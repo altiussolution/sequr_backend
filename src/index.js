@@ -10,7 +10,7 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
-const routesIndex = require('./router');
+const routesIndex = require('./routes/index');
 routesIndex(app);  
 
 app.use((req, res, next) => { 

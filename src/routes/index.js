@@ -1,4 +1,4 @@
-let Users = require('./routes/users.route')
+let Users = require('./users.route')
 
 module.exports = (app) => {
     app.use('/users', Users)
