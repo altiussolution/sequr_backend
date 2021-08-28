@@ -10,7 +10,8 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
-require('./routing/routes.js')(app);  
+const routesIndex = require('./router');
+routesIndex(app);  
 
 app.use((req, res, next) => { 
     res.header('Access-Control-Allow-Origin', '*');

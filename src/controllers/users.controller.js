@@ -1,6 +1,6 @@
 exports.getUserById = ((req, res) => {
-    console.log('Hiiii from SEQURE')
+    console.log('****** Hiiii from SEQURE ******')
     res.json({
-        message: 'Hiiii from SEQURE'
+        message: '****** Hiiii from SEQURE ******'
     })
 })
