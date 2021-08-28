@@ -1,6 +1,5 @@
-let User = require('./routes/user.route')
+let Users = require('./routes/users.route')
 
 module.exports = (app) => {
-    app.use('/users', User)
-
+    app.use('/users', Users)
 }
