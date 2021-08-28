@@ -1,5 +1,5 @@
-SampleController = require('./users.controller');
+UsersController = require('./users.controller');
 
-module.exports.Controllers = {
-    SampleController: SampleController
+module.exports = {
+    UsersController
 }

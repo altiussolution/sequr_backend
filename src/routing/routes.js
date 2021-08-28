@@ -1,11 +1,7 @@
-var IndexController = require('../controllers/index').Controllers
-
-
-
+var controllers = require('../controllers/index')
 
 module.exports = ((app) => {
-    app.get('/getUser', IndexController.SampleController.getUserById);
-
+    app.get('/getUser', controllers.UsersController.getUserById);
 });
 
 
