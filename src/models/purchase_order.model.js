@@ -49,6 +49,23 @@ const PurchaseOrderSchema = Schema({
         enum: [1,2],
         default: 1
     },
+    created_at: {
+        type: Date,
+        default: Date.now
+    },
+    deleted_at: {
+        type: Date,
+        default: null
+    },
+    updated_at: {
+        type: Date,
+        default: Date.now
+    },
+    active_status: {
+        type: Number,
+        enum: [0,1],
+        default: 0
+    }
 })
 
 
