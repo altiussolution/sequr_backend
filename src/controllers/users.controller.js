@@ -1,3 +1,4 @@
+
 exports.getUserById = ((req, res) => {
     console.log('****** Hiiii from SEQURE ******')
     res.json({

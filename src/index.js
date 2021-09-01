@@ -4,12 +4,11 @@ const port = 4500;
 var express = require('express')
 var cors = require('cors')
 var app = express()
-var bodyParser = require('body-parser');
 app.use(cors());
-app.use(bodyParser.urlencoded({
+app.use(express.urlencoded({
   extended: true
 }));
-app.use(bodyParser.json());
+app.use(express.json());
 const routesIndex = require('./routes/index');
 routesIndex(app);  
 
