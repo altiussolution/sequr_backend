@@ -7,9 +7,9 @@ let csc = require('country-state-city');
 const mongoURL = process.env.MONGODB_URI;
 
 // Load models
-const Country = require("./country.model");
-const State = require("./state.model");
-const City = require("./city.model");
+const Country = require("../models/country.model");
+const State = require("../models/state.model");
+const City = require("../models/city.model");
 
 
 // Connect to DB
@@ -29,11 +29,11 @@ var cities = csc.City.getAllCities()
 const importData = async () => {
   try {
     await Country.create(countries);
-    console.log(' **** 1 ****')
+    console.log(' **** Country ****')
     await State.create(states);
-    console.log(' **** 2 ****')
+    console.log(' **** State ****')
     await City.create(cities);
-    console.log(' **** 3 ****')
+    console.log(' **** City ****')
 
     console.log("Data Imported...");
     process.exit();
