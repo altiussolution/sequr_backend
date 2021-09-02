@@ -13,9 +13,13 @@
     "country-state-city": "^3.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "lang-list": "^1.0.3",
+    "language-list": "0.0.3",
+    "mongodb": "^4.1.1",
     "mongoose": "^6.0.2",
     "mongoose-data-seed": "^2.1.6",
-    "mongoose-seed": "^0.6.0"
+    "mongoose-seed": "^0.6.0",
+    "multer": "^1.4.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"

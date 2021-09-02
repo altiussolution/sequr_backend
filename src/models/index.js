@@ -12,6 +12,11 @@ const purchase_orderModel = require("./purchase_order.model")
 const stock_allocationModel = require("./stock_allocation.model")
 const supplierModel = require("./supplier.model")
 const categoryModel = require("./category.model")
+const countryModel = require("./country.model")
+const stateModel = require("./state.model")
+const cityModel = require("./city.model")
+const languageModel = require("./language.model")
+
 
 module.exports = {
     branchModel,
@@ -27,5 +32,12 @@ module.exports = {
     stock_allocationModel,
     supplierModel,
     shift_timeModel,
-    userModel
+    userModel,
+    countryModel,
+    stateModel,
+    cityModel,
+    languageModel
+
+
+
 }
