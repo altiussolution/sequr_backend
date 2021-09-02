@@ -43,6 +43,10 @@ const ItemSchema = Schema({
         type: String,
         required: true
     },
+    video_path: {
+        type: String,
+        required: true
+    },
     created_at: {
         type: Date,
         default: Date.now
