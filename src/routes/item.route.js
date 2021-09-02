@@ -8,9 +8,9 @@ var upload = multer(
     }
   );
 
-route.post('/add', upload.array('files'), controllers.ItemController.add_item)
-route.get('/get', controllers.ItemController.get_item)
-route.put('/edit', upload.single('profile'), controllers.ItemController.edit_item)
+route.post('/add', upload.array('files'), controllers.ItemController.addItem)
+route.get('/get', controllers.ItemController.getItem)
+route.put('/edit', upload.single('profile'), controllers.ItemController.editItem)
 
 
 module.exports = route

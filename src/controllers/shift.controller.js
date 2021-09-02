@@ -1,7 +1,7 @@
 var Models = require('../models/index')
 
 
-exports.add_shift = (async (req, res) => {
+exports.addShift = (async (req, res) => {
     console.log(req.body)
     var shift = new Models.shift_timeModel();
     shift.shift_type = req.body.shift_type;
@@ -18,7 +18,7 @@ exports.add_shift = (async (req, res) => {
         }
     });
 })
-exports.get_shift = (async (req, res) => {
+exports.getShift = (async (req, res) => {
     Models.shift_timeModel.find({ active_status: 0 }, (err, shift) => {
         if (!err) {
             res.send({
@@ -32,7 +32,7 @@ exports.get_shift = (async (req, res) => {
     })
 })
 
-exports.edit_shift = (async (req, res) => {
+exports.editShift = (async (req, res) => {
     var shift = {}
     shift.shift_type = req.body.shift_type;
     shift.start_time = req.body.start_time;
@@ -49,7 +49,7 @@ exports.edit_shift = (async (req, res) => {
     });
 })
 
-exports.delete_shift = (async (req, res) => {
+exports.deleteShift = (async (req, res) => {
     Models.shift_timeModel.findOneAndUpdate({ _id: req.body._id }, { active_status: 1 }, (err, file) => {
         if (!err)
             res.send({
