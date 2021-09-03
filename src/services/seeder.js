@@ -27,7 +27,7 @@ mongoose.connect(mongoURL, {
 //var countries = csc.Country.getAllCountries()
 //var states = csc.State.getAllStates()
 var cities = csc.City.getAllCities()
-var language_list = languageList.getData()
+//var language_list = languageList.getData()
 
 // Import into DB
 const importData = async () => {
@@ -38,8 +38,8 @@ const importData = async () => {
     //console.log(' **** State ****')
       await City.create(cities);
     console.log(' **** City ****')
-    await Language.create(language_list)
-    console.log(' **** Language ****')
+   // await Language.create(language_list)
+   // console.log(' **** Language ****')
     console.log("Data Imported...");
     process.exit();
   } catch (err) {
