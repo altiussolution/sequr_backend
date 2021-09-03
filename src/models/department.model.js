@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 const DepartmentSchema = Schema({
     department_name: {
         type: String,
-        required: true
+        required: true,
     },
     department_id: {
         type: String,

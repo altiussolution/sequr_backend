@@ -32,9 +32,9 @@ let mongoose = require('mongoose');
 
 const dbPath = process.env['MONGODB_URI'];
 
-const options = {useNewUrlParser: true, useUnifiedTopology: true}
+const options = {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex : false}
 // mongoose.set('useFindAndModify', false);
-const mongo = mongoose.connect(dbPath,options);
+const mongo = mongoose.connect(dbPath);
 
 mongo.then(() =>{
     console.log('mongo connected success')
