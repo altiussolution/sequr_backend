@@ -10,6 +10,9 @@ const RoleSchema = Schema({
         type: String,
         required: true
     },
+    permission : {
+        type : Array,
+    },
     created_at: {
         type: Date,
         default: Date.now
@@ -25,7 +28,7 @@ const RoleSchema = Schema({
     active_status: {
         type: Number,
         enum: [0,1],
-        default: 0
+        default: 1
     }
 })
 
