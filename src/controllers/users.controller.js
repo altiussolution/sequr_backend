@@ -103,13 +103,29 @@ exports.upload = (async(req,res) => {
 
 exports.update = (async (req,res) =>{
   try{
-    var userId = req.body._id;
+    
+    var userId = req.query.id;
     var updateUser = req.body
-    User.findByIdAndUpdate({userId},updateUser,(err,isExist) =>{
-      console.log(isExist)
+    User.findByIdAndUpdate(userId,updateUser,(err,isExist) =>{
+      if(isExist){
+        res.status(200).send({Message : 'Employee Updated Sucessfully'})
+      }else{
+        res.status(201).send({Message : 'Employee Not Found'})
+      }
     })
   }
   catch(err){
     res.status(400).send(err);
   }
+})
+
+exports.delete = ((req, res) => {
+  User.findByIdAndUpdate(req.query.id, {active_status: 1} , function(err, branch){
+      if (!err) {
+          res.status(200).send({ success: true, message: 'Employee Deactivated Successfully!' });
+      }
+      else {
+          res.status(200).send({ success: false, message: 'error in deactivating employee' });
+      }
+  });
 })
