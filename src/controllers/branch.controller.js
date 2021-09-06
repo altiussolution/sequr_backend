@@ -4,7 +4,7 @@ const { branchModel } = require("../models");
 
 exports.createBranch = (req, res) => {
     var newBranch = new branchModel(req.body);
-    console.log(req.body);
+    // console.log(req.body);
     newBranch.save(function (err) {
         if (err) {
             res.status(200).send({

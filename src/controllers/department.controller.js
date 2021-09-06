@@ -4,7 +4,7 @@ const { departmentModel } = require("../models");
 
 exports.createDepartment = (req, res) => {
     var newDepartment = new departmentModel(req.body);
-    console.log(req.body);
+    // console.log(req.body);
     newDepartment.save(function (err) {
         if (err) {
             res.status(200).send({
