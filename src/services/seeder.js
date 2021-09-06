@@ -24,22 +24,22 @@ mongoose.connect(mongoURL, {
 
 // Get Counter State City
 
-var countries = csc.Country.getAllCountries()
-var states = csc.State.getAllStates()
+//var countries = csc.Country.getAllCountries()
+//var states = csc.State.getAllStates()
 var cities = csc.City.getAllCities()
-var language_list = languageList.getData()
+//var language_list = languageList.getData()
 
 // Import into DB
 const importData = async () => {
   try {
-    await Country.create(countries);
-    console.log(' **** Country ****')
-    await State.create(states);
-    console.log(' **** State ****')
-    await City.create(cities);
+//    await Country.create(countries);
+  //  console.log(' **** Country ****')
+    //await State.create(states);
+    //console.log(' **** State ****')
+      await City.create(cities);
     console.log(' **** City ****')
-    await Language.create(language_list)
-    console.log(' **** Language ****')
+   // await Language.create(language_list)
+   // console.log(' **** Language ****')
     console.log("Data Imported...");
     process.exit();
   } catch (err) {

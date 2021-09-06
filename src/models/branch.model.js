@@ -15,12 +15,14 @@ const BranchSchema = Schema({
         required: true
     },
     state_id: {
-        type: String,
-        required: true
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'state'
     },
     city_id: {
-        type: String,
-        required: true
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'city'
     },
     zip_code: {
         type: String,
