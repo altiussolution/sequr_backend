@@ -2,7 +2,7 @@ var Models = require('../models/index')
 
 
 exports.addShift = (async (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     var shift = new Models.shift_timeModel();
     shift.shift_type = req.body.shift_type;
     shift.start_time = req.body.start_time;

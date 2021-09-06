@@ -9,7 +9,7 @@ let Branch = require('./branch.route')
 let Cube = require('./cube.route')
 
 module.exports = (app) => {
-    app.use('/users', Users)
+    app.use('/employee', Users)
     app.use('/roles', Roles)
     app.use('/category', Category)
     app.use('/item', Item)

@@ -1,5 +1,6 @@
 require('dotenv').config();
 const hostname = 'localhost';
+// const hostname = '172.31.45.190';
 const port = 4500;
 var express = require('express')
 var cors = require('cors')
