@@ -10,10 +10,6 @@ const UserSchema = Schema({
         type: String,
         required: true
       },
-      user_name: {
-        type: String,
-        required: true
-      },
       email_id: {
         type: String,
         required: true
@@ -37,7 +33,8 @@ const UserSchema = Schema({
       },
       employee_id: {
         type: String,
-        required: true
+        required: true,
+        unique: true
       },
       item_max_quantity: {
         type: String,
@@ -48,7 +45,7 @@ const UserSchema = Schema({
         required: true,
         ref: 'branch'
       },
-      shift_time: {
+      shift_time_id: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'shift_time'
@@ -60,7 +57,6 @@ const UserSchema = Schema({
       },
       profile_pic: {
         type: String,
-        required: true
       },
       status: {
         type: Number,
@@ -87,7 +83,8 @@ const UserSchema = Schema({
         type: Number,
         enum: [0,1],
         default: 0
-    }
+    },
+    token: { type: String },
 })
 
 
