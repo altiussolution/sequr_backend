@@ -17,4 +17,5 @@ route.post('/login',controllers.UsersController.login)
 route.post('/upload',auth, upload.single('profile'),controllers.UsersController.upload)
 route.put('/update', auth, controllers.UsersController.update)
 route.put('/delete', auth, controllers.UsersController.delete)
+route.get('/get', auth, controllers.UsersController.listEmployees)
 module.exports = route 

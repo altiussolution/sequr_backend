@@ -18,7 +18,7 @@ exports.updatePermission = ((req, res) => {
     var roles = {}
     roles.role_name = req.body.role_name;
     roles.permission = req.body.permission;
-    RoleSchema.findByIdAndUpdate({ _id: body._id }, roles).then(roleUpdate => {
+    RoleSchema.findOneAndUpdate({ _id: body._id }, roles).then(roleUpdate => {
         res.status(200).send({ 
             status:'Success',
             message: 'Permissions updated sucessfully'

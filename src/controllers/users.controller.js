@@ -66,7 +66,7 @@ exports.login = (async (req,res) =>{
     
     const user = await User.findOne({ employee_id });
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (user && (await bcrypt.compare(password, user.password)) && user.active_status) {
       
       const token = jwt.sign(
         { user_id: user._id, employee_id },
@@ -128,4 +128,12 @@ exports.delete = ((req, res) => {
           res.status(200).send({ success: false, message: 'error in deactivating employee' });
       }
   });
+})
+
+exports.listEmployees = ((req,res) =>{
+  var offset = parseInt(req.query.offset);
+  var limit = parseInt(req.query.limit);
+  User.find({active_status : 0}).skip(offset).limit(limit).then(result =>{
+    res.send(result)
+  })
 })
