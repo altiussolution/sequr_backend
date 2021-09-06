@@ -27,3 +27,27 @@ exports.getBranch = (req, res) => {
         }
     });
 }
+
+
+exports.updateBranch = (req, res) => {
+    console.log(req.params.id);
+    branchModel.findByIdAndUpdate(req.params.id, req.body , function(err, branch){
+        if (!err) {
+            res.status(200).send({ success: true, message: 'Branch Updated Successfully!' });
+        }
+        else {
+            res.status(200).send({ success: false, message: 'error in updationg branch' });
+        }
+    });
+}
+
+exports.deleteBranch = (req, res) => {
+    branchModel.findByIdAndUpdate(req.params.id, {active_status: 1} , function(err, branch){
+        if (!err) {
+            res.status(200).send({ success: true, message: 'Branch Deleted Successfully!' });
+        }
+        else {
+            res.status(200).send({ success: false, message: 'error in deleting branch' });
+        }
+    });
+}
