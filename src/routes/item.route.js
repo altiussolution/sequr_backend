@@ -1,5 +1,6 @@
 let route = require('express').Router()
 var controllers = require('../controllers/index')
+const auth = require("../middleware/auth.middleware");
 var multer = require("multer");
 var upload = multer(
     {
@@ -8,9 +9,9 @@ var upload = multer(
     }
   );
 
-route.post('/add', upload.array('files'), controllers.ItemController.addItem)
-route.get('/get', controllers.ItemController.getItem)
-route.put('/edit', upload.single('profile'), controllers.ItemController.editItem)
+route.post('/add',auth, upload.array('files'), controllers.ItemController.addItem)
+route.get('/get', auth,controllers.ItemController.getItem)
+route.put('/edit', auth,upload.single('profile'), controllers.ItemController.editItem)
 
 
 module.exports = route

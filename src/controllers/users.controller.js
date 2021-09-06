@@ -12,7 +12,7 @@ exports.add = (async (req, res) => {
         //     numbers: true
         // });
         var password  = '1q2w3e$R';
-        const { first_name, last_name, email_id,contact_no,date_of_birth,role_id,language_prefered,employee_id,item_max_quantity, branch_id, shift_time_id, department_id, profile_pic} = req.body;
+        const { first_name, last_name, email_id,contact_no,date_of_birth,role_id,language_prefered,employee_id,item_max_quantity, branch_id, shift_time_id, department_id, profile_pic, status} = req.body;
 
         if (!(email_id && employee_id && first_name && role_id && language_prefered )) {
           res.status(400).send("All input is required");
@@ -39,7 +39,7 @@ exports.add = (async (req, res) => {
           profile_pic,
           email_id: email_id.toLowerCase(), // sanitize: convert email to lowercase
           password: encryptedPassword,
-          status : 1
+          status : status ? status : 0
         });
         const token = jwt.sign(
           { user_id: user._id, employee_id },
@@ -79,12 +79,37 @@ exports.login = (async (req,res) =>{
       user.token = token;
 
       res.status(200).json(user);
-      
+
     }else{
       res.status(400).send("Invalid Credentials or No user found");
     }
     
   } catch (err) {
     console.log(err);
+  }
+})
+
+exports.upload = (async(req,res) => {
+  try{
+    if(req.file){
+      var filename = `${req.user.user_id}.${req.file.originalname.split('.').pop()}`
+      res.status(200).send({Message : 'Profile Added Sucessfully', Path : `${req.file.destination}/${filename}`})
+    }
+  }catch (err) {
+    res.status(400).send(err);
+  }
+ 
+})
+
+exports.update = (async (req,res) =>{
+  try{
+    var userId = req.body._id;
+    var updateUser = req.body
+    User.findByIdAndUpdate({userId},updateUser,(err,isExist) =>{
+      console.log(isExist)
+    })
+  }
+  catch(err){
+    res.status(400).send(err);
   }
 })
