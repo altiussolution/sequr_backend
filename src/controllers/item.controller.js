@@ -3,9 +3,8 @@ var Models = require('../models/index')
 const { MongoClient, ObjectId } = require("mongodb");
 
 
-exports.add_item = (async (req, res) => {
+exports.addItem = (async (req, res) => {
     var item = new Models.itemModel();
-    console.log(req.files)
     item.item_name = req.body.item_name;
     item.item_number = req.body.item_number;
     item.category_id = ObjectId(req.body.category_id)
@@ -37,7 +36,7 @@ exports.add_item = (async (req, res) => {
         }
     });
 })
-exports.get_item = (async (req, res) => {
+exports.getItem = (async (req, res) => {
     Models.itemModel.find({ active_status: 0 }, (err, item) => {
         if (!err) {
             res.send({
@@ -51,7 +50,7 @@ exports.get_item = (async (req, res) => {
     })
 })
 
-exports.edit_item = (async (req, res) => {
+exports.editItem = (async (req, res) => {
     var item = {}
     item.item_name = req.body.item_name;
     item.item_number = req.body.item_number;

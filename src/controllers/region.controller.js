@@ -1,6 +1,6 @@
 var Models = require('../models/index')
 
-exports.get_country = (async (req, res) => {
+exports.country = (async (req, res) => {
     Models.countryModel.find({}, (err, doc) => {
         if (!err) {
             res.send({
@@ -13,7 +13,7 @@ exports.get_country = (async (req, res) => {
         }
     })
 })
-exports.get_state = (async (req, res) => {
+exports.state = (async (req, res) => {
     Models.stateModel.find({ countryCode: req.query.country_code }, (err, doc) => {
         if (!err) {
             res.send({
@@ -26,7 +26,7 @@ exports.get_state = (async (req, res) => {
         }
     })
 })
-exports.get_city = (async (req, res) => {
+exports.city = (async (req, res) => {
     Models.cityModel.find({ countryCode: req.query.country_code, stateCode: req.query.state_code }, (err, doc) => {
         if (!err) {
             res.send({
@@ -39,7 +39,7 @@ exports.get_city = (async (req, res) => {
         }
     })
 })
-exports.get_language = (async (req, res) => {
+exports.language = (async (req, res) => {
     Models.languageModel.find({}, (err, doc) => {
         if (!err) {
             res.send({

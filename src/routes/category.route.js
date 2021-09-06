@@ -8,9 +8,9 @@ var upload = multer(
     }
   );
 
-route.post('/add', upload.single('profile'), controllers.CategoryController.add_category)
-route.get('/get', controllers.CategoryController.get_category)
-route.put('/edit', upload.single('profile'), controllers.CategoryController.edit_category)
+route.post('/add', upload.single('profile'), controllers.CategoryController.addCategory)
+route.get('/get', controllers.CategoryController.getCategory)
+route.put('/edit', upload.single('profile'), controllers.CategoryController.editCategory)
 
 
 module.exports = route

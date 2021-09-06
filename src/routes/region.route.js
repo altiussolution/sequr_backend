@@ -1,9 +1,15 @@
 let route = require('express').Router()
 var controllers = require('../controllers/index')
 
-route.get('/get_country', controllers.RegionController.get_country)
-route.get('/get_state', controllers.RegionController.get_state)
-route.get('/get_city', controllers.RegionController.get_city)
-route.get('/get_language', controllers.RegionController.get_language)
+route.get('/country', controllers.RegionController.country)
+route.get('/state', controllers.RegionController.state)
+route.get('/city', controllers.RegionController.city)
+route.get('/language', controllers.RegionController.language)
+
+//country
+//state
+//language
+//city
+
 
 module.exports = route

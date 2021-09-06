@@ -1,7 +1,7 @@
 var Models = require('../models/index')
 
 
-exports.add_category = (async (req, res) => {
+exports.addCategory = (async (req, res) => {
     var category = new Models.categoryModel();
     category.category_name = req.body.category_name;
     category.category_code = req.body.category_code;
@@ -19,7 +19,7 @@ exports.add_category = (async (req, res) => {
         }
     });
 })
-exports.get_category = (async (req, res) => {
+exports.getCategory = (async (req, res) => {
     Models.categoryModel.find({ active_status: 0 }, (err, category) => {
         if (!err) {
             res.send({
@@ -33,7 +33,7 @@ exports.get_category = (async (req, res) => {
     })
 })
 
-exports.edit_category = (async (req, res) => {
+exports.editCategory = (async (req, res) => {
     var category = {}
     category.category_name = req.body.category_name;
     category.category_code = req.body.category_code;
