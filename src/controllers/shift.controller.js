@@ -19,7 +19,7 @@ exports.addShift = (async (req, res) => {
     });
 })
 exports.getShift = (async (req, res) => {
-    Models.shift_timeModel.find({ active_status: 0 }, (err, shift) => {
+    Models.shift_timeModel.find({ active_status: 1 }, (err, shift) => {
         if (!err) {
             res.send({
                 status: 'Success',
@@ -37,7 +37,7 @@ exports.editShift = (async (req, res) => {
     shift.shift_type = req.body.shift_type;
     shift.start_time = req.body.start_time;
     shift.end_time = req.body.end_time
-    Models.shift_timeModel.findOneAndUpdate({ _id: req.body._id }, shift, (err, file) => {
+    Models.shift_timeModel.findByIdAndUpdate({ _id: req.body._id }, shift, (err, file) => {
         if (!err)
             res.send({
                 status: 'Success',
@@ -50,7 +50,7 @@ exports.editShift = (async (req, res) => {
 })
 
 exports.deleteShift = (async (req, res) => {
-    Models.shift_timeModel.findOneAndUpdate({ _id: req.body._id }, { active_status: 1 }, (err, file) => {
+    Models.shift_timeModel.findByIdAndUpdate({ _id: req.body._id }, { active_status: 0 }, (err, file) => {
         if (!err)
             res.send({
                 status: 'Success',

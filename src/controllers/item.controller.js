@@ -37,7 +37,7 @@ exports.addItem = (async (req, res) => {
     });
 })
 exports.getItem = (async (req, res) => {
-    Models.itemModel.find({ active_status: 0 }, (err, item) => {
+    Models.itemModel.find({ active_status: 1 }, (err, item) => {
         if (!err) {
             res.send({
                 status: 'Success',
@@ -63,7 +63,7 @@ exports.editItem = (async (req, res) => {
     item.calibration_month = req.body.calibration_month;
     item.image_path = req.body.image_path || req.files[0].path
     item.video_path = req.files[1].path || req.files[0].path || req.body.video_path;
-    Models.itemModel.findOneAndUpdate({ _id: req.body._id }, item, (err, file) => {
+    Models.itemModel.findByIdAndUpdate({ _id: req.body._id }, item, (err, file) => {
         if (!err)
             res.send({
                 status: 'Success',
