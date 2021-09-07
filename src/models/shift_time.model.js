@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 const ShiftTimeSchema = Schema({
     shift_type: {
         type: Number,
-        enum: [1,2,3],
+        enum: [1,2,3,4],
         default: 1
     },
     start_time: {
