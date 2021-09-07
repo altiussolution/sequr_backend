@@ -14,7 +14,7 @@ var upload = multer({ storage: storage })
 
 route.post('/add', auth, CategoryController.addCategory)
 route.get('/get', auth, CategoryController.getCategory)
-route.put('/update', auth, CategoryController.updateCategory)
+route.put('/update/:id', auth, CategoryController.updateCategory)
 route.post('/upload',auth, upload.single('category'),CategoryController.upload)
 
 module.exports = route
