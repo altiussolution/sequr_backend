@@ -30,7 +30,6 @@ exports.getBranch = (req, res) => {
 
 
 exports.updateBranch = (req, res) => {
-    console.log(req.params.id);
     branchModel.findByIdAndUpdate(req.params.id, req.body , function(err, branch){
         if (!err) {
             res.status(200).send({ success: true, message: 'Branch Updated Successfully!' });
