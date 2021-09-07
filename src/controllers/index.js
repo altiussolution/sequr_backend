@@ -8,6 +8,7 @@ RegionController = require('./region.controller');
 ShiftController = require('./shift.controller');
 BranchController = require('./branch.controller');
 CubeController= require('./cube.controller');
+CompartmentController= require('./compartment.controller');
 
 module.exports = {
     UsersController,
@@ -18,5 +19,6 @@ module.exports = {
     ItemController,
     RegionController,
     ShiftController,
-    CubeController
+    CubeController,
+    CompartmentController
 }
