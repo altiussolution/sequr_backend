@@ -1,17 +1,20 @@
 let route = require('express').Router()
-var controllers = require('../controllers/index')
+var {CategoryController} = require('../controllers')
 const auth = require("../middleware/auth.middleware");
-var multer = require("multer"); 
-var upload = multer(
-    {
-  
-      dest: '../upload/images'
+var multer = require("multer");
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './upload')
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
     }
-  );
+})
+var upload = multer({ storage: storage })
 
-route.post('/add', auth,upload.single('profile'), controllers.CategoryController.addCategory)
-route.get('/get', auth,controllers.CategoryController.getCategory)
-route.put('/edit', auth,upload.single('profile'), controllers.CategoryController.editCategory)
-
+route.post('/add', auth, CategoryController.addCategory)
+route.get('/get', auth, CategoryController.getCategory)
+route.put('/update', auth, CategoryController.updateCategory)
+route.post('/upload',auth, upload.single('category'),CategoryController.upload)
 
 module.exports = route
