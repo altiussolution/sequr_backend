@@ -1,6 +1,7 @@
 var Models = require('../models/index')
 
 exports.country = (async (req, res) => {
+    try {
     Models.countryModel.find({}, (err, doc) => {
         if (!err) {
             res.send({
@@ -12,8 +13,13 @@ exports.country = (async (req, res) => {
             res.send(err.message);
         }
     })
+} catch (error) {
+    res.send("An error occured");
+    console.log(error);
+}
 })
 exports.state = (async (req, res) => {
+    try {
     Models.stateModel.find({ countryCode: req.query.country_code }, (err, doc) => {
         if (!err) {
             res.send({
@@ -25,8 +31,13 @@ exports.state = (async (req, res) => {
             res.send(err.message);
         }
     })
+} catch (error) {
+    res.send("An error occured");
+    console.log(error);
+}
 })
 exports.city = (async (req, res) => {
+    try {
     Models.cityModel.find({ countryCode: req.query.country_code, stateCode: req.query.state_code }, (err, doc) => {
         if (!err) {
             res.send({
@@ -38,8 +49,13 @@ exports.city = (async (req, res) => {
             res.send(err.message);
         }
     })
+} catch (error) {
+    res.send("An error occured");
+    console.log(error);
+}
 })
 exports.language = (async (req, res) => {
+    try {
     Models.languageModel.find({}, (err, doc) => {
         if (!err) {
             res.send({
@@ -51,4 +67,8 @@ exports.language = (async (req, res) => {
             res.send(err.message);
         }
     })
+} catch (error) {
+    res.send("An error occured");
+    console.log(error);
+}
 })

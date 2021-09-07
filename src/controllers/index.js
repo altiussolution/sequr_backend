@@ -9,6 +9,8 @@ ShiftController = require('./shift.controller');
 BranchController = require('./branch.controller');
 CubeController= require('./cube.controller');
 BinController = require('./bin.controller')
+ResetPassword = require('./resetPassword.controller')
+
 
 module.exports = {
     UsersController,
@@ -20,5 +22,6 @@ module.exports = {
     RegionController,
     ShiftController,
     CubeController,
-    BinController
+    BinController,
+    ResetPassword
 }
