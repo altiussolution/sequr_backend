@@ -59,6 +59,9 @@ const enumVariables = {
             'Log_Permission',
         ]
         
+    },
+    error_code : {
+        isDuplication : 11000
     }
 }
 

@@ -7,6 +7,7 @@ let Shift = require('./shift.route')
 let Departments = require('./department.route')
 let Branch = require('./branch.route')
 let Cube = require('./cube.route')
+let Bin = require('./bin.route');
 
 module.exports = (app) => {
     app.use('/employee', Users)
@@ -18,6 +19,7 @@ module.exports = (app) => {
     app.use('/department', Departments)
     app.use('/branch', Branch)
     app.use('/cube', Cube)
+    app.use('/bin', Bin)
 }
 
 

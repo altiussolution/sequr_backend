@@ -7,11 +7,12 @@ var generator = require('generate-password');
 
 exports.add = (async (req, res) => {
     try {
-        // var password = generator.generate({
-        //     length: 6,
-        //     numbers: true
-        // });
-        var password  = '1q2w3e$R';
+        var password = generator.generate({
+            length: 6,
+            numbers: true
+        });
+        console.log(password);
+        // var password  = '1q2w3e$R';
         const { first_name, last_name, email_id,contact_no,date_of_birth,role_id,language_prefered,employee_id,item_max_quantity, branch_id, shift_time_id, department_id, profile_pic, status} = req.body;
 
         if (!(email_id && employee_id && first_name && role_id && language_prefered )) {
@@ -130,10 +131,10 @@ exports.delete = ((req, res) => {
   });
 })
 
-exports.listEmployees = ((req,res) =>{
+exports.listEmployees = ((req,res) => {
   var offset = parseInt(req.query.offset);
   var limit = parseInt(req.query.limit);
-  User.find({active_status : 0}).skip(offset).limit(limit).then(result =>{
+  User.find({active_status : 0}).populate("department_id").skip(offset).limit(limit).then(result =>{
     res.send(result)
   })
 })
