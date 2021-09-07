@@ -13,7 +13,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
 
 route.post('/add', controllers.UsersController.add)
-route.post('/login',auth, controllers.UsersController.login)
+route.post('/login', controllers.UsersController.login)
 route.post('/upload',auth, upload.single('profile'),controllers.UsersController.upload)
 route.put('/update', auth, controllers.UsersController.update)
 route.put('/delete', auth, controllers.UsersController.delete)
