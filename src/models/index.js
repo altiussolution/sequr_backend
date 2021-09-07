@@ -5,7 +5,7 @@ const cubeModel = require("./cube.model")
 const departmentModel = require("./department.model")
 const rolesModel = require("./roles.model")
 const shift_timeModel = require("./shift_time.model")
-const userModel = require("./user.model")
+const userModel = (require("./user.model")).User
 const itemModel = require("./item.model")
 const kitModel = require("./kit.model")
 const purchase_orderModel = require("./purchase_order.model")
@@ -16,6 +16,7 @@ const countryModel = require("./country.model")
 const stateModel = require("./state.model")
 const cityModel = require("./city.model")
 const languageModel = require("./language.model")
+const resetPasswordTokenModel = require("./resetPasswordToken.model")
 
 
 module.exports = {
@@ -36,7 +37,8 @@ module.exports = {
     countryModel,
     stateModel,
     cityModel,
-    languageModel
+    languageModel,
+    resetPasswordTokenModel
 
 
 

@@ -11,6 +11,7 @@ CubeController= require('./cube.controller');
 CompartmentController= require('./compartment.controller');
 BinController = require('./bin.controller')
 
+
 module.exports = {
     UsersController,
     DepartmentController,

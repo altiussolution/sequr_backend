@@ -4,6 +4,7 @@ const { MongoClient, ObjectId } = require("mongodb");
 
 
 exports.addItem = (async (req, res) => {
+    try {
     var item = new Models.itemModel();
     item.item_name = req.body.item_name;
     item.item_number = req.body.item_number;
@@ -35,8 +36,13 @@ exports.addItem = (async (req, res) => {
             res.send(err.message);
         }
     });
+} catch (error) {
+    res.send("An error occured");
+    console.log(error);
+}
 })
 exports.getItem = (async (req, res) => {
+    try {
     Models.itemModel.find({ active_status: 1 }, (err, item) => {
         if (!err) {
             res.send({
@@ -48,9 +54,14 @@ exports.getItem = (async (req, res) => {
             res.send(err.message);
         }
     })
+} catch (error) {
+    res.send("An error occured");
+    console.log(error);
+}
 })
 
 exports.editItem = (async (req, res) => {
+    try {
     var item = {}
     item.item_name = req.body.item_name;
     item.item_number = req.body.item_number;
@@ -63,7 +74,7 @@ exports.editItem = (async (req, res) => {
     item.calibration_month = req.body.calibration_month;
     item.image_path = req.body.image_path || req.files[0].path
     item.video_path = req.files[1].path || req.files[0].path || req.body.video_path;
-    Models.itemModel.findByIdAndUpdate({ _id: req.body._id }, item, (err, file) => {
+    Models.itemModel.findByIdAndUpdate({ _id: req.params.id }, item, (err, file) => {
         if (!err)
             res.send({
                 status: 'Success',
@@ -73,5 +84,9 @@ exports.editItem = (async (req, res) => {
             res.send(err.message);
         }
     });
+} catch (error) {
+    res.send("An error occured");
+    console.log(error);
+}
 })
 

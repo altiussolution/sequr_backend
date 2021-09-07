@@ -1,7 +1,11 @@
-var User = require('../models/user.model');
+var {User} = require('../models/user.model');
+var Models = require('../models/index')
 let Utils = require('../utils/enum.utils');
 const bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
+const sendEmail = require("../utils/sendEmail");
+const crypto = require("crypto");
+const Joi = require("joi");
 var generator = require('generate-password');
 
 
@@ -137,4 +141,58 @@ exports.listEmployees = ((req,res) => {
   User.find({active_status : 0}).populate("department_id").skip(offset).limit(limit).then(result =>{
     res.send(result)
   })
+})
+
+exports.forgotPassword = (async (req, res) => {
+    try {
+        const schema = Joi.object({ email_id: Joi.string().email().required() });
+        const { error } = schema.validate(req.body);
+        if (error) return res.status(400).send(error.details[0].message);
+
+        const user = await Models.userModel.findOne({ email_id: req.body.email_id });
+        if (!user)
+            return res.status(400).send("user with given email doesn't exist");
+
+        let token = await Models.resetPasswordTokenModel.findOne({ user_id: user._id });
+        if (!token) {
+            token = await new Models.resetPasswordTokenModel({
+                user_id: user._id,
+                token: crypto.randomBytes(32).toString("hex"),
+            }).save();
+        }
+
+        const link = `${process.env.BASE_URL}/password-reset/${user._id}/${token.token}`;
+        await sendEmail(user.email_id, "Password reset", link);
+
+        res.send("password reset link sent to your email account");
+    } catch (error) {
+        res.send("An error occured");
+        console.log(error);
+    }
+})
+
+exports.resetPassword = (async (req, res) => {
+    try {
+        const schema = Joi.object({ password: Joi.string().required() });
+        const { error } = schema.validate(req.body);
+        if (error) return res.status(400).send(error.details[0].message);
+
+        const user = await Models.userModel.findById(req.params.user_id);
+        if (!user) return res.status(400).send("invalid link or expired");
+
+        const token = await Models.resetPasswordTokenModel.findOne({
+            user_id: user._id,
+            token: req.params.token,
+        });
+        if (!token) return res.status(400).send("Invalid link or expired");
+
+        user.password = await bcrypt.hash(req.body.password, 10);
+        await user.save();
+        await token.delete();
+
+        res.send("password reset sucessfully.");
+    } catch (error) {
+        res.send("An error occured");
+        console.log(error);
+    }
 })

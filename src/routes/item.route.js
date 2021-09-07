@@ -11,7 +11,7 @@ var upload = multer(
 
 route.post('/add',auth, upload.array('files'), controllers.ItemController.addItem)
 route.get('/get', auth,controllers.ItemController.getItem)
-route.put('/edit', auth,upload.single('profile'), controllers.ItemController.editItem)
+route.put('/edit/:id', auth,upload.single('profile'), controllers.ItemController.editItem)
 
 
 module.exports = route
