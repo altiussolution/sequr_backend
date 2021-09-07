@@ -20,7 +20,7 @@ exports.addCategory = (async (req, res) => {
     });
 })
 exports.getCategory = (async (req, res) => {
-    Models.categoryModel.find({ active_status: 0 }, (err, category) => {
+    Models.categoryModel.find({ active_status: 1 }, (err, category) => {
         if (!err) {
             res.send({
                 status: 'Success',

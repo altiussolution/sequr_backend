@@ -20,7 +20,7 @@ exports.createDepartment = (req, res) => {
 
 
 exports.getDepartment = (req, res) => {
-    departmentModel.find({active_status: 0}).exec((err, department) => {
+    departmentModel.find({active_status: 1}).exec((err, department) => {
         if (!err) {
             res.status(200).send({ success: true, data: department });
         } else {
@@ -42,7 +42,7 @@ exports.updateDepartment = (req, res) => {
 }
 
 exports.deleteDepartment = (req, res) => {
-    departmentModel.findByIdAndUpdate(req.params.id, {active_status: 1} , function(err, department){
+    departmentModel.findByIdAndUpdate(req.params.id, {active_status: 0} , function(err, department){
         if (!err) {
             res.status(200).send({ success: true, message: 'Department Deleted Successfully!' });
         }

@@ -51,7 +51,7 @@ const CubeSchema = Schema({
     active_status: {
         type: Number,
         enum: [0,1],
-        default: 0
+        default: 1
     }
 })
 
