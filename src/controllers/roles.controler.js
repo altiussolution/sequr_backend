@@ -1,19 +1,19 @@
-const RoleSchema = require('../models/roles.model');
-var Models = require('../models/index')
-
+const { rolesModel, userModel } = require("../models");
 
 exports.createRole = ((req, res) => {
     try {
-        let body = req.body;
-        console.log(body)
-        var RoleModel = new RoleSchema;
-        RoleModel.role_name = body.role_name;
-        RoleModel.role_id = body.role_id;
-        RoleModel.save().then(roleSave => {
-            res.status(200).send({ Message: 'Role Created Sucessfully', roleSave })
-        }).catch(error => {
-            res.status(400).send(error)
-        })
+        var newRole = new rolesModel(req.body);
+        newRole.save(function (err) {
+            if (err) {
+                res.status(200).send({
+                    success: false,
+                    message: 'error in adding role'
+                });
+            }
+            else {
+                res.status(200).send({ success: true, message: 'Role Added Successfully!' });
+            }
+        });
     } catch (error) {
         res.send("An error occured");
         console.log(error);
@@ -22,7 +22,7 @@ exports.createRole = ((req, res) => {
 
 exports.updatePermission = ((req, res) => {
     try {
-        RoleSchema.findByIdAndUpdate({ _id: req.params.id }, req.body).then(roleUpdate => {
+        rolesModel.findByIdAndUpdate({ _id: req.params.id }, req.body).then(roleUpdate => {
             res.status(200).send({
                 status: 'Success',
                 message: 'Permissions updated sucessfully'
@@ -38,7 +38,7 @@ exports.updatePermission = ((req, res) => {
 
 exports.getRoles = ((req, res) => {
     try {
-        RoleSchema.find({ active_status: 1 }, (err, roles) => {
+        rolesModel.find({ active_status: 1 }, (err, roles) => {
             if (!err) {
                 res.status(200).send({
                     status: 'Success',
@@ -57,9 +57,9 @@ exports.getRoles = ((req, res) => {
 
 exports.deleteRole = (async (req, res) => {
     try {
-        Models.userModel.countDocuments({ role_id: req.params.id, active_status: 1 }, (err, count) => {
+        userModel.countDocuments({ role_id: req.params.id, active_status: 1 }, (err, count) => {
             if (count == 0) {
-                RoleSchema.findByIdAndUpdate({ _id: req.params.id }, { active_status: 0 }, (err, file) => {
+                rolesModel.findByIdAndUpdate({ _id: req.params.id }, { active_status: 0 }, (err, file) => {
                     if (!err)
                         res.status(200).send({
                             status: 'Success',

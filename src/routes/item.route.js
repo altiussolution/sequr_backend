@@ -1,5 +1,5 @@
 let route = require('express').Router()
-var controllers = require('../controllers/index')
+const {ItemController} = require('../controllers')
 const auth = require("../middleware/auth.middleware");
 var multer = require("multer");
 var storage = multer.diskStorage({
@@ -12,11 +12,11 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage })
 
-route.post('/add', controllers.ItemController.addItem)
-route.get('/get', auth,controllers.ItemController.getItem)
-route.put('/edit/:id', controllers.ItemController.editItem)
-route.post('/upload', upload.array('image-video'), controllers.ItemController.upload)
-
+route.post('/add', auth, ItemController.addItem)
+route.get('/get', auth,ItemController.getItem)
+route.put('/update/:id', auth, ItemController.updateItem)
+route.post('/upload', auth, upload.array('image-video'), ItemController.upload)
+route.get('/getItemByCategory/:category_id', auth,ItemController.getItemByCategory)
 
 
 module.exports = route

@@ -1,32 +1,17 @@
-const { db } = require('../models/branch.model');
-var Models = require('../models/index');
-const {itemModel} =  require("../models");
-const { MongoClient, ObjectId } = require("mongodb");
-
+const { itemModel } = require("../models");
 
 exports.addItem = (async (req, res) => {
     try {
-        var item = new Models.itemModel();
-        item.item_name = req.body.item_name;
-        item.item_number = req.body.item_number;
-        item.category_id = ObjectId(req.body.category_id)
-        item.supplier_id = req.body.supplier_id;
-        item.is_active = req.body.is_active;
-        item.calibration_month = req.body.calibration_month;
-        item.is_gages = req.body.is_gages;
-        item.description = req.body.description;
-        item.calibration_month = req.body.calibration_month;
-        item.image_path = req.body.image_path;
-        item.video_path = req.body.video_path;
-
-        item.save((err, file) => {
-            if (!err)
-                res.send({
-                    status: 'Success',
-                    message: 'item added'
+        var newItem = new itemModel(req.body);
+        newItem.save(function (err) {
+            if (err) {
+                res.status(200).send({
+                    success: false,
+                    message: 'error in adding item'
                 });
+            }
             else {
-                res.send(err.message);
+                res.status(200).send({ success: true, message: 'Item Added Successfully!' });
             }
         });
     } catch (error) {
@@ -36,7 +21,7 @@ exports.addItem = (async (req, res) => {
 })
 exports.getItem = (async (req, res) => {
     try {
-        Models.itemModel.find({ active_status: 1 }, (err, item) => {
+        itemModel.find({ active_status: 1 }, (err, item) => {
             if (!err) {
                 res.send({
                     status: 'Success',
@@ -53,13 +38,13 @@ exports.getItem = (async (req, res) => {
     }
 })
 
-exports.editItem = (async (req, res) => {
+exports.updateItem = (async (req, res) => {
     try {
-        Models.itemModel.findByIdAndUpdate({ _id: req.params.id }, req.body, (err, file) => {
+        itemModel.findByIdAndUpdate({ _id: req.params.id }, req.body, (err, file) => {
             if (!err)
                 res.send({
                     status: 'Success',
-                    message: 'item edited'
+                    message: 'item Updated'
                 });
             else {
                 res.send(err.message);
@@ -73,12 +58,6 @@ exports.editItem = (async (req, res) => {
 
 exports.upload = (async (req, res) => {
     try {
-        console.log(req.files.length)
-
-
-        console.log(req.files.length === 1)
-        console.log(req.files[0].mimetype.startsWith('image'))
-
         fileLocations = {}
         if (req.files) {
             if (req.files.length === 2 && req.files[0].mimetype.startsWith('image') && req.files[1].mimetype.startsWith('video')) {
