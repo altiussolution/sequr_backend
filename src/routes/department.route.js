@@ -5,7 +5,7 @@ let route = require('express').Router()
 route.post('/add', auth,DepartmentController.createDepartment);
 route.get('/get',auth, DepartmentController.getDepartment);
 route.put('/update/:id',auth, DepartmentController.updateDepartment);
-route.delete('/delete/:id',auth, DepartmentController.deleteDepartment);
+route.put('/delete/:id',auth, DepartmentController.deleteDepartment);
 
 
 

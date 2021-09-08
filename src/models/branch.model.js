@@ -4,11 +4,13 @@ var mongoose = require('mongoose'),
 const BranchSchema = Schema({
     branch_name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     branch_code: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     branch_address: {
         type: String,
