@@ -1,20 +1,19 @@
-var Models = require('../models/index')
+const { shift_timeModel } = require("../models");
+
 
 
 exports.addShift = (async (req, res) => {
     try {
-        var shift = new Models.shift_timeModel();
-        shift.shift_type = req.body.shift_type;
-        shift.start_time = req.body.start_time;
-        shift.end_time = req.body.end_time
-        shift.save((err, file) => {
-            if (!err)
-                res.send({
-                    status: 'Success',
-                    message: 'shift added'
+        var newShift = new shift_timeModel(req.body);
+        newShift.save(function (err) {
+            if (err) {
+                res.status(200).send({
+                    success: false,
+                    message: 'error in adding shift time'
                 });
+            }
             else {
-                res.send(err.message);
+                res.status(200).send({ success: true, message: 'Shift Time Added Successfully!' });
             }
         });
     } catch (error) {
@@ -24,7 +23,7 @@ exports.addShift = (async (req, res) => {
 })
 exports.getShift = (async (req, res) => {
     try {
-        Models.shift_timeModel.find({ active_status: 1 }, (err, shift) => {
+        shift_timeModel.find({ active_status: 1 }, (err, shift) => {
             if (!err) {
                 res.send({
                     status: 'Success',
@@ -41,17 +40,13 @@ exports.getShift = (async (req, res) => {
     }
 })
 
-exports.editShift = (async (req, res) => {
+exports.updateShift = (async (req, res) => {
     try {
-        var shift = {}
-        shift.shift_type = req.body.shift_type;
-        shift.start_time = req.body.start_time;
-        shift.end_time = req.body.end_time
-        Models.shift_timeModel.findByIdAndUpdate({ _id: req.params.id }, shift, (err, file) => {
+        shift_timeModel.findByIdAndUpdate({ _id: req.params.id }, req.body, (err, file) => {
             if (!err)
                 res.send({
                     status: 'Success',
-                    message: 'shift edited'
+                    message: 'shift updated'
                 });
             else {
                 res.send(err.message);
@@ -65,7 +60,7 @@ exports.editShift = (async (req, res) => {
 
 exports.deleteShift = (async (req, res) => {
     try {
-        Models.shift_timeModel.findByIdAndUpdate({ _id: req.params.id }, { active_status: 0 }, (err, file) => {
+        shift_timeModel.findByIdAndUpdate({ _id: req.params.id }, { active_status: 0 }, (err, file) => {
             if (!err)
                 res.send({
                     status: 'Success',

@@ -4,13 +4,11 @@ var mongoose = require('mongoose'),
 const CategorySchema = Schema({
     category_name: {
         type: String,
-        required: true,
-        unique : true,
+        required: true
     },
     category_code: {
         type: String,
-        required: true,
-        unique : true,
+        required: true
     },
     is_active: {
         type: Boolean,

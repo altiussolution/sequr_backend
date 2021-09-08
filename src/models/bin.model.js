@@ -4,13 +4,11 @@ var mongoose = require('mongoose'),
 const BinSchema = Schema({
     bin_name: {
         type: String,
-        required: true,
-        unique : true
+        required: true
     },
     bin_id: {
         type: String,
-        required: true,
-        unique : true
+        required: true
     },
     cube_id: {
         type: Schema.Types.ObjectId,
