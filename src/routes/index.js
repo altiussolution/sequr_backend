@@ -9,6 +9,7 @@ let Branch = require('./branch.route')
 let Cube = require('./cube.route')
 let Bin = require('./bin.route');
 let Kitting = require('./kitting.route')
+let Compartment = require('./compartment.route');
 
 module.exports = (app) => {
     app.use('/employee', Users)
@@ -22,6 +23,7 @@ module.exports = (app) => {
     app.use('/cube', Cube)
     app.use('/bin', Bin)
     app.use('/kitting', Kitting)
+    app.use('/compartment', Compartment)
 }
 
 
