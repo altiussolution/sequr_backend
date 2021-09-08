@@ -43,11 +43,7 @@ exports.getShift = (async (req, res) => {
 
 exports.editShift = (async (req, res) => {
     try {
-        var shift = {}
-        shift.shift_type = req.body.shift_type;
-        shift.start_time = req.body.start_time;
-        shift.end_time = req.body.end_time
-        Models.shift_timeModel.findByIdAndUpdate({ _id: req.params.id }, shift, (err, file) => {
+        Models.shift_timeModel.findByIdAndUpdate({ _id: req.params.id }, req.body, (err, file) => {
             if (!err)
                 res.send({
                     status: 'Success',
