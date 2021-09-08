@@ -12,10 +12,12 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage })
 
-route.post('/add', auth, controllers.UsersController.add)
-route.post('/login',controllers.UsersController.login)
+route.post('/add', controllers.UsersController.add)
+route.post('/login', controllers.UsersController.login)
 route.post('/upload',auth, upload.single('profile'),controllers.UsersController.upload)
 route.put('/update', auth, controllers.UsersController.update)
 route.put('/delete', auth, controllers.UsersController.delete)
 route.get('/get', auth, controllers.UsersController.listEmployees)
+route.post('/forgotPassword', controllers.UsersController.forgotPassword)
+route.put('/resetPassword/:user_id/:token', controllers.UsersController.resetPassword)
 module.exports = route 

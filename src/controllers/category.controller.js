@@ -46,6 +46,7 @@ exports.getCategory = (async (req, res) => {
 })
 
 exports.updateCategory = (async (req, res) => {
+    console.log(req.params.id)
     try{
         categoryModel.findByIdAndUpdate(req.params.id, req.body).then(binUpdate =>{
             res.status(200).send({ success: true, message: 'Category Updated Successfully!' });
