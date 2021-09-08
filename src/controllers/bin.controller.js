@@ -1,20 +1,28 @@
 const { binModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
 
-exports.createBin = ((req,res) =>{
+exports.createBin = (async (req,res) =>{
     try{
         var bin = new binModel(req.body);
-        bin.save((err)=>{
-            if(!err){
-                res.status(200).send({ success: true, message: 'Bin Created Successfully!' });
-            }else{
-                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Bin code or name' : err)
-                res.status(200).send({
-                    success: false,
-                    message: errorMessage
-                });
-            }
-        })
+        var isExist = await binModel.find({ $or: [{bin_name : req.body.bin_name},{bin_id: req.body.bin_id} ] }).exec()
+        if(!isExist){
+            bin.save((err)=>{
+                if(!err){
+                    res.status(200).send({ success: true, message: 'Bin Created Successfully!' });
+                }else{
+                    res.status(200).send({
+                        success: false,
+                        message: err
+                    });
+                }
+            })
+        }else{
+            res.status(200).send({
+                success: false,
+                message: 'Bin already exist'
+            });
+        }
+       
     }
     catch(error){
         res.status(201).send(error)
