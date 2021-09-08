@@ -1,5 +1,6 @@
 const { db } = require('../models/branch.model');
-var Models = require('../models/index')
+var Models = require('../models/index');
+const {itemModel} =  require("../models");
 const { MongoClient, ObjectId } = require("mongodb");
 
 
@@ -106,4 +107,14 @@ exports.upload = (async (req, res) => {
         res.status(400).send(err);
     }
 
+})
+
+exports.getItemByCategory = (async (req,res) =>{
+    try{
+        var itemsInCategory =  await itemModel.find({category_id : req.params.category_id}).exec();
+        res.status(200).send({data : itemsInCategory})
+    }catch(err) {
+        res.status(400).send(err);
+    }
+    
 })

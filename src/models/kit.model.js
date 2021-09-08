@@ -8,7 +8,6 @@ const KitSchema = Schema({
     },
     image_path: {
         type: String,
-        required: true
     },
     kit_data: {
         type: Array,

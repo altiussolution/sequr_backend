@@ -1,11 +1,11 @@
 const { binModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
 
-exports.createBin = (async (req,res) =>{
+exports.createBin = (async (req,res) =>{    
     try{
         var bin = new binModel(req.body);
-        var isExist = await binModel.find({ $or: [{bin_name : req.body.bin_name},{bin_id: req.body.bin_id} ] }).exec()
-        if(!isExist){
+        var isBinExist = await binModel.find({ $or: [{bin_name : req.body.bin_name},{bin_id: req.body.bin_id} ] }).exec()
+        if(isBinExist.length == 0){
             bin.save((err)=>{
                 if(!err){
                     res.status(200).send({ success: true, message: 'Bin Created Successfully!' });
@@ -46,13 +46,14 @@ exports.getBin = ((req,res) =>{
   
 })
   
-exports.updateBin = ((req,res) =>{
+exports.updateBin = (async (req,res) =>{
     try{
         binModel.findByIdAndUpdate(req.params.id, req.body).then(binUpdate =>{
             res.status(200).send({ success: true, message: 'Bin Updated Successfully!' });
         }).catch(error =>{
             res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
         }) 
+      
     }catch(err){
         res.status(200).send({ success: false, error: err, message : 'An Error Catched' });  
     }
