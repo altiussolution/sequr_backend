@@ -1,5 +1,4 @@
 node_modules 
 test.rest
-src/upload
+upload/
 try.js
-upload

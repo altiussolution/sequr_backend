@@ -9,54 +9,54 @@ const enumVariables = {
         Success : "Created sucess"
     },
     Permissions : {
-        Users : [
-            'Users_Edit',
-            'Users_Create',
-            'Users_Delete',
-            'Users_View',
-            'Users_Permission',
+        Employee : [ 
+            'employee_update',
+            'employee_add',
+            'employee_delete',
+            'employee_get',
+            'employee_permission',
         ],
         Item : [
-            'Item_Edit',
-            'Item_Create',
-            'Item_Delete',
-            'Item_View',
-            'Item_Permission',
+            'item_update',
+            'item_add',
+            'item_delete',
+            'item_get',
+            'item_permission',
         ],
         Machine_Access : [
-            'Machine_Access_View',
-            'Machine_Access_Create',
-            'Machine_Access_Edit',
-            'Machine_Access_Delete',
-            'Machine_Access_Permission'
+            'machine_access_get',
+            'machine_access_add',
+            'machine_access_update',
+            'machine_access_delete',
+            'machine_access_permission'
         ],
         Kitting_Access : [
-            'Kitting_Access_View',
-            'Kitting_Access_Edit',
-            'Kitting_Access_Create',
-            'Kitting_Access_Delete',
-            'Kitting_Access_Permission'
+            'kitting_access_get',
+            'kitting_access_update',
+            'kitting_access_add',
+            'kitting_access_delete',
+            'kitting_access_permission'
         ],
         Return : [
-            'Return_View',
-            'Return_Edit',
-            'Return_Create',
-            'Return_Delete',
-            'Return_Permission'
+            'return_get',
+            'return_update',
+            'return_add',
+            'return_delete',
+            'return_permission'
         ],
         Report : [
-            'Report_View',
-            'Report_Edit',
-            'Report_Create',
-            'Report_Delete',
-            'Report_Permission'
+            'report_get',
+            'report_update',
+            'report_add',
+            'report_delete',
+            'report_permission'
         ],
         Log : [
-            'Log_View',
-            'Log_Edit',
-            'Log_Create',
-            'Log_Delete',
-            'Log_Permission',
+            'log_get',
+            'log_update',
+            'log_add',
+            'log_delete',
+            'log_permission',
         ]
         
     },

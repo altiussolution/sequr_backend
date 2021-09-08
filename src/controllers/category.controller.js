@@ -3,17 +3,27 @@ var {error_code} = require('../utils/enum.utils')
 exports.addCategory = (async (req, res) => {
    try{
        var category = new categoryModel(req.body);
-       category.save((err) =>{
-        if(!err){
-            res.status(200).send({ success: true, message: 'Category Created Successfully!' });
-        }else{
-            var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Category code or name' : err)
-            res.status(200).send({
-                success: false,
-                message: errorMessage
-            });
-        }
-       })
+       var isCategoryExist = await binModel.find({ $or: [{category_name : req.body.category_name},{category_code: req.body.category_code} ] }).exec()
+       if(!isCategoryExist){
+        category.save((err) =>{
+            if(!err){
+                res.status(200).send({ success: true, message: 'Category Created Successfully!' });
+            }else{
+                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Category code or name' : err)
+                res.status(200).send({
+                    success: false,
+                    message: errorMessage
+                });
+            }
+           })
+       }else{
+        res.status(200).send({
+            success: false,
+            message: 'Givven Category Already Exist'
+        });
+
+       }
+      
    }catch(err){
     res.status(201).send({success: false, error : err})
    }
