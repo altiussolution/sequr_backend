@@ -75,41 +75,19 @@ exports.language = (async (req, res) => {
 
 
 exports.createState = ((req, res) => {
-    try {
-        var newState = new Models.stateModel(req.body);
-        newState.save(function (err) {
-            if (err) {
+           await Models.stateModel.create(req.body);  
+
                 res.status(200).send({
                     success: false,
-                    message: 'error in adding state'
-                });
-            }
-            else {
-                res.status(200).send({ success: true, message: 'State Added Successfully!' });
-            }
-        });
-    } catch (error) {
-        res.send("An error occured");
-        console.log(error);
-    }
+                    message: 'State Created'
 })
 
-exports.createCity = ((req, res) => {
-    try {
-        var newCity = new Models.cityModel(req.body);
-        newCity.save(function (err) {
-            if (err) {
+exports.createCity = (async (req, res) => {
+  
+           await Models.cityModel.create(req.body);  
+
                 res.status(200).send({
                     success: false,
-                    message: 'error in adding city'
-                });
-            }
-            else {
-                res.status(200).send({ success: true, message: 'City Added Successfully!' });
-            }
-        });
-    } catch (error) {
-        res.send("An error occured");
-        console.log(error);
-    }
+                    message: 'City Created'
+ 
 })

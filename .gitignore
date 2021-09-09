@@ -2,3 +2,4 @@ node_modules
 test.rest
 upload/
 try.js
+.vscode/extensions.json
