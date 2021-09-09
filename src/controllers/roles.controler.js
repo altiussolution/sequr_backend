@@ -1,5 +1,6 @@
 const { rolesModel, userModel } = require("../models");
 
+// Roles
 exports.createRole = ((req, res) => {
     try {
         var newRole = new rolesModel(req.body);
@@ -14,22 +15,6 @@ exports.createRole = ((req, res) => {
                 res.status(200).send({ success: true, message: 'Role Added Successfully!' });
             }
         });
-    } catch (error) {
-        res.send("An error occured");
-        console.log(error);
-    }
-})
-
-exports.updatePermission = ((req, res) => {
-    try {
-        rolesModel.findByIdAndUpdate({ _id: req.params.id }, req.body).then(roleUpdate => {
-            res.status(200).send({
-                status: 'Success',
-                message: 'Permissions updated sucessfully'
-            })
-        }).catch(error => {
-            res.status(400).send(error)
-        })
     } catch (error) {
         res.send("An error occured");
         console.log(error);
@@ -76,6 +61,95 @@ exports.deleteRole = (async (req, res) => {
                 });
             }
         })
+    } catch (error) {
+        res.send("An error occured");
+        console.log(error);
+    }
+})
+
+exports.updateRole = ((req, res) => {
+    try {
+        rolesModel.findByIdAndUpdate({ _id: req.params.id }, req.body).then(roleUpdate => {
+            res.status(200).send({
+                status: 'Success',
+                message: 'Role updated sucessfully'
+            })
+        }).catch(error => {
+            res.status(400).send(error)
+        })
+    } catch (error) {
+        res.send("An error occured");
+        console.log(error);
+    }
+})
+
+// Permissions
+exports.addPermission = ((req, res) => {
+    try {
+        rolesModel.findByIdAndUpdate({ _id: req.params.id }, req.body).then(roleUpdate => {
+            res.status(200).send({
+                status: 'Success',
+                message: 'Permissions added sucessfully'
+            })
+        }).catch(error => {
+            res.status(400).send(error)
+        })
+    } catch (error) {
+        res.send("An error occured");
+        console.log(error);
+    }
+})
+
+
+
+exports.updatePermission = ((req, res) => {
+    try {
+        rolesModel.findByIdAndUpdate({ _id: req.params.id }, req.body).then(roleUpdate => {
+            res.status(200).send({
+                status: 'Success',
+                message: 'Permissions updated sucessfully'
+            })
+        }).catch(error => {
+            res.status(400).send(error)
+        })
+    } catch (error) {
+        res.send("An error occured");
+        console.log(error);
+    }
+})
+
+exports.getPermission = ((req, res) => {
+    try {
+        rolesModel.find({ active_status: 1, permission : {$exists:true}, $where:'this.permission.length>0' }, (err, roles) => {
+            if (!err) {
+                res.status(200).send({
+                    status: 'Success',
+                    roles: roles
+                });
+            }
+            else {
+                res.send(err.message);
+            }
+        })
+    } catch (error) {
+        res.send("An error occured");
+        console.log(error);
+    }
+})
+
+exports.deletePermission = (async (req, res) => {
+    try {
+        rolesModel.findByIdAndUpdate({ _id: req.params.id }, { $unset: { permission: "" } }, (err, file) => {
+            if (!err)
+                res.status(200).send({
+                    status: 'Success',
+                    message: 'Permission deleted'
+                });
+            else {
+                res.send(err.message);
+            }
+        })
+
     } catch (error) {
         res.send("An error occured");
         console.log(error);
