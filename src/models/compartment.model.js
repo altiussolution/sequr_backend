@@ -4,11 +4,13 @@ var mongoose = require('mongoose'),
 const CompartmentSchema = Schema({
     compartment_name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     compartment_id: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     cube_id: {
         type: Schema.Types.ObjectId,
@@ -50,5 +52,5 @@ const CompartmentSchema = Schema({
     }
 })
 
-
+CompartmentSchema.index({'$**': 'text'});
 module.exports = mongoose.model('compartment', CompartmentSchema);

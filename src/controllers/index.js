@@ -10,7 +10,7 @@ BranchController = require('./branch.controller');
 CubeController= require('./cube.controller');
 CompartmentController= require('./compartment.controller');
 BinController = require('./bin.controller')
-
+KitController = require('./kitting.controller');
 
 module.exports = {
     UsersController,
@@ -23,5 +23,6 @@ module.exports = {
     ShiftController,
     CubeController,
     CompartmentController,
-    BinController
+    BinController,
+    KitController
 }

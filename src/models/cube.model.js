@@ -4,11 +4,13 @@ var mongoose = require('mongoose'),
 const CubeSchema = Schema({
     cube_name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     cube_id: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     cube_type: {
         type: Number,
@@ -55,5 +57,5 @@ const CubeSchema = Schema({
     }
 })
 
-
+CubeSchema.index({'$**': 'text'});
 module.exports = mongoose.model('cube', CubeSchema);

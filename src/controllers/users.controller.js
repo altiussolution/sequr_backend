@@ -138,7 +138,7 @@ exports.delete = ((req, res) => {
 exports.listEmployees = ((req,res) => {
   var offset = parseInt(req.query.offset);
   var limit = parseInt(req.query.limit);
-  User.find({active_status : 0}).populate("department_id").skip(offset).limit(limit).then(result =>{
+  User.find({active_status : 1}).populate("department_id").skip(offset).limit(limit).then(result =>{
     res.send(result)
   })
 })
