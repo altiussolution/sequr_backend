@@ -74,7 +74,7 @@ exports.language = (async (req, res) => {
 })
 
 
-exports.createState = ((req, res) => {
+exports.createState = (async (req, res) => {
            await Models.stateModel.create(req.body);  
 
                 res.status(200).send({
