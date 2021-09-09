@@ -81,6 +81,7 @@ exports.createState = (async (req, res) => {
                     success: false,
                     message: 'State Created'
 })
+})
 
 exports.createCity = (async (req, res) => {
   
@@ -90,4 +91,5 @@ exports.createCity = (async (req, res) => {
                     success: false,
                     message: 'City Created'
  
+})
 })
