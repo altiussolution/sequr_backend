@@ -20,7 +20,7 @@ exports.country = (async (req, res) => {
 })
 exports.state = (async (req, res) => {
     try {
-        Models.stateModel.find({ countryCode: req.query.country_code }, (err, doc) => {
+        Models.stateModel.find({ countryCode: req.params.country_code }, (err, doc) => {
             if (!err) {
                 res.send({
                     status: 'Success',
@@ -38,7 +38,7 @@ exports.state = (async (req, res) => {
 })
 exports.city = (async (req, res) => {
     try {
-        Models.cityModel.find({ countryCode: req.query.country_code, stateCode: req.query.state_code }, (err, doc) => {
+        Models.cityModel.find({ countryCode: req.params.country_code, stateCode: req.params.state_code }, (err, doc) => {
             if (!err) {
                 res.send({
                     status: 'Success',
