@@ -69,7 +69,7 @@ exports.deleteBin = ((req,res) =>{
         })
     }
     catch(err){
-        res.status(200).send({ success: false, error: err, message : 'An Error Catched' });  
+        res.status(200).send({ success: false, error: err.name, message : 'An Error Catched' });  
     }
    
 })
