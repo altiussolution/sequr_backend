@@ -77,7 +77,7 @@ exports.upload = (async (req, res) => {
             }
 
             res.status(200).send({
-                Message: 'Profile Added Sucessfully',
+                message: 'Profile Added Sucessfully',
                 fileLocations: fileLocations
             })
         }

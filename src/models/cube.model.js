@@ -34,9 +34,8 @@ const CubeSchema = Schema({
         ref: 'branch'
     },
     employee_status: {
-        type: Number,
-        enum: [0,1],
-        default: 0
+        type: Boolean,
+        default: false
     },
     created_at: {
         type: Date,

@@ -3,8 +3,14 @@ const {kitModel} =  require("../models");
 exports.createKit = (async (req,res) =>{
     var samplDate = '[{"category_id":"61370939e41b121931d5a408","item_id":"613843b8576e25cb1f0b44f5","qty":1,"description":"Sample developer description"},{"category_id":"61370939e41b121931d5a408","item_id":"613850d1217e9ffd5db305f2","qty":1,"description":"Sample developer description"}]';
     var body = req.body;
-    body.kit_data = (body.kit_data == "" ? JSON.parse(samplDate) : JSON.parse(body.kit_data))
+    
     try{
+        parseKitData  = (body.kit_data == "" ? JSON.parse(samplDate) : JSON.parse(body.kit_data))
+        if(parseKitData instanceof Error){
+            console.log(parseKitData)
+           throw err
+        }
+        body.kit_data = parseKitData
         var kit = new kitModel(body)
         var isKitExist = await kitModel.find({kit_name :body.kit_name}).exec()
         if(isKitExist.length == 0){
@@ -18,6 +24,7 @@ exports.createKit = (async (req,res) =>{
                     });
                 }
             })
+        
         }else{
             res.status(200).send({
                 success: false,
@@ -27,28 +34,80 @@ exports.createKit = (async (req,res) =>{
        
     }catch(err){
         console.log('error logged')
-        res.status(201).send('error occured')
+        res.status(201).send({message : err.name})
     }
      
 })
 
 exports.getKit = ((req,res) =>{
-
-})
-
-exports.updateKit = ((req,res) =>{
+    var offset = parseInt(req.query.offset);
+    var limit = parseInt(req.query.limit);
+    var searchString = req.query.searchString
+    var query = (searchString ? {active_status: 1, $text: {$search: searchString}} : {active_status: 1})
+    var _ = require('lodash');
+    var binDatas = []
     try{
-        binModel.findByIdAndUpdate(req.params.id, req.body).then(binUpdate =>{
-            res.status(200).send({ success: true, message: 'Bin Updated Successfully!' });
-        }).catch(error =>{
-            res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
-        }) 
-        
-    }catch(err){
-        res.status(200).send({ success: false, error: err, message : 'An Error Catched' });  
+        kitModel.find(query).skip(offset).limit(limit).then(kits =>{
+            for(let kit of kits){
+               var quantity = kit.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
+               binDatas.push({
+                kit_name : kit.kit_name,
+                available_item : kit.kit_data.length,
+                total_qty : quantity
+               })
+
+            }
+            if(kits.length == binDatas.length){
+                res.status(400).send({success: true, data : binDatas})
+            }
+        }).catch(error => {
+            res.status(400).send({success: false, error : error})
+        })
+    } catch(error){
+        res.status(201).send({success: false, error : error})
     }
 })
 
+exports.updateKit = (async (req,res) =>{
+    var samplDate = '[{"category_id":"61370939e41b121931d5a408","item_id":"613843b8576e25cb1f0b44f5","qty":1,"description":"Sample developer description"},{"category_id":"61370939e41b121931d5a408","item_id":"613850d1217e9ffd5db305f2","qty":1,"description":"Sample developer description"}]';
+    let body = req.body;
+    body.kit_data = (body.kit_data == "" ? JSON.parse(samplDate) : JSON.parse(body.kit_data))
+    try{
+        var isKitExist = await kitModel.findOne({kit_name :  body.kit_name}).exec()
+        if(!isKitExist || isKitExist._id == req.params.id){
+            kitModel.findByIdAndUpdate(req.params.id,body).then(kitUpdate =>{
+                res.status(200).send({ success: true, message: 'Kit Updated Successfully!' });
+            }).catch(error =>{
+                res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
+            }) 
+        }else{
+            res.status(200).send({ success: false, message : 'Kit Name Alreadey exist' });
+        }     
+    }catch(err){
+        res.status(200).send({ success: false, error: err.name, message : 'An Error Catched' });  
+    }
+})
+   
 exports.deleteKit = ((req,res) =>{
-    
+    try{
+        kitModel.findByIdAndUpdate(req.params.id, {active_status: 0}).then(kitDeactivate =>{
+            res.status(200).send({ success: true, message: 'Kit Deactivated Successfully!' });
+        }).catch(err =>{
+            res.status(200).send({ success: false, message: 'Kit Not Found' });
+        })
+    }
+    catch(err){
+        res.status(200).send({ success: false, error: err.name, message : 'An Error Catched' });  
+    }
+})
+
+exports.upload = ((req,res) =>{
+    try{
+        if(req.file){
+            var filename = req.file.originalname
+          res.status(200).send({message : 'Kin Image Added Sucessfully', Path : `${req.file.destination}/${filename}`})
+        }
+      }catch (err) {
+        res.status(400).send(err);
+      }
 })

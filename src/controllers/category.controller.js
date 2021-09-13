@@ -3,9 +3,9 @@ var {error_code} = require('../utils/enum.utils')
 exports.addCategory = (async (req, res) => {
    try{
        var category = new categoryModel(req.body);
-       var isCategoryExist = await binModel.find({ $or: [{category_name : req.body.category_name},{category_code: req.body.category_code} ] }).exec()
+       var isCategoryExist = await categoryModel.findOne({ $or: [{category_name : req.body.category_name},{category_code: req.body.category_code} ] }).exec()
        if(!isCategoryExist){
-        category.save((err) =>{
+        category.save((err) =>{  
             if(!err){
                 res.status(200).send({ success: true, message: 'Category Created Successfully!' });
             }else{
@@ -25,7 +25,7 @@ exports.addCategory = (async (req, res) => {
        }
       
    }catch(err){
-    res.status(201).send({success: false, error : err})
+    res.status(201).send({success: false, error : err.name})
    }
 })
 
@@ -62,7 +62,7 @@ exports.upload = (async(req,res) => {
     try{
       if(req.file){
         var filename = req.file.originalname
-        res.status(200).send({Message : 'Profile Added Sucessfully', Path : `${req.file.destination}/${filename}`})
+        res.status(200).send({message : 'Category Image Sucessfully', Path : `${req.file.destination}/${filename}`})
       }
     }catch (err) {
       res.status(400).send(err);

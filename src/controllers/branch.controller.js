@@ -30,7 +30,7 @@ exports.getBranch = (req, res) => {
     var searchString = req.query.searchString;
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
-        branchModel.find(query).populate("state_id").populate("city_id").skip(offset).limit(limit).then(branch => {
+        branchModel.find(query).populate("country_id").populate("state_id").populate("city_id").skip(offset).limit(limit).then(branch => {
             res.status(200).send({ success: true, data: branch });
         }).catch(error => {
             res.status(400).send({ success: false, error: error })
