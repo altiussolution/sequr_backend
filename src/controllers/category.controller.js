@@ -62,7 +62,7 @@ exports.upload = (async(req,res) => {
     try{
       if(req.file){
         var filename = req.file.originalname
-        res.status(200).send({Message : 'Category Image Sucessfully', Path : `${req.file.destination}/${filename}`})
+        res.status(200).send({message : 'Category Image Sucessfully', Path : `${req.file.destination}/${filename}`})
       }
     }catch (err) {
       res.status(400).send(err);

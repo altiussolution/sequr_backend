@@ -105,7 +105,7 @@ exports.upload = ((req,res) =>{
     try{
         if(req.file){
             var filename = req.file.originalname
-          res.status(200).send({Message : 'Kin Image Added Sucessfully', Path : `${req.file.destination}/${filename}`})
+          res.status(200).send({message : 'Kin Image Added Sucessfully', Path : `${req.file.destination}/${filename}`})
         }
       }catch (err) {
         res.status(400).send(err);

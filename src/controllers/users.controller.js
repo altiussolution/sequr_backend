@@ -98,7 +98,7 @@ exports.upload = (async(req,res) => {
   try{
     if(req.file){
       var filename = `${req.user.user_id}.${req.file.originalname.split('.').pop()}`
-      res.status(200).send({Message : 'Profile Added Sucessfully', Path : `${req.file.destination}/${filename}`})
+      res.status(200).send({message : 'Profile Added Sucessfully', Path : `${req.file.destination}/${filename}`})
     }
   }catch (err) {
     res.status(400).send(err);
@@ -113,9 +113,9 @@ exports.update = (async (req,res) =>{
     var updateUser = req.body
     User.findByIdAndUpdate(userId,updateUser,(err,isExist) =>{
       if(isExist){
-        res.status(200).send({Message : 'Employee Updated Sucessfully'})
+        res.status(200).send({message : 'Employee Updated Sucessfully'})
       }else{
-        res.status(201).send({Message : 'Employee Not Found'})
+        res.status(201).send({message : 'Employee Not Found'})
       }
     })
   }
