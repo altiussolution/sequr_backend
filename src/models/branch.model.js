@@ -16,6 +16,11 @@ const BranchSchema = Schema({
         type: String,
         required: true
     },
+    country_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'country'
+    },
     state_id: {
         type: Schema.Types.ObjectId,
         required: true,
