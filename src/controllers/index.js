@@ -11,6 +11,7 @@ CompartmentController = require('./compartment.controller')
 BinController = require('./bin.controller')
 KitController = require('./kitting.controller')
 const SubCategoryController = require('./sub_category.controller')
+SupplierController = require('./supplier.controller');
 
 module.exports = {
   UsersController,
@@ -25,5 +26,6 @@ module.exports = {
   CompartmentController,
   BinController,
   KitController,
-  SubCategoryController
+  SubCategoryController,
+  SupplierController
 }
