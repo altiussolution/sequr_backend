@@ -29,7 +29,7 @@ exports.getsubCategory = async (req, res) => {
   const searchString = req.query.searchString
   const query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    : { active_status: 1, category_id: req.query.category_id}
   try {
     subCategoryModel
       .find(query)
