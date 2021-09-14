@@ -29,6 +29,7 @@ const SupplierSchema = Schema({
         required: true,
         ref: 'city'
     },
+    
     zip_code: {
         type: String,
         required: true,
