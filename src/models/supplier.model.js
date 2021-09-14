@@ -14,13 +14,20 @@ const SupplierSchema = Schema({
         type: String,
         required: true
     },
-    state_id: {
-        type: String,
+    country_id: {
+        type: Schema.Types.ObjectId,
         required: true,
+        ref: 'country'
+    },
+    state_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'state'
     },
     city_id: {
-        type: String,
+        type: Schema.Types.ObjectId,
         required: true,
+        ref: 'city'
     },
     zip_code: {
         type: String,
