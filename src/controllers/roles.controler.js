@@ -1,23 +1,30 @@
 const { rolesModel, userModel } = require("../models");
 
 // Roles
-exports.createRole = ((req, res) => {
+exports.createRole = (async (req, res) => {
     try {
-        var newRole = new rolesModel(req.body);
-        newRole.save(function (err) {
-            if (err) {
-                res.status(200).send({
-                    success: false,
-                    message: 'error in adding role'
-                });
-            }
-            else {
-                res.status(200).send({ success: true, message: 'Role Added Successfully!' });
-            }
-        });
+        let body = req.body
+        var isRoleExist = await rolesModel.find({ $or: [{role_name : body.role_name},{role_id: body.role_id} ] }).exec()
+        if(isRoleExist.length == 0){
+            var newRole = new rolesModel(req.body);
+            newRole.save(function (err) {
+                if (err) {
+                    res.status(200).send({
+                        success: false,
+                        message: 'error in adding role',
+                        error : err
+                    });
+                }
+                else {
+                    res.status(200).send({ success: true, message: 'Role Added Successfully!' });
+                }
+            });
+        }else{
+            res.status(200).send({ success: false, message: 'Role Duplication occured' });
+        }
+       
     } catch (error) {
-        res.send("An error occured");
-        console.log(error);
+        res.send({status : false , message : error.name});
     }
 })
 
@@ -26,7 +33,7 @@ exports.getRoles = ((req, res) => {
         rolesModel.find({ active_status: 1 }, (err, roles) => {
             if (!err) {
                 res.status(200).send({
-                    status: 'Success',
+                    status: true,
                     roles: roles
                 });
             }
@@ -47,7 +54,7 @@ exports.deleteRole = (async (req, res) => {
                 rolesModel.findByIdAndUpdate({ _id: req.params.id }, { active_status: 0 }, (err, file) => {
                     if (!err)
                         res.status(200).send({
-                            status: 'Success',
+                            status: true,
                             message: 'Role deleted'
                         });
                     else {
@@ -56,13 +63,13 @@ exports.deleteRole = (async (req, res) => {
                 })
             } else {
                 res.status(200).send({
-                    status: 'Failed',
+                    status: false,
                     message: `${count} Employees are in this Role`
                 });
             }
         })
     } catch (error) {
-        res.send("An error occured");
+        res.send({status : false , error : error.name});
         console.log(error);
     }
 })
@@ -75,11 +82,10 @@ exports.updateRole = ((req, res) => {
                 message: 'Role updated sucessfully'
             })
         }).catch(error => {
-            res.status(400).send(error)
+            res.status(400).send({status : false, error : error, message : "Error Occured"})
         })
     } catch (error) {
-        res.send("An error occured");
-        console.log(error);
+        res.send({status : false , error : error.name});
     }
 })
 
@@ -95,8 +101,7 @@ exports.addPermission = ((req, res) => {
             res.status(400).send(error)
         })
     } catch (error) {
-        res.send("An error occured");
-        console.log(error);
+        res.send({status : false , error : error.name});
     }
 })
 
@@ -113,8 +118,7 @@ exports.updatePermission = ((req, res) => {
             res.status(400).send(error)
         })
     } catch (error) {
-        res.send("An error occured");
-        console.log(error);
+        res.send({status : false , error : error.name});
     }
 })
 
@@ -132,8 +136,7 @@ exports.getPermission = ((req, res) => {
             }
         })
     } catch (error) {
-        res.send("An error occured");
-        console.log(error);
+        res.send({status : false , error : error.name});
     }
 })
 
@@ -151,7 +154,6 @@ exports.deletePermission = (async (req, res) => {
         })
 
     } catch (error) {
-        res.send("An error occured");
-        console.log(error);
+        res.send({status : false , error : error.name});
     }
 })

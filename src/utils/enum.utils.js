@@ -23,19 +23,19 @@ const enumVariables = {
             'item_get',
             'item_permission',
         ],
-        Machine_Access : [
-            'machine_access_get',
-            'machine_access_add',
-            'machine_access_update',
-            'machine_access_delete',
-            'machine_access_permission'
+        Machine : [
+            'machine_get',
+            'machine_add',
+            'machine_update',
+            'machine_delete',
+            'machine_permission'
         ],
-        Kitting_Access : [
-            'kitting_access_get',
-            'kitting_access_update',
-            'kitting_access_add',
-            'kitting_access_delete',
-            'kitting_access_permission'
+        Kitting : [
+            'kitting_get',
+            'kitting_update',
+            'kitting_add',
+            'kitting_delete',
+            'kitting_permission'
         ],
         Return : [
             'return_get',
