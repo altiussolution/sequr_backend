@@ -51,7 +51,7 @@ exports.deleteRole = (async (req, res) => {
     try {
         userModel.countDocuments({ role_id: req.params.id, active_status: 1 }, (err, count) => {
             if (count == 0) {
-                rolesModel.findByIdAndUpdate({ _id: req.params.id }, { active_status: 0 }, (err, file) => {
+                rolesModel.findByIdAndUpdate(req.params.id, { active_status: 0 }, (err, file) => {
                     if (!err)
                         res.status(200).send({
                             status: true,
@@ -76,7 +76,7 @@ exports.deleteRole = (async (req, res) => {
 
 exports.updateRole = ((req, res) => {
     try {
-        rolesModel.findByIdAndUpdate({ _id: req.params.id }, req.body).then(roleUpdate => {
+        rolesModel.findByIdAndUpdate(req.params.id, req.body).then(roleUpdate => {
             res.status(200).send({
                 status: 'Success',
                 message: 'Role updated sucessfully'
@@ -92,7 +92,7 @@ exports.updateRole = ((req, res) => {
 // Permissions
 exports.addPermission = ((req, res) => {
     try {
-        rolesModel.findByIdAndUpdate({ _id: req.params.id }, req.body).then(roleUpdate => {
+        rolesModel.findByIdAndUpdate(req.params.id, req.body).then(roleUpdate => {
             res.status(200).send({
                 status: 'Success',
                 message: 'Permissions added sucessfully'
@@ -109,7 +109,7 @@ exports.addPermission = ((req, res) => {
 
 exports.updatePermission = ((req, res) => {
     try {
-        rolesModel.findByIdAndUpdate({ _id: req.params.id }, req.body).then(roleUpdate => {
+        rolesModel.findByIdAndUpdate(req.params.id, req.body).then(roleUpdate => {
             res.status(200).send({
                 status: 'Success',
                 message: 'Permissions updated sucessfully'
@@ -142,7 +142,7 @@ exports.getPermission = ((req, res) => {
 
 exports.deletePermission = (async (req, res) => {
     try {
-        rolesModel.findByIdAndUpdate({ _id: req.params.id }, { $unset: { permission: "" } }, (err, file) => {
+        rolesModel.findByIdAndUpdate(req.params.id, { $unset: { permission: "" } }, (err, file) => {
             if (!err)
                 res.status(200).send({
                     status: 'Success',

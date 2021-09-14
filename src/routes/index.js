@@ -10,6 +10,9 @@ let Cube = require('./cube.route')
 let Bin = require('./bin.route');
 let Kitting = require('./kitting.route')
 let Compartment = require('./compartment.route');
+const SubCategory = require('./sub_category.route')
+let Supplier = require('./supplier.route')
+
 
 module.exports = (app) => {
     app.use('/employee', Users)
@@ -24,8 +27,6 @@ module.exports = (app) => {
     app.use('/bin', Bin)
     app.use('/kitting', Kitting)
     app.use('/compartment', Compartment)
+  app.use('/subCategory', SubCategory)
+  app.use('/supplier', Supplier)
 }
-
-
-
-

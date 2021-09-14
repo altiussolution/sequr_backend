@@ -17,6 +17,8 @@ const stateModel = require("./state.model")
 const cityModel = require("./city.model")
 const languageModel = require("./language.model")
 const resetPasswordTokenModel = require("./resetPasswordToken.model")
+const subCategoryModel = require("./sub_category.model")
+
 
 
 module.exports = {
@@ -38,7 +40,8 @@ module.exports = {
     stateModel,
     cityModel,
     languageModel,
-    resetPasswordTokenModel
+    resetPasswordTokenModel,
+    subCategoryModel
 
 
 

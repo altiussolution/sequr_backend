@@ -40,7 +40,7 @@ exports.getItem = (async (req, res) => {
 
 exports.updateItem = (async (req, res) => {
     try {
-        itemModel.findByIdAndUpdate({ _id: req.params.id }, req.body, (err, file) => {
+        itemModel.findByIdAndUpdate(req.params.id, req.body, (err, file) => {
             if (!err)
                 res.send({
                     status: 'Success',
@@ -58,22 +58,22 @@ exports.updateItem = (async (req, res) => {
 
 exports.upload = (async (req, res) => {
     try {
-        fileLocations = {}
+        var fileLocations = {}
         if (req.files) {
             if (req.files.length === 2 && req.files[0].mimetype.startsWith('image') && req.files[1].mimetype.startsWith('video')) {
-                fileLocations['image_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
-                fileLocations['video_path'] = `${req.files[1].destination}/${req.files[1].originalname}`
+                 fileLocations['image_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
+                 fileLocations['video_path'] = `${req.files[1].destination}/${req.files[1].originalname}`
             }
 
             else if (req.files.length === 1 && req.files[0].mimetype.startsWith('image')) {
-                fileLocations['image_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
+                 fileLocations['image_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
             }
             else if (req.files.length === 1 && req.files[0].mimetype.startsWith('video')) {
-                fileLocations['video_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
+                 fileLocations['video_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
             }
             else {
-                fileLocations['image_path'] = `${req.files[1].destination}/${req.files[1].originalname}`
-                fileLocations['video_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
+                 fileLocations['image_path'] = `${req.files[1].destination}/${req.files[1].originalname}`
+                 fileLocations['video_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
             }
 
             res.status(200).send({

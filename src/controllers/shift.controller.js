@@ -42,7 +42,7 @@ exports.getShift = (async (req, res) => {
 
 exports.updateShift = (async (req, res) => {
     try {
-        shift_timeModel.findByIdAndUpdate({ _id: req.params.id }, req.body, (err, file) => {
+        shift_timeModel.findByIdAndUpdate(req.params.id, req.body, (err, file) => {
             if (!err)
                 res.send({
                     status: 'Success',
@@ -60,7 +60,7 @@ exports.updateShift = (async (req, res) => {
 
 exports.deleteShift = (async (req, res) => {
     try {
-        shift_timeModel.findByIdAndUpdate({ _id: req.params.id }, { active_status: 0 }, (err, file) => {
+        shift_timeModel.findByIdAndUpdate(req.params.id, { active_status: 0 }, (err, file) => {
             if (!err)
                 res.send({
                     status: 'Success',

@@ -1,5 +1,5 @@
 let route = require('express').Router()
-const {RolesController} = require('../controllers/index');
+const { RolesController } = require('../controllers/index');
 const auth = require("../middleware/auth.middleware");
 
 route.post('/add', auth, RolesController.createRole)
