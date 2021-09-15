@@ -1,5 +1,5 @@
 const {categoryModel} = require('../models')
-var {error_code} = require('../utils/enum.utils')
+var {error_code,appRouteModels} = require('../utils/enum.utils')
 exports.addCategory = (async (req, res) => {
    try{
        var category = new categoryModel(req.body);
@@ -62,11 +62,10 @@ exports.upload = (async(req,res) => {
     try{
       if(req.file){
         var filename = req.file.originalname
-        res.status(200).send({message : 'Category Image Sucessfully', Path : `${req.file.destination}/${filename}`})
+        res.status(200).send({message : 'Category Image Sucessfully', Path : `${req.file.destination.replace('./src/public/',appRouteModels.BASEURL)}/${filename}`})
       }
     }catch (err) {
       res.status(400).send(err);
     }
-   
-  })
+})
 

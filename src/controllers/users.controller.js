@@ -1,6 +1,6 @@
 var {User} = require('../models/user.model');
 var Models = require('../models/index')
-let Utils = require('../utils/enum.utils');
+const utils = require('../utils/enum.utils');
 const bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 const sendEmail = require("../middleware/sendmail.middleware");
@@ -98,10 +98,10 @@ exports.upload = (async(req,res) => {
   try{
     if(req.file){
       var filename = `${req.user.user_id}.${req.file.originalname.split('.').pop()}`
-      res.status(200).send({message : 'Profile Added Sucessfully', Path : `${req.file.destination}/${filename}`})
+      res.status(200).send({message : 'Profile Added Sucessfully', Path : `${req.file.destination.replace('./src/public/',utils.appRouteModels.BASEURL)}/${filename}`})
     }
   }catch (err) {
-    res.status(400).send(err);
+    res.status(400).send(err.name);
   }
  
 })

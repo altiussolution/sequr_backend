@@ -1,11 +1,11 @@
 require('dotenv').config();
-// const hostname = 'localhost';
- const hostname = '172.31.45.190';
+const hostname = 'localhost';
+// const hostname = '172.31.45.190';
 var mkdirp = require('mkdirp');
 const port = 4500;
 var express = require('express')
 var cors = require('cors')
-var app = express()
+var app = express() 
 app.use(cors());
 app.use(express.urlencoded({
   extended: true

@@ -3,7 +3,7 @@ const enumVariables = {
         Users : 'users'
     },
     appRouteModels : {
-        BASEURL : "http://15.206.191.104:4200/",
+        BASEURL : "http://13.232.128.227:4500/",
     },
     Messages : {
         Success : "Created sucess"
