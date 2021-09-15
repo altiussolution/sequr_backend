@@ -17,10 +17,10 @@ const verifyToken = async (req, res, next) => {
       if(!isValidUser || !isValidUser.active_status){
         return res.status(401).send("Not a valid user");
       }else{
-         var isAthenticated = await authentication(req)
-        if(!isAthenticated){
-          return res.status(401).send("Not Authorized");
-        } 
+        // var isAthenticated = await authentication(req)
+        // if(!isAthenticated){
+        //   return res.status(401).send("Not Authorized");
+        // } 
       }
      
     }
