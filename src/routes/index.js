@@ -29,6 +29,6 @@ module.exports = (app) => {
     app.use('/kitting', Kitting)
     app.use('/compartment', Compartment)
     app.use('/subCategory', SubCategory)
-    app.use('/purchase_order', PurchaseOrder)
+    app.use('/purchaseorder', PurchaseOrder)
     app.use('/supplier', Supplier)
 }

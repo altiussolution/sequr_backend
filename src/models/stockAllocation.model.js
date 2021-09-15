@@ -1,7 +1,7 @@
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
-const PurchaseOrderSchema = Schema({
+const StockAllocationSchema = Schema({
     category_id: {
         type: Schema.Types.ObjectId,
         required: true,
@@ -17,37 +17,36 @@ const PurchaseOrderSchema = Schema({
         required: true,
         ref: 'supplier'
     },
-    po_number: {
-        type: String,
-        required: true
+    purchase_order_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'purchase_order'
     },
     quantity: {
         type: Number,
         required: true
     },
-    po_date: {
-        type: Date,
-        required: true
+    cube_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'cube'
     },
-    is_received: {
-        type: Boolean,
-        default: false
+    bin_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'bin'
     },
-    received_date: {
-        type: Date,
-        required: true
+    compartment_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'compartment'
     },
     description: {
         type: String
     },
-    invoice_path: {
+    image_path: {
         type: String,
         required: true
-    },
-    status: {
-        type: Number,
-        enum: [1,2],
-        default: 1
     },
     created_at: {
         type: Date,
@@ -69,4 +68,4 @@ const PurchaseOrderSchema = Schema({
 })
 
 
-module.exports = mongoose.model('purchase_order', PurchaseOrderSchema);
+module.exports = mongoose.model('stockAllocation', StockAllocationSchema);

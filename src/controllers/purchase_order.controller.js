@@ -1,9 +1,9 @@
-const { purchase_orderModel } = require("../models");
+const { purchaseOrderModel } = require("../models");
 
 exports.addPurchaseOrder = (async (req, res) => {
     try{
-        var purchase_order = new purchase_orderModel(req.body);
-        var isPurchaseOrderExist = await purchase_orderModel.findOne({ $or: [{po_number : req.body.po_number} ] }).exec()
+        var purchase_order = new purchaseOrderModel(req.body);
+        var isPurchaseOrderExist = await purchaseOrderModel.findOne({ $or: [{po_number : req.body.po_number} ] }).exec()
         if(!isPurchaseOrderExist){
          purchase_order.save((err) =>{  
              if(!err){
@@ -31,7 +31,7 @@ exports.addPurchaseOrder = (async (req, res) => {
  
 exports.getPurchaseOrder = (async (req, res) => {
     try {
-        purchase_orderModel.find({ active_status: 1 }, (err, purchase_order) => {
+        purchaseOrderModel.find({ active_status: 1 }, (err, purchase_order) => {
             if (!err) {
                 res.send({
                     status: 'Success',

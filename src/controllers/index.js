@@ -10,7 +10,7 @@ CubeController = require('./cube.controller')
 CompartmentController = require('./compartment.controller')
 BinController = require('./bin.controller')
 KitController = require('./kitting.controller')
-const SubCategoryController = require('./sub_category.controller')
+SubCategoryController = require('./sub_category.controller')
 PurchaseOrderController = require('./purchase_order.controller')
 SupplierController = require('./supplier.controller');
 
