@@ -15,7 +15,8 @@ exports.add = (async (req, res) => {
             length: 6,
             numbers: true
         });
-        console.log(password);
+        console.log( req.body);
+        return;
         // var password  = '1q2w3e$R';
         const { first_name, last_name, email_id,contact_no,date_of_birth,role_id,language_prefered,employee_id,item_max_quantity, branch_id, shift_time_id, department_id, profile_pic, status} = req.body;
 
