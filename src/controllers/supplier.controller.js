@@ -1,8 +1,6 @@
 const { supplierModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
 
-
-
 exports.createSupplier = (req, res) => {
     try {
         var newSupplier = new supplierModel(req.body);
@@ -22,7 +20,6 @@ exports.createSupplier = (req, res) => {
         res.status(201).send(error)
     }
 }
-
 
 
 exports.getSupplier = (req, res) => {

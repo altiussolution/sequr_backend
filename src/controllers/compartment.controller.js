@@ -25,8 +25,8 @@ exports.createCompartment = (req, res) => {
 
 
 exports.getCompartment = (req, res) => {
-    var offset = parseInt(req.query.offset);
-    var limit = parseInt(req.query.limit);
+    var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
     var searchString = req.query.searchString;
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
@@ -38,6 +38,24 @@ exports.getCompartment = (req, res) => {
         })
     } catch (error) {
         res.status(201).send({ success: false, error: error })
+    }
+}
+
+exports.getCompartmentByCube = (req,res) =>{
+    try{
+        var cube_id = req.query.cube_id;
+        var bin_id = req.query.bin_id;
+        if(cube_id && bin_id){
+            compartmentModel.find({cube_id:cube_id,bin_id:bin_id}).then(compartments =>{
+                res.status(200).send({ success: true, data: compartments });
+            }).catch(err=>{
+                res.status(201).send({success: false, message : err})
+            })
+        }else{
+            res.status(201).send({success: false, message : 'Cube Id and Bin IDRequired'})
+        }
+    }catch(error){
+        res.status(201).send({success: false, message : error.name})
     }
 }
 

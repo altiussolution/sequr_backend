@@ -30,8 +30,8 @@ exports.addCategory = (async (req, res) => {
 })
 
 exports.getCategory = (async (req, res) => {
-    var offset = parseInt(req.query.offset);
-    var limit = parseInt(req.query.limit);
+    var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
     var searchString = req.query.searchString
     var query = (searchString ? {active_status: 1, $text: {$search: searchString}} : {active_status: 1})
     try{
@@ -46,7 +46,6 @@ exports.getCategory = (async (req, res) => {
 })
 
 exports.updateCategory = (async (req, res) => {
-    console.log(req.params.id)
     try{
         categoryModel.findByIdAndUpdate(req.params.id, req.body).then(binUpdate =>{
             res.status(200).send({ success: true, message: 'Category Updated Successfully!' });
