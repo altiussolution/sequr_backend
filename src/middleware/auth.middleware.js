@@ -1,5 +1,6 @@
 var authentication = require('./athentication.middleware')
 const jwt = require("jsonwebtoken");
+const {User} = require('../models/user.model')
 
 const config = process.env;
 
@@ -12,10 +13,16 @@ const verifyToken = async (req, res, next) => {
     }else{
       const decoded = jwt.verify(token, config.TOKEN_KEY);
       req.user = decoded;
-      // var isAthenticated = await authentication(req)
-      // if(!isAthenticated){
-      //   return res.status(401).send("Not Authorized");
-      // }
+      var isValidUser = await User.findById(decoded.user_id).populate("role_id").exec()
+      if(!isValidUser || !isValidUser.active_status){
+        return res.status(401).send("Not a valid user");
+      }else{
+         var isAthenticated = await authentication(req)
+        if(!isAthenticated){
+          return res.status(401).send("Not Authorized");
+        } 
+      }
+     
     }
     
   } catch (err) {

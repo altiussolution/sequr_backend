@@ -26,6 +26,7 @@ app.use((req, res, next) => {
     next();
 });
 app.listen(port, hostname, () => {
+    console.log(process.env['HOSTNAME'])
     console.log(`Server running at http://${hostname}:${port}/`);
     mkdirp(__dirname + '/public/uploads/').then(made =>
         console.log(`made directories, starting with ${made}`))

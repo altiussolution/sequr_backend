@@ -42,7 +42,7 @@ exports.add = (async (req, res) => {
           shift_time_id,
           department_id,
           profile_pic,
-          email_id: email_id.toLowerCase(), // sanitize: convert email to lowercase
+          email_id: email_id, // sanitize: convert email to lowercase
           password: encryptedPassword,
           status : status ? status : 0
         });
@@ -54,6 +54,8 @@ exports.add = (async (req, res) => {
           }
         );
         user.token = token;
+        var subject = `Dear ${first_name}, Use the following to siginin in sequr username - ${employee_id} , password - ${password}`
+        await sendEmail(email_id, "New User Signup",subject );
         res.status(201).json(user);
       } catch (err) {
         console.log(err);
@@ -82,7 +84,7 @@ exports.login = (async (req,res) =>{
       );
       
       user.token = token;
-
+    
       res.status(200).json(user);
 
     }else{
@@ -108,7 +110,6 @@ exports.upload = (async(req,res) => {
 
 exports.update = (async (req,res) =>{
   try{
-    
     var userId = req.query.id;
     var updateUser = req.body
     User.findByIdAndUpdate(userId,updateUser,(err,isExist) =>{
