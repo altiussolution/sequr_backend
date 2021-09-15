@@ -1,6 +1,6 @@
 require('dotenv').config();
 // const hostname = 'localhost';
-const hostname = '172.31.45.190';
+const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
 var mkdirp = require('mkdirp');
 const port = 4500;
 var express = require('express')
@@ -26,7 +26,6 @@ app.use((req, res, next) => {
     next();
 });
 app.listen(port, hostname, () => {
-    console.log(process.env)
     console.log(`Server running at http://${hostname}:${port}/`);
     mkdirp(__dirname + '/public/uploads/').then(made =>
         console.log(`made directories, starting with ${made}`))
