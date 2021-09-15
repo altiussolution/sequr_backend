@@ -58,7 +58,7 @@ const StockAllocationSchema = Schema({
     },
     updated_at: {
         type: Date,
-        default: Date.now
+        default: Date.now  
     },
     active_status: {
         type: Number,
@@ -68,4 +68,4 @@ const StockAllocationSchema = Schema({
 })
 
 
-module.exports = mongoose.model('stockAllocation', StockAllocationSchema);
+module.exports = mongoose.model('stockallocation', StockAllocationSchema);

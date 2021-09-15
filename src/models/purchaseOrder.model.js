@@ -69,4 +69,4 @@ const PurchaseOrderSchema = Schema({
 })
 
 
-module.exports = mongoose.model('purchaseOrder', PurchaseOrderSchema);
+module.exports = mongoose.model('purchaseorder', PurchaseOrderSchema);
