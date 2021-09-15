@@ -1,6 +1,7 @@
 require('dotenv').config();
-// const hostname = 'localhost';
- const hostname = '172.31.45.190';
+const hostname = 'localhost';
+//  const hostname = '172.31.45.190';
+var mkdirp = require('mkdirp');
 const port = 4500;
 var express = require('express')
 var cors = require('cors')
@@ -10,6 +11,7 @@ app.use(express.urlencoded({
   extended: true
 }));
 app.use(express.json());
+app.use(express.static(__dirname + '/public'));
 const routesIndex = require('./routes/index');
 routesIndex(app);  
 
@@ -24,10 +26,13 @@ app.use((req, res, next) => {
     next();
 });
 app.listen(port, hostname, () => {
-  
     console.log(`Server running at http://${hostname}:${port}/`);
-    
+    mkdirp(__dirname + '/public/uploads/').then(made =>
+        console.log(`made directories, starting with ${made}`))
 });
+
+app.use(express.static(__dirname + '/public'))
+
 let mongoose = require('mongoose');
 
 const dbPath = process.env['MONGODB_URI'];

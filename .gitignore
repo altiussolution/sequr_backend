@@ -1,5 +1,6 @@
 node_modules 
 test.rest
 upload/
+src/public
 try.js
 .vscode/extensions.json

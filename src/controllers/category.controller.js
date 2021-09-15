@@ -59,6 +59,7 @@ exports.updateCategory = (async (req, res) => {
 })
 
 exports.upload = (async(req,res) => {
+    console.log('here',req.file)
     try{
       if(req.file){
         var filename = req.file.originalname

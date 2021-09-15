@@ -21,6 +21,8 @@
     "lang-list": "^1.0.3",
     "language-list": "0.0.3",
     "lodash": "^4.17.21",
+    "mkdirp": "^1.0.4",
+    "moment": "^2.29.1",
     "mongodb": "^4.1.1",
     "mongoose": "^6.0.4",
     "mongoose-data-seed": "^2.1.6",
