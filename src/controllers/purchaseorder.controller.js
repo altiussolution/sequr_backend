@@ -34,7 +34,7 @@ exports.getPurchaseOrder = (async (req, res) => {
             if (!err) {
                 res.send({
                     status: 'Success',
-                    purchase_order: purchase_order
+                    data: purchase_order
                 });
             }
             else {
