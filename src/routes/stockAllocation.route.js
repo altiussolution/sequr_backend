@@ -3,4 +3,5 @@ const { StockAllocationController } = require('../controllers')
 const auth = require('../middleware/auth.middleware')
 
 route.post('/add', StockAllocationController.allocateStock)
+route.get('/get', StockAllocationController.getStockAllocations)
 module.exports = route 

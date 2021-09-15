@@ -2,22 +2,22 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 const StockAllocationSchema = Schema({
-    category_id: {
+    category: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'category'
     },
-    item_id: {
+    item: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'item'
     },
-    supplier_id: {
+    supplier: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'supplier'
     },
-    purchase_order_id: {
+    purchase_order: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'purchase_order'
@@ -26,17 +26,17 @@ const StockAllocationSchema = Schema({
         type: Number,
         required: true
     },
-    cube_id: {
+    cube: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'cube'
     },
-    bin_id: {
+    bin: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'bin'
     },
-    compartment_id: {
+    compartment: {
         type: Schema.Types.ObjectId,
         required: true,
         ref: 'compartment'
@@ -46,7 +46,6 @@ const StockAllocationSchema = Schema({
     },
     image_path: {
         type: String,
-        required: true
     },
     created_at: {
         type: Date,

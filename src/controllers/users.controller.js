@@ -44,7 +44,7 @@ exports.add = (async (req, res) => {
           profile_pic,
           email_id: email_id, // sanitize: convert email to lowercase
           password: encryptedPassword,
-          status : status ? status : 0
+          active_status : status ? status : 0
         });
         const token = jwt.sign(
           { user_id: user._id, employee_id },
@@ -139,7 +139,7 @@ exports.delete = ((req, res) => {
 exports.listEmployees = ((req,res) => {
   var offset = parseInt(req.query.offset);
   var limit = parseInt(req.query.limit);
-  User.find({active_status : 1}).populate("department_id").skip(offset).limit(limit).then(result =>{
+  User.find({active_status : 1, status : 1}).populate("department_id").skip(offset).limit(limit).then(result =>{
     res.send(result)
   })
 })
