@@ -1,4 +1,6 @@
 const { itemModel } = require("../models");
+const { appRouteModels } = require('../utils/enum.utils');
+
 
 exports.addItem = (async (req, res) => {
     try {
@@ -61,19 +63,19 @@ exports.upload = (async (req, res) => {
         var fileLocations = {}
         if (req.files) {
             if (req.files.length === 2 && req.files[0].mimetype.startsWith('image') && req.files[1].mimetype.startsWith('video')) {
-                 fileLocations['image_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
-                 fileLocations['video_path'] = `${req.files[1].destination}/${req.files[1].originalname}`
+                 fileLocations['image_path'] = `${req.files[0].destination.replace('./src/public/', appRouteModels.BASEURL)}/${req.files[0].originalname}`
+                 fileLocations['video_path'] = `${req.files[1].destination.replace('./src/public/', appRouteModels.BASEURL)}/${req.files[1].originalname}`
             }
 
             else if (req.files.length === 1 && req.files[0].mimetype.startsWith('image')) {
-                 fileLocations['image_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
+                 fileLocations['image_path'] = `${req.files[0].destination.replace('./src/public/', appRouteModels.BASEURL)}/${req.files[0].originalname}`
             }
             else if (req.files.length === 1 && req.files[0].mimetype.startsWith('video')) {
-                 fileLocations['video_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
+                 fileLocations['video_path'] = `${req.files[0].destination.replace('./src/public/', appRouteModels.BASEURL)}/${req.files[0].originalname}`
             }
             else {
-                 fileLocations['image_path'] = `${req.files[1].destination}/${req.files[1].originalname}`
-                 fileLocations['video_path'] = `${req.files[0].destination}/${req.files[0].originalname}`
+                 fileLocations['image_path'] = `${req.files[1].destination.replace('./src/public/', appRouteModels.BASEURL)}/${req.files[1].originalname}`
+                 fileLocations['video_path'] = `${req.files[0].destination.replace('./src/public/', appRouteModels.BASEURL)}/${req.files[0].originalname}`
             }
 
             res.status(200).send({

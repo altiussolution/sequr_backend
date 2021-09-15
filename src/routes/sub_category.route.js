@@ -4,7 +4,7 @@ const auth = require('../middleware/auth.middleware')
 const multer = require('multer')
 const storage = multer.diskStorage({
   destination: function (req, files, cb) {
-    cb(null, './upload/sub_category')
+    cb(null, './src/public/uploads')
   },
   filename: function (req, files, cb) {
     cb(null, files.originalname)
