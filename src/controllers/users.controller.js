@@ -15,10 +15,9 @@ exports.add = (async (req, res) => {
             length: 6,
             numbers: true
         });
-        console.log( req.body);
-        return;
+        
         // var password  = '1q2w3e$R';
-        const { first_name, last_name, email_id,contact_no,date_of_birth,role_id,language_prefered,employee_id,item_max_quantity, branch_id, shift_time_id, department_id, profile_pic, status} = req.body;
+        const { first_name, last_name, email_id,contact_no,date_of_birth,role_id,language_prefered,employee_id,item_max_quantity, branch_id, shift_time_id, department_id, profile_pic, active_status} = req.body;
 
         if (!(email_id && employee_id && first_name && role_id && language_prefered )) {
           res.status(400).send("All input is required");
@@ -45,7 +44,7 @@ exports.add = (async (req, res) => {
           profile_pic,
           email_id: email_id, // sanitize: convert email to lowercase
           password: encryptedPassword,
-          active_status : status ? status : 0
+          active_status : active_status ? active_status : 0
         });
         const token = jwt.sign(
           { user_id: user._id, employee_id },
