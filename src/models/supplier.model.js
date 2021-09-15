@@ -50,10 +50,6 @@ const SupplierSchema = Schema({
         type: String,
         required: true,
     },
-    supplier_item: {
-        type: String,
-        required: true,
-    },
     status: {
         type: Boolean,
         default: false
