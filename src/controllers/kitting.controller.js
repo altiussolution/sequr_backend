@@ -1,11 +1,9 @@
 const {kitModel} =  require("../models");
 
 exports.createKit = (async (req,res) =>{
-    var samplDate = '[{"category_id":"61370939e41b121931d5a408","item_id":"613843b8576e25cb1f0b44f5","qty":1,"description":"Sample developer description"},{"category_id":"61370939e41b121931d5a408","item_id":"613850d1217e9ffd5db305f2","qty":1,"description":"Sample developer description"}]';
     var body = req.body;
-    
     try{
-        parseKitData  = (body.kit_data == "" ? JSON.parse(samplDate) : JSON.parse(body.kit_data))
+        parseKitData  = JSON.parse(body.kit_data)
         if(parseKitData instanceof Error){
             console.log(parseKitData)
            throw err
@@ -40,8 +38,8 @@ exports.createKit = (async (req,res) =>{
 })
 
 exports.getKit = ((req,res) =>{
-    var offset = parseInt(req.query.offset);
-    var limit = parseInt(req.query.limit);
+    var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false ;
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false ;
     var searchString = req.query.searchString
     var query = (searchString ? {active_status: 1, $text: {$search: searchString}} : {active_status: 1})
     var _ = require('lodash');
@@ -58,7 +56,7 @@ exports.getKit = ((req,res) =>{
 
             }
             if(kits.length == binDatas.length){
-                res.status(400).send({success: true, data : binDatas})
+                res.status(200).send({success: true, data : binDatas})
             }
         }).catch(error => {
             res.status(400).send({success: false, error : error})
@@ -69,9 +67,8 @@ exports.getKit = ((req,res) =>{
 })
 
 exports.updateKit = (async (req,res) =>{
-    var samplDate = '[{"category_id":"61370939e41b121931d5a408","item_id":"613843b8576e25cb1f0b44f5","qty":1,"description":"Sample developer description"},{"category_id":"61370939e41b121931d5a408","item_id":"613850d1217e9ffd5db305f2","qty":1,"description":"Sample developer description"}]';
     let body = req.body;
-    body.kit_data = (body.kit_data == "" ? JSON.parse(samplDate) : JSON.parse(body.kit_data))
+    body.kit_data = JSON.parse(body.kit_data)
     try{
         var isKitExist = await kitModel.findOne({kit_name :  body.kit_name}).exec()
         if(!isKitExist || isKitExist._id == req.params.id){

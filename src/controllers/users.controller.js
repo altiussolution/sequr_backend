@@ -25,7 +25,7 @@ exports.add = (async (req, res) => {
         const oldUser = await User.findOne({ employee_id });
     
         if (oldUser) {
-          return res.status(409).send("User Already Exist. Please Login");
+          return res.status(409).send({status : false , message : "User Already Exist. Please Login"});
         }
     
         encryptedPassword = await bcrypt.hash(password, 10);
@@ -68,7 +68,7 @@ exports.login = (async (req,res) =>{
   try {
     const { employee_id, password } = req.body;
     if (!(employee_id && password)) {
-      res.status(400).send("All input is required");
+      res.status(400).send({status : false , message : "All input is required"});
     }
     
     const user = await User.findOne({ employee_id });
