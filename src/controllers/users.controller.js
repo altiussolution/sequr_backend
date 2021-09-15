@@ -126,7 +126,7 @@ exports.update = (async (req,res) =>{
 })
 
 exports.delete = ((req, res) => {
-  User.findByIdAndUpdate(req.query.id, {active_status: 1} , function(err, branch){
+  User.findByIdAndUpdate(req.query.id, {active_status: 0, status: 0} , function(err, branch){
       if (!err) {
           res.status(200).send({ success: true, message: 'Employee Deactivated Successfully!' });
       }
