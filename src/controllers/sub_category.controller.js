@@ -1,4 +1,6 @@
 const { subCategoryModel } = require('../models')
+const { appRouteModels } = require('../utils/enum.utils');
+
 
 exports.addsubCategory = async (req, res) => {
   try {
@@ -74,7 +76,7 @@ exports.upload = async (req, res) => {
       const filename = req.file.originalname
       res.status(200).send({
         Message: 'Image Added Sucessfully',
-        Path: `${req.file.destination}/${filename}`
+        Path: `${req.file.destination.replace('./src/public/', appRouteModels.BASEURL)}/${filename}`
       })
     }
   } catch (err) {
