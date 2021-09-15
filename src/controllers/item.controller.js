@@ -3,6 +3,7 @@ const { appRouteModels } = require('../utils/enum.utils');
 
 
 exports.addItem = (async (req, res) => {
+    console.log(req.body);
     try {
         var newItem = new itemModel(req.body);
         newItem.save(function (err) {
@@ -92,7 +93,7 @@ exports.upload = (async (req, res) => {
 
 exports.getItemByCategory = (async (req,res) =>{
     try{
-        var itemsInCategory =  await itemModel.find({category_id : req.params.category_id}).exec();
+        var itemsInCategory =  await itemModel.find({category_id : req.params.category_id}).populate('supplier.suppliedBy').exec();
         res.status(200).send({data : itemsInCategory})
     }catch(err) {
         res.status(400).send(err);

@@ -30,8 +30,8 @@ exports.createBin = (async (req,res) =>{
 })  
 
 exports.getBin = ((req,res) =>{
-    var offset = parseInt(req.query.offset);
-    var limit = parseInt(req.query.limit);
+    var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
     var searchString = req.query.searchString
     var query = (searchString ? {active_status: 1, $text: {$search: searchString}} : {active_status: 1})
     try{
@@ -44,6 +44,24 @@ exports.getBin = ((req,res) =>{
         res.status(201).send({success: false, error : error})
     }
   
+})
+
+exports.getBinByCube = ((req,res) =>{
+    try{
+        var cube_id = req.query.cube_id;
+        if(cube_id){
+            binModel.find({cube_id:cube_id}).then(bins =>{
+                res.status(200).send({ success: true, data: bins });
+            }).catch(err=>{
+                res.status(201).send({success: false, message : err})
+            })
+        }else{
+            res.status(201).send({success: false, message : 'Cube Id Required'})
+        }
+    }catch(error){
+        res.status(201).send({success: false, message : error.name})
+    }
+   
 })
   
 exports.updateBin = (async (req,res) =>{

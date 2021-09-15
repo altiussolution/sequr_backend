@@ -28,6 +28,7 @@ exports.addPurchaseOrder = (async (req, res) => {
      res.status(201).send({success: false, error : err.name})
     }
  })
+ 
 exports.getPurchaseOrder = (async (req, res) => {
     try {
         purchase_orderModel.find({ active_status: 1 }, (err, purchase_order) => {
