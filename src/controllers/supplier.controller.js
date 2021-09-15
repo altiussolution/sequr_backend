@@ -31,7 +31,7 @@ exports.getSupplier = (req, res) => {
     var searchString = req.query.searchString;
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
-        supplierModel.find(query).populate("state_id").populate("city_id").skip(offset).limit(limit).then(supplier => {
+        supplierModel.find(query).populate("country_id").populate("state_id").populate("city_id").skip(offset).limit(limit).then(supplier => {
             res.status(200).send({ success: true, data: supplier });
         }).catch(error => {
             res.status(400).send({ success: false, error: error })
