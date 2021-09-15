@@ -8,10 +8,10 @@ let Departments = require('./department.route')
 let Branch = require('./branch.route')
 let Cube = require('./cube.route')
 let Bin = require('./bin.route');
-const Kitting = require('./kitting.route')
-const Compartment = require('./compartment.route');
+let Kitting = require('./kitting.route')
+let Compartment = require('./compartment.route');
 const SubCategory = require('./subCategory.route')
-let PurchaseOrder = require('./purchase_order.route')
+let PurchaseOrder = require('./purchaseOrder.route')
 let Supplier = require('./supplier.route')
 const StockAllocation = require('./stockAllocation.route')
 

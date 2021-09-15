@@ -11,7 +11,7 @@ CompartmentController = require('./compartment.controller')
 BinController = require('./bin.controller')
 KitController = require('./kitting.controller')
 SubCategoryController = require('./subCategory.controller')
-PurchaseOrderController = require('./purchase_order.controller')
+PurchaseOrderController = require('./purchaseOrder.controller')
 SupplierController = require('./supplier.controller');
 StockAllocationController = require('./stockAllocation.controller')
 
