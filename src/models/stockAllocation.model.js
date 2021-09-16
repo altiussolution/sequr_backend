@@ -63,6 +63,11 @@ const StockAllocationSchema = Schema({
         type: Number,
         enum: [0,1],
         default: 1
+    },
+    status: {
+        type: Number,
+        enum: [0,1],
+        default: 1
     }
 })
 

@@ -53,7 +53,6 @@ exports.getKit = ((req,res) =>{
                 available_item : kit.kit_data.length,
                 total_qty : quantity
                })
-
             }
             if(kits.length == binDatas.length){
                 res.status(200).send({success: true, data : binDatas})

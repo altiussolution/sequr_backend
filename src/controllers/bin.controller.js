@@ -1,16 +1,23 @@
-const { binModel } = require("../models");
+const { binModel, cubeModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
 
-exports.createBin = (async (req,res) =>{    
+exports.createBin = (async (req,res) =>{  
     try{
-        var bin = new binModel(req.body);
-        var isBinExist = await binModel.find({ $or: [{bin_name : req.body.bin_name},{bin_id: req.body.bin_id} ] }).exec()
-        if(isBinExist.length == 0){
+        var body = req.body;
+        var bin = new binModel(body);
+        var isBinExist = await binModel.find({ $or: [{bin_name : body.bin_name},{bin_id: body.bin_id} ] }).exec()
+        var checkBinCount = await cubeModel.findById(body.cube_id,['bin_max','bin_min']).exec()
+        if(checkBinCount.bin_max < body.item_max_cap){
+            res.status(200).send({ success: true, message: `Maximum bin count is ${checkBinCount.bin_max}` });
+        }else if(checkBinCount.bin_min < body.item_min_cap){
+            res.status(200).send({ success: true, message: `Minimum bin count is ${checkBinCount.bin_min}` });
+        }
+        else if(isBinExist.length == 0){
             bin.save((err)=>{
                 if(!err){
                     res.status(200).send({ success: true, message: 'Bin Created Successfully!' });
                 }else{
-                    res.status(200).send({
+                    res.status(201).send({
                         success: false,
                         message: err
                     });
@@ -25,7 +32,7 @@ exports.createBin = (async (req,res) =>{
        
     }
     catch(error){
-        res.status(201).send(error)
+        res.status(201).send(error.name)
     }
 })  
 
