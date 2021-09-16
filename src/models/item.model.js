@@ -15,12 +15,11 @@ const ItemSchema = Schema({
         required: true,
         ref: 'category'
     },
-    supplier: [{
-        suppliedBy:{
-            type: Schema.Types.ObjectId,
-            ref: 'supplier'
-        }
-    }],
+    supplier_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'supplier'
+    },
     is_active: {
         type: Boolean,
         default: false

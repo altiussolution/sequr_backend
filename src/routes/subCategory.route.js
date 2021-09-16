@@ -13,7 +13,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 
 route.get('/get', SubCategoryController.getsubCategory)
-route.post('/add', auth, SubCategoryController.addsubCategory)
+route.post('/add', SubCategoryController.addsubCategory)
 route.put('/update/:id', auth, SubCategoryController.updatesubCategory)
 route.post('/upload', auth, upload.single('sub-category'), SubCategoryController.upload)
 module.exports = route

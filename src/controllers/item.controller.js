@@ -22,24 +22,40 @@ exports.addItem = (async (req, res) => {
         console.log(error);
     }
 })
-exports.getItem = (async (req, res) => {
+// exports.getItem = (async (req, res) => {
+//     try {
+//         itemModel.find({ active_status: 1 }, (err, item) => {
+//             if (!err) {
+//                 res.send({
+//                     status: 'Success',
+//                     item: item
+//                 });
+//             }
+//             else {
+//                 res.send(err.message);
+//             }
+//         })
+//     } catch (error) {
+//         res.send("An error occured");
+//         console.log(error);
+//     }
+// })
+
+exports.getItem = (req, res) => {
+    var offset = parseInt(req.query.offset);
+    var limit = parseInt(req.query.limit);
+    var searchString = req.query.searchString;
+    var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
-        itemModel.find({ active_status: 1 }, (err, item) => {
-            if (!err) {
-                res.send({
-                    status: 'Success',
-                    item: item
-                });
-            }
-            else {
-                res.send(err.message);
-            }
+        itemModel.find(query).populate('category_id').skip(offset).limit(limit).then(item => {
+            res.status(200).send({ success: true, item: item })
+        }).catch(error => {
+            res.status(400).send({ success: false, error: error })
         })
     } catch (error) {
-        res.send("An error occured");
-        console.log(error);
+        res.status(201).send({ success: false, error: error })
     }
-})
+}
 
 exports.updateItem = (async (req, res) => {
     try {
