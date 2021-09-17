@@ -2,13 +2,7 @@ const {kitModel} =  require("../models");
 
 exports.createKit = (async (req,res) =>{
     var body = req.body;
-    try{
-        parseKitData  = JSON.parse(body.kit_data)
-        if(parseKitData instanceof Error){
-            console.log(parseKitData)
-           throw err
-        }
-        body.kit_data = parseKitData
+    try{        
         var kit = new kitModel(body)
         var isKitExist = await kitModel.find({kit_name :body.kit_name}).exec()
         if(isKitExist.length == 0){
@@ -31,7 +25,7 @@ exports.createKit = (async (req,res) =>{
         }
        
     }catch(err){
-        console.log('error logged')
+        console.log(err,'error logged')
         res.status(201).send({message : err.name})
     }
      
@@ -67,7 +61,6 @@ exports.getKit = ((req,res) =>{
 
 exports.updateKit = (async (req,res) =>{
     let body = req.body;
-    body.kit_data = JSON.parse(body.kit_data)
     try{
         var isKitExist = await kitModel.findOne({kit_name :  body.kit_name}).exec()
         if(!isKitExist || isKitExist._id == req.params.id){
