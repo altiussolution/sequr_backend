@@ -62,8 +62,6 @@ exports.add = (async (req, res) => {
       }
 })
 
-
-
 exports.login = (async (req,res) =>{
   try {
     const { employee_id, password } = req.body;
