@@ -1,14 +1,9 @@
 const {kitModel} =  require("../models");
+var {appRouteModels} = require('../utils/enum.utils')
 
 exports.createKit = (async (req,res) =>{
     var body = req.body;
-    try{
-        parseKitData  = JSON.parse(body.kit_data)
-        if(parseKitData instanceof Error){
-            console.log(parseKitData)
-           throw err
-        }
-        body.kit_data = parseKitData
+    try{        
         var kit = new kitModel(body)
         var isKitExist = await kitModel.find({kit_name :body.kit_name}).exec()
         if(isKitExist.length == 0){
@@ -31,7 +26,7 @@ exports.createKit = (async (req,res) =>{
         }
        
     }catch(err){
-        console.log('error logged')
+        console.log(err,'error logged')
         res.status(201).send({message : err.name})
     }
      
@@ -48,11 +43,14 @@ exports.getKit = ((req,res) =>{
         kitModel.find(query).skip(offset).limit(limit).then(kits =>{
             for(let kit of kits){
                var quantity = kit.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
-               binDatas.push({
-                kit_name : kit.kit_name,
-                available_item : kit.kit_data.length,
-                total_qty : quantity
-               })
+                   binDatas.push({
+                    _id : kit._id,
+                    kit_name : kit.kit_name,
+                    available_item : kit.kit_data.length,
+                    total_qty : quantity,
+                    kit_data : kit.kit_data,
+                    image_path : kit.image_path
+                   })
             }
             if(kits.length == binDatas.length){
                 res.status(200).send({success: true, data : binDatas})
@@ -67,7 +65,6 @@ exports.getKit = ((req,res) =>{
 
 exports.updateKit = (async (req,res) =>{
     let body = req.body;
-    body.kit_data = JSON.parse(body.kit_data)
     try{
         var isKitExist = await kitModel.findOne({kit_name :  body.kit_name}).exec()
         if(!isKitExist || isKitExist._id == req.params.id){
@@ -97,11 +94,11 @@ exports.deleteKit = ((req,res) =>{
     }
 })
 
-exports.upload = ((req,res) =>{
+exports.upload = ((req,res) =>{  
     try{
         if(req.file){
             var filename = req.file.originalname
-          res.status(200).send({message : 'Kin Image Added Sucessfully', Path : `${req.file.destination}/${filename}`})
+          res.status(200).send({message : 'Kin Image Added Sucessfully', Path : `${req.file.destination.replace('./src/public/',appRouteModels.BASEURL)}/${filename}`})
         }
       }catch (err) {
         res.status(400).send(err);
