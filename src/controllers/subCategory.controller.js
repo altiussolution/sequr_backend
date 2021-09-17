@@ -29,7 +29,8 @@ exports.getsubCategory = async (req, res) => {
   var offset = parseInt(req.query.offset);
   var limit = parseInt(req.query.limit);
   var searchString = req.query.searchString;
-  var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
+  var categoryId = req.query.category_id;
+  var query = (searchString ? { active_status: 1, category_id:categoryId, $text: { $search: searchString } } : { active_status: 1, category_id:categoryId })
   try {
       subCategoryModel.find(query).populate("category_id").skip(offset).limit(limit).then(categories => {
         res.status(200).send({ success: true, data: categories })
@@ -42,21 +43,6 @@ exports.getsubCategory = async (req, res) => {
   }
 }
 
-// exports.getBranch = (req, res) => {
-//   var offset = parseInt(req.query.offset);
-//   var limit = parseInt(req.query.limit);
-//   var searchString = req.query.searchString;
-//   var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
-//   try {
-//       branchModel.find(query).populate("country_id").populate("state_id").populate("city_id").skip(offset).limit(limit).then(branch => {
-//           res.status(200).send({ success: true, data: branch });
-//       }).catch(error => {
-//           res.status(400).send({ success: false, error: error })
-//       })
-//   } catch (error) {
-//       res.status(201).send({ success: false, error: error })
-//   }
-// }
 
 exports.updatesubCategory = async (req, res) => {
   console.log(req.params.id)
