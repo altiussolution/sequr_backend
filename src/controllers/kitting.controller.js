@@ -43,12 +43,14 @@ exports.getKit = ((req,res) =>{
         kitModel.find(query).skip(offset).limit(limit).then(kits =>{
             for(let kit of kits){
                var quantity = kit.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
-               binDatas.push({
-                kit_name : kit.kit_name,
-                available_item : kit.kit_data.length,
-                total_qty : quantity,
-                kit_data : kit.kit_data
-               })
+                   binDatas.push({
+                    _id : kit._id,
+                    kit_name : kit.kit_name,
+                    available_item : kit.kit_data.length,
+                    total_qty : quantity,
+                    kit_data : kit.kit_data,
+                    image_path : kit.image_path
+                   })
             }
             if(kits.length == binDatas.length){
                 res.status(200).send({success: true, data : binDatas})
