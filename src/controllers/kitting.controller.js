@@ -46,7 +46,8 @@ exports.getKit = ((req,res) =>{
                binDatas.push({
                 kit_name : kit.kit_name,
                 available_item : kit.kit_data.length,
-                total_qty : quantity
+                total_qty : quantity,
+                kit_data : kit.kit_data
                })
             }
             if(kits.length == binDatas.length){
