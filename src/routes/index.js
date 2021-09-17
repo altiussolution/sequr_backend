@@ -29,7 +29,7 @@ module.exports = (app) => {
     app.use('/kitting', Kitting)
     app.use('/compartment', Compartment)
     app.use('/subCategory', SubCategory)
-    app.use('/purchaseorder', PurchaseOrder)
+    app.use('/purchaseOrder', PurchaseOrder)
     app.use('/supplier', Supplier)
     app.use('/allocation',StockAllocation)
 }
