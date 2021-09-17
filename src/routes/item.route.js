@@ -13,9 +13,9 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
 
 route.post('/add', auth, ItemController.addItem)
-route.get('/get', ItemController.getItem)
+route.get('/get', auth, ItemController.getItem)
 route.put('/update/:id', auth, ItemController.updateItem)
-route.post('/upload', upload.array('image-video'), ItemController.upload)
+route.post('/upload', auth, upload.array('image-video'), ItemController.upload)
 route.get('/getItemByCategory/:category_id', auth, ItemController.getItemByCategory)
 
 module.exports = route
