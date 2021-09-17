@@ -1,4 +1,5 @@
 const {kitModel} =  require("../models");
+var {appRouteModels} = require('../utils/enum.utils')
 
 exports.createKit = (async (req,res) =>{
     var body = req.body;
@@ -90,11 +91,11 @@ exports.deleteKit = ((req,res) =>{
     }
 })
 
-exports.upload = ((req,res) =>{
+exports.upload = ((req,res) =>{  
     try{
         if(req.file){
             var filename = req.file.originalname
-          res.status(200).send({message : 'Kin Image Added Sucessfully', Path : `${req.file.destination}/${filename}`})
+          res.status(200).send({message : 'Kin Image Added Sucessfully', Path : `${req.file.destination.replace('./src/public/',appRouteModels.BASEURL)}/${filename}`})
         }
       }catch (err) {
         res.status(400).send(err);
