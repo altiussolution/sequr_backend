@@ -14,6 +14,7 @@ const SubCategory = require('./subCategory.route')
 let PurchaseOrder = require('./purchaseOrder.route')
 let Supplier = require('./supplier.route')
 const StockAllocation = require('./stockAllocation.route')
+const Cart = require('./cart.route')
 
 module.exports = (app) => {
     app.use('/employee', Users)
@@ -32,4 +33,5 @@ module.exports = (app) => {
     app.use('/purchaseOrder', PurchaseOrder)
     app.use('/supplier', Supplier)
     app.use('/allocation',StockAllocation)
+    app.use('/cart',Cart)
 }
