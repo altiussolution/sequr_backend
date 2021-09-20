@@ -26,8 +26,8 @@ exports.addsubCategory = async (req, res) => {
 }
 
 exports.getsubCategory = async (req, res) => {
-  var offset = parseInt(req.query.offset);
-  var limit = parseInt(req.query.limit);
+  var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
   var searchString = req.query.searchString;
   var categoryId = req.query.category_id;
   var query = (searchString ? { active_status: 1, category_id:categoryId, $text: { $search: searchString } } : { active_status: 1, category_id:categoryId })
