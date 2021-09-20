@@ -29,7 +29,7 @@ exports.getItem = (req, res) => {
     var searchString = req.query.searchString;
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
-        itemModel.find(query).populate('category_id').skip(offset).limit(limit).then(item => {
+        itemModel.find(query).populate('category_id').populate('sub_category_id').skip(offset).limit(limit).then(item => {
             res.status(200).send({ success: true, item: item })
         }).catch(error => {
             res.status(400).send({ success: false, error: error })
@@ -91,7 +91,7 @@ exports.upload = (async (req, res) => {
 
 exports.getItemByCategory = (async (req,res) =>{
     try{
-        var itemsInCategory =  await itemModel.find({category_id : req.params.category_id}).populate('supplier.suppliedBy').exec();
+        var itemsInCategory =  await itemModel.find({sub_category_id : req.params.sub_category_id}).populate('supplier.suppliedBy').exec();
         res.status(200).send({data : itemsInCategory})
     }catch(err) {
         res.status(400).send(err);

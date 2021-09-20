@@ -10,11 +10,11 @@ const ItemSchema = Schema({
         type: String,
         required: true
     },
-    // sub_category_id: {
-    //     type: Schema.Types.ObjectId,
-    //     required: true,
-    //     ref: 'subCategory'
-    // },
+    sub_category_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'subCategory'
+    },
     category_id: {
         type: Schema.Types.ObjectId,
         required: true,

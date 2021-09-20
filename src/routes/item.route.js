@@ -16,6 +16,6 @@ route.post('/add', auth, ItemController.addItem)
 route.get('/get', auth, ItemController.getItem)
 route.put('/update/:id', auth, ItemController.updateItem)
 route.post('/upload', auth, upload.array('image-video'), ItemController.upload)
-route.get('/getItemByCategory/:category_id', auth, ItemController.getItemByCategory)
+route.get('/getItemByCategory/:sub_category_id', auth, ItemController.getItemByCategory)
 
 module.exports = route
