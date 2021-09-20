@@ -16,7 +16,7 @@ exports.addToCart = ((req,res) => {
             var product = await itemModel.findById(productId).exec()
             CartModel.findOne({user : body.user}).then(CartData =>{
                 var cart = AddCart(CartData ? CartData : body,body.item,isQuantity._id)
-                console.log(cart)
+                console.log(cart);
                 // CartModel.findOneAndUpdate({},cart, options).then(is_create =>{
                 //     res.status(200).send({ success: true, message: 'Successfully added into cart!' });
                 // }).catch(err =>{
