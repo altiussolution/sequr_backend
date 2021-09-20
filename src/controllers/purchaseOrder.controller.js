@@ -30,24 +30,20 @@ exports.addPurchaseOrder = (async (req, res) => {
     }
  })
  
-exports.getPurchaseOrder = (async (req, res) => {
+ exports.getPurchaseOrder = (req, res) => {
+    var searchString = req.query.searchString;
+    var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
-        purchaseOrderModel.find({ active_status: 1 }, (err, purchase_order) => {
-            if (!err) {
-                res.send({
-                    status: 'Success',
-                    data: purchase_order
-                });
-            }
-            else {
-                res.send(err.message);
-            }
+        purchaseOrderModel.find(query).populate('item_id').then(purchaseOrder => {
+            res.status(200).send({ success: true, data: purchaseOrder })
+        }).catch(error => {
+            res.status(400).send({ success: false, error: error })
         })
     } catch (error) {
-        res.send("An error occured");
-        console.log(error);
+        res.status(201).send({ success: false, error: error })
     }
-})
+}
+
 exports.updatePurchaseOrder = (async (req, res) => {
     console.log(req.params.id)
     try{
