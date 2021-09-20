@@ -51,7 +51,7 @@ exports.getPurchaseOrder = (async (req, res) => {
 exports.updatePurchaseOrder = (async (req, res) => {
     console.log(req.params.id)
     try{
-        purchase_orderModel.findByIdAndUpdate(req.params.id, req.body).then(purchase_orderUpdate =>{
+        purchaseOrderModel.findByIdAndUpdate(req.params.id, req.body).then(purchaseOrderUpdate =>{
             res.status(200).send({ success: true, message: 'PurchaseOrder Updated Successfully!' });
         }).catch(error =>{
             res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
@@ -62,7 +62,7 @@ exports.updatePurchaseOrder = (async (req, res) => {
 })
 exports.deletePurchaseOrder = (req, res) => {
     try {
-        purchase_orderModel.findByIdAndUpdate(req.params.id, { active_status: 0 }).then(purchase_order => {
+        purchaseOrderModel.findByIdAndUpdate(req.params.id, { active_status: 0 }).then(purchaseOrder => {
             res.status(200).send({ success: true, message: 'PurchaseOrder Deleted Successfully!' });
         }).catch(err => {
             res.status(200).send({ success: false, message: 'PurchaseOrder Not Found' });

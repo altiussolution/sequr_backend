@@ -20,4 +20,5 @@ route.put('/delete', auth, controllers.UsersController.delete)
 route.get('/get', auth, controllers.UsersController.listEmployees)
 route.post('/forgotPassword', controllers.UsersController.forgotPassword)
 route.put('/resetPassword/:user_id/:token', controllers.UsersController.resetPassword)
+route.get('/userProfile/:id',auth,controllers.UsersController.userProfile);
 module.exports = route 

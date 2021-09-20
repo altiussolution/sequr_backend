@@ -8,6 +8,11 @@ const enumVariables = {
     Messages : {
         Success : "Created sucess"
     },
+    Cart : {
+        In_Cart : 1,
+        Has_Taken : 2,
+        Kept : 3
+    },
     Permissions : {
         Employee : [ 
             'employee_update',

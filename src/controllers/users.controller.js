@@ -27,7 +27,7 @@ exports.add = (async (req, res) => {
         if (oldUser) {
           return res.status(409).send({status : false , message : "User Already Exist. Please Login"});
         }
-    
+        console.log(password);
         encryptedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({
           employee_id,
@@ -55,7 +55,7 @@ exports.add = (async (req, res) => {
         );
         user.token = token;
         var subject = `Dear ${first_name}, Use the following to siginin in sequr username - ${employee_id} , password - ${password}`
-        await sendEmail(email_id, "New User Signup",subject );
+        //await sendEmail(email_id, "New User Signup",subject );
         res.status(201).json(user);
       } catch (err) {
         console.log(err);
@@ -135,9 +135,11 @@ exports.delete = ((req, res) => {
 })
 
 exports.listEmployees = ((req,res) => {
-  var offset = parseInt(req.query.offset);
-  var limit = parseInt(req.query.limit);
-  User.find({active_status : 1, status : 1}).populate("department_id").skip(offset).limit(limit).then(result =>{
+  var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false ;
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false ;
+    var searchString = req.query.searchString
+    var query = (searchString ? {active_status: 1, $text: {$search: searchString}} : {active_status: 1})
+  User.find(query).populate("department_id").skip(offset).limit(limit).then(result =>{
     res.send(result)
   })
 })
@@ -193,5 +195,20 @@ exports.resetPassword = (async (req, res) => {
     } catch (error) {
         res.send("An error occured");
         console.log(error);
+    }  
+})
+
+exports.userProfile = (async (req,res) =>{
+  var userId = req.params.id;
+  try{
+    var userDetails =await User.findOne({_id : userId, active_status : 1 , status : 1}).exec();
+    if(userDetails){
+      res.status(200).send({status:true, data:userDetails})
+    }else{
+      res.status(201).send({status:false, message : 'Not a valid User'})
     }
+  }catch(err){
+    res.status(200).send({ success: false, error: err.name, message : 'An Error Catched' });  
+  }
+ 
 })

@@ -14,6 +14,7 @@ SubCategoryController = require('./subCategory.controller')
 PurchaseOrderController = require('./purchaseOrder.controller')
 SupplierController = require('./supplier.controller');
 StockAllocationController = require('./stockAllocation.controller')
+CartController = require('./cart.controller')
 
 module.exports = {
   UsersController,
@@ -31,5 +32,6 @@ module.exports = {
   SubCategoryController,
   PurchaseOrderController,
   SupplierController,
-  StockAllocationController
+  StockAllocationController,
+  CartController
 }
