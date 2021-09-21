@@ -43,5 +43,5 @@ const SubCategorySchema = Schema({
     default: 1
   }
 })
-
+SubCategorySchema.index({'$**': 'text'});
 module.exports = mongoose.model('subCategory', SubCategorySchema)
