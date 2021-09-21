@@ -1,4 +1,5 @@
 const { rolesModel, userModel } = require("../models");
+const {Permissions} = require("../utils/enum.utils")
 
 // Roles
 exports.createRole = (async (req, res) => {
@@ -156,4 +157,8 @@ exports.deletePermission = (async (req, res) => {
     } catch (error) {
         res.send({status : false , error : error.name});
     }
+})
+
+exports.listPermission = ((req,res) =>{
+    res.status(200).send(Permissions)
 })
