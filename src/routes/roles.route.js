@@ -12,6 +12,4 @@ route.get('/permission/get', auth, RolesController.getPermission)
 route.put('/permission/delete/:id', auth, RolesController.deletePermission)
 route.get('/permission/list/get', RolesController.listPermission)
 
-
-
 module.exports = route
