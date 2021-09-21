@@ -91,7 +91,7 @@ exports.upload = (async (req, res) => {
 
 exports.getItemByCategory = (async (req,res) =>{
     try{
-        var itemsInCategory =  await itemModel.find({category_id : req.params.category_id}).populate('supplier.suppliedBy').exec();
+        var itemsInCategory =  await itemModel.find({category_id : req.params.category_id, sub_category_id : req.params.sub_category_id}).populate('supplier.suppliedBy').exec();
         res.status(200).send({data : itemsInCategory})
     }catch(err) {
         res.status(400).send(err);

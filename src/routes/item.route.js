@@ -16,7 +16,7 @@ route.post('/add', auth, ItemController.addItem)
 route.get('/get', ItemController.getItem)
 route.put('/update/:id', auth, ItemController.updateItem)
 route.post('/upload', auth, upload.array('image-video'), ItemController.upload)
-route.get('/getItemByCategory/:sub_category_id', auth, ItemController.getItemByCategory)
+route.get('/getItemByCategory/:category_id/:sub_category_id', auth, ItemController.getItemByCategory)
 route.put('/delete/:id', ItemController.deleteItems)
 route.get('/getItemById/:item',auth, ItemController.getItemById)
 
