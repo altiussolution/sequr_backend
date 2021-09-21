@@ -29,7 +29,7 @@ exports.getItem = (req, res) => {
     var searchString = req.query.searchString;
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
-        itemModel.find(query).populate('category_id').populate('sub_category_id').skip(offset).limit(limit).then(item => {
+        itemModel.find(query).populate('category_id').populate('sub_category_id').populate('supplier.suppliedBy').skip(offset).limit(limit).then(item => {
             res.status(200).send({ success: true, item: item })
         }).catch(error => {
             res.status(400).send({ success: false, error: error })
@@ -97,3 +97,18 @@ exports.getItemByCategory = (async (req,res) =>{
         res.status(400).send(err);
     }
 })
+
+exports.deleteItems = (req, res) => {
+    
+    try {
+        itemModel.findByIdAndUpdate(req.params.id, { active_status: 0 }).then(item => {
+            res.status(200).send({ success: true, message: 'Item  Deleted Successfully!' });
+        }).catch(err => {
+            res.status(200).send({ success: false, message: 'Item Not Found' });
+        })
+    }
+    catch (err) {
+        res.status(200).send({ success: false, error: err, message: 'An Error Catched' });
+    }
+
+}
