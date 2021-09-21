@@ -10,11 +10,11 @@ const CartSchema = Schema({
     cart : [{
         item:{
             type: Schema.Types.ObjectId,
+            required: true,
             ref: 'item'
         },
         allocation : {
             type: Schema.Types.ObjectId,
-            required: true,
             ref: 'stockallocation'
         },
         qty : {
@@ -28,7 +28,12 @@ const CartSchema = Schema({
         type : Number,
         enum : [1,2,3],
         default : 1  // 1 -> In Cart , 2 -> Has taken , 3 -> Kept
-    }    
+    },
+    status : {
+        type : Number,
+        enum : [0,1],
+        default : 1
+    }
 })
 
 module.exports = mongoose.model('cart', CartSchema);

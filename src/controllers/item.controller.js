@@ -1,4 +1,4 @@
-const { itemModel } = require("../models");
+const { itemModel , stockAllocationModel} = require("../models");
 const { appRouteModels } = require('../utils/enum.utils');
 
 
@@ -24,12 +24,17 @@ exports.addItem = (async (req, res) => {
 })
 
 exports.getItem = (req, res) => {
+<<<<<<< HEAD
+    var offset = req.query.offset ? parseInt(req.query.offset) : false;
+    var limit = req.query.limit ? parseInt(req.query.limit) : false;
+=======
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
     var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
+>>>>>>> 616728ab0c9dddf74957926caa9ffe43828c8bc5
     var searchString = req.query.searchString;
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
-        itemModel.find(query).populate('category_id').populate('sub_category_id').skip(offset).limit(limit).then(item => {
+        itemModel.find(query).populate('category_id').populate('sub_category_id').populate('supplier.suppliedBy').skip(offset).limit(limit).then(item => {
             res.status(200).send({ success: true, item: item })
         }).catch(error => {
             res.status(400).send({ success: false, error: error })
@@ -97,3 +102,30 @@ exports.getItemByCategory = (async (req,res) =>{
         res.status(400).send(err);
     }
 })
+
+exports.getItemById = (async (req,res) =>{
+    try{
+        var item = req.params.item;
+        var itemDetails = await itemModel.findById(item).exec()
+        var stockDetails = await stockAllocationModel.findOne({item:item}).populate('cube').populate('bin').populate('compartment')
+        res.status(200).send({status : true, items : itemDetails, machine : stockDetails ? stockDetails : false})
+
+    }catch(err){
+        res.status(400).send({status : false , message : err.name});
+    }
+})
+
+exports.deleteItems = (req, res) => {
+    
+    try {
+        itemModel.findByIdAndUpdate(req.params.id, { active_status: 0 }).then(item => {
+            res.status(200).send({ success: true, message: 'Item  Deleted Successfully!' });
+        }).catch(err => {
+            res.status(200).send({ success: false, message: 'Item Not Found' });
+        })
+    }
+    catch (err) {
+        res.status(200).send({ success: false, error: err, message: 'An Error Catched' });
+    }
+
+}
