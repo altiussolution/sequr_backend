@@ -34,7 +34,7 @@ exports.addPurchaseOrder = (async (req, res) => {
     var searchString = req.query.searchString;
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
-        purchaseOrderModel.find(query).populate('item_id').then(purchaseOrder => {
+        purchaseOrderModel.find(query).populate('item_id').populate('sub_category_id').then(purchaseOrder => {
             res.status(200).send({ success: true, data: purchaseOrder })
         }).catch(error => {
             res.status(400).send({ success: false, error: error })
