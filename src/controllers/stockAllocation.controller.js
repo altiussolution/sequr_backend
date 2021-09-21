@@ -76,3 +76,18 @@ exports.deleteStockAllocation = ((req,res) =>{
         res.status(201).send({ success: false, error: err.name, message : 'An Error Catched' });  
     }
 })
+
+exports.getItemById = ((req,res) =>{
+    try{
+        var item = req.params.item;
+        stockAllocationModel.findOne({item:item}).populate('item').populate('cube').populate('bin').populate('compartment').then(data =>{
+            if(data){
+                res.status(200).send({status:true, data})
+            }else{
+                res.status(200).send({status : false , message : 'No Data Found'});
+            }
+        })
+    }catch(err){
+        res.status(400).send({status : false , message : err.name});
+    }
+})

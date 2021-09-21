@@ -5,7 +5,7 @@ let route = require('express').Router()
 route.post('/add', auth,CartController.addToCart);
 // route.get('/get',auth, BinController.getBin);
 // route.get('/getBinByCube',BinController.getBinByCube);
-// route.put('/update/:id', auth,BinController.updateBin);
+route.put('/update/:id', auth,CartController.updateCart);
 // route.put('/delete/:id', auth,BinController.deleteBin);
 
 
