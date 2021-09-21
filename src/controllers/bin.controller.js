@@ -69,7 +69,7 @@ exports.getBinByCube = ((req,res) =>{
         res.status(201).send({success: false, message : error.name})
     }
    
-})
+}) 
   
 exports.updateBin = (async (req,res) =>{
     try{

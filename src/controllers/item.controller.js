@@ -1,4 +1,4 @@
-const { itemModel } = require("../models");
+const { itemModel , stockAllocationModel} = require("../models");
 const { appRouteModels } = require('../utils/enum.utils');
 
 
@@ -24,8 +24,8 @@ exports.addItem = (async (req, res) => {
 })
 
 exports.getItem = (req, res) => {
-    var offset = parseInt(req.query.offset);
-    var limit = parseInt(req.query.limit);
+    var offset = req.query.offset ? parseInt(req.query.offset) : false;
+    var limit = req.query.limit ? parseInt(req.query.limit) : false;
     var searchString = req.query.searchString;
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
@@ -95,5 +95,17 @@ exports.getItemByCategory = (async (req,res) =>{
         res.status(200).send({data : itemsInCategory})
     }catch(err) {
         res.status(400).send(err);
+    }
+})
+
+exports.getItemById = (async (req,res) =>{
+    try{
+        var item = req.params.item;
+        var itemDetails = await itemModel.findById(item).exec()
+        var stockDetails = await stockAllocationModel.findOne({item:item}).populate('cube').populate('bin').populate('compartment')
+        res.status(200).send({status : true, items : itemDetails, machine : stockDetails ? stockDetails : false})
+
+    }catch(err){
+        res.status(400).send({status : false , message : err.name});
     }
 })
