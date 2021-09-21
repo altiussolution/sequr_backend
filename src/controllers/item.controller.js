@@ -3,7 +3,6 @@ const { appRouteModels } = require('../utils/enum.utils');
 
 
 exports.addItem = (async (req, res) => {
-    console.log(req.body);
     try {
         var newItem = new itemModel(req.body);
         newItem.save(function (err) {
@@ -42,13 +41,13 @@ exports.getItem = (req, res) => {
 exports.updateItem = (async (req, res) => {
     try {
         itemModel.findByIdAndUpdate(req.params.id, req.body, (err, file) => {
-            if (!err)
+            if (file)
                 res.send({
                     status: 'Success',
-                    message: 'item Updated'
+                    message: 'item Updated'  
                 });
             else {
-                res.send(err.message);
+                res.send({message : 'Not Found'});
             }
         });
     } catch (error) {
@@ -88,16 +87,16 @@ exports.upload = (async (req, res) => {
     }
 
 })
-
+ 
 exports.getItemByCategory = (async (req,res) =>{
     try{
-        var itemsInCategory =  await itemModel.find({sub_category_id : req.params.sub_category_id}).populate('supplier.suppliedBy').exec();
+        var itemsInCategory =  await itemModel.find({category_id : req.params.category_id,sub_category_id : req.params.sub_category_id}).populate('supplier.suppliedBy').exec();
         res.status(200).send({data : itemsInCategory})
     }catch(err) {
         res.status(400).send(err);
     }
 })
-
+  
 exports.getItemById = (async (req,res) =>{
     try{
         var item = req.params.item;
