@@ -90,6 +90,8 @@ exports.upload = (async (req, res) => {
 })
 
 exports.getItemByCategory = (async (req,res) =>{
+    console.log('**********req.params**************')
+    console.log(req.params)
     try{
         console.log(req.params)
         var itemsInCategory =  await itemModel.find({category_id : req.params.category_id, sub_category_id : req.params.sub_category_id}).populate('supplier.suppliedBy').exec();
