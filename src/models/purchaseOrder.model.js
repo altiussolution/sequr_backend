@@ -12,6 +12,11 @@ const PurchaseOrderSchema = Schema({
         required: true,
         ref: 'item'
     },
+    sub_category_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'subCategory'
+    },
     supplier_id: {
         type: Schema.Types.ObjectId,
         required: true,
