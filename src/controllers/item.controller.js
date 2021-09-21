@@ -24,13 +24,8 @@ exports.addItem = (async (req, res) => {
 })
 
 exports.getItem = (req, res) => {
-<<<<<<< HEAD
-    var offset = req.query.offset ? parseInt(req.query.offset) : false;
-    var limit = req.query.limit ? parseInt(req.query.limit) : false;
-=======
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
     var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
->>>>>>> 616728ab0c9dddf74957926caa9ffe43828c8bc5
     var searchString = req.query.searchString;
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
