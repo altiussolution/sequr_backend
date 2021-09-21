@@ -11,12 +11,12 @@ var generator = require('generate-password');
 
 exports.add = (async (req, res) => {
     try {
-        // var password = generator.generate({
-        //     length: 6,
-        //     numbers: true
-        // });
+        var password = generator.generate({
+            length: 6,
+            numbers: true
+        });
         
-        var password  = '1q2w3e$R';
+        // var password  = '1q2w3e$R';
         const { first_name, last_name, email_id,contact_no,date_of_birth,role_id,language_prefered,employee_id,item_max_quantity, branch_id, shift_time_id, department_id, profile_pic, active_status} = req.body;
 
         if (!(email_id && employee_id && first_name && role_id && language_prefered )) {
