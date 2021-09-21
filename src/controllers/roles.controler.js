@@ -160,5 +160,6 @@ exports.deletePermission = (async (req, res) => {
 })
 
 exports.listPermission = ((req,res) =>{
+    delete Permissions.Employee;
     res.status(200).send(Permissions)
 })
