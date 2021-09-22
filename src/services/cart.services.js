@@ -23,3 +23,4 @@ module.exports = function AddCart(cartData){ //oldCart,item,allocation,userQty
 	}, 0);
 	return oldCart;
 }
+

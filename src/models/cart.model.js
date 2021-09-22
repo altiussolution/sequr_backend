@@ -21,6 +21,15 @@ const CartSchema = Schema({
             type : Number
         }
     }],
+    kitting: [{
+        kit_id : {
+            type: Schema.Types.ObjectId,
+            ref: 'kit'
+        }
+    }],
+    total_kitting_quantity : {
+        type : Number
+    },
     total_quantity : {
         type : Number
     },

@@ -17,6 +17,7 @@ route.get('/get', auth , KitController.getKit);
 route.put('/update/:id', auth, KitController.updateKit);
 route.put('/delete/:id', auth, KitController.deleteKit);
 route.post('/upload', auth , upload.single('kit'), KitController.upload);
+route.put('/addKitToCart/:id', auth, KitController.addKitToCart);
 
 
 module.exports = route;  

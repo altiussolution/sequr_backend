@@ -9,10 +9,26 @@ const KitSchema = Schema({
     image_path: {
         type: String,
     },
-    kit_data: {
-        type: Array,
-        required: true
-    },
+    kit_data: [
+        {
+            category_id:{
+                type: Schema.Types.ObjectId,
+                required: true,
+                ref: 'category'
+            },
+            item_id:{
+                type: Schema.Types.ObjectId,
+                required: true,
+                ref: 'item'
+            },
+            qty : {
+                type : Number
+            },
+            description : {
+                type : String
+            }
+        }
+    ],
     created_at: {
         type: Date,
         default: Date.now
