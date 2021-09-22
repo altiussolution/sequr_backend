@@ -25,12 +25,12 @@ exports.getStockAllocations =   ((req,res) =>{
         .populate("supplier").populate("purchase_order").populate("bin").populate("category").populate("cube").skip(offset).limit(limit).then(stocks =>{
             res.status(200).send({ success: true, data: stocks });
         }).catch(error => {
-            console.log(error.name)
+            console.log(error)
             res.status(400).send({success: false, error : error.name})
         })
     } catch(error){
         console.log(error.name)
-        res.status(201).send({success: false, error : error.name})
+        res.status(201).send({success: false, error : error})
     }
   
 })
