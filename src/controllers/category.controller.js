@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 const { result } = require('lodash');
 const {categoryModel,subCategoryModel,itemModel} = require('../models')
+=======
+const {categoryModel,subCategoryModel} = require('../models')
+>>>>>>> 1495c43948e75b9bf8677bf5be73d9edbfc0c138
 var {error_code,appRouteModels} = require('../utils/enum.utils')
 exports.addCategory = (async (req, res) => {
    try{
@@ -91,3 +95,23 @@ exports.deleteCategory = (async(req,res) =>{
     }
 })
 
+exports.getCategorylist = (async (req, res) => {
+    var query = {active_status : 1}
+    var categories = []
+    try{
+        await categoryModel.find(query).then(async category =>{
+            for (let cat of category){
+
+            await subCategoryModel.find({category_id : cat._id}).then(subCategory =>{
+                    categories.push({...cat , ...subCategory})
+                })
+            }
+            ///////console.log(categories)
+           res.status(200).send({ success: true, data: categories });
+        }).catch(error => {
+            res.status(400).send({success: false, error : error})
+        })
+    } catch(error){
+        res.status(201).send({success: false, error : error})
+    }
+})

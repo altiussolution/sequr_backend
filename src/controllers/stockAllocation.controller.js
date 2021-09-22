@@ -15,18 +15,21 @@ exports.allocateStock = ((req,res) =>{
     
 })
 
-exports.getStockAllocations = ((req,res) =>{
+exports.getStockAllocations =   ((req,res) =>{
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
     var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
     var searchString = req.query.searchString
     var query = (searchString ? {active_status: 1,status:1, $text: {$search: searchString}} : {active_status: 1, status:1})
     try{
-        stockAllocationModel.find(query).populate("item").populate("compartment").skip(offset).limit(limit).then(stocks =>{
+        stockAllocationModel.find(query).populate("item").populate("compartment").populate("sub_category")
+        .populate("supplier").populate("purchase_order").populate("bin").populate("category").populate("cube").skip(offset).limit(limit).then(stocks =>{
             res.status(200).send({ success: true, data: stocks });
         }).catch(error => {
-            res.status(400).send({success: false, error : error})
+            console.log(error)
+            res.status(400).send({success: false, error : error.name})
         })
     } catch(error){
+        console.log(error.name)
         res.status(201).send({success: false, error : error})
     }
   

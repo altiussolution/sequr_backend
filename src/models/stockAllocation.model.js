@@ -7,6 +7,11 @@ const StockAllocationSchema = Schema({
         required: true,
         ref: 'category'
     },
+    sub_category: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'subCategory'
+    },
     item: {
         type: Schema.Types.ObjectId,
         required: true,
@@ -20,7 +25,7 @@ const StockAllocationSchema = Schema({
     purchase_order: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: 'purchase_order'
+        ref: 'purchaseorder'
     },
     quantity: {
         type: Number,
