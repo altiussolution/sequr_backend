@@ -94,18 +94,23 @@ exports.deleteCategory = (async(req,res) =>{
 exports.getCategorylist = (async (req, res) => {
     var query = {active_status : 1}
     var categories = []
+    var name = 'subcategory'
     try{
         await categoryModel.find(query).then(async category =>{
             for (let cat of category){
-
-            await subCategoryModel.find({category_id : cat._id}).then(subCategory =>{
-                    categories.push({...cat , ...subCategory})
-                })
+            var subCategory = await subCategoryModel.find({category_id : cat._id}).countDocuments()
+            // await subCategoryModel.find({category_id : cat._id}).then(subCategory =>{
+            //     categories[cat.category_name] = subCategory
+            //     // console.log(subCategory,'subCategory')
+            //     // cat[name] = subCategory;
+                    categories.push({category : cat, TotalSubCat : subCategory})
+            //     })
+                
             }
-            ///////console.log(categories)
-           res.status(200).send({ success: true, data: categories });
+            console.log(categories);
+          await  res.status(200).send({ success: true, data: await categories });
         }).catch(error => {
-            res.status(400).send({success: false, error : error})
+            res.status(400).send({success: false, error : error.name})  
         })
     } catch(error){
         res.status(201).send({success: false, error : error})
