@@ -1,4 +1,5 @@
-const {categoryModel} = require('../models')
+const { result } = require('lodash');
+const {categoryModel,subCategoryModel,itemModel} = require('../models')
 var {error_code,appRouteModels} = require('../utils/enum.utils')
 exports.addCategory = (async (req, res) => {
    try{
@@ -65,6 +66,28 @@ exports.upload = (async(req,res) => {
       }
     }catch (err) {
       res.status(400).send(err);
+    }
+})
+
+exports.deleteCategory = (async(req,res) =>{
+    try{
+        var catId = req.params.id;
+        categoryModel.deleteOne({_id : catId}).then(result =>{
+            if(result.deletedCount){
+                subCategoryModel.deleteMany({},{category_id :catId }).then(subResult =>{
+                    itemModel.deleteMany({},{category_id :catId }).then(itemRestul =>{
+                        res.status(200).send({status : true, message : 'Category and all the references were deleted'})
+                    })
+                })
+            }else{
+                res.status(200).send({status : true, message : 'Category not found'})
+            }
+           
+        }).catch(err=>{
+            console.log(err,'catch error')
+        })
+    }catch(err){
+        res.status(400).send(err);
     }
 })
 

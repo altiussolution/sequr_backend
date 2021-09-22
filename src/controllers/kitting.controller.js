@@ -1,5 +1,6 @@
-const {kitModel} =  require("../models");
-var {appRouteModels} = require('../utils/enum.utils')
+const {kitModel, stockAllocationModel, CartModel} =  require("../models");
+const cartModel = require("../models/cart.model");
+var {appRouteModels,Cart} = require('../utils/enum.utils')
 
 exports.createKit = (async (req,res) =>{
     var body = req.body;
@@ -39,16 +40,20 @@ exports.getKit = ((req,res) =>{
     var query = (searchString ? {active_status: 1, $text: {$search: searchString}} : {active_status: 1})
     var _ = require('lodash');
     var binDatas = []
+    var allocationDetais;
     try{
-        kitModel.find(query).skip(offset).limit(limit).then(kits =>{
+        kitModel.find(query).skip(offset).limit(limit).then(async kits =>{
             for(let kit of kits){
                var quantity = kit.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
+               for(let kitdata of kit.kit_data){
+                   allocationDetais = await stockAllocationModel.find({category:kitdata.category_id, item:kitdata.item_id}).populate('item',['item_name']).populate('cube',['cube_name','cube_id']).populate('bin',['bin_name','bin_id']).populate('compartment',['compartment_name','compartment_id']).exec()
+               }
                    binDatas.push({
                     _id : kit._id,
                     kit_name : kit.kit_name,
                     available_item : kit.kit_data.length,
                     total_qty : quantity,
-                    kit_data : kit.kit_data,
+                    kit_data : allocationDetais,
                     image_path : kit.image_path
                    })
             }
@@ -103,4 +108,22 @@ exports.upload = ((req,res) =>{
       }catch (err) {
         res.status(400).send(err);
       }
+})
+
+exports.addKitToCart = ((req,res) =>{
+    var userId = req.user.user_id;
+    var query = {user : userId, cart_status : Cart.In_Cart}
+    var kit_id = req.params.kit_id
+    var kitting;
+    cartModel.findOne(query,['kitting']).then(isInCart =>{
+        if(isInCart){
+            if(isInCart.kitting.length == 0){
+                isInCart.kitting.push({kit_id:kit_id})
+            }else{
+                var checkIsKitItemExist = isInCart.kitting.filter(obj => (obj.kit_id == kit_id));
+                console.log(checkIsKitItemExist)
+            }
+            console.log(isInCart);
+        }
+    })
 })
