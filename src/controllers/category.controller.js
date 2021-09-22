@@ -98,16 +98,17 @@ exports.getCategorylist = (async (req, res) => {
     try{
         await categoryModel.find(query).then(async category =>{
             for (let cat of category){
-            var subCategory = await subCategoryModel.find({category_id : cat._id}).countDocuments()
+            var subCategory = await subCategoryModel.find({category_id : cat._id}).exec()
             // await subCategoryModel.find({category_id : cat._id}).then(subCategory =>{
             //     categories[cat.category_name] = subCategory
             //     // console.log(subCategory,'subCategory')
             //     // cat[name] = subCategory;
-                    categories.push({category : cat, TotalSubCat : subCategory})
+            // console.log({...category, ...{sub_category : subCategory}})
+                    categories.push({...{category : cat}, ...{sub_category : subCategory}})
             //     })
                 
             }
-            console.log(categories);
+            
           await  res.status(200).send({ success: true, data: await categories });
         }).catch(error => {
             res.status(400).send({success: false, error : error.name})  
