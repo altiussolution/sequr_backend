@@ -21,7 +21,8 @@ exports.getStockAllocations = ((req,res) =>{
     var searchString = req.query.searchString
     var query = (searchString ? {active_status: 1,status:1, $text: {$search: searchString}} : {active_status: 1, status:1})
     try{
-        stockAllocationModel.find(query).populate("item").populate("compartment").skip(offset).limit(limit).then(stocks =>{
+        stockAllocationModel.find(query).populate("item").populate("compartment").populate("sub_category_id")
+        .populate("supplier").populate("purchase_order").populate("bin").populate("category").populate("cube").skip(offset).limit(limit).then(stocks =>{
             res.status(200).send({ success: true, data: stocks });
         }).catch(error => {
             res.status(400).send({success: false, error : error})

@@ -7,6 +7,11 @@ const StockAllocationSchema = Schema({
         required: true,
         ref: 'category'
     },
+    sub_category_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'subCategory'
+    },
     item: {
         type: Schema.Types.ObjectId,
         required: true,
