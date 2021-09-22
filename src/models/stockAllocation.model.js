@@ -25,7 +25,7 @@ const StockAllocationSchema = Schema({
     purchase_order: {
         type: Schema.Types.ObjectId,
         required: true,
-        ref: 'purchase_order'
+        ref: 'purchaseorder'
     },
     quantity: {
         type: Number,
