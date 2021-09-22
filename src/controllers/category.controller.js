@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 const { result } = require('lodash');
 const {categoryModel,subCategoryModel,itemModel} = require('../models')
-=======
-const {categoryModel,subCategoryModel} = require('../models')
->>>>>>> 1495c43948e75b9bf8677bf5be73d9edbfc0c138
 var {error_code,appRouteModels} = require('../utils/enum.utils')
 exports.addCategory = (async (req, res) => {
    try{
