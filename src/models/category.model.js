@@ -5,7 +5,7 @@ const CategorySchema = Schema({
     category_name: {
         type: String,
         required: true
-    },
+    }, 
     category_code: {
         type: String,
         required: true

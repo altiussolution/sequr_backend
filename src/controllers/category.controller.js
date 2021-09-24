@@ -1,4 +1,5 @@
-const {categoryModel} = require('../models')
+const { result } = require('lodash');
+const {categoryModel,subCategoryModel,itemModel} = require('../models')
 var {error_code,appRouteModels} = require('../utils/enum.utils')
 exports.addCategory = (async (req, res) => {
    try{
@@ -68,3 +69,51 @@ exports.upload = (async(req,res) => {
     }
 })
 
+exports.deleteCategory = (async(req,res) =>{
+    try{
+        var catId = req.params.id;
+        categoryModel.deleteOne({_id : catId}).then(result =>{
+            if(result.deletedCount){
+                subCategoryModel.deleteMany({},{category_id :catId }).then(subResult =>{
+                    itemModel.deleteMany({},{category_id :catId }).then(itemRestul =>{
+                        res.status(200).send({status : true, message : 'Category and all the references were deleted'})
+                    })
+                })
+            }else{
+                res.status(200).send({status : true, message : 'Category not found'})
+            }
+           
+        }).catch(err=>{
+            console.log(err,'catch error')
+        })
+    }catch(err){
+        res.status(400).send(err);
+    }
+})
+
+exports.getCategorylist = (async (req, res) => {
+    var query = {active_status : 1}
+    var categories = []
+    var name = 'subcategory'
+    try{
+        await categoryModel.find(query).then(async category =>{
+            for (let cat of category){
+            var subCategory = await subCategoryModel.find({category_id : cat._id}).exec()
+            // await subCategoryModel.find({category_id : cat._id}).then(subCategory =>{
+            //     categories[cat.category_name] = subCategory
+            //     // console.log(subCategory,'subCategory')
+            //     // cat[name] = subCategory;
+            // console.log({...category, ...{sub_category : subCategory}})
+                    categories.push({...{category : cat}, ...{sub_category : subCategory}})
+            //     })
+                
+            }
+            
+          await  res.status(200).send({ success: true, data: await categories });
+        }).catch(error => {
+            res.status(400).send({success: false, error : error.name})  
+        })
+    } catch(error){
+        res.status(201).send({success: false, error : error})
+    }
+})

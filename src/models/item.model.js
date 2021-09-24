@@ -28,7 +28,7 @@ const ItemSchema = Schema({
     }],
     is_active: {
         type: Boolean,
-        default: false
+        default: false 
     },
     calibration_month: {
         type: Date,
