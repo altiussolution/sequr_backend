@@ -3,10 +3,8 @@ const auth = require("../middleware/auth.middleware");
 let route = require('express').Router()
 
 route.post('/add', auth,CartController.addToCart);
-// route.get('/get',auth, BinController.getBin);
-// route.get('/getBinByCube',BinController.getBinByCube);
+route.get('/myCart',auth, CartController.myCart);
+route.get('/get',auth, CartController.getCart);
 route.put('/update/:id', auth,CartController.updateCart);
-// route.put('/delete/:id', auth,BinController.deleteBin);
-
 
 module.exports = route;

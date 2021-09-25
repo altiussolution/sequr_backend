@@ -99,3 +99,41 @@ exports.updateCart = (async (req,res) =>{
     }
     
 })
+
+exports.myCart = ((req,res) =>{
+    try{
+        var userId = req.user.user_id;
+        CartModel.find({user:userId, cart_status : Cart.In_Cart}).then(mycart =>{
+            res.status(200).send(mycart)
+        }).catch(err=>{
+            console.log(err,'catch error')
+        })
+    }catch(err){
+        res.status(200).send({status : false , message : err.name})
+    }
+})
+  
+exports.getCart = (async (req,res) =>{
+    try{
+        var cartId = req.params.id;
+        var itemId = req.body.item;
+        var userId = req.user.user_id;
+        var cart_status = req.body.cart_status
+        var query = {user : userId, cart_status : 3}
+    
+        await CartModel.find(query).then(data =>{
+            //console.log(data)
+            if(data){
+                res.status(200).send({status:true, data})
+            }else{
+                res.status(200).send({status : false , message : 'No Data Found'});
+            }
+        }).catch(err=>{
+            console.log(err,'catch error')
+        })
+
+    }catch(err){
+        res.status(400).send({status : false , message : err.name});
+    }
+
+})
