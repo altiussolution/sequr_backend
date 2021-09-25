@@ -99,3 +99,15 @@ exports.updateCart = (async (req,res) =>{
     }
     
 })
+
+exports.myCart = ((req,res) =>{
+    try{
+        var userId = req.user.user_id;
+        CartModel.find({user:userId, cart_status : Cart.In_Cart}).then(mycart =>{
+            res.status(200).send(mycart)
+        })
+    }catch(err){
+        res.status(200).send({status : false , message : err.name})
+    }
+  
+})

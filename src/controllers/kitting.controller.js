@@ -110,20 +110,74 @@ exports.upload = ((req,res) =>{
       }
 })
 
-exports.addKitToCart = ((req,res) =>{
-    var userId = req.user.user_id;
-    var query = {user : userId, cart_status : Cart.In_Cart}
-    var kit_id = req.params.kit_id
-    var kitting;
-    cartModel.findOne(query,['kitting']).then(isInCart =>{
-        if(isInCart){
-            if(isInCart.kitting.length == 0){
-                isInCart.kitting.push({kit_id:kit_id})
+exports.addKitToCart = (async (req,res) =>{
+    try{
+        var userId = req.user.user_id;
+        var options = { upsert: true, new: true, setDefaultsOnInsert: true };
+        var query = {user : userId, cart_status : Cart.In_Cart}
+        var kit_id = req.params.id
+        var kitData = await kitModel.findById(kit_id,['kit_data']).exec()
+        var quantity = kitData.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
+        cartModel.findOne(query,['kitting','total_kitting_quantity']).then(isInCart =>{
+            var items = isInCart ? isInCart.kitting : [] 
+            if(!isInCart){
+                items = {kitting:{kit_id:kit_id,qty:1,item_quantity:quantity}}
+                isInCart = items;
             }else{
-                var checkIsKitItemExist = isInCart.kitting.filter(obj => (obj.kit_id == kit_id));
-                console.log(checkIsKitItemExist)
+                var checkIsKitItemExist = items.filter(obj => (obj.kit_id == kit_id));
+                if(checkIsKitItemExist.length > 0){
+                    var index = items.findIndex(p => p.kit_id == kit_id); 
+                    items[index].qty++;
+                    items[index].item_quantity =  items[index].item_quantity*items[index].qty
+                }else{
+                    items.push({kit_id:kit_id,qty:1,item_quantity:quantity})
+                }
+                isInCart.kitting = items;
             }
-            console.log(isInCart);
-        }
-    })
+            
+            // console.log(isInCart,'141');
+           
+            isInCart.total_kitting_quantity = isInCart.kitting.reduce((acc, curr) => acc + curr.item_quantity, 0); // 6;
+            CartModel.findOneAndUpdate(query,isInCart, options).then(is_create =>{
+                console.log(is_create,'144')
+                res.status(200).send({ success: true, message: 'Successfully added into cart!' });
+            }).catch(err =>{
+                console.log(err,'147');
+                res.status(201).send({status : false , message : err.name})
+            })
+                
+            
+        })
+    }catch(err){
+        console.log(err)
+    }
+})
+
+exports.deleteKitFromCart = (async (req,res) =>{
+    var userId = req.user.user_id;
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true };
+    var cart_id = req.params.cart_id
+    var kit_id = req.params.kit_id
+    var query = {_id : cart_id, user : userId, cart_status : Cart.In_Cart}
+    try{
+        CartModel.findOne(query).then(data =>{
+            if(data){
+                var checkIsKitItemExist = data.kitting.findIndex(obj => (obj.kit_id == kit_id));
+                if(checkIsKitItemExist !== -1){
+                    data.kitting.splice(checkIsKitItemExist, 1);
+                }
+                data.total_kitting_quantity = data.kitting.reduce((acc, curr) => acc + curr.item_quantity, 0); // 6;
+                CartModel.findOneAndUpdate(query,data, options).then(is_create =>{
+                    res.status(200).send({ success: true, message: 'Successfully deleted from cart!' });
+                }).catch(err =>{
+                    res.status(201).send({status : false , message : err.name})
+                })
+            }
+        }).catch(err =>{
+            res.status(201).send({status : false, message : err.name});
+        })
+
+    }catch(err){
+        res.status(201).send({status : false, message : err.name});
+    }
 })
