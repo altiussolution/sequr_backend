@@ -266,7 +266,6 @@ exports.userProfile = async (req, res) => {
 
 exports.EmployeeForgotPassword = async (req, res) => {
   try {
-    console.log(req.params)
     const user = await User.findOne({
       email_id: req.body.email_id
     })
