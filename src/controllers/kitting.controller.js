@@ -118,7 +118,7 @@ exports.addKitToCart = (async (req,res) =>{
         var kit_id = req.params.id
         var kitData = await kitModel.findById(kit_id,['kit_data']).exec()
         var quantity = kitData.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
-        cartModel.findOne(query,['kitting','total_kitting_quantity']).then(isInCart =>{
+        cartModel.findOne(query,['kitting','total_kitting_quantity','kit_status']).then(isInCart =>{
             var items = isInCart ? isInCart.kitting : [] 
             if(!isInCart){
                 items = {kitting:{kit_id:kit_id,qty:1,item_quantity:quantity}}
@@ -138,6 +138,7 @@ exports.addKitToCart = (async (req,res) =>{
             // console.log(isInCart,'141');
            
             isInCart.total_kitting_quantity = isInCart.kitting.reduce((acc, curr) => acc + curr.item_quantity, 0); // 6;
+            isInCart.kit_status = 1;
             CartModel.findOneAndUpdate(query,isInCart, options).then(is_create =>{
                 console.log(is_create,'144')
                 res.status(200).send({ success: true, message: 'Successfully added into cart!' });
@@ -145,8 +146,6 @@ exports.addKitToCart = (async (req,res) =>{
                 console.log(err,'147');
                 res.status(201).send({status : false , message : err.name})
             })
-                
-            
         })
     }catch(err){
         console.log(err)

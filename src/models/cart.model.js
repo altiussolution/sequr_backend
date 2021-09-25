@@ -46,6 +46,11 @@ const CartSchema = Schema({
         enum : [1,2,3],
         default : 1  // 1 -> In Cart , 2 -> Has taken , 3 -> Kept
     },
+    kit_status : {
+        type : Number,
+        enum : [0,1,2,3],
+        default : 0  // 0-> no kit , 1 -> In Kit , 2 -> Has taken , 3 -> Kept
+    },
     status : {
         type : Number,
         enum : [0,1],
