@@ -31,9 +31,9 @@ exports.getsubCategory = async (req, res) => {
   var searchString = req.query.searchString;
   var categoryId = req.query.category_id;
   var query = (searchString ? { active_status: 1, category_id:categoryId, $text: { $search: searchString } } : { active_status: 1, category_id:categoryId })
-  var popVal = categoryId ? null : 'category_id'
+  // var popVal = categoryId ? null : 'category_id'
   try {
-      subCategoryModel.find(query).populate(popVal).skip(offset).limit(limit).then(categories => {
+      subCategoryModel.find(query).populate('category_id').skip(offset).limit(limit).then(categories => {
         res.status(200).send({ success: true, data: categories })
       })
       .catch(error => {

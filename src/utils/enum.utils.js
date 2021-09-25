@@ -15,23 +15,23 @@ const enumVariables = {
     },
     Permissions : {
         Employee : [ 
+            'employee_get',
             'employee_update',
             'employee_add',
             'employee_delete',
-            'employee_get',
             'employee_permission',
         ],
         Item : [
+            'item_get',
             'item_update',
             'item_add',
             'item_delete',
-            'item_get',
-            'item_permission',
+            'item_permission'
         ],
         Machine : [
             'machine_get',
-            'machine_add',
             'machine_update',
+            'machine_add',
             'machine_delete',
             'machine_permission'
         ],
