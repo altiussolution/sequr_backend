@@ -103,7 +103,7 @@ exports.updateCart = (async (req,res) =>{
 exports.myCart = ((req,res) =>{
     try{
         var userId = req.user.user_id;
-        CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart']).populate('cart.item','item_name').then(mycart =>{
+        CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart']).populate('cart.item',['item_name','image_path']).then(mycart =>{
             res.status(200).send(mycart)
         }).catch(err=>{
             console.log(err,'catch error')
@@ -116,7 +116,7 @@ exports.myCart = ((req,res) =>{
 exports.itemHistory = (async (req,res) =>{
     try{
         var userId = req.user.user_id;
-        var CartHistory = await CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart']).exec();
+        var CartHistory = await CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart']).populate('cart.item',['item_name','image_path']).exec();
         var KitHistory = await CartModel.find({user:userId, kit_status : Cart.In_Cart},['kitting']).exec()
         res.status(200).send({status : true, Cart : CartHistory, Kits : KitHistory})
     }catch(err){
