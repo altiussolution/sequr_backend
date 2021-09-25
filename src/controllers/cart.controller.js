@@ -103,7 +103,7 @@ exports.updateCart = (async (req,res) =>{
 exports.myCart = ((req,res) =>{
     try{
         var userId = req.user.user_id;
-        CartModel.find({user:userId, cart_status : Cart.In_Cart}).then(mycart =>{
+        CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart']).populate('cart.item','item_name').then(mycart =>{
             res.status(200).send(mycart)
         }).catch(err=>{
             console.log(err,'catch error')
@@ -113,27 +113,28 @@ exports.myCart = ((req,res) =>{
     }
 })
   
-exports.getCart = (async (req,res) =>{
+exports.itemHistory = (async (req,res) =>{
     try{
-        var cartId = req.params.id;
-        var itemId = req.body.item;
         var userId = req.user.user_id;
-        var cart_status = req.body.cart_status
-        var query = {user : userId, cart_status : 3}
-    
-        await CartModel.find(query).then(data =>{
-            //console.log(data)
-            if(data){
-                res.status(200).send({status:true, data})
-            }else{
-                res.status(200).send({status : false , message : 'No Data Found'});
-            }
-        }).catch(err=>{
-            console.log(err,'catch error')
-        })
-
+        var CartHistory = await CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart']).exec();
+        var KitHistory = await CartModel.find({user:userId, kit_status : Cart.In_Cart},['kitting']).exec()
+        res.status(200).send({status : true, Cart : CartHistory, Kits : KitHistory})
     }catch(err){
-        res.status(400).send({status : false , message : err.name});
+        res.status(201).send({status : false , message : err.name})
     }
 
+})
+
+exports.return = ((req,res) => {
+    var body = req.body;
+    try{
+        CartModel.updateOne(body,(err,data) =>{
+            if(data.modifiedCount){
+                res.status(201).send({status : false , message : "Returned Sucessfully"})
+            }
+        })
+    }catch(err){
+        res.status(201).send({status : false , message : err.name})
+    }
+    
 })
