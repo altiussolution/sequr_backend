@@ -3,6 +3,7 @@ const auth = require("../middleware/auth.middleware");
 let route = require('express').Router()
 
 route.post('/add', auth,CartController.addToCart);
+route.get('/get',auth, CartController.getCart);
 // route.get('/get',auth, BinController.getBin);
 // route.get('/getBinByCube',BinController.getBinByCube);
 route.put('/update/:id', auth,CartController.updateCart);
