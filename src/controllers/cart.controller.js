@@ -117,7 +117,14 @@ exports.itemHistory = (async (req,res) =>{
     try{
         var userId = req.user.user_id;
         var CartHistory = await CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart']).populate('cart.item',['item_name','image_path']).exec();
-        var KitHistory = await CartModel.find({user:userId, kit_status : Cart.In_Cart},['kitting']).exec()
+        var KitHistory = await CartModel.find({user:userId, kit_status : Cart.In_Cart},['kitting'])
+        .populate({
+            path : 'kitting.kit_id',
+            populate : {
+                path : 'kit_data.item_id'
+            }
+        })
+        .exec()
         res.status(200).send({status : true, Cart : CartHistory, Kits : KitHistory})
     }catch(err){
         res.status(201).send({status : false , message : err.name})
