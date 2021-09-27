@@ -5,7 +5,7 @@ let route = require('express').Router()
 route.post('/add', auth,CartController.addToCart);
 route.get('/myCart',auth, CartController.myCart);
 route.get('/itemHistory',auth, CartController.itemHistory);
-route.put('/update/:id', auth,CartController.updateCart);
+route.put('/update', auth,CartController.updateCart);
 route.put('/return', auth,CartController.return);
 
 module.exports = route;

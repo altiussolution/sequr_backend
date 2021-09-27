@@ -36,7 +36,7 @@ exports.addToCart = ((req,res) => {
 
 exports.updateCart = (async (req,res) =>{
     try{
-        var cartId = req.params.id;
+        var cartId = req.body.id;
         var qty = req.body.qty;
         var itemId = req.body.item;
         var userId = req.user.user_id;
@@ -46,7 +46,7 @@ exports.updateCart = (async (req,res) =>{
         var cart_delete = req.body.cart_delete;
         var isErrResponse = false
         
-        var data = await CartModel.findOne({_id : cartId, user : userId, status : 1}).exec() //, cart_status : Cart.In_Cart
+        var data = await CartModel.findOne({_id : { $in : cartId}, user : userId, status : 1}).exec() //, cart_status : Cart.In_Cart
         if(!data){
             isErrResponse = true;
             res.status(200).send({message : 'Cart not found or Deleted'})
@@ -68,7 +68,7 @@ exports.updateCart = (async (req,res) =>{
                 )
             }
         }else if(cart_status){
-            cartUpdate = {cart_status : cart_status}
+            cartUpdate = {cart_status : cart_status} //  in cart, ketp or taket ref module
         }else if(cart_delete){
             if(data.cart_status > Cart.In_Cart){
                 isErrResponse = true;
@@ -128,7 +128,6 @@ exports.itemHistory = (async (req,res) =>{
         var kitData = []
         for await(let [i,item] of KitHistory.entries()){
             for(let [j,val] of item.kitting.entries()){
-                console.log(val);
                 for(let [k,data] of val.kit_id.kit_data.entries()){
                     stockData = await stockAllocationModel.find({item:data.item_id._id}).populate('item',['item_name','image_path']).populate('cube',['cube_name','cube_id']).populate('bin',['bin_name','bin_id']).populate('compartment',['compartment_name','compartment_id']).exec()
                     kitData.push({
@@ -150,7 +149,7 @@ exports.itemHistory = (async (req,res) =>{
 exports.return = ((req,res) => {
     var body = req.body;
     try{
-        CartModel.updateOne(body,(err,data) =>{
+        CartModel.updateOne({_id : {$in : body._id}}, body,(err,data) =>{
             if(data.modifiedCount){
                 res.status(201).send({status : false , message : "Returned Sucessfully"})
             }
