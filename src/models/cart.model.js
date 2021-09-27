@@ -55,7 +55,19 @@ const CartSchema = Schema({
         type : Number,
         enum : [0,1],
         default : 1
-    }
+    },
+    created_at: {
+        type: Date,
+        default: Date.now
+      },
+      deleted_at: {
+        type: Date,
+        default: null
+      },
+      updated_at: {
+        type: Date,
+        default: Date.now
+      },
 })
 
 module.exports = mongoose.model('cart', CartSchema);
