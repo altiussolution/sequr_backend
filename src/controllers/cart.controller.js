@@ -103,7 +103,7 @@ exports.updateCart = (async (req,res) =>{
 exports.myCart = ((req,res) =>{
     try{
         var userId = req.user.user_id;
-        CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart','total_quantity']).populate('cart.item',['item_name','image_path']).then(mycart =>{
+        CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart','total_quantity','cart_status']).populate('cart.item',['item_name','image_path']).then(mycart =>{
             res.status(200).send(mycart)
         }).catch(err=>{
             console.log(err,'catch error')
@@ -158,4 +158,36 @@ exports.return = ((req,res) => {
         res.status(201).send({status : false , message : err.name})
     }
     
+})
+
+exports.deleteItemFromCart = ((req,res) =>{
+    var cart_id = req.body.cart_id;
+    var item_id = req.body.item_id;
+    var userId = req.user.user_id;
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true };
+    var query = {_id : cart_id, user : userId, cart_status : Cart.In_Cart}
+    try{
+        CartModel.findOne(query).then(data =>{
+            console.log(data, query);
+            if(data){
+                for(let id of item_id){
+                    var checkIsKitItemExist = data.cart.findIndex(obj => (obj.item == id));
+                    if(checkIsKitItemExist !== -1){
+                        data.cart.splice(checkIsKitItemExist, 1);
+                    }
+                }
+                
+                data.total_quantity = data.cart.reduce((acc, curr) => acc + curr.qty, 0); // 6;
+                CartModel.findOneAndUpdate(query,data, options).then(is_create =>{
+                    res.status(200).send({ success: true, message: 'Successfully item deleted from cart!' });
+                }).catch(err =>{
+                    res.status(201).send({status : false , message : err.name})
+                })
+            }
+        }).catch(err =>{
+            res.status(201).send({status : false , message : err.name})
+        })
+    }catch(err){
+        res.status(201).send({status : false, message : err.name});
+    }
 })
