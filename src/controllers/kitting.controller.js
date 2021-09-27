@@ -46,7 +46,7 @@ exports.getKit = ((req,res) =>{
             for(let kit of kits){
                var quantity = kit.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
                for(let kitdata of kit.kit_data){
-                   allocationDetais = await stockAllocationModel.find({category:kitdata.category_id, item:kitdata.item_id}).populate('item',['item_name']).populate('cube',['cube_name','cube_id']).populate('bin',['bin_name','bin_id']).populate('compartment',['compartment_name','compartment_id']).exec()
+                   allocationDetais = await stockAllocationModel.find({category:kitdata.category_id, item:kitdata.item_id}).populate('item',['item_name','image_path']).populate('cube',['cube_name','cube_id']).populate('bin',['bin_name','bin_id']).populate('compartment',['compartment_name','compartment_id']).exec()
                }
                    binDatas.push({
                     _id : kit._id,
