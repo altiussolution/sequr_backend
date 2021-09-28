@@ -132,7 +132,7 @@ exports.itemHistory = (async (req,res) =>{
                     stockData = await stockAllocationModel.find({item:data.item_id._id}).populate('item',['item_name','image_path']).populate('cube',['cube_name','cube_id']).populate('bin',['bin_name','bin_id']).populate('compartment',['compartment_name','compartment_id']).exec()
                     kitData.push({
                         kit_id : val._id,
-                        kit_name : val.kit_name,
+                        kit_name : val.kit_id.kit_name,
                         kit_data : stockData
                     })
                 }
