@@ -285,3 +285,64 @@ exports.EmployeeForgotPassword = async (req, res) => {
     console.log(error)
   }
 }
+
+exports.changePassword = (async (req, res) =>{
+  var passwordDetails = req.body;
+  console.log(req.body)
+   var userId = req.params._id;
+   console.log(userId)
+     if (userId) {
+       if (passwordDetails.newpassword) {
+        await User.findOne({userId : userId}, async function (err, user) {
+           console.log(user)
+           if (!err && user) {
+             //console.log(user.authenticate(passwordDetails.oldpassword));
+             var compare = await bcrypt.compare(passwordDetails.oldpassword , user.password)
+             console.log(compare)
+             if (user && compare)  {
+               
+                 user.password  = await bcrypt.hash(passwordDetails.newpassword, 10)
+                //const user = await User.findOne({ employee_id });
+
+                
+                 user.save(function (err) {
+                   if (err) {
+                     return res.status(422).send({
+                       message: errorHandler.getErrorMessage(err)
+                     });
+                   } else {
+                     //req.login(user, function (err) {
+                      // console.log(user)
+                       //if (err) {
+                         //res.status(400).send(err);
+                     //  } else {
+                         res.send({
+                           message: 'Password changed successfully'
+                         });
+                     //  }
+                    // });
+                   }
+                 });
+             } else {
+               res.status(422).send({
+                 message: 'Current password is incorrect'
+               });
+             }
+           } else {
+             res.status(400).send({
+               message: 'User is not found'
+             });
+           }
+         });
+       } else {
+         res.status(422).send({
+           message: 'Please provide a new password'
+         });
+       }
+     } else {
+       res.status(401).send({
+         message: 'User is not signed in'
+       });
+     }
+ });
+ 
