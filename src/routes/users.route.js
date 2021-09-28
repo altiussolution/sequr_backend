@@ -19,6 +19,7 @@ route.put('/update', auth, controllers.UsersController.update)
 route.put('/delete', auth, controllers.UsersController.delete)
 route.get('/get', auth, controllers.UsersController.listEmployees)
 route.post('/forgotPassword', controllers.UsersController.forgotPassword)
+route.post('/changePassword/:_id',auth, controllers.UsersController.changePassword)
 route.put('/resetPassword/:user_id/:token', controllers.UsersController.resetPassword)
 route.get('/userProfile/:id',auth,controllers.UsersController.userProfile);
 route.post('/EmployeeforgotPassword/',controllers.UsersController.EmployeeForgotPassword);
