@@ -19,7 +19,12 @@ const CartSchema = Schema({
         },
         qty : {
             type : Number
-        }
+        },
+        cart_status : {
+            type : Number,
+            enum : [1,2,3,4],
+            default : 1  // 1 -> In Cart , 2 -> Has taken , 3 -> Kept, 4 -> return
+        },
     }],
     kitting: [{
         kit_id : {
@@ -31,7 +36,20 @@ const CartSchema = Schema({
         },
         item_quantity: {
             type : Number
-        }
+        },
+        kit_status : {
+            type : Number,
+            enum : [1,2,3,4],
+            default : 1  // 0-> no kit , 1 -> In Kit , 2 -> Has taken , 3 -> Kept, 4-> Return
+        },
+        created_at: {
+            type: Date,
+            default: Date.now
+        },
+        updated_at: {
+        type: Date,
+        default: Date.now
+        }, 
     }],
     total_kitting_quantity : {
         type : Number,
@@ -40,16 +58,6 @@ const CartSchema = Schema({
     total_quantity : {
         type : Number,
         default : 0
-    },
-    cart_status : {
-        type : Number,
-        enum : [1,2,3],
-        default : 1  // 1 -> In Cart , 2 -> Has taken , 3 -> Kept
-    },
-    kit_status : {
-        type : Number,
-        enum : [0,1,2,3],
-        default : 0  // 0-> no kit , 1 -> In Kit , 2 -> Has taken , 3 -> Kept
     },
     status : {
         type : Number,
@@ -67,7 +75,7 @@ const CartSchema = Schema({
       updated_at: {
         type: Date,
         default: Date.now
-      },
+      }, 
 })
 
 module.exports = mongoose.model('cart', CartSchema);

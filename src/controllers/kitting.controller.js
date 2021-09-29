@@ -114,23 +114,23 @@ exports.addKitToCart = (async (req,res) =>{
     try{
         var userId = req.user.user_id;
         var options = { upsert: true, new: true, setDefaultsOnInsert: true };
-        var query = {user : userId, cart_status : Cart.In_Cart}
+        var query = {user : userId}
         var kit_id = req.params.id
         var kitData = await kitModel.findById(kit_id,['kit_data']).exec()
         var quantity = kitData.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
         cartModel.findOne(query,['kitting','total_kitting_quantity','kit_status']).then(isInCart =>{
             var items = isInCart ? isInCart.kitting : [] 
             if(!isInCart){
-                items = {kitting:{kit_id:kit_id,qty:1,item_quantity:quantity}}
+                items = {kitting:{kit_id:kit_id,qty:1,item_quantity:quantity, kit_status : 1}}
                 isInCart = items;
             }else{
-                var checkIsKitItemExist = items.filter(obj => (obj.kit_id == kit_id));
+                var checkIsKitItemExist = items.filter(obj => (obj.kit_id == kit_id && obj.kit_status == 1));
                 if(checkIsKitItemExist.length > 0){
                     var index = items.findIndex(p => p.kit_id == kit_id); 
                     items[index].qty++;
                     items[index].item_quantity =  items[index].item_quantity*items[index].qty
                 }else{
-                    items.push({kit_id:kit_id,qty:1,item_quantity:quantity})
+                    items.push({kit_id:kit_id,qty:1,item_quantity:quantity, kit_status :1})
                 }
                 isInCart.kitting = items;
             }
@@ -140,7 +140,6 @@ exports.addKitToCart = (async (req,res) =>{
             isInCart.total_kitting_quantity = isInCart.kitting.reduce((acc, curr) => acc + curr.item_quantity, 0); // 6;
             isInCart.kit_status = 1;
             CartModel.findOneAndUpdate(query,isInCart, options).then(is_create =>{
-                console.log(is_create,'144')
                 res.status(200).send({ success: true, message: 'Successfully added into cart!' });
             }).catch(err =>{
                 console.log(err,'147');

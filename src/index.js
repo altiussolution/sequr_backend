@@ -14,6 +14,8 @@ app.use(express.static(__dirname + '/public'));
 const routesIndex = require('./routes/index');
 routesIndex(app);  
 
+const {CartModel} = require('./models')
+
 app.use((req, res, next) => { 
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -40,8 +42,17 @@ const options = {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModi
 // mongoose.set('useFindAndModify', false);
 const mongo = mongoose.connect(dbPath);
 
-mongo.then(() =>{
+
+
+mongo.then(async () =>{
     console.log('mongo connected success')
+    // await CartModel.deleteMany({},(err,res) =>{
+    //     if(!err){
+    //         console.log(res)
+    //     }else{
+    //         console.log(err);
+    //     }
+    // })
 }, error =>{
     console.log(error, 'error');
 })
