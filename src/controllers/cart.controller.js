@@ -113,7 +113,7 @@ exports.myCart = ((req,res) =>{
     }
 })
   
-exports.itemHistory = (async (req,res) =>{
+exports.itemHistory = (async (req,res) => {
     try{
         var userId = req.user.user_id;
         var CartHistory = await CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart','updated_at']).populate('cart.item',['item_name','image_path']).exec();
@@ -131,6 +131,7 @@ exports.itemHistory = (async (req,res) =>{
                 for(let [k,data] of val.kit_id.kit_data.entries()){
                     stockData = await stockAllocationModel.find({item:data.item_id._id}).populate('item',['item_name','image_path']).populate('cube',['cube_name','cube_id']).populate('bin',['bin_name','bin_id']).populate('compartment',['compartment_name','compartment_id']).exec()
                     kitData.push({
+                        _id : item._id,
                         kit_id : val._id,
                         kit_name : val.kit_id.kit_name,
                         kit_data : stockData
