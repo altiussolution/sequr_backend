@@ -1,7 +1,7 @@
 require('dotenv').config();
 const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
 var mkdirp = require('mkdirp');
-const port = 4500;
+const port = 4500; 
 var express = require('express')
 var cors = require('cors')
 var app = express() 
@@ -13,6 +13,8 @@ app.use(express.json());
 app.use(express.static(__dirname + '/public'));
 const routesIndex = require('./routes/index');
 routesIndex(app);  
+
+const {CartModel} = require('./models')
 
 app.use((req, res, next) => { 
     res.header('Access-Control-Allow-Origin', '*');
@@ -40,8 +42,17 @@ const options = {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModi
 // mongoose.set('useFindAndModify', false);
 const mongo = mongoose.connect(dbPath);
 
-mongo.then(() =>{
+
+
+mongo.then(async () =>{
     console.log('mongo connected success')
+    // await CartModel.deleteMany({},(err,res) =>{
+    //     if(!err){
+    //         console.log(res)
+    //     }else{
+    //         console.log(err);
+    //     }
+    // })
 }, error =>{
     console.log(error, 'error');
 })
