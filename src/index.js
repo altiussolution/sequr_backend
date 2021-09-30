@@ -46,13 +46,13 @@ const mongo = mongoose.connect(dbPath);
 
 mongo.then(async () =>{
     console.log('mongo connected success')
-    await CartModel.deleteMany({},(err,res) =>{
-        if(!err){
-            console.log(res)
-        }else{
-            console.log(err);
-        }
-    })
+    // await CartModel.deleteMany({},(err,res) =>{
+    //     if(!err){
+    //         console.log(res)
+    //     }else{
+    //         console.log(err);
+    //     }
+    // })
 }, error =>{
     console.log(error, 'error');
 })
