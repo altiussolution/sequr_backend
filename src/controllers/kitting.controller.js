@@ -156,20 +156,26 @@ exports.deleteKitFromCart = (async (req,res) =>{
     var options = { upsert: true, new: true, setDefaultsOnInsert: true };
     var cart_id = req.params.cart_id
     var kit_id = req.params.kit_id
-    var query = {_id : cart_id, user : userId, cart_status : Cart.In_Cart}
+    var query = {_id : cart_id, user : userId}
     try{
         CartModel.findOne(query).then(data =>{
             if(data){
-                var checkIsKitItemExist = data.kitting.findIndex(obj => (obj.kit_id == kit_id));
+                var checkIsKitItemExist = data.kitting.findIndex(obj => (obj.kit_id == kit_id && obj.kit_status == 1));
                 if(checkIsKitItemExist !== -1){
                     data.kitting.splice(checkIsKitItemExist, 1);
                 }
-                data.total_kitting_quantity = data.kitting.reduce((acc, curr) => acc + curr.item_quantity, 0); // 6;
+               
+                data.total_kitting_quantity =  data.kitting.reduce(function(sum, current) {
+                    return current.kit_status == 1 ? sum + current.item_quantity : sum;
+                }, 0);
+                
                 CartModel.findOneAndUpdate(query,data, options).then(is_create =>{
                     res.status(200).send({ success: true, message: 'Successfully deleted from cart!' });
                 }).catch(err =>{
                     res.status(201).send({status : false , message : err.name})
                 })
+            }else{
+                res.status(201).send({status : false, message : 'No Kit Found'});
             }
         }).catch(err =>{
             res.status(201).send({status : false, message : err.name});
