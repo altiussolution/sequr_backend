@@ -1,6 +1,19 @@
 const { binModel, cubeModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
+const request = require('request')
 
+exports.machineAccess = (async (req,res) =>{
+    var url = 'http://localhost:44400/machine/unlock.xml?uid=1305167547307745&drawer=5&compartment=10&id=1'
+    var details;
+    await new Promise((resolve, reject) => {
+        request(url, { json: true }, (err, res, body) => {
+          if (err) reject(err)
+          resolve(body)
+          details= body 
+        });
+    })
+    res.send(details)
+})
 
 exports.createBin = (async (req,res) =>{  
     try{

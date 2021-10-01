@@ -53,6 +53,6 @@ mongo.then(async () =>{
     //         console.log(err);
     //     }
     // })
-}, error =>{
+}, error =>{  
     console.log(error, 'error');
 })
