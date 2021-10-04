@@ -41,7 +41,7 @@ const BranchSchema = Schema({
     },
     fax: {
         type: String,
-        required: true
+        required: false
     },
     email_id: {
         type: String,
