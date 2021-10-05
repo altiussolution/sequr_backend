@@ -1,19 +1,6 @@
 const { binModel, cubeModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
-const request = require('request')
 
-exports.machineAccess = (async (req,res) =>{
-    var url = 'http://localhost:44400/machine/unlock.xml?uid=1305167547307745&drawer=5&compartment=10&id=1'
-    var details;
-    await new Promise((resolve, reject) => {
-        request(url, { json: true }, (err, res, body) => {
-          if (err) reject(err)
-          resolve(body)
-          details= body 
-        });
-    })
-    res.send(details)
-})
 
 exports.createBin = (async (req,res) =>{  
     try{
@@ -21,11 +8,15 @@ exports.createBin = (async (req,res) =>{
         var bin = new binModel(body);
         var isBinExist = await binModel.find({ $or: [{bin_name : body.bin_name},{bin_id: body.bin_id} ] }).exec()
         var checkBinCount = await cubeModel.findById(body.cube_id,['bin_max','bin_min']).exec()
-        if(checkBinCount.bin_max < body.item_max_cap){
-            res.status(200).send({ success: true, message: `Maximum bin count is ${checkBinCount.bin_max}` });
-        }else if(checkBinCount.bin_min < body.item_min_cap){
-            res.status(200).send({ success: true, message: `Minimum bin count is ${checkBinCount.bin_min}` });
+        var countBinByCube = await binModel.find({cube_id : body.cube_id}).countDocuments()
+        if(countBinByCube == checkBinCount.bin_max){
+            res.status(200).send({ success: true, message: `Maximum Draw Count Reached` });
         }
+        // if(checkBinCount.bin_max < body.item_max_cap){
+        //     res.status(200).send({ success: true, message: `Maximum bin count is ${checkBinCount.bin_max}` });
+        // }else if(checkBinCount.bin_min < body.item_min_cap){
+        //     res.status(200).send({ success: true, message: `Minimum bin count is ${checkBinCount.bin_min}` });
+        // }
         else if(isBinExist.length == 0){
             bin.save((err)=>{
                 if(!err){

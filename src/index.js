@@ -36,7 +36,7 @@ app.use(express.static(__dirname + '/public'))
 
 let mongoose = require('mongoose');
 
-const dbPath = process.env['MONGODB_URI'];
+const dbPath = process.env['MONGO_CLUSTER_URI'];
 
 const options = {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex : false}
 // mongoose.set('useFindAndModify', false);

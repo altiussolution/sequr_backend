@@ -118,10 +118,10 @@ exports.addKitToCart = (async (req,res) =>{
         var kit_id = req.params.id
         var kitData = await kitModel.findById(kit_id,['kit_data']).exec()
         var quantity = kitData.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
-        cartModel.findOne(query,['kitting','total_kitting_quantity','kit_status']).then(isInCart =>{
+        cartModel.findOne(query,['kitting','total_kitting_quantity','kit_status']).then(async isInCart =>{
             var items = isInCart ? isInCart.kitting : [] 
             if(!isInCart){
-                items = {kitting:{kit_id:kit_id,qty:1,item_quantity:quantity, kit_status : 1}}
+                items = {kitting:[{kit_id:kit_id,qty:1,item_quantity:quantity, kit_status : 1}]}
                 isInCart = items;
             }else{
                 var checkIsKitItemExist = items.filter(obj => (obj.kit_id == kit_id && obj.kit_status == 1));
@@ -135,9 +135,9 @@ exports.addKitToCart = (async (req,res) =>{
                 isInCart.kitting = items;
             }
             
-            // console.log(isInCart,'141');
+            console.log(isInCart,'138');
            
-            isInCart.total_kitting_quantity = isInCart.kitting.reduce((acc, curr) => acc + curr.item_quantity, 0); // 6;
+            isInCart.total_kitting_quantity = await isInCart.kitting.reduce((acc, curr) => acc + curr.item_quantity, 0); // 6;
             isInCart.kit_status = 1;
             CartModel.findOneAndUpdate(query,isInCart, options).then(is_create =>{
                 res.status(200).send({ success: true, message: 'Successfully added into cart!' });
