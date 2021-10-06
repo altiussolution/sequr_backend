@@ -3,10 +3,7 @@ const request = require('request')
 
 exports.machineAccess = (async (req,res) =>{
     var body = req.body;
-    var x = 0
-    var sendResponse = false;
-    var message;
-    
+    var url = `http://localhost:44400/machine/singledevinfo.xml?id=${body[x].cube_id}`
     var machineDetails = async (url) => {
       var xml;
       var resultData;
@@ -26,24 +23,26 @@ exports.machineAccess = (async (req,res) =>{
       return resultData
       
     }
-    for(let params of body){
-      var url = `http://localhost:44400/machine/unlock.xml?id=${body[x].cube_id}&drawer=${body[x].bin_name}&compartment=${body[x].compartment_name}`
-      var details = await machineDetails(url)
-      if(details.Error){
-        sendResponse = true;
-        message = details.Error.message;
-        details
-        break;
-      }else{
-        console.log('not there')
-        sendResponse = false;
-        x++
-      }
+    var details = await machineDetails(url) 
+    console.log(details);
+    // for(let params of body){
+    //   var url = `http://localhost:44400/machine/unlock.xml?id=${body[x].cube_id}&drawer=${body[x].bin_name}&compartment=${body[x].compartment_name}`
+    //   var details = await machineDetails(url)
+    //   if(details.Error){
+    //     sendResponse = true;
+    //     message = details.Error.message;
+    //     details
+    //     break;
+    //   }else{
+    //     console.log('not there')
+    //     sendResponse = false;
+    //     x++
+    //   }
       
-    }
-    if(sendResponse){
-      res.send({details : message, machine : body[x]})
-    }
+    // }
+    // if(sendResponse){
+    //   res.send({details : message, machine : body[x]})
+    // }
     
 }) 
 
