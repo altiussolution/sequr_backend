@@ -38,7 +38,6 @@ exports.machineAccess = (async (req,res) =>{
     //     sendResponse = false;
     //     x++
     //   }
-      
     // }
     // if(sendResponse){
     //   res.send({details : message, machine : body[x]})

@@ -5,12 +5,10 @@ const CompartmentSchema = Schema({
     compartment_name: {
         type: String,
         required: true,
-        unique: true
     },
     compartment_id: {
         type: String,
         required: true,
-        unique: true
     },
     cube_id: {
         type: Schema.Types.ObjectId,

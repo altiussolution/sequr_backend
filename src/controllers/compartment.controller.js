@@ -3,22 +3,34 @@ var {error_code} = require('../utils/enum.utils')
 
 
 
-exports.createCompartment = (req, res) => {
+exports.createCompartment = async (req, res) => {
     try {
-        var newCompartment = new compartmentModel(req.body);
-        newCompartment.save((err) => {
-            if (!err) {
-                res.status(200).send({ success: true, message: 'Compartment Created Successfully!' });
-            }
-            else {
-                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Compartment code or name' : err)
-                res.status(200).send({
-                    success: false,
-                    message: errorMessage
-                });
-            }
-        });
+        var isCompartmentExist = await compartmentModel.find({ $or: [{compartment_name : req.body.compartment_name},{compartment_id: req.body.compartment_id} ] , bin_id : req.body.bin_id }).exec()
+        console.log(isCompartmentExist);
+        if(isCompartmentExist.length == 0){
+            var newCompartment = new compartmentModel(req.body);
+            newCompartment.save((err) => {
+                if (!err) {
+                    res.status(200).send({ success: true, message: 'Compartment Created Successfully!' });
+                }
+                else {
+                    console.log(err);
+                    var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Compartment code or name' : err)
+                    res.status(200).send({
+                        success: false,
+                        message: errorMessage
+                    });
+                }
+            });
+        }else{
+            res.status(200).send({
+                success: false,
+                message: 'Compartment already exist'
+            });
+        }
+       
     } catch (error) {
+        console.log(error);
         res.status(201).send(error)
     }
 }

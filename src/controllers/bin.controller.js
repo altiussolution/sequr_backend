@@ -6,7 +6,7 @@ exports.createBin = (async (req,res) =>{
     try{
         var body = req.body;
         var bin = new binModel(body);
-        var isBinExist = await binModel.find({ $or: [{bin_name : body.bin_name},{bin_id: body.bin_id} ] }).exec()
+        var isBinExist = await binModel.find({ $or: [{bin_name : body.bin_name},{bin_id: body.bin_id} ] , cube_id : body.cube_id}).exec()
         var checkBinCount = await cubeModel.findById(body.cube_id,['bin_max','bin_min']).exec()
         var countBinByCube = await binModel.find({cube_id : body.cube_id}).countDocuments()
         if(countBinByCube == checkBinCount.bin_max){
@@ -17,6 +17,7 @@ exports.createBin = (async (req,res) =>{
         // }else if(checkBinCount.bin_min < body.item_min_cap){
         //     res.status(200).send({ success: true, message: `Minimum bin count is ${checkBinCount.bin_min}` });
         // }
+        
         else if(isBinExist.length == 0){
             bin.save((err)=>{
                 if(!err){

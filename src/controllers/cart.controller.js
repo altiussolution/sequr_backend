@@ -9,7 +9,7 @@ exports.addToCart = ((req,res) => {
     var query = {user : userId}
     stockAllocationModel.findOne({item : body.item},['_id','quantity']).then(async isQuantity =>{ //, quantity : {$gte: body.qty}
         if(!isQuantity){
-            res.status(200).send({status : true , message : `Stock Not Yet Allocated`})
+            res.status(201).send({status : false , message : `Stock Not Yet Allocated`})
         }
         else if(body.qty > isQuantity.quantity){
             res.status(200).send({status : true , message : `Available quantity for this item is ${isQuantity.quantity}`})
@@ -24,7 +24,7 @@ exports.addToCart = ((req,res) => {
                     userQty : body.total_quantity})
                     
                 CartModel.findOneAndUpdate(query,cart, options).then(is_create =>{
-                    res.status(200).send({ success: true, message: 'Successfully added into cart!' });
+                    res.status(200).send({ status: true, message: 'Successfully added into cart!' });
                 }).catch(err =>{
                     res.status(201).send({status : false , message : err.name})
                 })
@@ -102,10 +102,35 @@ exports.updateCart = (async (req,res) =>{
     
 })
 
-exports.myCart = ((req,res) =>{
+exports.myCart = ((req,res) => {
     try{
         var userId = req.user.user_id;
-        CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart','total_quantity','cart_status']).populate('cart.item',['item_name','image_path']).then(mycart =>{
+        CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart','total_quantity','cart_status']).populate('cart.item',['item_name','image_path'])
+        .populate({
+            path : 'cart.allocation',
+            select:'item',
+            populate : {
+                path : 'cube',
+                select:'cube_id',
+            }
+        })
+        .populate({
+            path : 'cart.allocation',
+            select:'item',
+            populate : {
+                path : 'bin',
+                select:'bin_name',
+            }
+        })
+        .populate({
+            path : 'cart.allocation',
+            select:'item',
+            populate : {
+                path : 'compartment',
+                select:'compartment_name',
+            }
+        })
+        .then(mycart =>{
             res.status(200).send(mycart)
         }).catch(err=>{
             console.log(err,'catch error')
