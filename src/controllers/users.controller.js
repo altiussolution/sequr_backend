@@ -106,7 +106,7 @@ exports.login = async (req, res) => {
 
       res.status(200).json(user)
     } else {
-      res.status(400).send('Invalid Credentials or No user found')
+      res.status(400).send({statue : false , message : 'Invalid Credentials or No user found'})
     }
   } catch (err) {
     console.log(err)

@@ -66,7 +66,6 @@ exports.updateCart = (async (req,res) =>{
                 }
             )
         }else if(cart_status){
-
             var index = data.cart.findIndex(p => p._id == itemId);
             data.cart[index].cart_status = cart_status
             cartUpdate = {cart : data.cart, total_quantity : data.total_quantity-data.cart[index].qty} 
@@ -119,8 +118,8 @@ exports.myCart = ((req,res) =>{
 exports.itemHistory = (async (req,res) => {
     try{
         var userId = req.user.user_id;
-        var CartHistory = await CartModel.find({user:userId, cart_status : Cart.In_Cart},['cart','updated_at']).populate('cart.item',['item_name','image_path']).exec();
-        var KitHistory = await CartModel.find({user:userId, kit_status : Cart.In_Cart},['kitting','updated_at'])
+        var CartHistory = await CartModel.find({user:userId},['cart','updated_at']).populate('cart.item',['item_name','image_path']).exec();
+        var KitHistory = await CartModel.find({user:userId},['kitting','updated_at'])
         .populate({
             path : 'kitting.kit_id',
             populate : {
@@ -152,17 +151,47 @@ exports.itemHistory = (async (req,res) => {
   
 })
 
-exports.return = ((req,res) => {
+exports.return = (async (req,res) => {
     var body = req.body;
+    options = { upsert: true, new: false, setDefaultsOnInsert: true };
+    var return_items = body.return_items
+    var cart_status = body.cart_status;
+    var kit_status= body.kit_status;
     try{
-        CartModel.updateOne(query, update, options,(err,data) =>{
-            if(data.modifiedCount){
-                res.status(201).send({status : false , message : "Returned Sucessfully"})
-            }else{
-                res.status(201).send({status : false , message : "Nothing to modify"})
-            }
-        })
+        if(cart_status){
+            CartModel.findById(body.cart_id, ['cart','total_quantity']).then(values =>{
+                for(var id of return_items){
+                    var index = values.cart.findIndex(p => p._id == id)
+                    values.cart[index]['cart_status'] = cart_status  
+                    values.total_quantity = values.total_quantity-values.cart[index]['qty']
+                }
+                    CartModel.findByIdAndUpdate(body.cart_id, values,(err,data) =>{
+                        if(data){
+                            res.status(201).send({status : false , message : "Returned Sucessfully"})
+                        }else{
+                            res.status(201).send({status : false , message : "Nothing to modify"})
+                        }
+                    })
+            })
+        }else if(kit_status){
+            CartModel.findById(body.cart_id, ['kitting','total_kitting_quantity']).then(values =>{
+                for(var id of return_items){
+                    var index = values.kitting.findIndex(p => p._id == id)
+                    values.kitting[index]['kit_status'] = kit_status  
+                    values.total_kitting_quantity = values.total_kitting_quantity-values.kitting[index]['qty']
+                }
+                console.log(values);
+                    CartModel.findByIdAndUpdate(body.cart_id, values,(err,data) =>{
+                        if(data){
+                            res.status(201).send({status : false , message : "Returned Sucessfully"})
+                        }else{
+                            res.status(201).send({status : false , message : "Nothing to modify"})
+                        }
+                    })
+            })
+        }
     }catch(err){
+        console.log(err);
         res.status(201).send({status : false , message : err.name})
     }
     
@@ -173,28 +202,33 @@ exports.deleteItemFromCart = ((req,res) =>{
     var item_id = req.body.item_id;
     var userId = req.user.user_id;
     var options = { upsert: true, new: true, setDefaultsOnInsert: true };
-    var query = {_id : cart_id, user : userId, cart_status : Cart.In_Cart}
+    var query = {_id : cart_id, user : userId}
     try{
         CartModel.findOne(query).then(data =>{
             if(data){
                 for(let id of item_id){
-                    var checkIsKitItemExist = data.cart.findIndex(obj => (obj.item == id && cart_status == 1));
+                    var checkIsKitItemExist = data.cart.findIndex(obj => (obj.item == id && obj.cart_status == 1));
                     if(checkIsKitItemExist !== -1){
                         data.cart.splice(checkIsKitItemExist, 1);
                     }
                 }
                 
-                data.total_quantity = data.cart.reduce((acc, curr) => acc + curr.qty, 0); // 6;
+                data.total_quantity = data.cart.reduce(function(sum, current) {
+                    return current.cart_status == 1 ? sum + current.qty : sum;
+                }, 0);
                 CartModel.findOneAndUpdate(query,data, options).then(is_create =>{
                     res.status(200).send({ success: true, message: 'Successfully item deleted from cart!' });
                 }).catch(err =>{
+                    console.log(err);
                     res.status(201).send({status : false , message : err.name})
                 })
             }
         }).catch(err =>{
+            console.log(err);
             res.status(201).send({status : false , message : err.name})
         })
     }catch(err){
+        console.log('hit 3');
         res.status(201).send({status : false, message : err.name});
     }
 })

@@ -1,6 +1,7 @@
 const { binModel, cubeModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
 
+
 exports.createBin = (async (req,res) =>{  
     try{
         var body = req.body;
