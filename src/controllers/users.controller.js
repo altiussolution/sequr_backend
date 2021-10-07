@@ -276,7 +276,9 @@ exports.EmployeeForgotPassword = async (req, res) => {
       length: 6,
       numbers: true
     })
-    await sendEmail(user.email_id, 'New Password', newPassword)
+
+    template = `${process.env.STAGING_USER} \n New Password : ${newPassword}`
+    await sendEmail(user.email_id, 'New Password', template)
     const encryptedPassword = await bcrypt.hash(newPassword, 10)
     await User.findByIdAndUpdate(req.body.id, { password: encryptedPassword }).exec()
     res.send('new password sent to employee email account')

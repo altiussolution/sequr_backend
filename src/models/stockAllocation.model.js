@@ -42,7 +42,7 @@ const StockAllocationSchema = Schema({
         ref: 'bin'
     },
     compartment: {
-        type: Number,
+        type: Schema.Types.ObjectId,
         required: true,
         ref: 'compartment'
     },
@@ -73,6 +73,10 @@ const StockAllocationSchema = Schema({
         type: Number,
         enum: [0,1],
         default: 1
+    },
+    compartment_number: {
+        type: Number,
+        required: true
     }
 })
 
