@@ -73,7 +73,7 @@ exports.add = async (req, res) => {
     )
     user.token = token
     var subject = `Dear ${first_name}, Use the following to siginin in sequr username - ${employee_id} , password - ${password}`
-    //await sendEmail(email_id, "New User Signup",subject );
+    await sendEmail(email_id, "New User Signup",subject );
     res.status(201).json(user)
   } catch (err) {
     console.log(err)

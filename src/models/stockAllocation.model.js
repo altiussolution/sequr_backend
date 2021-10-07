@@ -42,7 +42,7 @@ const StockAllocationSchema = Schema({
         ref: 'bin'
     },
     compartment: {
-        type: Schema.Types.ObjectId,
+        type: Number,
         required: true,
         ref: 'compartment'
     },
