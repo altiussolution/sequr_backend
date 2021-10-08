@@ -15,6 +15,7 @@ PurchaseOrderController = require('./purchaseOrder.controller')
 SupplierController = require('./supplier.controller');
 StockAllocationController = require('./stockAllocation.controller')
 CartController = require('./cart.controller')
+DashboardController = require('./dashboard.controller')
 
 module.exports = {
   UsersController,
@@ -33,5 +34,6 @@ module.exports = {
   PurchaseOrderController,
   SupplierController,
   StockAllocationController,
-  CartController
+  CartController,
+  DashboardController
 }
