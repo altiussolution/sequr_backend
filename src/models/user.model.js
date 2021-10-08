@@ -86,6 +86,10 @@ const UserSchema = Schema({
     enum: [0, 1],
     default: 1
   },
+  status: {
+    type: Boolean,
+    default: false
+},
   token: { type: String },
 })
 
