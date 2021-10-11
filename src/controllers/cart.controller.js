@@ -332,8 +332,8 @@ exports.takeCartItems = async (req, res) => {
 
 exports.myCart = async (req, res) => {
   try {
-    var userId = ObjectId('615d38fcb3b43020c778f381')
-    // var userId = req.user.user_id
+    // var userId = ObjectId('615d38fcb3b43020c778f381')
+    var userId = req.user.user_id
     cartItems = await CartModel.find({ user: userId, status: Cart.In_Cart }, [
       'cart',
       'total_quantity',
@@ -366,8 +366,8 @@ exports.myCart = async (req, res) => {
 
 exports.itemHistory = async (req, res) => {
   try {
-    // var userId = req.user.user_id
-    var userId = ObjectId('615d38fcb3b43020c778f381')
+    var userId = req.user.user_id
+    // var userId = ObjectId('615d38fcb3b43020c778f381')
     var CartHistory = await CartModel.find({ user: userId }, [
       'cart',
       'updated_at'
