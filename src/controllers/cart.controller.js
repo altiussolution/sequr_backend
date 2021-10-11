@@ -128,6 +128,7 @@ exports.updateCart = async (req, res) => {
   }
 }
 
+<<<<<<< HEAD
 exports.myCart = (req, res) => {
   try {
    console.log(req.user.user_id)
@@ -150,55 +151,77 @@ exports.myCart = (req, res) => {
     res.status(200).send({ status: false, message: err.name })
   }
 }
+=======
+// exports.myCart = (req, res) => {
+//   try {
+//     var userId = ObjectId("615d38fcb3b43020c778f381")
+>>>>>>> f3481636b4651deddf86912bfc8797d785e8139d
 
-exports.itemHistory = async (req, res) => {
-  try {
-    var userId = req.user.user_id
-    var CartHistory = await CartModel.find({ user: userId }, [
-      'cart',
-      'updated_at'
-    ])
-      .populate('cart.item', ['item_name', 'image_path'])
-      .exec()
-    var KitHistory = await CartModel.find({ user: userId }, [
-      'kitting',
-      'updated_at'
-    ])
-      .populate({
-        path: 'kitting.kit_id',
-        populate: {
-          path: 'kit_data.item_id'
-        }
-      })
-      .exec()
-    var kitData = []
-    for await (let [i, item] of KitHistory.entries()) {
-      for (let [j, val] of item.kitting.entries()) {
-        for (let [k, data] of val.kit_id.kit_data.entries()) {
-          stockData = await stockAllocationModel
-            .find({ item: data.item_id._id })
-            .populate('item', ['item_name', 'image_path'])
-            .populate('cube', ['cube_name', 'cube_id'])
-            .populate('bin', ['bin_name', 'bin_id'])
-            .populate('compartment', ['compartment_name', 'compartment_id'])
-            .exec()
-          kitData.push({
-            cart_id: item._id,
-            update_kit_id: val._id,
-            kit_name: val.kit_id.kit_name,
-            kit_item_details: stockData,
-            created_at: val.created_at,
-            updated_at: val.updated_at
-          })
-        }
-      }
-    }
+//     CartModel.find({ user: userId, cart_status: Cart.In_Cart }, [
+//       'cart',
+//       'total_quantity',
+//       'cart_status'
+//     ])
+//       // .populate('cart.item', ['item_name', 'image_path'])
+//       .then(mycart => {
+//         res.status(200).send(mycart)
+//       })
+//       .catch(err => {
+//         console.log(err, 'catch error')
+//       })
+//   } catch (err) {
+//     res.status(200).send({ status: false, message: err.name })
+//   }
+// }
 
-    res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
-  } catch (err) {
-    res.status(201).send({ status: false, message: err.name })
-  }
-}
+// exports.itemHistory = async (req, res) => {
+//   try {
+//     var userId = req.user.user_id
+//     var CartHistory = await CartModel.find({ user: userId }, [
+//       'cart',
+//       'updated_at'
+//     ])
+//       .populate('cart.item', ['item_name', 'image_path'])
+//       .exec()
+//     var KitHistory = await CartModel.find({ user: userId }, [
+//       'kitting',
+//       'updated_at'
+//     ])
+//       .populate({
+//         path: 'kitting.kit_id',
+//         populate: {
+//           path: 'kit_data.item_id'
+//         }
+//       })
+//       .exec()
+//     var kitData = []
+//     for await (let [i, item] of KitHistory.entries()) {
+//       for (let [j, val] of item.kitting.entries()) {
+//         for (let [k, data] of val.kit_id.kit_data.entries()) {
+//           stockData = await stockAllocationModel
+//             .find({ item: data.item_id._id })
+//             .populate('item', ['item_name', 'image_path'])
+//             .populate('cube', ['cube_name', 'cube_id'])
+//             .populate('bin', ['bin_name', 'bin_id'])
+//             .populate('compartment', ['compartment_name', 'compartment_id'])
+//             .exec()
+//           kitData.push({
+//             cart_id: item._id,
+//             update_kit_id: val._id,
+//             kit_name: val.kit_id.kit_name,
+//             kit_item_details: stockData,
+//             created_at: val.created_at,
+//             updated_at: val.updated_at
+//           })
+//         }
+//       }
+//     }
+
+//     res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
+//   } catch (err) {
+//     res.status(201).send({ status: false, message: err.name })
+//   }
+// }
 
 exports.return = async (req, res) => {
   var body = req.body
@@ -305,6 +328,8 @@ exports.deleteItemFromCart = (req, res) => {
   }
 }
 
+/// ************************** Arunkumar ********************** ////////////
+
 exports.takeCartItems = async (req, res) => {
   body = req.body
   cartItems = body.cart
@@ -329,3 +354,105 @@ exports.takeCartItems = async (req, res) => {
     res.send('Success')
   })
 }
+
+exports.myCart = async (req, res) => {
+  try {
+    var userId = ObjectId('615d38fcb3b43020c778f381')
+    // var userId = req.user.user_id
+    cartItems = await CartModel.find({ user: userId, status: Cart.In_Cart }, [
+      'cart',
+      'total_quantity',
+      'cart_status'
+    ])
+      .populate('cart.item', ['item_name', 'image_path'])
+      .exec()
+    mycartData = []
+    cartItems = JSON.parse(JSON.stringify(cartItems))
+    var i = 0
+    for await (let item of cartItems[0]['cart']) {
+      let data = item
+      stockData = await stockAllocationModel
+        .findOne({ item: data.item._id })
+        .populate('cube', ['cube_name', 'cube_id'])
+        .populate('bin', ['bin_name', 'bin_id'])
+        .populate('compartment', ['compartment_name', 'compartment_id'])
+        .exec()
+      // console.log(stockData)
+      cartItems[0]['cart'][i]['item_details'] = stockData
+
+      i++
+    }
+    res.status(200).send(cartItems)
+  } catch (err) {
+    console.log(err)
+    res.status(200).send({ status: false, message: err })
+  }
+}
+
+exports.itemHistory = async (req, res) => {
+  try {
+    // var userId = req.user.user_id
+    var userId = ObjectId('615d38fcb3b43020c778f381')
+    var CartHistory = await CartModel.find({ user: userId }, [
+      'cart',
+      'updated_at'
+    ])
+      .populate('cart.item', ['item_name', 'image_path'])
+      .exec()
+
+    cartItems = JSON.parse(JSON.stringify(CartHistory))
+    var i = 0
+    for await (let item of cartItems[0]['cart']) {
+      let data = item
+      stockData = await stockAllocationModel
+        .findOne({ item: data.item._id })
+        .populate('cube', ['cube_name', 'cube_id'])
+        .populate('bin', ['bin_name', 'bin_id'])
+        .populate('compartment', ['compartment_name', 'compartment_id'])
+        .exec()
+      cartItems[0]['cart'][i]['item_details'] = stockData
+
+      i++
+    }
+    var KitHistory = await CartModel.find({ user: userId }, [
+      'kitting',
+      'updated_at'
+    ])
+      .populate({
+        path: 'kitting.kit_id',
+        populate: {
+          path: 'kit_data.item_id'
+        }
+      })
+      .exec()
+    var kitData = []
+    for await (let [i, item] of KitHistory.entries()) {
+      for (let [j, val] of item.kitting.entries()) {
+        for (let [k, data] of val.kit_id.kit_data.entries()) {
+          stockData = await stockAllocationModel
+            .find({ item: data.item_id._id })
+            .populate('item', ['item_name', 'image_path'])
+            .populate('cube', ['cube_name', 'cube_id'])
+            .populate('bin', ['bin_name', 'bin_id'])
+            .populate('compartment', ['compartment_name', 'compartment_id'])
+            .exec()
+          kitData.push({
+            cart_id: item._id,
+            update_kit_id: val._id,
+            kit_name: val.kit_id.kit_name,
+            kit_item_details: stockData,
+            created_at: val.created_at,
+            updated_at: val.updated_at
+          })
+        }
+      }
+    }
+
+    res.status(200).send({ status: true, Cart: cartItems, Kits: kitData })
+  } catch (err) {
+    res.status(201).send({ status: false, message: err.name })
+  }
+}
+
+/// ************************** Arunkumar ********************** ////////////
+
