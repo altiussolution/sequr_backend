@@ -128,34 +128,9 @@ exports.updateCart = async (req, res) => {
   }
 }
 
-<<<<<<< HEAD
-exports.myCart = (req, res) => {
-  try {
-   console.log(req.user.user_id)
-	  console.log(Cart)
-
-	  var userId = req.user.user_id
-    CartModel.find({ user: userId, cart_status: Cart.In_Cart }, [
-      'cart',
-      'total_quantity',
-      'cart_status'
-    ])
-      .populate('cart.item', ['item_name', 'image_path'])
-      .then(mycart => {
-        res.status(200).send(mycart)
-      })
-      .catch(err => {
-        console.log(err, 'catch error')
-      })
-  } catch (err) {
-    res.status(200).send({ status: false, message: err.name })
-  }
-}
-=======
 // exports.myCart = (req, res) => {
 //   try {
 //     var userId = ObjectId("615d38fcb3b43020c778f381")
->>>>>>> f3481636b4651deddf86912bfc8797d785e8139d
 
 //     CartModel.find({ user: userId, cart_status: Cart.In_Cart }, [
 //       'cart',
