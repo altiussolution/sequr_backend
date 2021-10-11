@@ -130,7 +130,10 @@ exports.updateCart = async (req, res) => {
 
 exports.myCart = (req, res) => {
   try {
-    var userId = req.user.user_id
+   console.log(req.user.user_id)
+	  console.log(Cart)
+
+	  var userId = req.user.user_id
     CartModel.find({ user: userId, cart_status: Cart.In_Cart }, [
       'cart',
       'total_quantity',
