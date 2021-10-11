@@ -137,9 +137,6 @@ exports.myCart = (req, res) => {
       'cart_status'
     ])
       .populate('cart.item', ['item_name', 'image_path'])
-      .populate('cube', ['cube_name', 'cube_id'])
-      .populate('bin', ['bin_name', 'bin_id'])
-      .populate('compartment', ['compartment_name', 'compartment_id'])
       .then(mycart => {
         res.status(200).send(mycart)
       })
@@ -159,9 +156,6 @@ exports.itemHistory = async (req, res) => {
       'updated_at'
     ])
       .populate('cart.item', ['item_name', 'image_path'])
-      .populate('cube', ['cube_name', 'cube_id'])
-      .populate('bin', ['bin_name', 'bin_id'])
-      .populate('compartment', ['compartment_name', 'compartment_id'])
       .exec()
     var KitHistory = await CartModel.find({ user: userId }, [
       'kitting',
