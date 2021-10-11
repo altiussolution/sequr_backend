@@ -9,4 +9,8 @@ route.put('/update', auth,CartController.updateCart);
 route.put('/return', auth,CartController.return);
 route.put('/deleteItemFromCart', auth,CartController.deleteItemFromCart);
 
+route.post('/takeCartItems' ,CartController.takeCartItems);
+
+
+
 module.exports = route;
