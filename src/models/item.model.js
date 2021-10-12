@@ -32,7 +32,6 @@ const ItemSchema = Schema({
     },
     calibration_month: {
         type: Date,
-        required: true
     },
     is_item: {
         type: Boolean,
