@@ -305,29 +305,70 @@ exports.deleteItemFromCart = (req, res) => {
 
 /// ************************** Arunkumar ********************** ////////////
 
-exports.takeCartItems = async (req, res) => {
-  body = req.body
-  cartItems = body.cart
-  cartId = body._id
-  cartItems.forEach(async cart_item => {
-    var itemOnCube = await stockAllocationModel
-      .findOne({ item: cart_item.item._id })
-      .populate('item', ['item_name', 'image_path'])
-      .populate('cube', ['cube_name', 'cube_id'])
-      .populate('bin', ['bin_name', 'bin_id'])
-      .populate('compartment', ['compartment_name', 'compartment_id'])
-      .exec()
+exports.updateCartAfterReturnTake = async (req, res) => {
+  var body = req.body
+  options = { upsert: true, new: false, setDefaultsOnInsert: true }
+  var take_item = body.take_items
+  var cart_status = body.cart_status
+  var kit_status = body.kit_status
+  if (cart_status == 2) {
+    var current_status = 'Taken'
+  } else if (cart_status == 3) {
+    var current_status = 'Return'
+  }
+  if (cart_status) {
+    // update cart document
+    CartModel.findById(body.cart_id, ['cart', 'total_quantity']).then(
+      async values => {
+        for await (var id of take_item) {
+          var index = values.cart.findIndex(p => p._id == id.cart_id)
+          values.cart[index]['cart_status'] = cart_status
+          if (cart_status == 3 && id.qty < values.cart[index]['qty']) {
+            values.cart[index]['cart_status'] = 2
+            values.cart[index]['qty'] = id.qty - values.cart[index]['qty']
+          }
+          values.total_quantity =
+            values.total_quantity - values.cart[index]['qty']
+        }
+        CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
+          if (err) {
+            console.log(err.name)
+          }
+        })
+      }
+    )
+    //update stockAllocation Model
 
-    // CartModel.findOneAndUpdate(
-    //   { id: cartId, 'cart._id': cart_item._id },
-    //   {
-    //     $set: {
-    //       'cart.$.cart_status': 2
-    //     }
-    //   }
-    // ).exec()
-    res.send('Success')
-  })
+    for await (let item of take_item) {
+      let stockAllocationItems = await stockAllocationModel
+        .findById(item.stock_allocation_id)
+        .exec()
+      if (cart_status == 2) {
+        if (stockAllocationItems.quantity >= item.qty) {
+          stockAllocationItems.quantity =
+            stockAllocationItems.quantity - item.qty
+        } else if (stockAllocationItems.quantity < item.qty) {
+          stockAllocationItems.quantity = 0
+        }
+      } else if (cart_status == 3) {
+        stockAllocationItems.quantity = stockAllocationItems.quantity + item.qty
+      }
+
+      await stockAllocationModel.findByIdAndUpdate(
+        item.stock_allocation_id,
+        stockAllocationItems,
+        (err, data) => {
+          if (err) {
+            console.log(err.name)
+          }
+        }
+      )
+    }
+
+    res
+      .status(201)
+      .send({ status: false, message: `${current_status} Sucessfully` })
+  }
 }
 
 exports.myCart = async (req, res) => {
@@ -430,4 +471,3 @@ exports.itemHistory = async (req, res) => {
 }
 
 /// ************************** Arunkumar ********************** ////////////
-

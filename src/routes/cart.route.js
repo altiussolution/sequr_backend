@@ -8,8 +8,7 @@ route.get('/itemHistory',auth, CartController.itemHistory);
 route.put('/update', auth,CartController.updateCart);
 route.put('/return', auth,CartController.return);
 route.put('/deleteItemFromCart', auth,CartController.deleteItemFromCart);
-
-route.post('/takeCartItems' ,CartController.takeCartItems);
+route.post('/updateReturnTake', CartController.updateCartAfterReturnTake);
 
 
 
