@@ -31,7 +31,9 @@ const UserSchema = Schema({
   },
   language_prefered: {
     type: String,
-    required: true
+    required: true,
+    ref: 'language'
+
   },
   employee_id: {
     type: String,

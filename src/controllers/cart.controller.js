@@ -354,15 +354,9 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         stockAllocationItems.quantity = stockAllocationItems.quantity + item.qty
       }
 
-      await stockAllocationModel.findByIdAndUpdate(
-        item.stock_allocation_id,
-        stockAllocationItems,
-        (err, data) => {
-          if (err) {
-            console.log(err.name)
-          }
-        }
-      )
+      await stockAllocationModel
+        .findByIdAndUpdate(item.stock_allocation_id, stockAllocationItems)
+        .exec()
     }
 
     res
