@@ -410,7 +410,7 @@ exports.itemHistory = async (req, res) => {
       .populate('cart.item', ['item_name', 'image_path'])
       .exec()
 
-    cartItems = JSON.parse(JSON.stringify(CartHistory))
+      CartHistory = JSON.parse(JSON.stringify(CartHistory))
     var i = 0
     for await (let item of cartItems[0]['cart']) {
       let data = item
@@ -420,7 +420,7 @@ exports.itemHistory = async (req, res) => {
         .populate('bin', ['bin_name', 'bin_id'])
         .populate('compartment', ['compartment_name', 'compartment_id'])
         .exec()
-      cartItems[0]['cart'][i]['item_details'] = stockData
+        CartHistory[0]['cart'][i]['item_details'] = stockData
 
       i++
     }
@@ -458,7 +458,7 @@ exports.itemHistory = async (req, res) => {
       }
     }
 
-    res.status(200).send({ status: true, Cart: cartItems, Kits: kitData })
+    res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
   } catch (err) {
     res.status(201).send({ status: false, message: err.name })
   }
