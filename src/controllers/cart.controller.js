@@ -410,7 +410,7 @@ exports.itemHistory = async (req, res) => {
       .populate('cart.item', ['item_name', 'image_path'])
       .exec()
 
-      CartHistory = JSON.parse(JSON.stringify(CartHistory))
+    CartHistory = JSON.parse(JSON.stringify(CartHistory))
     var i = 0
     for await (let item of cartItems[0]['cart']) {
       let data = item
@@ -420,7 +420,7 @@ exports.itemHistory = async (req, res) => {
         .populate('bin', ['bin_name', 'bin_id'])
         .populate('compartment', ['compartment_name', 'compartment_id'])
         .exec()
-        CartHistory[0]['cart'][i]['item_details'] = stockData
+      CartHistory[0]['cart'][i]['item_details'] = stockData
 
       i++
     }
@@ -449,6 +449,9 @@ exports.itemHistory = async (req, res) => {
           kitData.push({
             cart_id: item._id,
             update_kit_id: val._id,
+            kit_id: val.kit_id,
+            kit_status: val.kit_status,
+            qty: val.qty,
             kit_name: val.kit_id.kit_name,
             kit_item_details: stockData,
             created_at: val.created_at,
