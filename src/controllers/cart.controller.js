@@ -460,6 +460,7 @@ exports.itemHistory = async (req, res) => {
         }
       }
     }
+    kitData._id = item._id._id
 
     res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
   } catch (err) {
