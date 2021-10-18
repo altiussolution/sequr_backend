@@ -424,9 +424,9 @@ exports.itemHistory = async (req, res) => {
 
       i++
     }
-    var KitHistory = await CartModel.find({ user: userId }, [
+    var KitHistory = await CartModel.find({ user: userId }, [    
       'kitting',
-      'updated_at'
+      '_id'
     ])
       .populate({
         path: 'kitting.kit_id',
@@ -460,6 +460,7 @@ exports.itemHistory = async (req, res) => {
         }
       }
     }
+    kitData['_id'] = KitHistory[0]._id
 
     res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
   } catch (err) {
