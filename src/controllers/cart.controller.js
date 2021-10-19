@@ -311,9 +311,10 @@ exports.updateCartAfterReturnTake = async (req, res) => {
   var take_item = body.take_items
   var cart_status = body.cart_status
   var kit_status = body.kit_status
-  if (cart_status == 2) {
+  var kit_cart_id = body.kit_cart_id
+  if (cart_status == 2 || kit_status == 2) {
     var current_status = 'Taken'
-  } else if (cart_status == 3) {
+  } else if (cart_status == 3 || kit_status == 3) {
     var current_status = 'Return'
   }
   if (cart_status) {
@@ -352,6 +353,59 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         }
       } else if (cart_status == 3) {
         stockAllocationItems.quantity = stockAllocationItems.quantity + item.qty
+      }
+
+      await stockAllocationModel
+        .findByIdAndUpdate(item.stock_allocation_id, stockAllocationItems)
+        .exec()
+    }
+
+    res
+      .status(201)
+      .send({ status: false, message: `${current_status} Sucessfully` })
+  }
+  if (kit_status) {
+    // update cart document
+    CartModel.findById(body.cart_id, ['kitting', 'total_quantity']).then(
+      async values => {
+        console.log(values)
+        var index = values.kitting.findIndex(p => p._id == take_item[0].cart_id)
+
+        values.kitting[index]['kit_status'] = kit_status
+        if (
+          cart_status == 3 &&
+          take_item[0].kit_qty < values.kitting[index]['qty']
+        ) {
+          values.kitting[index]['kit_status'] = 2
+          values.kitting[index]['qty'] =
+            take_item[0].kit_qty - values.kitting[index]['qty']
+        }
+        values.total_quantity =
+          values.total_quantity - values.kitting[index]['qty']
+        CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
+          if (err) {
+            console.log(err.name)
+          }
+        })
+      }
+    )
+    //update stockAllocation Model
+
+    for await (let item of take_item) {
+      let stockAllocationItems = await stockAllocationModel
+        .findById(item.stock_allocation_id)
+        .exec()
+      console.log(stockAllocationItems)
+      if (kit_status == 2) {
+        if (stockAllocationItems.quantity >= item.qty) {
+          stockAllocationItems.quantity =
+            stockAllocationItems.quantity - item.qty * take_item[0].kit_qty
+        } else if (stockAllocationItems.quantity < item.qty) {
+          stockAllocationItems.quantity = 0
+        }
+      } else if (kit_status == 3) {
+        stockAllocationItems.quantity =
+          stockAllocationItems.quantity + item.qty * take_item[0].kit_qty
       }
 
       await stockAllocationModel
@@ -424,10 +478,7 @@ exports.itemHistory = async (req, res) => {
 
       i++
     }
-    var KitHistory = await CartModel.find({ user: userId }, [    
-      'kitting',
-      '_id'
-    ])
+    var KitHistory = await CartModel.find({ user: userId }, ['kitting', '_id'])
       .populate({
         path: 'kitting.kit_id',
         populate: {
@@ -450,6 +501,7 @@ exports.itemHistory = async (req, res) => {
             cart_id: item._id,
             update_kit_id: val._id,
             kit_id: val.kit_id,
+            kit_cart_id: val._id,
             kit_status: val.kit_status,
             qty: val.qty,
             kit_name: val.kit_id.kit_name,
@@ -460,8 +512,6 @@ exports.itemHistory = async (req, res) => {
         }
       }
     }
-    console.log(KitHistory)
-    kitData['_id'] = KitHistory[0]._id
 
     res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
   } catch (err) {
