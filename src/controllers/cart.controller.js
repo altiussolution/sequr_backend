@@ -460,6 +460,7 @@ exports.itemHistory = async (req, res) => {
         }
       }
     }
+    console.log(KitHistory)
     kitData['_id'] = KitHistory[0]._id
 
     res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
