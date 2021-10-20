@@ -28,7 +28,7 @@ var countries = csc.Country.getAllCountries()
 var states = csc.State.getAllStates()
 var cities = csc.City.getAllCities()
 var language_list = languageList.getData()
-var citiesByCode = csc.City.getCitiesOfState('HAV', 'GB') 
+var citiesByCode = csc.City.getCitiesOfCountry('GB') 
 
 
 // Import into DB
