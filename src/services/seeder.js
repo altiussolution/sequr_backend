@@ -28,21 +28,21 @@ var countries = csc.Country.getAllCountries()
 var states = csc.State.getAllStates()
 var cities = csc.City.getAllCities()
 var language_list = languageList.getData()
-var citiesByCode = csc.City.getCitiesOfState('IN', 'TN') 
+var citiesByCode = csc.City.getCitiesOfState('HAV', 'GB') 
 
 
 // Import into DB
 const importData = async () => {
   try {
-   await Country.create(countries);  
-   console.log(' **** Country ****')
-    await State.create(states);
-    console.log(' **** State ****')
+  // await Country.create(countries);  
+  // console.log(' **** Country ****')
+   // await State.create(states);
+   // console.log(' **** State ****')
       // await City.create(cities);
       await City.create(citiesByCode);
     console.log(' **** City ****')
-   await Language.create(language_list)
-   console.log(' **** Language ****')
+  // await Language.create(language_list)
+  // console.log(' **** Language ****')
     console.log("Data Imported...");
     process.exit();
   } catch (err) {
