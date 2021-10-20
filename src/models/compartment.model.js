@@ -33,6 +33,10 @@ const CompartmentSchema = Schema({
     description: {
         type: String
     },
+    is_removed: {
+        type: Boolean,
+        default: false
+    },
     created_at: {
         type: Date,
         default: Date.now

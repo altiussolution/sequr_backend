@@ -40,7 +40,7 @@ const PurchaseOrderSchema = Schema({
     },
     received_date: {
         type: Date,
-        required: true
+        required: false
     },
     description: {
         type: String
