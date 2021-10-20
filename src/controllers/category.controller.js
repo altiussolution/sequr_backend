@@ -20,7 +20,7 @@ exports.addCategory = (async (req, res) => {
        }else{
         res.status(200).send({
             success: false,
-            message: 'Givven Category Already Exist'
+            message: 'Given Category is Already Exist'
         });
 
        }
