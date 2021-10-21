@@ -331,7 +331,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
           values.total_quantity =
             values.total_quantity - values.cart[index]['qty']
         }
-        var values = await dedup_and_sum(values, 'item', 'cart_status')
+        var values = await dedup_and_sum(values.cart, 'item', 'cart_status')
         CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
           if (err) {
             console.log(err.name)
@@ -383,7 +383,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         }
         values.total_quantity =
           values.total_quantity - values.kitting[index]['qty']
-          var values = await dedup_and_sum(values, 'kit_id', 'cart_status')
+          var values = await dedup_and_sum(values.kitting, 'kit_id', 'cart_status')
         CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
           if (err) {
             console.log(err.name)
