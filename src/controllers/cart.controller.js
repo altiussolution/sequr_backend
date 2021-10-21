@@ -526,7 +526,7 @@ exports.itemHistory = async (req, res) => {
 async function dedup_and_sum (arr, prop, prop1) {
   var seen = {},
     order = []
-  await arr.forEach(function (o) {
+  await arr.forEach(async function (o) {
     o[item] = `${o[prop]} - ${o[prop1]}`
     var item = `${o[prop]} - ${o[prop1]}`
     if (item in seen) {
