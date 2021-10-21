@@ -331,6 +331,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
           values.total_quantity =
             values.total_quantity - values.cart[index]['qty']
         }
+        var values = await dedup_and_sum(values, 'item', 'cart_status')
         CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
           if (err) {
             console.log(err.name)
@@ -362,7 +363,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
 
     res
       .status(201)
-      .send({ status: false, message: `${current_status} Sucessfully` })
+      .send({ status: true, message: `${current_status} Sucessfully` })
   }
   if (kit_status) {
     // update cart document
@@ -382,6 +383,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         }
         values.total_quantity =
           values.total_quantity - values.kitting[index]['qty']
+          var values = await dedup_and_sum(values, 'kit_id', 'cart_status')
         CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
           if (err) {
             console.log(err.name)
@@ -517,6 +519,35 @@ exports.itemHistory = async (req, res) => {
   } catch (err) {
     res.status(201).send({ status: false, message: err.name })
   }
+}
+
+
+
+async function dedup_and_sum (arr, prop, prop1) {
+  var seen = {},
+    order = []
+  await arr.forEach(function (o) {
+    o[item] = `${o[prop]} - ${o[prop1]}`
+    var item = `${o[prop]} - ${o[prop1]}`
+    if (item in seen) {
+      // keep running sum of qty
+      var qty = seen[item].qty + o.qty
+      // keep this newest record's values
+      seen[item] = o
+      // upitem[118805291], qty=432, instock=truedate qty to our running total
+      seen[item].qty = qty
+      // keep track of ordering, having seen again, push to end
+      await order.push(order.splice(order.indexOf(item), 1))
+    } else {
+      seen[item] = o
+      await order.push(item)
+    }
+  })
+
+  return order.map(function (k) {    
+    delete seen[k].undefined
+    return seen[k]
+  })
 }
 
 /// ************************** Arunkumar ********************** ////////////
