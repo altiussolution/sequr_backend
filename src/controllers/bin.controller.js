@@ -9,9 +9,9 @@ exports.createBin = (async (req,res) =>{
         var isBinExist = await binModel.find({ $or: [{bin_name : body.bin_name},{bin_id: body.bin_id} ] }).exec()
         var checkBinCount = await cubeModel.findById(body.cube_id,['bin_max','bin_min']).exec()
         if(checkBinCount.bin_max < body.item_max_cap){
-            res.status(200).send({ success: true, message: `Maximum bin count is ${checkBinCount.bin_max}` });
+            res.status(200).send({ success: false, message: `Maximum bin count is ${checkBinCount.bin_max}` });
         }else if(checkBinCount.bin_min < body.item_min_cap){
-            res.status(200).send({ success: true, message: `Minimum bin count is ${checkBinCount.bin_min}` });
+            res.status(200).send({ success: false, message: `Minimum bin count is ${checkBinCount.bin_min}` });
         }
         else if(isBinExist.length == 0){
             bin.save((err)=>{
