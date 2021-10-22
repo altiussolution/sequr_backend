@@ -16,6 +16,7 @@ route.get('/getSuppliercount', auth,DashboardController.getSuppliercount);
 route.get('/getDepartmentcount', auth,DashboardController.getDepartmentcount);
 route.get('/getpurchaseOrdercount', auth,DashboardController.getPurchaseOrdercount);
 route.get('/getCubecount', auth,DashboardController.getCubecount);
-
+route.get('/getPermissioncount', auth,DashboardController.getPermissioncount);
+route.get('/getshiftTimecount', auth,DashboardController.getshiftTimecount);
 
 module.exports = route;

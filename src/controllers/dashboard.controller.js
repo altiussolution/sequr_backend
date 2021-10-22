@@ -1,5 +1,5 @@
 
-const { UserModel,branchModel,itemModel,categoryModel,subCategoryModel,rolesModel,binModel,compartmentModel,cubeModel,stockAllocationModel,departmentModel,supplierModel,purchaseOrderModel,kitModel} = require("../models");
+const { UserModel,branchModel,itemModel,categoryModel,subCategoryModel,rolesModel,binModel,compartmentModel,cubeModel,stockAllocationModel,departmentModel,supplierModel,purchaseOrderModel,kitModel,shift_timeModel} = require("../models");
 const { User } = require("../models/user.model");
 var {error_code} = require('../utils/enum.utils')
 
@@ -192,6 +192,34 @@ exports.getPurchaseOrdercount = (async (req, res) => {
        await purchaseOrderModel.count(query).then(purchaseOrder => {
             console.log(purchaseOrder)
             res.status(200).send({ success: true, data: purchaseOrder});
+        }).catch(error => {
+            res.status(400).send({ success: false, error: error })
+        })
+    } catch (error) {
+        res.status(201).send({ success: false, error: error })
+    }
+})
+
+exports.getPermissioncount = (async (req, res) => {
+    var query = ( { active_status: 1 })
+    try {
+       await rolesModel.count(query).then(roles => {
+            console.log(roles)
+            res.status(200).send({ success: true, data: roles});
+        }).catch(error => {
+            res.status(400).send({ success: false, error: error })
+        })
+    } catch (error) {
+        res.status(201).send({ success: false, error: error })
+    }
+})
+
+exports.getshiftTimecount = (async (req, res) => {
+    var query = ( { active_status: 1})
+    try {
+       await shift_timeModel.count(query).then(shift_time => {
+            console.log(shift_time)
+            res.status(200).send({ success: true, data: shift_time});
         }).catch(error => {
             res.status(400).send({ success: false, error: error })
         })
