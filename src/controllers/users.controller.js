@@ -78,8 +78,8 @@ exports.add = async (req, res) => {
       employee_id: employee_id,
       password: password,
       loginPage: process.env.STAGING,
-      logo : `http://${hostname}:${process.env.PORT}/mailAssets/logobg.png`,
-      background : `http://${hostname}:${process.env.PORT}/mailAssets/bgbg.jpg`
+      logo : `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
+      background : `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
     }
     user.token = token
     const email = new Email()
