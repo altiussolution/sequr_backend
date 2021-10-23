@@ -7,6 +7,8 @@ const sendEmail = require('../middleware/sendmail.middleware')
 const crypto = require('crypto')
 const Joi = require('joi')
 var generator = require('generate-password')
+var fs = require('fs')
+const Email = require('email-templates')
 
 exports.add = async (req, res) => {
   try {
@@ -71,9 +73,26 @@ exports.add = async (req, res) => {
         expiresIn: '2h'
       }
     )
+    const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
+    const locals = {
+      employee_id: employee_id,
+      password: password,
+      loginPage: process.env.STAGING,
+      logo : `http://${hostname}:${process.env.PORT}/mailAssets/logobg.png`,
+      background : `http://${hostname}:${process.env.PORT}/mailAssets/bgbg.jpg`
+    }
     user.token = token
-    var subject = `Dear ${first_name}, Use the following to siginin in sequr username - ${employee_id} , password - ${password}`
-    await sendEmail(email_id, "New User Signup",subject );
+    const email = new Email()
+    Promise.all([email.render('./templates/registerMail', locals)]).then(
+      async registerMail => {
+        console.log(registerMail[0])
+        await sendEmail(
+          email_id,
+          'New User Signup',
+          registerMail[0],          
+        )
+      }
+    )
     res.status(201).json(user)
   } catch (err) {
     console.log(err)
@@ -106,7 +125,10 @@ exports.login = async (req, res) => {
 
       res.status(200).json(user)
     } else {
-      res.status(400).send({statue : false , message : 'Invalid Credentials or No user found'})
+      res.status(400).send({
+        statue: false,
+        message: 'Invalid Credentials or No user found'
+      })
     }
   } catch (err) {
     console.log(err)
@@ -280,7 +302,9 @@ exports.EmployeeForgotPassword = async (req, res) => {
     template = `${process.env.STAGING_USER} \n New Password : ${newPassword}`
     await sendEmail(user.email_id, 'New Password', template)
     const encryptedPassword = await bcrypt.hash(newPassword, 10)
-    await User.findByIdAndUpdate(req.body.id, { password: encryptedPassword }).exec()
+    await User.findByIdAndUpdate(req.body.id, {
+      password: encryptedPassword
+    }).exec()
     res.send('new password sent to employee email account')
   } catch (error) {
     res.send('An error occured')
@@ -288,63 +312,63 @@ exports.EmployeeForgotPassword = async (req, res) => {
   }
 }
 
-exports.changePassword = (async (req, res) =>{
-  var passwordDetails = req.body;
+exports.changePassword = async (req, res) => {
+  var passwordDetails = req.body
   console.log(req.body)
-   var userId = req.params._id;
-   console.log(userId)
-     if (userId) {
-       if (passwordDetails.newpassword) {
-        await User.findOne({userId : userId}, async function (err, user) {
-           console.log(user)
-           if (!err && user) {
-             //console.log(user.authenticate(passwordDetails.oldpassword));
-             var compare = await bcrypt.compare(passwordDetails.oldpassword , user.password)
-             console.log(compare)
-             if (user && compare)  {
-               
-                 user.password  = await bcrypt.hash(passwordDetails.newpassword, 10)
-                //const user = await User.findOne({ employee_id });
+  var userId = req.params._id
+  console.log(userId)
+  if (userId) {
+    if (passwordDetails.newpassword) {
+      await User.findOne({ userId: userId }, async function (err, user) {
+        console.log(user)
+        if (!err && user) {
+          //console.log(user.authenticate(passwordDetails.oldpassword));
+          var compare = await bcrypt.compare(
+            passwordDetails.oldpassword,
+            user.password
+          )
+          console.log(compare)
+          if (user && compare) {
+            user.password = await bcrypt.hash(passwordDetails.newpassword, 10)
+            //const user = await User.findOne({ employee_id });
 
-                
-                 user.save(function (err) {
-                   if (err) {
-                     return res.status(422).send({
-                       message: errorHandler.getErrorMessage(err)
-                     });
-                   } else {
-                     //req.login(user, function (err) {
-                      // console.log(user)
-                       //if (err) {
-                         //res.status(400).send(err);
-                     //  } else {
-                         res.send({
-                           message: 'Password changed successfully'
-                         });
-                     //  }
-                    // });
-                   }
-                 });
-             } else {
-               res.status(422).send({
-                 message: 'Current password is incorrect'
-               });
-             }
-           } else {
-             res.status(400).send({
-               message: 'User is not found'
-             });
-           }
-         });
-       } else {
-         res.status(422).send({
-           message: 'Please provide a new password'
-         });
-       }
-     } else {
-       res.status(401).send({
-         message: 'User is not signed in'
-       });
-     }
- });
- 
+            user.save(function (err) {
+              if (err) {
+                return res.status(422).send({
+                  message: errorHandler.getErrorMessage(err)
+                })
+              } else {
+                //req.login(user, function (err) {
+                // console.log(user)
+                //if (err) {
+                //res.status(400).send(err);
+                //  } else {
+                res.send({
+                  message: 'Password changed successfully'
+                })
+                //  }
+                // });
+              }
+            })
+          } else {
+            res.status(422).send({
+              message: 'Current password is incorrect'
+            })
+          }
+        } else {
+          res.status(400).send({
+            message: 'User is not found'
+          })
+        }
+      })
+    } else {
+      res.status(422).send({
+        message: 'Please provide a new password'
+      })
+    }
+  } else {
+    res.status(401).send({
+      message: 'User is not signed in'
+    })
+  }
+}
