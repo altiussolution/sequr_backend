@@ -108,3 +108,32 @@ exports.getCategorylist = (async (req, res) => {
         res.status(201).send({success: false, error : error})
     }
 })
+
+
+exports.getCategoryfilter= (req, res) => {
+
+    var category_name = req.query.category_name;
+    var category_code = req.query.category_code;
+    var active_status = req.query.active_status;
+    //var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 },(categoryCode ? { active_status: 1, $text: { $search: categoryCode } } : { active_status: 1 }))
+    //var query = (category_name ? { active_status: 1, category_name : category_name }(category_code ? { active_status: 1,  category_code : category_code } )
+   
+    if (category_name && category_code && active_status ){
+        var query = {category_name : category_name, category_code : category_code, active_status : active_status}
+    }
+    else if(category_name ){
+        var query = {category_name : category_name}
+    }
+    else if( category_code ){
+        var query = { category_code : category_code}
+    }
+    else if( active_status ){
+        var query = { active_status: active_status}
+    }
+        categoryModel.find(query).then(category =>{
+            res.status(200).send({ success: true, data: category });
+        }).catch(error => {
+            res.status(400).send({success: false, error : error})
+        })
+    
+}

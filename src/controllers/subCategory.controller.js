@@ -80,3 +80,24 @@ exports.upload = async (req, res) => {
     res.status(400).send(err)
   }
 }
+
+exports.getsubCategoryfilter = async (req, res) => {
+  //var category_id = req.query.categoryId;
+  var sub_category_name = req.query.sub_category_name;
+  var sub_category_code = req.query.sub_category_code;
+  if (sub_category_name && sub_category_code ){
+    var query = {sub_category_name : sub_category_name, sub_category_code : sub_category_code}
+}
+else if(sub_category_name ){
+    var query = {sub_category_name : sub_category_name}
+}
+else if( sub_category_code ){
+    var query = { sub_category_code : sub_category_code}
+}
+      subCategoryModel.find(query).populate('category_id').then(subCategory => {
+        res.status(200).send({ success: true, data: subCategory })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  }

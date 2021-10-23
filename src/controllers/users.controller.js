@@ -372,3 +372,32 @@ exports.changePassword = async (req, res) => {
     })
   }
 }
+
+exports.getEmployeefilter = (req, res) => {
+  var employee_id = req.query.employee_id;
+    var first_name = req.query.first_name;
+    var department_name = req.query.department_name;
+    var active_status = req.query.active_status;
+  if (employee_id && first_name && department_name && active_status){
+    var query = {employee_id : employee_id, first_name: first_name, department_name : department_name, active_status : active_status}
+}
+else if(employee_id ){
+    var query = {employee_id : employee_id}
+}
+else if( first_name ){
+    var query = { first_name : first_name}
+}
+else if (department_name){
+  var query = {department_name : department_name}
+}
+else if (active_status){
+  var query = {active_status : active_status}
+}
+
+    User.find(query).populate('department_id').then(user =>{
+        res.status(200).send({ success: true, user: user });
+    }).catch(error => {
+        res.status(400).send({success: false, error : error})
+    })
+
+}

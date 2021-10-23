@@ -123,3 +123,32 @@ exports.deleteItems = (req, res) => {
     }
 
 }
+
+
+exports.getItemfilter = (req, res) => {
+    var item_name = req.query.item_name;
+    var item_number= req.query.item_number;
+    var active_status = req.query.active_status;
+   
+    if (item_name && item_number && active_status ){
+        var query = {item_name : item_name ,item_number : item_number, active_status : active_status}
+    }
+    else if(item_name){
+        var query = {item_name: item_name}
+    }
+    else if( item_number){
+        var query = { item_number : item_number}
+    }
+    else if( active_status ){
+        var query = { active_status: active_status}
+    }
+        try {
+            itemModel.find(query).populate('category_id').populate('sub_category_id').then(item => {
+                res.status(200).send({ success: true, item: item })
+            }).catch(error => {
+                res.status(400).send({ success: false, error: error })
+            })
+        } catch (error) {
+            res.status(201).send({ success: false, error: error })
+        }
+    }
