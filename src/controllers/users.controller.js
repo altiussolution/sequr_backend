@@ -83,7 +83,7 @@ exports.add = async (req, res) => {
     }
     user.token = token
     const email = new Email()
-    Promise.all([email.render('./templates/registerMail', locals)]).then(
+    Promise.all([email.render('../src/templates/registerMail', locals)]).then(
       async registerMail => {
         console.log(registerMail[0])
         await sendEmail(
