@@ -23,4 +23,5 @@ route.post('/changePassword/:_id',auth, controllers.UsersController.changePasswo
 route.put('/resetPassword/:user_id/:token', controllers.UsersController.resetPassword)
 route.get('/userProfile/:id',auth,controllers.UsersController.userProfile);
 route.post('/EmployeeforgotPassword/',controllers.UsersController.EmployeeForgotPassword);
+route.get('/getEmployeefilter', auth, UsersController.getEmployeefilter)
 module.exports = route 
