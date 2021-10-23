@@ -1,7 +1,7 @@
 node_modules 
 test.rest
 upload/
-src/public
+# src/public
 try.js
 try2.js
 try3.js
