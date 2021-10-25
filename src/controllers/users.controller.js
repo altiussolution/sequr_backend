@@ -31,6 +31,9 @@ exports.add = async (req, res) => {
       branch_id,
       shift_time_id,
       department_id,
+      country_id,
+      state_id,
+      city_id,
       profile_pic,
       active_status
     } = req.body
@@ -61,6 +64,9 @@ exports.add = async (req, res) => {
       branch_id,
       shift_time_id,
       department_id,
+      country_id,
+      state_id,
+      city_id,
       profile_pic,
       email_id: email_id, // sanitize: convert email to lowercase
       password: encryptedPassword,
