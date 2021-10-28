@@ -73,31 +73,54 @@ exports.getSupplierfilter = (req, res) => {
     var country_id = req.query.country_id;
     var state_id  = req.query.state_id;
     var city_id  = req.query.city_id;
+    var status = req.query.status;
 
-
-
-    if (country_id && state_id  && city_id){
-        var query = {country_id:country_id, state_id  : state_id   ,city_id:city_id}
+    if (country_id && state_id && city_id && status){
+        var query = {country_id:country_id,state_id :state_id , city_id  : city_id ,status:status}
     }
-    else if( country_id   && state_id ){
-        var query = { country_id: country_id ,state_id : state_id }
+    else if(country_id && state_id && status){
+        var query = {country_id: country_id, state_id : state_id ,status:status }
     }
-    else if( state_id  && city_id ){
-        var query = {state_id   : state_id , city_id :city_id}
+    else if( country_id && city_id  && state_id){
+        var query = { country_id: country_id ,  city_id : city_id ,state_id : state_id}
     }
-    else if( country_id   && city_id ){
-        var query = {country_id  : country_id , city_id :city_id}
+    else if( state_id  && city_id  && status ){
+        var query = {state_id  : state_id  , city_id : city_id ,status :status}
     }
-                                                                                                        
-    else if( country_id ){
-        var query = { country_id :country_id}
+    else if( country_id  && city_id && status ){
+        var query = {country_id  : country_id  , city_id :city_id ,status :status}
     }
     
-    else if(  city_id ){
-        var query = { city_id:city_id  }
+    else if( country_id && state_id){
+        var query = {country_id:country_id , state_id : state_id}
+    }                                                                                                     
+    else if(country_id && status){
+        var query = { country_id :country_id ,status:status}
     }
-    else if( state_id  ){
-        var query = { state_id  :state_id }
+    else if( country_id && city_id){
+        var query = { country_id :country_id , city_id:city_id}
+    }
+    
+    else if( state_id && status){
+        var query = {state_id : state_id, status:status}
+    }
+    else if( state_id && city_id ){
+        var query = {state_id : state_id, city_id:city_id}
+    }
+    else if( city_id && status){
+        var query = { city_id :city_id,status:status  }
+    }
+    else if( status ){
+        var query = { status :status}
+    }
+    else if(country_id ){
+        var query = {country_id :country_id}
+    }
+    else if( state_id ){
+        var query = { state_id :state_id}
+    }
+    else if( city_id ){
+        var query = {  city_id: city_id}
     }
     try {
         supplierModel.find(query).populate("country_id").populate("state_id").populate("city_id").skip(offset).limit(limit).then(supplier => {

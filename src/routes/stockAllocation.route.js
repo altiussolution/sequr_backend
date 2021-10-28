@@ -6,4 +6,5 @@ route.post('/add', StockAllocationController.allocateStock)
 route.get('/get', StockAllocationController.getStockAllocations)
 route.put('/update/:id', StockAllocationController.updateStockAllocation)
 route.put('/delete/:id', StockAllocationController.deleteStockAllocation)
+route.get('/getStockAllocationsfilter', StockAllocationController.getStockAllocationsfilter)
 module.exports = route 

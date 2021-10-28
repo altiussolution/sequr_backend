@@ -94,3 +94,119 @@ exports.getItemById = ((req,res) =>{
         res.status(400).send({status : false , message : err.name});
     }
 })
+
+exports.getStockAllocationsfilter =   ((req,res) =>{
+
+    var category_name = req.query.category_name;
+    var sub_category_name= req.query.sub_category_name;
+    var status = req.query.status;
+    var supplier_name = req.query.supplier_name;
+    var cube_name = req.query.cube_name;
+    
+    if (category_name && sub_category_name && status && supplier_name && cube_name){
+        var query = {category_name:category_name,sub_category_name :sub_category_name , status  : status ,supplier_name:supplier_name, cube_name:cube_name}
+    }
+    else if(category_name && sub_category_name && supplier_name && cube_name){
+        var query = {category_name: category_name, sub_category_name : sub_category_name ,supplier_name:supplier_name,cube_name:cube_name }
+    }
+    else if( category_name && status  && sub_category_name && cube_name){
+        var query = { category_name: category_name ,  status : status ,sub_category_name : sub_category_name,cube_name:cube_name}
+    }
+    else if( sub_category_name  && status  && supplier_name && cube_name){
+        var query = {sub_category_name  : sub_category_name  , status : status ,supplier_name :supplier_name,cube_name:cube_name}
+    }
+    else if( category_name  && status && supplier_name && cube_name ){
+        var query = {category_name  : category_name  , status :status ,supplier_name :supplier_name,cube_name:cube_name}
+    }
+      else if( category_name  && status && supplier_name && sub_category_name ){
+        var query = {category_name  : category_name  , status :status ,supplier_name :supplier_name,sub_category_name:sub_category_name}
+    }
+    else if( category_name && sub_category_name && cube_name){
+        var query = {category_name:category_name , sub_category_name : sub_category_name,cube_name:cube_name}
+    }                                                                                                     
+    else if(category_name && supplier_name && cube_name){
+        var query = { category_name :category_name ,supplier_name:supplier_name,cube_name : cube_name}
+    }
+    else if( category_name && status && cube_name){
+        var query = { category_name :category_name , status:status,cube_name:cube_name}
+    }
+    
+    else if( sub_category_name && supplier_name && cube_name){
+        var query = {sub_category_name : sub_category_name, supplier_name:supplier_name,cube_name:cube_name}
+    }
+    else if( sub_category_name && status && cube_name ){
+        var query = {sub_category_name : sub_category_name, status:status,cube_name:cube_name}
+    }
+    else if( status && supplier_name && cube_name){
+        var query = { status :status,supplier_name:supplier_name,cube_name:cube_name  }
+    }
+    else if(category_name && supplier_name && sub_category_name){
+        var query = { category_name :category_name ,supplier_name:supplier_name,sub_category_name:sub_category_name}
+    }
+    else if(category_name && status && sub_category_name){
+        var query = { category_name :category_name , status: status,sub_category_name:sub_category_name}
+    }
+    else if(supplier_name && status && sub_category_name){
+        var query = { supplier_name :supplier_name , status: status,sub_category_name:sub_category_name}
+    }
+    
+    else if( category_name && sub_category_name){
+        var query = {category_name:category_name , sub_category_name : sub_category_name}
+    }                                                                                                     
+    else if(category_name && supplier_name){
+        var query = { category_name :category_name ,supplier_name:supplier_name}
+    }
+    else if( category_name && status){
+        var query = { category_name :category_name , status:status}
+    }
+    else if( sub_category_name && supplier_name){
+        var query = {sub_category_name : sub_category_name, supplier_name:supplier_name}
+    }
+    else if( sub_category_name && status ){
+        var query = {sub_category_name : sub_category_name, status:status}
+    }
+    else if( status && supplier_name){
+        var query = { status :status,supplier_name:supplier_name  }
+    }
+    else if( category_name && cube_name){
+        var query = { category_name :category_name ,cube_name:cube_name  }
+    }
+    else if(  cube_name && supplier_name){
+        var query = { cube_name :cube_name,supplier_name:supplier_name  }
+    }
+    else if( sub_category_name && cube_name){
+        var query = {sub_category_name :sub_category_name ,cube_name:cube_name  }
+    }
+    else if( status && cube_name){
+        var query = { status :status,cube_name:cube_name  }
+    }
+    else if( supplier_name ){
+      var query = { supplier_name :supplier_name}
+    }
+    else if( category_name ){
+      var query = { category_name :category_name}
+    }
+    else if( sub_category_name ){
+      var query = { sub_category_name :sub_category_name}
+    }
+    else if( status  ){
+      var query = {  status: status}
+    }
+    else if( cube_name  ){
+    var query = {  cube_name: cube_name}
+    }
+    try{
+        stockAllocationModel.find(query).populate("sub_category")
+        .populate("supplier").populate("category").populate("cube").then(stocks =>{
+            res.status(200).send({ success: true, data: stocks });
+        }).catch(error => {
+            console.log(error)
+            res.status(400).send({success: false, error : error.name})
+        })
+    } catch(error){
+        console.log(error.name)
+        res.status(201).send({success: false, error : error})
+    }
+    
+    })
+    

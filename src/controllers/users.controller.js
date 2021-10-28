@@ -380,30 +380,109 @@ exports.changePassword = async (req, res) => {
 }
 
 exports.getEmployeefilter = (req, res) => {
-  var employee_id = req.query.employee_id;
-    var first_name = req.query.first_name;
-    var department_name = req.query.department_name;
-    var active_status = req.query.active_status;
-  if (employee_id && first_name && department_name && active_status){
-    var query = {employee_id : employee_id, first_name: first_name, department_name : department_name, active_status : active_status}
+  var role_name = req.query.role_name;
+  var branch_name= req.query.branch_name;
+  var status = req.query.status;
+  var department_name = req.query.department_name;
+  var shift_type = req.query.shift_type;
+ 
+  if (role_name && branch_name && status && department_name && shift_type){
+      var query = {role_name:role_name,branch_name :branch_name , status  : status ,department_name:department_name, shift_type:shift_type}
+  }
+  else if(role_name && branch_name && department_name && shift_type){
+      var query = {role_name: role_name, branch_name : branch_name ,department_name:department_name,shift_type:shift_type }
+  }
+  else if( role_name && status  && branch_name && shift_type){
+      var query = { role_name: role_name ,  status : status ,branch_name : branch_name,shift_type:shift_type}
+  }
+  else if( branch_name  && status  && department_name && shift_type){
+      var query = {branch_name  : branch_name  , status : status ,department_name :department_name,shift_type:shift_type}
+  }
+  else if( role_name  && status && department_name && shift_type ){
+      var query = {role_name  : role_name  , status :status ,department_name :department_name,shift_type:shift_type}
+  }
+    else if( role_name  && status && department_name && branch_name ){
+      var query = {role_name  : role_name  , status :status ,department_name :department_name,branch_name:branch_name}
+  }
+  else if( role_name && branch_name && shift_type){
+      var query = {role_name:role_name , branch_name : branch_name,shift_type:shift_type}
+  }                                                                                                     
+  else if(role_name && department_name && shift_type){
+      var query = { role_name :role_name ,department_name:department_name,shift_type : shift_type}
+  }
+  else if( role_name && status && shift_type){
+      var query = { role_name :role_name , status:status,shift_type:shift_type}
+  }
+  
+  else if( branch_name && department_name && shift_type){
+      var query = {branch_name : branch_name, department_name:department_name,shift_type:shift_type}
+  }
+  else if( branch_name && status && shift_type ){
+      var query = {branch_name : branch_name, status:status,shift_type:shift_type}
+  }
+  else if( status && department_name && shift_type){
+      var query = { status :status,department_name:department_name,shift_type:shift_type  }
+  }
+else if(role_name && department_name && branch_name){
+      var query = { role_name :role_name ,department_name:department_name,branch_name:branch_name}
+  }
+else if(role_name && status && branch_name){
+      var query = { role_name :role_name , status: status,branch_name:branch_name}
+  }
+else if(department_name && status && branch_name){
+      var query = { department_name :department_name , status: status,branch_name:branch_name}
+  }
+
+else if( role_name && branch_name){
+      var query = {role_name:role_name , branch_name : branch_name}
+  }                                                                                                     
+  else if(role_name && department_name){
+      var query = { role_name :role_name ,department_name:department_name}
+  }
+  else if( role_name && status){
+      var query = { role_name :role_name , status:status}
+  }
+  else if( branch_name && department_name){
+      var query = {branch_name : branch_name, department_name:department_name}
+  }
+  else if( branch_name && status ){
+      var query = {branch_name : branch_name, status:status}
+  }
+  else if( status && department_name){
+      var query = { status :status,department_name:department_name  }
+  }
+ else if( role_name && shift_type){
+      var query = { role_name :role_name ,shift_type:shift_type  }
+  }
+ else if(  shift_type && department_name){
+      var query = { shift_type :shift_type,department_name:department_name  }
+  }
+ else if( branch_name && shift_type){
+      var query = {branch_name :branch_name ,shift_type:shift_type  }
+  }
+ else if( status && shift_type){
+      var query = { status :status,shift_type:shift_type  }
+  }
+else if( department_name ){
+    var query = { department_name :department_name}
 }
-else if(employee_id ){
-    var query = {employee_id : employee_id}
+else if( role_name ){
+    var query = { role_name :role_name}
 }
-else if( first_name ){
-    var query = { first_name : first_name}
+else if( branch_name ){
+    var query = { first_name :first_name}
 }
-else if (department_name){
-  var query = {department_name : department_name}
+else if( status  ){
+    var query = {  status: status}
 }
-else if (active_status){
-  var query = {active_status : active_status}
+else if( shift_type  ){
+  var query = {  shift_type: shift_type}
 }
 
-    User.find(query).populate('department_id').then(user =>{
-        res.status(200).send({ success: true, user: user });
-    }).catch(error => {
-        res.status(400).send({success: false, error : error})
-    })
+User.find(query).populate('department_id').populate('role_id').populate('branch_id').populate('shift_time_id').then(user =>{
+  res.status(200).send({ success: true, user: user });
+}).catch(error => {
+  res.status(400).send({success: false, error : error})
+})
 
 }
