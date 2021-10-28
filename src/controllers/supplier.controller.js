@@ -66,3 +66,46 @@ exports.deleteSupplier = (req, res) => {
     }
 
 }
+
+exports.getSupplierfilter = (req, res) => {
+
+
+    var country_id = req.query.country_id;
+    var state_id  = req.query.state_id;
+    var city_id  = req.query.city_id;
+
+
+
+    if (country_id && state_id  && city_id){
+        var query = {country_id:country_id, state_id  : state_id   ,city_id:city_id}
+    }
+    else if( country_id   && state_id ){
+        var query = { country_id: country_id ,state_id : state_id }
+    }
+    else if( state_id  && city_id ){
+        var query = {state_id   : state_id , city_id :city_id}
+    }
+    else if( country_id   && city_id ){
+        var query = {country_id  : country_id , city_id :city_id}
+    }
+                                                                                                        
+    else if( country_id ){
+        var query = { country_id :country_id}
+    }
+    
+    else if(  city_id ){
+        var query = { city_id:city_id  }
+    }
+    else if( state_id  ){
+        var query = { state_id  :state_id }
+    }
+    try {
+        supplierModel.find(query).populate("country_id").populate("state_id").populate("city_id").skip(offset).limit(limit).then(supplier => {
+            res.status(200).send({ success: true, data: supplier });
+        }).catch(error => {
+            res.status(400).send({ success: false, error: error })
+        })
+    } catch (error) {
+        res.status(201).send({ success: false, error: error })
+    }
+}

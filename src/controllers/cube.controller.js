@@ -51,3 +51,44 @@ exports.updateCube = (req, res) => {
         res.status(200).send({ success: false, error: err, message: 'An Error Catched' });
     }
 }
+
+exports.getCubefilter = (req, res) => {
+ 
+    var branch_name = req.query.branch_name;
+    var cube_type = req.query.cube_type;
+    var employee_status = req.query.employee_status;
+
+    if (branch_name && cube_type && employee_status){
+        var query = {branch_name :branch_name ,cube_type :cube_type ,employee_status  :employee_status}
+    }
+    else if(branch_name && cube_type ){
+        var query = {branch_name : branch_name , cube_type : cube_type  }
+    }
+    else if( cube_type && employee_status  ){
+        var query = {cube_type  : cube_type, employee_status : employee_status }
+    }
+    else if( branch_name  && employee_status  ){
+        var query = {branch_name : branch_name, employee_status :employee_status}
+    }
+                                                                                                        
+    else if(branch_name ){
+        var query = { branch_name:branch_name}
+    }
+
+     else if( cube_type ){
+        var query = {cube_type : cube_type}
+    }
+    else if( employee_status ){
+        var query = {employee_status :employee_status  }
+    }
+
+try {
+    cubeModel.find(query).populate("branch_id").then(cube => {
+        res.status(200).send({ success: true, data: cube });
+    }).catch(error => {
+        res.status(400).send({ success: false, error: error })
+    })
+} catch (error) {
+    res.status(201).send({ success: false, error: error })
+}
+}
