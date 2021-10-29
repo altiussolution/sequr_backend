@@ -123,7 +123,7 @@ exports.getSupplierfilter = (req, res) => {
         var query = {  city_id: city_id}
     }
     try {
-        supplierModel.find(query).populate("country_id").populate("state_id").populate("city_id").skip(offset).limit(limit).then(supplier => {
+        supplierModel.find(query).populate("country_id").populate("state_id").populate("city_id").then(supplier => {
             res.status(200).send({ success: true, data: supplier });
         }).catch(error => {
             res.status(400).send({ success: false, error: error })
