@@ -196,8 +196,8 @@ exports.getStockAllocationsfilter =   ((req,res) =>{
     var query = {  cube_name: cube_name}
     }
     try{
-        stockAllocationModel.find(query).populate("sub_category")
-        .populate("supplier").populate("category").populate("cube").then(stocks =>{
+        stockAllocationModel.find(query).populate("item").populate("compartment").populate("sub_category")
+        .populate("supplier").populate("purchase_order").populate("bin").populate("category").populate("cube").then(stocks =>{
             res.status(200).send({ success: true, data: stocks });
         }).catch(error => {
             console.log(error)
