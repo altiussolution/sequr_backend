@@ -6,23 +6,32 @@ var {error_code} = require('../utils/enum.utils')
 exports.createCompartment = (req, res) => {
     try {
         var newCompartment = new compartmentModel(req.body);
-        newCompartment.save((err) => {
+        newCompartment.save(async(err) => {
             if (!err) {
                 res.status(200).send({ success: true, message: 'Compartment Created Successfully!' });
             }
             else {
-                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Compartment code or name' : err)
+                const name = await compartmentModel.findOne(({compartment_name: req.body.compartment_name ,active_status: 1 })).exec()
+                const id = await compartmentModel.findOne(({ compartment_id:req.body.compartment_id ,  active_status: 1 })).exec()
+                if(name){
+                var errorMessage = (err.code == error_code.isDuplication ? 'Compartment name already exists' : err)
                 res.status(200).send({
                     success: false,
                     message: errorMessage
                 });
+            }else if(id){
+                var errorMessage = (err.code == error_code.isDuplication ? 'Compartment id already exists' : err)
+                res.status(200).send({
+                    success: false,
+                    message: errorMessage
+                });
+            }
             }
         });
     } catch (error) {
         res.status(201).send(error)
     }
 }
-
 
 exports.getCompartment = (req, res) => {
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;

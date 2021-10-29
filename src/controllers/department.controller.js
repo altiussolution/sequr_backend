@@ -6,17 +6,28 @@ var {error_code} = require('../utils/enum.utils')
 exports.createDepartment = (req, res) => {
     try {
         var newDepartment = new departmentModel(req.body);
-        newDepartment.save((err) => {
+        newDepartment.save(async(err) => {
             if (!err) {
                 res.status(200).send({ success: true, message: 'Department Created Successfully!' });
             }
             else {
-                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Department name or id' : err)
+                const name = await departmentModel.findOne(({department_name :req.body.department_name, active_status : 1})).exec()
+                const id = await departmentModel.findOne(({ department_id: req.body.department_id ,active_status : 1 })).exec()
+                if(name){
+                    console.log(name)
+                var errorMessage = (err.code == error_code.isDuplication ? 'Department name already exists' : err)
+                res.status(200).send({
+                    success: false,
+                    message: errorMessage
+                });
+            } else if (id){
+                var errorMessage = (err.code == error_code.isDuplication ? 'Department id already exists' : err)
                 res.status(200).send({
                     success: false,
                     message: errorMessage
                 });
             }
+        }
         });
     } catch (error) {
         res.status(201).send(error)

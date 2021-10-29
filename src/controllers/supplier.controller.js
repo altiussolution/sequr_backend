@@ -4,20 +4,56 @@ var {error_code} = require('../utils/enum.utils')
 exports.createSupplier = (req, res) => {
     try {
         var newSupplier = new supplierModel(req.body);
-        newSupplier.save((err) => {
-            if (!err) {
-                res.status(200).send({ success: true, message: 'Supplier Created Successfully!' });
-            }
-            else {
-                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Supplier name or code' : err)
-                res.status(200).send({
-                    success: false,
-                    message: errorMessage
-                });
-            }
-        });
-    } catch (error) {
-        res.status(201).send(error)
+        const {
+            supplier_name,
+            supplier_code,
+            supplier_address,
+            email_id,
+            phone_number,
+            active_status
+        } = req.body
+        const name = await supplierModel.findOne(({ supplier_name , active_status: 1 }))
+       const id = await supplierModel.findOne(({ supplier_code ,  active_status: 1 }))
+        const oldaddress = await supplierModel.findOne({supplier_address  , active_status: 1 })
+        const oldemail = await supplierModel.findOne({email_id, active_status: 1 })
+        const oldmobilenumber = await supplierModel.findOne({phone_number, active_status:1 })
+        if (name){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Supplier name already exists'})
+          }
+          if (id){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Supplier id already exists'})
+          }
+          if (oldaddress){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Supplier address already exists'})
+          }
+          if (oldemail){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Email already exists'})
+          }
+          if (oldmobilenumber){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Mobile Number already exists'})
+          }
+          if(!name && !id && !oldaddress && !oldemail && !oldmobilenumber){
+            newSupplier.save(async(err) => {
+                if (!err) {
+                    res.status(200).send({ success: true, message: 'Supplier Created Successfully!' });
+                }
+            
+            });
+          }
+      
+    } catch (err) {
+        // res.status(201).send(err)
+        console.log(err)
     }
 }
 
