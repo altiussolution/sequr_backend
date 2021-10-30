@@ -10,100 +10,112 @@ var generator = require('generate-password')
 var fs = require('fs')
 const Email = require('email-templates')
 
-exports.add = async (req, res) => {
-  try {
-    var password = generator.generate({
-      length: 6,
-      numbers: true
-    })
 
-    // var password  = '1q2w3e$R';
-    const {
-      first_name,
-      last_name,
-      email_id,
-      contact_no,
-      date_of_birth,
-      role_id,
-      language_prefered,
-      employee_id,
-      item_max_quantity,
-      branch_id,
-      shift_time_id,
-      department_id,
-      country_id,
-      state_id,
-      city_id,
-      profile_pic,
-      active_status
-    } = req.body
-
-    if (
-      !(email_id && employee_id && first_name && role_id && language_prefered)
-    ) {
-      res.status(400).send('All input is required')
-    }
-    const oldUser = await User.findOne({ employee_id })
-
-    if (oldUser) {
-      return res
+  exports.add = async (req, res) => {
+    try {
+      var password = generator.generate({
+        length: 6,
+        numbers: true
+      })
+  
+      // var password  = '1q2w3e$R';
+      const {
+        first_name,
+        last_name,
+        email_id,
+        contact_no,
+        date_of_birth,
+        role_id,
+        language_prefered,
+        employee_id,
+        item_max_quantity,
+        branch_id,
+        shift_time_id,
+        department_id,
+        profile_pic,
+        city_id,
+        country_id,
+        state_id,
+        active_status 
+      } = req.body
+  
+      if (
+        !(email_id && employee_id && first_name && role_id && language_prefered)
+      ) {
+        res.status(400).send('All input is required')
+      }
+      const oldEmployee_id = await User.findOne({ employee_id , active_status: 1 })
+      const oldmobilenumber = await User.findOne({ contact_no , active_status: 1 })
+      const oldemail_id = await User.findOne({ email_id , active_status: 1 })
+      if (oldEmployee_id) {
+        return res
+          .status(409)
+          .send({ status: false, message: 'Employee_id already exist' })
+      }
+      if (oldemail_id){
+        return res
         .status(409)
-        .send({ status: false, message: 'User Already Exist. Please Login' })
-    }
-    console.log(password)
-    encryptedPassword = await bcrypt.hash(password, 10)
-    const user = await User.create({
-      employee_id,
-      first_name,
-      last_name,
-      contact_no,
-      date_of_birth,
-      role_id,
-      language_prefered,
-      item_max_quantity,
-      branch_id,
-      shift_time_id,
-      department_id,
-      country_id,
-      state_id,
-      city_id,
-      profile_pic,
-      email_id: email_id, // sanitize: convert email to lowercase
-      password: encryptedPassword,
-      active_status: active_status ? active_status : 0
-    })
-    const token = jwt.sign(
-      { user_id: user._id, employee_id },
-      process.env.TOKEN_KEY,
-      {
-        expiresIn: '2h'
+        .send( {status: false, message: 'Email id already exists'})
       }
-    )
-    const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
-    const locals = {
-      employee_id: employee_id,
-      password: password,
-      loginPage: process.env.STAGING,
-      logo : `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
-      background : `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
-    }
-    user.token = token
-    const email = new Email()
-    Promise.all([email.render('../src/templates/registerMail', locals)]).then(
-      async registerMail => {
-        await sendEmail(
-          email_id,
-          'New User Signup',
-          registerMail[0],          
-        )
+      if (oldmobilenumber){
+        return res
+        .status(409)
+        .send( {status: false, message: 'Contact number already exists'})
       }
-    )
-    res.status(201).json(user)
-  } catch (err) {
-    console.log(err)
+      console.log(password)
+      encryptedPassword = await bcrypt.hash(password, 10)
+      const user = await User.create({
+        employee_id,
+        first_name,
+        last_name,
+        contact_no,
+        date_of_birth,
+        role_id,
+        language_prefered,
+        item_max_quantity,
+        branch_id,
+        shift_time_id,
+        department_id,
+        profile_pic,
+        country_id,
+        city_id,
+        state_id,
+        email_id: email_id, // sanitize: convert email to lowercase
+        password: encryptedPassword,
+        active_status: active_status ? active_status : 0
+      })
+      const token = jwt.sign(
+        { user_id: user._id, employee_id },
+        process.env.TOKEN_KEY,
+        {
+          expiresIn: '2h'
+        }
+      )
+      const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
+      const locals = {
+        employee_id: employee_id,
+        password: password,
+        loginPage: process.env.STAGING,
+        logo : `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
+        background : `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
+      }
+      user.token = token
+      const email = new Email()
+      Promise.all([email.render('../src/templates/registerMail', locals)]).then(
+        async registerMail => {
+          console.log(registerMail[0])
+          await sendEmail(
+            email_id,
+            'New User Signup',
+            registerMail[0],          
+          )
+        }
+      )
+      res.status(201).json(user)
+    } catch (err) {
+      console.log(err)
+    }
   }
-}
-
 exports.login = async (req, res) => {
   try {
     const { employee_id, password } = req.body
