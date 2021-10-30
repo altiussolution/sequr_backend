@@ -18,6 +18,6 @@ route.put('/update/:id', auth, CategoryController.updateCategory)
 route.post('/upload',auth, upload.single('category'),CategoryController.upload)
 route.delete('/delete/:id', CategoryController.deleteCategory)
 route.get('/getCategorylist',auth, CategoryController.getCategorylist)
-route.get('/getCategorylist',auth, CategoryController.getCategorylist)
+route.get('/getCategoryfilter',auth, CategoryController.getCategoryfilter)
 
 module.exports = route

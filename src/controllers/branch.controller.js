@@ -3,26 +3,80 @@ var { error_code } = require('../utils/enum.utils')
 
 
 
-exports.createBranch = (req, res) => {
+exports.createBranch = (async(req, res) => {
     try {
         var newBranch = new branchModel(req.body);
-        newBranch.save((err) => {
-            if (!err) {
-                res.status(200).send({ success: true, message: 'Branch Created Successfully!' });
-            }
-            else {
-                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Branch name or code' : err)
-                res.status(200).send({
-                    success: false,
-                    message: errorMessage
-                });
-            }
-        });
-    } catch (error) {
-        res.status(201).send(error)
+        const {
+            branch_name,
+            branch_code,
+            branch_address,
+            email_id,
+            phone_number,
+            active_status
+        } = req.body
+        const name = await branchModel.findOne(({ branch_name , active_status: 1 }))
+       const id = await branchModel.findOne(({ branch_code ,  active_status: 1 }))
+        const oldaddress = await branchModel.findOne({branch_address  , active_status: 1 })
+        const oldemail = await branchModel.findOne({email_id, active_status: 1 })
+        const oldmobilenumber = await branchModel.findOne({phone_number, active_status:1 })
+        if (name){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Branch name already exists'})
+          }
+          if (id){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Branch id already exists'})
+          }
+          if (oldaddress){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Branch address already exists'})
+          }
+          if (oldemail){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Email already exists'})
+          }
+          if (oldmobilenumber){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Mobile Number already exists'})
+          }
+          if(!name && !id && !oldaddress && !oldemail && !oldmobilenumber){
+            newBranch.save(async(err) => {
+                if (!err) {
+                    res.status(200).send({ success: true, message: 'Branch Created Successfully!' });
+                }
+            //    else {
+            //     const name = await branchModel.findOne(({ branch_name , active_status: 1 })).exec()
+            //     const id = await branchModel.findOne(({ branch_code ,  active_status: 1 })).exec()
+            //         if(name){
+            //             var errorMessage = (err.code == error_code.isDuplication ? `Branch name already exists` : err)
+            //             console.log(err)
+            //             res.status(200).send({
+            //                 success: false,
+            //                 message: errorMessage
+            //             });  
+            //         }else if(id){
+            //             var errorMessage = (err.code == error_code.isDuplication ? `Branch code already exists` : err)
+            //             console.log(err)
+            //             res.status(200).send({
+            //                 success: false,
+            //                 message: errorMessage
+            //             });
+            //         } 
+                  
+            //     }
+            });
+          }
+      
+    } catch (err) {
+        // res.status(201).send(err)
+        console.log(err)
     }
-}
-
+})
 
 exports.getBranch = (req, res) => {
     var offset = parseInt(req.query.offset);
@@ -64,4 +118,47 @@ exports.deleteBranch = (req, res) => {
         res.status(200).send({ success: false, error: err, message: 'An Error Catched' });
     }
 
+}
+
+exports.getBranchfilter = (req, res) => {
+
+
+    var country_id = req.query.country_id;
+    var state_id  = req.query.state_id;
+    var city_id  = req.query.city_id;
+
+
+
+    if (country_id && state_id  && city_id){
+        var query = {country_id : country_id, state_id  : state_id,city_id:city_id}
+    }
+    else if( country_id && state_id ){
+        var query = { country_id: country_id,state_id : state_id }
+    }
+    else if( state_id  && city_id ){
+        var query = {state_id   : state_id, city_id :city_id}
+    }
+    else if( country_id && city_id ){
+        var query = {country_id  : country_id, city_id :city_id}
+    }
+                                                                                                         
+    else if( country_id ){
+        var query = { country_id :country_id}
+    }
+    
+    else if(  city_id ){
+        var query = { city_id : city_id  }
+    }
+    else if( state_id  ){
+        var query = { state_id  :state_id }
+    }
+    try {
+        branchModel.find(query).populate("country_id").populate("state_id").populate("city_id").then(branch => {
+            res.status(200).send({ success: true, data: branch });
+        }).catch(error => {
+            res.status(400).send({ success: false, error: error })
+        })
+    } catch (error) {
+        res.status(201).send({ success: false, error: error })
+    }
 }

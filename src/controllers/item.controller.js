@@ -126,21 +126,57 @@ exports.deleteItems = (req, res) => {
 
 
 exports.getItemfilter = (req, res) => {
-    var item_name = req.query.item_name;
-    var item_number= req.query.item_number;
-    var active_status = req.query.active_status;
+    var category_name = req.query.category_name;
+    var sub_category_name= req.query.sub_category_name;
+    var is_active = req.query.is_active;
+    var is_gages = req.query.is_gages;
    
-    if (item_name && item_number && active_status ){
-        var query = {item_name : item_name ,item_number : item_number, active_status : active_status}
+    if (category_name && sub_category_name && is_active && is_gages){
+        var query = {category_name:category_name,sub_category_name :sub_category_name , is_active  : is_active ,is_gages:is_gages}
     }
-    else if(item_name){
-        var query = {item_name: item_name}
+    else if(category_name && sub_category_name && is_gages){
+        var query = {category_name: category_name, sub_category_name : sub_category_name ,is_gages:is_gages }
     }
-    else if( item_number){
-        var query = { item_number : item_number}
+    else if( category_name && is_active  && sub_category_name){
+        var query = { category_name: category_name ,  is_active : is_active ,sub_category_name : sub_category_name}
     }
-    else if( active_status ){
-        var query = { active_status: active_status}
+    else if( sub_category_name  && is_active  && is_gages ){
+        var query = {sub_category_name  : sub_category_name  , is_active : is_active ,is_gages :is_gages}
+    }
+    else if( category_name  && is_active && is_gages ){
+        var query = {category_name  : category_name  , is_active :is_active ,is_gages :is_gages}
+    }
+    
+    else if( category_name && sub_category_name){
+        var query = {category_name:category_name , sub_category_name : sub_category_name}
+    }                                                                                                     
+    else if(category_name && is_gages){
+        var query = { category_name :category_name ,is_gages:is_gages}
+    }
+    else if( category_name && is_active){
+        var query = { category_name :category_name , is_active:is_active}
+    }
+    
+    else if( sub_category_name && is_gages){
+        var query = {sub_category_name : sub_category_name, is_gages:is_gages}
+    }
+    else if( sub_category_name && is_active ){
+        var query = {sub_category_name : sub_category_name, is_active:is_active}
+    }
+    else if( is_active && is_gages){
+        var query = { is_active :is_active,is_gages:is_gages  }
+    }
+    else if( is_gages ){
+        var query = { is_gages :is_gages}
+    }
+    else if(category_name ){
+        var query = {category_name :category_name}
+    }
+    else if( sub_category_name ){
+        var query = { sub_category_name :sub_category_name}
+    }
+    else if( is_active ){
+        var query = {  is_active: is_active}
     }
         try {
             itemModel.find(query).populate('category_id').populate('sub_category_id').then(item => {

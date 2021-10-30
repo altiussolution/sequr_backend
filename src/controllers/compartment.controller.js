@@ -6,23 +6,32 @@ var {error_code} = require('../utils/enum.utils')
 exports.createCompartment = (req, res) => {
     try {
         var newCompartment = new compartmentModel(req.body);
-        newCompartment.save((err) => {
+        newCompartment.save(async(err) => {
             if (!err) {
                 res.status(200).send({ success: true, message: 'Compartment Created Successfully!' });
             }
             else {
-                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Compartment code or name' : err)
+                const name = await compartmentModel.findOne(({compartment_name: req.body.compartment_name ,active_status: 1 })).exec()
+                const id = await compartmentModel.findOne(({ compartment_id:req.body.compartment_id ,  active_status: 1 })).exec()
+                if(name){
+                var errorMessage = (err.code == error_code.isDuplication ? 'Compartment name already exists' : err)
                 res.status(200).send({
                     success: false,
                     message: errorMessage
                 });
+            }else if(id){
+                var errorMessage = (err.code == error_code.isDuplication ? 'Compartment id already exists' : err)
+                res.status(200).send({
+                    success: false,
+                    message: errorMessage
+                });
+            }
             }
         });
     } catch (error) {
         res.status(201).send(error)
     }
 }
-
 
 exports.getCompartment = (req, res) => {
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
@@ -69,4 +78,44 @@ exports.updateCompartment = (req, res) => {
     } catch (err) {
         res.status(200).send({ success: false, error: err, message: 'An Error Catched' });
     }
+}
+
+exports.getCompartmentfilter = (req, res) => {
+
+    var cube_name = req.query.cube_name;
+    var bin_name = req.query.bin_name;
+    var is_removed = req.query.is_removed;
+
+if (cube_name && bin_name  && is_removed){
+var query = {cube_name : cube_name, bin_name  : bin_name,is_removed:is_removed}
+}
+else if( cube_name && bin_name ){
+var query = { cube_name: cube_name,bin_name : bin_name }
+}
+else if( bin_name  && is_removed ){
+var query = {bin_name   : bin_name, is_removed :is_removed}
+}
+else if( cube_name && is_removed ){
+var query = {cube_name  : cube_name, is_removed :is_removed}
+}
+                                                                                                
+else if( cube_name ){
+var query = { cube_name :cube_name}
+}
+else if(  is_removed ){
+var query = { is_removed:is_removed  }
+}
+else if( bin_name  ){
+var query = { bin_name  :bin_name }
+}
+try {
+compartmentModel.find(query).populate("cube_id").populate("bin_id").then(compartment => {
+   console.log(compartment)
+   res.status(200).send({ success: true, data: compartment });
+}).catch(error => {
+   res.status(400).send({ success: false, error: error })
+})
+} catch (error) {
+res.status(201).send({ success: false, error: error })
+}
 }

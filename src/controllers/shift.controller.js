@@ -76,3 +76,19 @@ exports.deleteShift = (async (req, res) => {
     }
 })
 
+exports.getShiftfilter =  (req, res) => {
+    var shift_type = req.query.shift_type;
+   
+    if( shift_type ){
+        var query = { shift_type :shift_type }
+    }
+    try {
+       shift_timeModel.find(query).then(shift_time => {
+            res.status(200).send({ success: true, data: shift_time});
+        }).catch(error => {
+            res.status(400).send({ success: false, error: error })
+        })
+    } catch (error) {
+        res.status(201).send({ success: false, error: error })
+    }
+}

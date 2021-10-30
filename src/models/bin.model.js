@@ -15,7 +15,7 @@ const BinSchema = Schema({
         required: true,
         ref: 'cube'
     },
-    auto_purchanse_order: {
+    auto_purchase_order: {
         type: Boolean,
         default: false
     },

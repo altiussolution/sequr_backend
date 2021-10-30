@@ -59,6 +59,18 @@ const UserSchema = Schema({
     required: true,
     ref: 'department'
   },
+  country_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'country'
+  },
+  state_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'state'
+  },
+  city_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'city'
+  },
   profile_pic: {
     type: String,
   },
