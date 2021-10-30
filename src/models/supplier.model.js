@@ -30,6 +30,7 @@ const SupplierSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'city'
     },
+    
     zip_code: {
         type: String,
         required: true,

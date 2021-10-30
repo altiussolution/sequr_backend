@@ -215,7 +215,7 @@ exports.listEmployees = (req, res) => {
     ? { active_status: 1, $text: { $search: searchString } }
     : { active_status: 1 }
   User.find(query)
-    .populate('department_id')
+    .populate('department_id').populate('country_id').populate('state_id').populate('city_id')
     .skip(offset)
     .limit(limit)
     .then(result => {
