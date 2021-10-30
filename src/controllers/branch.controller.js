@@ -3,7 +3,7 @@ var { error_code } = require('../utils/enum.utils')
 
 
 
-exports.createBranch = (req, res) => {
+exports.createBranch = (async(req, res) => {
     try {
         var newBranch = new branchModel(req.body);
         const {
@@ -76,8 +76,7 @@ exports.createBranch = (req, res) => {
         // res.status(201).send(err)
         console.log(err)
     }
-}
-
+})
 
 exports.getBranch = (req, res) => {
     var offset = parseInt(req.query.offset);
