@@ -85,7 +85,6 @@ exports.add = async (req, res) => {
     const email = new Email()
     Promise.all([email.render('../src/templates/registerMail', locals)]).then(
       async registerMail => {
-        console.log(registerMail[0])
         await sendEmail(
           email_id,
           'New User Signup',
@@ -231,7 +230,26 @@ exports.forgotPassword = async (req, res) => {
     }
 
     const link = `${process.env.STAGING}/reset?id=${user._id}&token=${token.token}`
-    await sendEmail(user.email_id, 'Password reset', link)
+    // await sendEmail(user.email_id, 'Password reset', link)
+
+    const locals = {
+      forgotPageLink: link,
+      adminName:`${user.first_name} ${user.last_name}`,
+      logo : `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
+      background : `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
+    }
+    const email = new Email()
+    Promise.all([email.render('../src/templates/adminForgotPassword', locals)]).then(
+      async adminForgotPassword => {
+        await sendEmail(
+          user.email_id,
+          'Password reset',
+          adminForgotPassword[0],          
+        )
+      }
+    )
+
+    
 
     res.send('password reset link sent to your email account')
   } catch (error) {
@@ -299,8 +317,29 @@ exports.EmployeeForgotPassword = async (req, res) => {
       numbers: true
     })
 
-    template = `${process.env.STAGING_USER} \n New Password : ${newPassword}`
-    await sendEmail(user.email_id, 'New Password', template)
+    // template = `${process.env.STAGING_USER} \n New Password : ${newPassword}`
+    // await sendEmail(user.email_id, 'New Password', template)
+
+    const locals = {
+      newPassword: newPassword,
+      loginPage: process.env.STAGING_USER,
+      userName:`${user.first_name} ${user.last_name}`,
+      logo : `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
+      background : `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
+    }
+    const email = new Email()
+    Promise.all([email.render('../src/templates/employeeNewPassword', locals)]).then(
+      async employeeNewPassword => {
+        await sendEmail(
+          user.email_id,
+          'New Password',
+          employeeNewPassword[0],          
+        )
+      }
+    )
+
+
+
     const encryptedPassword = await bcrypt.hash(newPassword, 10)
     await User.findByIdAndUpdate(req.body.id, {
       password: encryptedPassword
