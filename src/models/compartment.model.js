@@ -22,6 +22,26 @@ const CompartmentSchema = Schema({
         required: true,
         ref: 'bin'
     },
+    auto_purchase_order: {
+        type: Boolean,
+        default: false
+    },
+    item_alert: {
+        type: Boolean,
+        default: false
+    },
+    print_receipt: {
+        type: Boolean,
+        default: false
+    },
+    alert_on: {
+        type: Number,
+        required: false
+    },
+    generate_po_on: {
+        type: Number,
+        required: false
+    },
     item_max_cap: {
         type: Number,
         required: true

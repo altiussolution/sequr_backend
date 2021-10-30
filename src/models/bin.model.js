@@ -15,26 +15,26 @@ const BinSchema = Schema({
         required: true,
         ref: 'cube'
     },
-    auto_purchase_order: {
-        type: Boolean,
-        default: false
-    },
-    item_alert: {
-        type: Boolean,
-        default: false
-    },
-    print_receipt: {
-        type: Boolean,
-        default: false
-    },
-    item_max_cap: {
-        type: Number,
-        required: true
-    },
-    item_min_cap: {
-        type: Number,
-        required: true
-    },
+    // auto_purchase_order: {
+    //     type: Boolean,
+    //     default: false
+    // },
+    // item_alert: {
+    //     type: Boolean,
+    //     default: false
+    // },
+    // print_receipt: {
+    //     type: Boolean,
+    //     default: false
+    // },
+    // item_max_cap: {
+    //     type: Number,
+    //     required: true
+    // },
+    // item_min_cap: {
+    //     type: Number,
+    //     required: true
+    // },
     description: {
         type: String,
     },
