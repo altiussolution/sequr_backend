@@ -44,23 +44,32 @@ exports.getKit = ((req,res) =>{
     try{
         kitModel.find(query).skip(offset).limit(limit).then(async kits =>{
             for(let kit of kits){
-               var quantity = kit.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
+               var quantity = await kit.kit_data.reduce((acc, curr) => acc + curr.qty, 0); // 6
+               var index = 0
                for(let kitdata of kit.kit_data){
-                   allocationDetais = await stockAllocationModel.find({category:kitdata.category_id, item:kitdata.item_id}).populate('item',['item_name','image_path']).populate('cube',['cube_name','cube_id']).populate('bin',['bin_name','bin_id']).populate('compartment',['compartment_name','compartment_id']).exec()
-               }
-                   binDatas.push({
+                allocationDetais = await stockAllocationModel.findOne({category:kitdata.category_id, item:kitdata.item_id}).populate('item',['item_name','image_path']).populate('cube',['cube_name','cube_id']).populate('bin',['bin_name','bin_id']).populate('compartment',['compartment_name','compartment_id']).exec()
+                await binDatas.push({
                     _id : kit._id,
                     kit_name : kit.kit_name,
                     available_item : kit.kit_data.length,
                     total_qty : quantity,
-                    kit_data : allocationDetais,
+                    allocation : allocationDetais,
+                    kitData : kit.kit_data[index],
                     image_path : kit.image_path
                    })
+                   index++
+               }
+                  
             }
-            if(kits.length == binDatas.length){
-                res.status(200).send({success: true, data : binDatas})
-            }
+
+            var grouped = await _.mapValues(_.groupBy(binDatas, 'kit_name'),
+                          clist => clist.map(binData => _.omit(binDatas, 'kit_name')));
+            
+            // if(kits.length == binDatas.length){
+                res.status(200).send({success: true, data : await grouped})
+            // }
         }).catch(error => {
+            console.log(error)
             res.status(400).send({success: false, error : error})
         })
     } catch(error){
