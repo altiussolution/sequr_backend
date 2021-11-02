@@ -18,5 +18,8 @@ route.get('/getpurchaseOrdercount', auth,DashboardController.getPurchaseOrdercou
 route.get('/getCubecount', auth,DashboardController.getCubecount);
 route.get('/getPermissioncount', auth,DashboardController.getPermissioncount);
 route.get('/getshiftTimecount', auth,DashboardController.getshiftTimecount);
+route.post('/machineUsageAdd', DashboardController.addMachineUsage);
+route.get('/getMachineUsage', DashboardController.getMachineUsage);
+
 
 module.exports = route;

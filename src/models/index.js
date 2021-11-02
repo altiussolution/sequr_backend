@@ -19,6 +19,7 @@ const languageModel = require("./language.model")
 const resetPasswordTokenModel = require("./resetPasswordToken.model")
 const subCategoryModel = require("./subCategory.model")
 const CartModel = require("./cart.model")
+const machineUsageModel = require("./machineUsage.model")
 
 
 module.exports = {
@@ -42,5 +43,6 @@ module.exports = {
     languageModel,
     resetPasswordTokenModel,
     subCategoryModel,
-    CartModel
+    CartModel,
+    machineUsageModel
 }

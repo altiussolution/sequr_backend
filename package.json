@@ -13,6 +13,7 @@
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "country-state-city": "^3.0.1",
+    "dateformat": "^5.0.2",
     "dotenv": "^10.0.0",
     "email-templates": "^8.0.8",
     "express": "^4.17.1",
