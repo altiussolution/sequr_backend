@@ -24,12 +24,10 @@ const BranchSchema = Schema({
     },
     state_id: {
         type: Schema.Types.ObjectId,
-        required: true,
         ref: 'state'
     },
     city_id: {
         type: Schema.Types.ObjectId,
-        required: true,
         ref: 'city'
     },
     zip_code: {

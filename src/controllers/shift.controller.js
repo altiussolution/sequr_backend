@@ -3,24 +3,38 @@ const { shift_timeModel } = require("../models");
 
 
 exports.addShift = (async (req, res) => {
-    try {
-        var newShift = new shift_timeModel(req.body);
-        newShift.save(function (err) {
-            if (err) {
-                res.status(200).send({
-                    success: false,
-                    message: 'error in adding shift time'
-                });
-            }
-            else {
-                res.status(200).send({ success: true, message: 'Shift Time Added Successfully!' });
-            }
-        });
-    } catch (error) {
-        res.send("An error occured");
-        console.log(error);
-    }
-})
+        try {
+            var newShift = new shift_timeModel(req.body);
+            newShift.save(async (err) =>  {
+                if (err) {
+                    const start = await shift_timeModel.findOne(({start_time :req.body.start_time, active_status : 1})).exec()
+                    const end = await shift_timeModel.findOne(({ end_time: req.body.end_time ,active_status : 1 })).exec()
+                    if(start && end){
+                        res.status(409).send({
+                            success: false,
+                            message: 'Shift start time & end time already exists'
+                        });
+                    } else if (start){
+                        res.status(409).send({
+                            success: false,
+                            message: 'Shift start time already exists'
+                        });
+                    }else if (end){
+                        res.status(409).send({
+                            success: false,
+                            message: 'Shift end time already exists'
+                        });
+                    }
+                }
+                else {
+                    res.status(200).send({ success: true, message: 'Shift Time Added Successfully!' });
+                }
+            });
+        } catch (error) {
+            res.send("An error occured");
+            console.log(error);
+        }
+    })
 exports.getShift = (async (req, res) => {
     try {
         shift_timeModel.find({ active_status: 1 }, (err, shift) => {
