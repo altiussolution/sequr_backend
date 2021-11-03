@@ -20,5 +20,6 @@ route.get('/getItemByCategory/:category_id/:sub_category_id', auth, ItemControll
 route.put('/delete/:id', ItemController.deleteItems)
 route.get('/getItemById/:item',auth, ItemController.getItemById)
 route.get('/getItemfilter', ItemController.getItemfilter)
+route.post('/uploadImage', auth, upload.array('image'), ItemController.uploadImage)
 
 module.exports = route

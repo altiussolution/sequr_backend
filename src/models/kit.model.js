@@ -21,6 +21,11 @@ const KitSchema = Schema({
                 required: true,
                 ref: 'item'
             },
+            sub_category_id: {
+                type: Schema.Types.ObjectId,
+                required: true,
+                ref: 'subCategory'
+            },
             qty : {
                 type : Number
             },

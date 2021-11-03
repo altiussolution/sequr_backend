@@ -54,19 +54,25 @@ exports.getKit = ((req,res) =>{
                     available_item : kit.kit_data.length,
                     total_qty : quantity,
                     allocation : allocationDetais,
-                    kitData : kit.kit_data[index],
+                    kit_data : [kit.kit_data[index]],
                     image_path : kit.image_path
-                   })
+                })
                    index++
                }
                   
             }
+            var grouped = await _.groupBy(binDatas,'kit_name')
 
-            var grouped = await _.mapValues(_.groupBy(binDatas, 'kit_name'),
-                          clist => clist.map(binData => _.omit(binDatas, 'kit_name')));
-            
+            kitNames = await Object.keys(grouped)
+console.log(kitNames)
+
+result = []
+for await (let kit of kitNames){
+  result.push(grouped[kit][0])
+}
+            //console.log(binDatas)
             // if(kits.length == binDatas.length){
-                res.status(200).send({success: true, data : await grouped})
+                res.status(200).send({success: true, data : await result})
             // }
         }).catch(error => {
             console.log(error)
