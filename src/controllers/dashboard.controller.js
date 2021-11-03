@@ -397,3 +397,58 @@ exports.getMachineUsage = async (req, res) => {
     res.status(201).send({ success: false, error: error })
   }
 }
+
+exports.outOfStock = async (req, res) => {
+//   try {
+    itemOnCube = await stockAllocationModel
+      .aggregate([
+        {
+          $group: {
+            _id: '$item',
+            compartment: { $push: '$compartment' },
+            item: { $push: '$item' },
+            available: { $sum: '$quantity' },
+            total_quantity: { $sum: '$total_quantity' }
+          }
+        },
+
+        {
+          $lookup: {
+            from: 'compartments',
+            localField: 'compartment',
+            foreignField: '_id',
+            as: 'draw_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'items',
+            localField: 'item',
+            foreignField: '_id',
+            as: 'item_doc'
+          }
+        }
+        //   {
+        //     $match: {
+        //      available: '$available',
+        //     }
+        // }
+      ])
+      .exec()
+
+    outOfStockItems = []
+    for await (let item of itemOnCube) {
+        console.log(item)
+        console.log(item.available + '   ' + item.draw_doc.item_min_cap)
+      if (item.available <= item.draw_doc[0].item_min_cap) {
+        await outOfStockItems.push(item)
+      }
+    }
+
+    //   itemOnCube2 = await itemModel.populate(itemOnCube, { path: 'item' }).exec()
+    //   console.log(itemOnCube2)
+    res.status(200).send({ success: true, data: outOfStockItems })
+//   } catch (error) {
+//     res.status(201).send(error.name)
+//   }
+}

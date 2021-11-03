@@ -20,6 +20,7 @@ route.get('/getPermissioncount', auth,DashboardController.getPermissioncount);
 route.get('/getshiftTimecount', auth,DashboardController.getshiftTimecount);
 route.post('/machineUsageAdd', DashboardController.addMachineUsage);
 route.get('/getMachineUsage', DashboardController.getMachineUsage);
+route.get('/outOfStock', DashboardController.outOfStock);
 
 
 module.exports = route;
