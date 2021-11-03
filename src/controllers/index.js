@@ -16,6 +16,8 @@ SupplierController = require('./supplier.controller');
 StockAllocationController = require('./stockAllocation.controller')
 CartController = require('./cart.controller')
 DashboardController = require('./dashboard.controller')
+ServiceCubeMaintenanceController= require('./serviceCubeMaintenance.controller')
+analyticsController= require('./analytics.controller')
 
 module.exports = {
   UsersController,
@@ -35,5 +37,8 @@ module.exports = {
   SupplierController,
   StockAllocationController,
   CartController,
-  DashboardController
+  DashboardController,
+  ServiceCubeMaintenanceController,
+  analyticsController
+
 }

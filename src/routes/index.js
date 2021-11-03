@@ -16,6 +16,8 @@ let Supplier = require('./supplier.route')
 const StockAllocation = require('./stockAllocation.route')
 const Cart = require('./cart.route')
 const Dashboard = require('./dashboard.route')
+const ServiceCubeMaintenance = require('./serviceCubeMaintenance.route')
+const Analytics = require('./analytics.route')
 
 module.exports = (app) => {
     app.use('/employee', Users)
@@ -36,4 +38,6 @@ module.exports = (app) => {
     app.use('/allocation',StockAllocation)
     app.use('/cart',Cart)
     app.use('/dashboard',Dashboard)
+    app.use('/ServiceCubeMaintenance',ServiceCubeMaintenance)
+    app.use('/analytics',Analytics)
 }
