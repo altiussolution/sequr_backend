@@ -188,3 +188,24 @@ exports.getItemfilter = (req, res) => {
             res.status(201).send({ success: false, error: error })
         }
     }
+
+    exports.uploadImage = (async(req,res) => {
+        
+        try {
+            totalImages = []
+            for(let image of req.files){
+                fileLocations = {}
+                fileLocations['image_path'] = `${image.destination.replace('./src/public/', appRouteModels.BASEURL)}/${image.originalname}`
+                totalImages.push(fileLocations)
+            }
+            res.status(200).send({
+                message: 'Profile Added Sucessfully',
+                fileLocations: totalImages
+            })
+
+    
+        } catch (err) {
+            res.status(400).send(err);
+        }
+    
+    })
