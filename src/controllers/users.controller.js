@@ -36,6 +36,7 @@ const Email = require('email-templates')
         city_id,
         country_id,
         state_id,
+        status,
         active_status 
       } = req.body
   
@@ -80,9 +81,10 @@ const Email = require('email-templates')
         country_id,
         city_id,
         state_id,
+        status,
         email_id: email_id, // sanitize: convert email to lowercase
         password: encryptedPassword,
-        active_status: active_status ? active_status : 0
+        active_status: 1
       })
       const token = jwt.sign(
         { user_id: user._id, employee_id },
