@@ -386,7 +386,7 @@ exports.getMachineUsage = async (req, res) => {
         console.log(binUsage)
         eachBin['column_id'] = bin.bin_id
         eachBin['column_name'] = bin.bin_name
-        if (binUsage[0].sum) {
+        if (binUsage.length > 0) {
           eachBin['column_usage'] = binUsage[0].sum
         } else {
           eachBin['column_usage'] = 0
