@@ -18,6 +18,8 @@ const {
 } = require('../models')
 const { User } = require('../models/user.model')
 var { error_code } = require('../utils/enum.utils')
+// const { createLog } = require('../middleware/crud.middleware')
+
 
 exports.getUsercount = async (req, res) => {
   var query = { active_status: 1 }
@@ -309,6 +311,8 @@ exports.addMachineUsage = async (req, res) => {
       res
         .status(200)
         .send({ success: true, message: 'Machine Usage Created Successfully!' })
+        // createLog(req.headers['authorization'], 'Columns', 2)
+
     })
   } catch (error) {
     res.status(201).send({ success: false, error: error })
@@ -318,7 +322,7 @@ exports.addMachineUsage = async (req, res) => {
 var ObjectId = require('mongodb').ObjectID
 
 exports.getMachineUsage = async (req, res) => {
-  try {
+  // try {
     cubes = await cubeModel
       .find({
         active_status: 1
@@ -393,9 +397,9 @@ exports.getMachineUsage = async (req, res) => {
       await oveallmachineUsage.push(eachCubeUsage)
     }
     res.status(200).send({ success: true, data: oveallmachineUsage })
-  } catch (error) {
-    res.status(201).send({ success: false, error: error })
-  }
+  // } catch (error) {
+  //   res.status(201).send({ success: false, error: error })
+  // }
 }
 
 exports.outOfStock = async (req, res) => {

@@ -67,6 +67,11 @@ const enumVariables = {
     },
     error_code : {
         isDuplication : 11000
+    },
+    action : {
+        created : 2,
+        updated : 1,
+        deleted : 0
     }
 }
 

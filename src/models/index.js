@@ -20,6 +20,7 @@ const resetPasswordTokenModel = require("./resetPasswordToken.model")
 const subCategoryModel = require("./subCategory.model")
 const CartModel = require("./cart.model")
 const machineUsageModel = require("./machineUsage.model")
+const logModel = require("./log.model")
 
 
 module.exports = {
@@ -44,5 +45,6 @@ module.exports = {
     resetPasswordTokenModel,
     subCategoryModel,
     CartModel,
-    machineUsageModel
+    machineUsageModel,
+    logModel
 }
