@@ -328,7 +328,7 @@ exports.getMachineUsage = async (req, res) => {
     // Usage Between today and 7 day before
     today = new Date()
     sevenDayBefore = new Date()
-    var dateOffset = 24 * 60 * 60 * 1000 * 7 //5 days
+    var dateOffset = 24 * 60 * 60 * 1000 * 7 //7 days
     sevenDayBefore.setTime(sevenDayBefore.getTime() - dateOffset)
     console.log(today)
     console.log(sevenDayBefore)
