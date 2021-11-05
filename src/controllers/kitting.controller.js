@@ -53,8 +53,9 @@ exports.getKit = ((req,res) =>{
                     kit_name : kit.kit_name,
                     available_item : kit.kit_data.length,
                     total_qty : quantity,
-                    allocation : allocationDetais,
-                    kit_data : [kit.kit_data[index]],
+                    // allocation : allocationDetais,
+                    // kit_data : [kit.kit_data[index]],
+                    kit_data : allocationDetais,
                     image_path : kit.image_path
                 })
                    index++
