@@ -320,7 +320,7 @@ exports.addMachineUsage = async (req, res) => {
 var ObjectId = require('mongodb').ObjectID
 
 exports.getMachineUsage = async (req, res) => {
-  // try {
+  try {
   cubes = await cubeModel
     .find({
       active_status: 1
@@ -395,9 +395,9 @@ exports.getMachineUsage = async (req, res) => {
     await oveallmachineUsage.push(eachCubeUsage)
   }
   res.status(200).send({ success: true, data: oveallmachineUsage })
-  // } catch (error) {
-  //   res.status(201).send({ success: false, error: error })
-  // }
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
 }
 
 exports.outOfStock = async (req, res) => {
@@ -442,7 +442,7 @@ exports.outOfStock = async (req, res) => {
     for await (let item of itemOnCube) {
       console.log(item)
       console.log(item.available + '   ' + item.draw_doc.item_min_cap)
-      if (item.available <= item.draw_doc[0].item_min_cap) {
+      if (item.available <= item.draw_doc[0].item_min_cap || item.available <= alert_on) {
         await outOfStockItems.push(item)
       }
     }

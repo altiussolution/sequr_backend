@@ -80,3 +80,13 @@ exports.upload = (async(req,res) => {
       res.status(400).send(err);
     }
 })
+
+exports.autoPurchaseOrder = () => {
+    try {
+
+    }
+    catch (err) {
+        res.status(200).send({ success: false, error: err, message: 'An Error Catched' });
+    }
+
+}
