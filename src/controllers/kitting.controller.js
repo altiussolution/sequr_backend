@@ -66,12 +66,12 @@ exports.getKit = (req, res) => {
               .populate('bin', ['bin_name', 'bin_id'])
               .populate('compartment', ['compartment_name', 'compartment_id'])
               .exec()
-              itemDetails['description'] = kitData.description
-              itemDetails['qty'] = kitData.qty
-              itemDetails['_id'] = kitData._id
-              itemDetails['item_id'] = kitData.item_id
-              itemDetails['itemDetails'] = allocationDetais
-            await kitData.push(itemDetails)
+              allocationDetais['description'] = kitdata['description']
+              allocationDetais['qty'] = kitdata['qty']
+              allocationDetais['_id'] = kitdata['_id']
+              allocationDetais['item_id'] = kitdata['kitData.item_id']
+            //   itemDetails['itemDetails'] = allocationDetais
+            await kitData.push(allocationDetais)
             index++
           }
           await binDatas.push({
