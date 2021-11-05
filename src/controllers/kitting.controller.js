@@ -57,6 +57,7 @@ exports.getKit = (req, res) => {
           var index = 0
           var kitData = []
           for (let kitdata of kit.kit_data) {
+            itemDetails = {}
             allocationDetais = await stockAllocationModel
               .findOne({ category: kitdata.category_id, item: kitdata.item_id })
               .populate('item', ['item_name', 'image_path'])
@@ -64,9 +65,12 @@ exports.getKit = (req, res) => {
               .populate('bin', ['bin_name', 'bin_id'])
               .populate('compartment', ['compartment_name', 'compartment_id'])
               .exec()
-              allocationDetais['description'] = kitData.description
-              allocationDetais['qty'] = kitData.qty
-            await kitData.push(allocationDetais)
+              itemDetails['description'] = kitData.description
+              itemDetails['qty'] = kitData.qty
+              itemDetails['_id'] = kitData._id
+              itemDetails['item_id'] = kitData.item_id
+              itemDetails['itemDetails'] = allocationDetais
+            await kitData.push(itemDetails)
             index++
           }
           await binDatas.push({
@@ -155,15 +159,13 @@ exports.upload = (req, res) => {
   try {
     if (req.file) {
       var filename = req.file.originalname
-      res
-        .status(200)
-        .send({
-          message: 'Kin Image Added Sucessfully',
-          Path: `${req.file.destination.replace(
-            './src/public/',
-            appRouteModels.BASEURL
-          )}/${filename}`
-        })
+      res.status(200).send({
+        message: 'Kin Image Added Sucessfully',
+        Path: `${req.file.destination.replace(
+          './src/public/',
+          appRouteModels.BASEURL
+        )}/${filename}`
+      })
     }
   } catch (err) {
     res.status(400).send(err)
@@ -262,12 +264,10 @@ exports.deleteKitFromCart = async (req, res) => {
 
           CartModel.findOneAndUpdate(query, data, options)
             .then(is_create => {
-              res
-                .status(200)
-                .send({
-                  success: true,
-                  message: 'Successfully deleted from cart!'
-                })
+              res.status(200).send({
+                success: true,
+                message: 'Successfully deleted from cart!'
+              })
             })
             .catch(err => {
               res.status(201).send({ status: false, message: err.name })
