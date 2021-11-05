@@ -57,6 +57,7 @@ exports.getKit = (req, res) => {
           var index = 0
           var kitData = []
           for (let kitdata of kit.kit_data) {
+              console.log(kitdata)
             itemDetails = {}
             allocationDetais = await stockAllocationModel
               .findOne({ category: kitdata.category_id, item: kitdata.item_id })
