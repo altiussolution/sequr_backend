@@ -399,7 +399,7 @@ exports.getMachineUsage = async (req, res) => {
 }
 
 exports.outOfStock = async (req, res) => {
-//   try {
+  try {
     itemOnCube = await stockAllocationModel
       .aggregate([
         {
@@ -438,8 +438,8 @@ exports.outOfStock = async (req, res) => {
 
     outOfStockItems = []
     for await (let item of itemOnCube) {
-        console.log(item)
-        console.log(item.available + '   ' + item.draw_doc.item_min_cap)
+      console.log(item)
+      console.log(item.available + '   ' + item.draw_doc.item_min_cap)
       if (item.available <= item.draw_doc[0].item_min_cap) {
         await outOfStockItems.push(item)
       }
@@ -448,7 +448,47 @@ exports.outOfStock = async (req, res) => {
     //   itemOnCube2 = await itemModel.populate(itemOnCube, { path: 'item' }).exec()
     //   console.log(itemOnCube2)
     res.status(200).send({ success: true, data: outOfStockItems })
-//   } catch (error) {
-//     res.status(201).send(error.name)
-//   }
+  } catch (error) {
+    res.status(201).send(error.name)
+  }
+}
+
+exports.calibrationMonthNotification = async (req, res) => {
+  try {
+    await itemModel
+      .find({
+        active_status: 1,
+        is_gages: true,
+        calibration_month: { $exists: true, $ne: null }
+      })
+      .then(async items => {
+        if (items.length > 0) {
+          notifyItems = []
+          for await (let item of items) {
+            today = new Date()
+            calibration_month = new Date(item.calibration_month)
+            if (calibration_month < today) {
+              var isFuture = true
+            } else {
+              var diffDate = parseInt(
+                (item.calibration_month - new Date()) / (1000 * 60 * 60 * 24),
+                10
+              )
+            }
+            console.log(calibration_month)
+            console.log(today)
+            console.log(isFuture)
+            console.log(diffDate)
+            if (isFuture) {
+              await notifyItems.push(item)
+            } else if (diffDate <= 3) {
+              await notifyItems.push(item)
+            }
+          }
+          res.status(200).send({ success: true, data: notifyItems })
+        }
+      })
+  } catch (error) {
+    res.status(201).send(error.name)
+  }
 }
