@@ -70,7 +70,7 @@ exports.getKit = (req, res) => {
               kitItemAllocation['kit_item_description'] = kitdata['description']
               kitItemAllocation['kit_item_qty'] = kitdata['qty']
               kitItemAllocation['kit_item_pack_id'] = kitdata['_id']
-              kitItemAllocation['kit_item_id'] = kitdata['kitData.item_id']
+              kitItemAllocation['kit_item_id'] = kitdata['item_id']
             //   itemDetails['itemDetails'] = allocationDetais
             await kitData.push(kitItemAllocation)
             index++
