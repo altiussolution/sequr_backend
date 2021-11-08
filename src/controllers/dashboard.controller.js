@@ -321,59 +321,28 @@ var ObjectId = require('mongodb').ObjectID
 
 exports.getMachineUsage = async (req, res) => {
   try {
-  cubes = await cubeModel
-    .find({
-      active_status: 1
-    })
-    .exec()
-
-  // Usage Between today and 7 day before
-  today = new Date()
-  sevenDayBefore = new Date()
-  var dateOffset = 24 * 60 * 60 * 1000 * 7 //7 days
-  sevenDayBefore.setTime(sevenDayBefore.getTime() - dateOffset)
-  console.log(today)
-  console.log(sevenDayBefore)
-  oveallmachineUsage = []
-  for await (let cube of cubes) {
-    let eachCubeUsage = {}
-    cubeUsage = await machineUsageModel
-      .aggregate([
-        {
-          $match: {
-            $and: [
-              { cube_id: cube._id },
-              { created_at: { $gt: new Date(sevenDayBefore) } },
-              { created_at: { $lt: new Date(today) } }
-            ]
-          }
-        },
-        { $group: { _id: null, sum: { $sum: '$machine_usage' } } }
-      ])
-      .exec()
-    console.log(cubeUsage[0].sum)
-    eachCubeUsage[cube.cube_name] = {}
-    eachCubeUsage[cube.cube_name]['cube_id'] = cube.cube_id
-    if (cubeUsage[0].sum) {
-      eachCubeUsage[cube.cube_name]['cube_usage'] = cubeUsage[0].sum
-    } else {
-      eachCubeUsage[cube.cube_name]['cube_usage'] = 0
-    }
-    bins = await binModel
+    cubes = await cubeModel
       .find({
         active_status: 1
       })
       .exec()
-    eachCubeUsage[cube.cube_name]['columns'] = []
-    for await (let bin of bins) {
-      let eachBin = {}
 
-      binUsage = await machineUsageModel
+    // Usage Between today and 7 day before
+    today = new Date()
+    sevenDayBefore = new Date()
+    var dateOffset = 24 * 60 * 60 * 1000 * 7 //7 days
+    sevenDayBefore.setTime(sevenDayBefore.getTime() - dateOffset)
+    console.log(today)
+    console.log(sevenDayBefore)
+    oveallmachineUsage = []
+    for await (let cube of cubes) {
+      let eachCubeUsage = {}
+      cubeUsage = await machineUsageModel
         .aggregate([
           {
             $match: {
               $and: [
-                { bin_id: bin._id },
+                { cube_id: cube._id },
                 { created_at: { $gt: new Date(sevenDayBefore) } },
                 { created_at: { $lt: new Date(today) } }
               ]
@@ -382,25 +351,56 @@ exports.getMachineUsage = async (req, res) => {
           { $group: { _id: null, sum: { $sum: '$machine_usage' } } }
         ])
         .exec()
-      console.log(binUsage)
-      eachBin['column_id'] = bin.bin_id
-      eachBin['column_name'] = bin.bin_name
-      if (binUsage.length > 0) {
-        eachBin['column_usage'] = binUsage[0].sum
+      console.log(cubeUsage[0].sum)
+      eachCubeUsage[cube.cube_name] = {}
+      eachCubeUsage[cube.cube_name]['cube_id'] = cube.cube_id
+      if (cubeUsage[0].sum) {
+        eachCubeUsage[cube.cube_name]['cube_usage'] = cubeUsage[0].sum
       } else {
-        eachBin['column_usage'] = 0
+        eachCubeUsage[cube.cube_name]['cube_usage'] = 0
       }
-      await eachCubeUsage[cube.cube_name]['columns'].push(eachBin)
+      bins = await binModel
+        .find({
+          active_status: 1
+        })
+        .exec()
+      eachCubeUsage[cube.cube_name]['columns'] = []
+      for await (let bin of bins) {
+        let eachBin = {}
+
+        binUsage = await machineUsageModel
+          .aggregate([
+            {
+              $match: {
+                $and: [
+                  { bin_id: bin._id },
+                  { created_at: { $gt: new Date(sevenDayBefore) } },
+                  { created_at: { $lt: new Date(today) } }
+                ]
+              }
+            },
+            { $group: { _id: null, sum: { $sum: '$machine_usage' } } }
+          ])
+          .exec()
+        console.log(binUsage)
+        eachBin['column_id'] = bin.bin_id
+        eachBin['column_name'] = bin.bin_name
+        if (binUsage.length > 0) {
+          eachBin['column_usage'] = binUsage[0].sum
+        } else {
+          eachBin['column_usage'] = 0
+        }
+        await eachCubeUsage[cube.cube_name]['columns'].push(eachBin)
+      }
+      await oveallmachineUsage.push(eachCubeUsage)
     }
-    await oveallmachineUsage.push(eachCubeUsage)
-  }
-  res.status(200).send({ success: true, data: oveallmachineUsage })
+    res.status(200).send({ success: true, data: oveallmachineUsage })
   } catch (error) {
     res.status(201).send({ success: false, error: error })
   }
 }
 
-exports.outOfStock = async (req, res) => {
+exports.itemAlert = async (req, res) => {
   try {
     itemOnCube = await stockAllocationModel
       .aggregate([
@@ -442,7 +442,10 @@ exports.outOfStock = async (req, res) => {
     for await (let item of itemOnCube) {
       console.log(item)
       console.log(item.available + '   ' + item.draw_doc.item_min_cap)
-      if (item.available <= item.draw_doc[0].item_min_cap || item.available <= alert_on) {
+      if (
+        item.available <= item.draw_doc[0].item_min_cap ||
+        item.available <= alert_on
+      ) {
         await outOfStockItems.push(item)
       }
     }
@@ -489,6 +492,21 @@ exports.calibrationMonthNotification = async (req, res) => {
           }
           res.status(200).send({ success: true, data: notifyItems })
         }
+      })
+  } catch (error) {
+    res.status(201).send(error.name)
+  }
+}
+exports.outOfStockItems = async (req, res) => {
+  try {
+    await itemModel
+      .find({
+        active_status: 1,
+        is_gages: true,
+        calibration_month: { $exists: true, $ne: null }
+      })
+      .then(async items => {
+        res.status(200).send({ success: true, data: notifyItems })
       })
   } catch (error) {
     res.status(201).send(error.name)

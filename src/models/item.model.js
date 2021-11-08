@@ -66,6 +66,18 @@ const ItemSchema = Schema({
         type: Number,
         enum: [0,1],
         default: 1
+    },
+    generate_po_on: {
+        type: Number,
+        required: false
+    },
+    auto_purchase_order: {
+        type: Boolean,
+        default: false
+    },
+    in_stock:{
+        type: Number,
+        default: 0
     }
 })
 
