@@ -22,6 +22,7 @@ route.post('/machineUsageAdd', DashboardController.addMachineUsage);
 route.get('/getMachineUsage', DashboardController.getMachineUsage);
 route.get('/itemAlert', DashboardController.itemAlert);
 route.get('/calibrationMonthNotification', DashboardController.calibrationMonthNotification);
+route.get('/getForgotpassword', auth,DashboardController.getForgotpassword);
 
 
 
