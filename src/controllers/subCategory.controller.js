@@ -1,18 +1,15 @@
 const { subCategoryModel } = require('../models')
-const { appRouteModels } = require('../utils/enum.utils');
-
+const { appRouteModels } = require('../utils/enum.utils')
 
 exports.addsubCategory = async (req, res) => {
   try {
     const subCategory = new subCategoryModel(req.body)
     subCategory.save(err => {
       if (!err) {
-        res
-          .status(200)
-          .send({
-            success: true,
-            message: 'Sub Category Created Successfully!'
-          })
+        res.status(200).send({
+          success: true,
+          message: 'Sub Category Created Successfully!'
+        })
       } else {
         res.status(200).send({
           success: false,
@@ -26,14 +23,26 @@ exports.addsubCategory = async (req, res) => {
 }
 
 exports.getsubCategory = async (req, res) => {
-  var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
-  var searchString = req.query.searchString;
-  var categoryId = req.query.category_id;
-  var query = (searchString ? { active_status: 1, category_id:categoryId, $text: { $search: searchString } } : { active_status: 1, category_id:categoryId })
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var searchString = req.query.searchString
+  var categoryId = req.query.category_id
+  var query = searchString
+    ? {
+        active_status: 1,
+        category_id: categoryId,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, category_id: categoryId }
   // var popVal = categoryId ? null : 'category_id'
   try {
-      subCategoryModel.find(query).populate('category_id').skip(offset).limit(limit).then(categories => {
+    subCategoryModel
+      .find(query)
+      .populate('category_id')
+      .skip(offset)
+      .limit(limit)
+      .then(categories => {
         res.status(200).send({ success: true, data: categories })
       })
       .catch(error => {
@@ -44,16 +53,16 @@ exports.getsubCategory = async (req, res) => {
   }
 }
 
-
 exports.updatesubCategory = async (req, res) => {
   console.log(req.params.id)
   try {
     subCategoryModel
       .findByIdAndUpdate(req.params.id, req.body)
       .then(binUpdate => {
-        res
-          .status(200)
-          .send({ success: true, message: 'Sub Category Updated Successfully!' })
+        res.status(200).send({
+          success: true,
+          message: 'Sub Category Updated Successfully!'
+        })
       })
       .catch(error => {
         res
@@ -73,7 +82,10 @@ exports.upload = async (req, res) => {
       const filename = req.file.originalname
       res.status(200).send({
         Message: 'Image Added Sucessfully',
-        Path: `${req.file.destination.replace('./src/public/', appRouteModels.BASEURL)}/${filename}`
+        Path: `${req.file.destination.replace(
+          './src/public/',
+          appRouteModels.BASEURL
+        )}/${filename}`
       })
     }
   } catch (err) {
@@ -83,21 +95,79 @@ exports.upload = async (req, res) => {
 
 exports.getsubCategoryfilter = async (req, res) => {
   //var category_id = req.query.categoryId;
-  var sub_category_name = req.query.sub_category_name;
-  var sub_category_code = req.query.sub_category_code;
-  if (sub_category_name && sub_category_code ){
-    var query = {sub_category_name : sub_category_name, sub_category_code : sub_category_code}
+  var sub_category_name = req.query.sub_category_name
+  var sub_category_code = req.query.sub_category_code
+  if (sub_category_name && sub_category_code) {
+    var query = {
+      sub_category_name: sub_category_name,
+      sub_category_code: sub_category_code
+    }
+  } else if (sub_category_name) {
+    var query = { sub_category_name: sub_category_name }
+  } else if (sub_category_code) {
+    var query = { sub_category_code: sub_category_code }
+  }
+  subCategoryModel
+    .find(query)
+    .populate('category_id')
+    .then(subCategory => {
+      res.status(200).send({ success: true, data: subCategory })
+    })
+    .catch(error => {
+      res.status(400).send({ success: false, error: error })
+    })
 }
-else if(sub_category_name ){
-    var query = {sub_category_name : sub_category_name}
-}
-else if( sub_category_code ){
-    var query = { sub_category_code : sub_category_code}
-}
-      subCategoryModel.find(query).populate('category_id').then(subCategory => {
-        res.status(200).send({ success: true, data: subCategory })
+
+exports.getSubCategoryMachine = (req, res) => {
+  var columnIds = JSON.parse(req.query.column_ids)
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var categoryId = req.query.category_id
+
+  var searchString = req.query.searchString
+  var categoryId = req.query.category_id
+
+  try {
+    //Find all Columns Ids
+    binModel
+      .distinct('_id', { active_status: 1, bin_id: { $in: columnIds } })
+      .then(binList => {
+        console.log(binList)
+        //Find all Item Ids in stock allocation
+        stockAllocationModel
+          .distinct('sub_category', { active_status: 1, bin: { $in: binList } })
+          .then(sub_cat => {
+            console.log(sub_cat)
+            var query = {
+              active_status: 1,
+              category_id: categoryId,
+              $text: { $search: searchString },
+              _id: { $in: sub_cat }
+            }
+            console.log(sub_cat)
+
+            // Find All items in machine
+            subCategoryModel
+              .find(query)
+              .populate('category_id')
+              .skip(offset)
+              .limit(limit)
+              .then(sub_category => {
+                res.status(200).send({ success: true, item: sub_category })
+              })
+              .catch(error => {
+                res.status(400).send({ success: false, error: error })
+              })
+          })
+          .catch(error => {
+            res.status(400).send({ success: false, error: error })
+          })
       })
       .catch(error => {
         res.status(400).send({ success: false, error: error })
       })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
   }
+}

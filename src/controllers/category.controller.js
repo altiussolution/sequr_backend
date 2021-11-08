@@ -1,5 +1,5 @@
 const { result } = require('lodash');
-const {categoryModel,subCategoryModel,itemModel} = require('../models')
+const {categoryModel,subCategoryModel,itemModel, stockAllocationModel} = require('../models')
 var {error_code,appRouteModels} = require('../utils/enum.utils')
 exports.addCategory = (async (req, res) => {
    try{
@@ -127,3 +127,45 @@ exports.getCategoryfilter= (req, res) => {
         })
     
 }
+
+exports.getCategoryMachine = (req, res) => {
+    var columnIds = JSON.parse(req.query.column_ids)
+  
+    try {
+      //Find all Columns Ids
+      binModel
+        .distinct('_id', { active_status: 1, bin_id: { $in: columnIds } })
+        .then(binList => {
+          console.log(binList)
+          //Find all Item Ids in stock allocation
+          stockAllocationModel
+            .distinct('category', { active_status: 1, bin: { $in: binList } })
+            .then(category => {
+              console.log(category)
+              var query = {
+                active_status: 1,
+                _id: { $in: category }
+              }
+              console.log(category)
+  
+              // Find All items in machine
+              categoryModel
+                .find(query)        
+                .then(category => {
+                  res.status(200).send({ success: true, item: category })
+                })
+                .catch(error => {
+                  res.status(400).send({ success: false, error: error })
+                })
+            })
+            .catch(error => {
+              res.status(400).send({ success: false, error: error })
+            })
+        })
+        .catch(error => {
+          res.status(400).send({ success: false, error: error })
+        })
+    } catch (error) {
+      res.status(201).send({ success: false, error: error })
+    }
+  }

@@ -81,7 +81,7 @@ const ItemSchema = Schema({
     type: Number,
     default: 0
   },
-  Returnable: {
+  returnable: {
     type: Boolean,
     default: false
   }

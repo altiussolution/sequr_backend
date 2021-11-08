@@ -497,16 +497,16 @@ exports.calibrationMonthNotification = async (req, res) => {
     res.status(201).send(error.name)
   }
 }
-exports.outOfStockItems = async (req, res) => {
+exports.outOfStockItems = async (req, res) =>   {
   try {
     await itemModel
       .find({
         active_status: 1,
-        is_gages: true,
-        calibration_month: { $exists: true, $ne: null }
+        returnable: false,
+        $where: "this.generate_po_on >= this.in_stock"
       })
       .then(async items => {
-        res.status(200).send({ success: true, data: notifyItems })
+        res.status(200).send({ success: true, data: items })
       })
   } catch (error) {
     res.status(201).send(error.name)

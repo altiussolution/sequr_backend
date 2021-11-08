@@ -1,7 +1,7 @@
 const { logModel} = require('../models')
 
 
-exports.getBin = (req, res) => {
+exports.getLog = (req, res) => {
     var offset =
       req.query.offset != undefined ? parseInt(req.query.offset) : false
     var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false

@@ -47,6 +47,7 @@ exports.itemShortage = async (req, res) => {
         $group: {
           _id: '$item',
           item: { $push: '$item' },
+          compartment: { $push: '$compartment' },
           available: { $sum: '$quantity' },
           total_quantity: { $sum: '$total_quantity' }
         }
@@ -58,6 +59,14 @@ exports.itemShortage = async (req, res) => {
           localField: 'item',
           foreignField: '_id',
           as: 'item_doc'
+        }
+      },
+      {
+        $lookup: {
+          from: 'compartments',
+          localField: 'compartment',
+          foreignField: '_id',
+          as: 'draw_doc'
         }
       }
     ])

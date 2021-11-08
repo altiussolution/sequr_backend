@@ -72,7 +72,12 @@ const enumVariables = {
         created : 2,
         updated : 1,
         deleted : 0
-    }
+    },
+    // po_is_received : {
+    //     po_null : 0,
+    //     po_generated : 1,
+    //     po_received : 2
+    // }
 }
 
 module.exports = enumVariables;
