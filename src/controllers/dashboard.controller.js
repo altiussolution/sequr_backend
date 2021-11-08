@@ -444,7 +444,7 @@ exports.itemAlert = async (req, res) => {
       console.log(item.available + '   ' + item.draw_doc.item_min_cap)
       if (
         item.available <= item.draw_doc[0].item_min_cap ||
-        item.available <= alert_on
+        item.available <= item.draw_doc[0].alert_on
       ) {
         await outOfStockItems.push(item)
       }
