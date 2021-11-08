@@ -23,6 +23,7 @@ route.get('/getMachineUsage', DashboardController.getMachineUsage);
 route.get('/itemAlert', DashboardController.itemAlert);
 route.get('/calibrationMonthNotification', DashboardController.calibrationMonthNotification);
 route.get('/outOfStockItems', DashboardController.outOfStockItems);
+route.get('/getForgotpassword', auth,DashboardController.getForgotpassword);
 
 
 

@@ -512,3 +512,17 @@ exports.outOfStockItems = async (req, res) =>   {
     res.status(201).send(error.name)
   }
 }
+
+exports.getForgotpassword = (async (req, res) => {
+  var query = ( { new_pass_req : true,active_status:1 })
+  try {
+     await User.find(query).then(user => {
+          console.log(user)
+          res.status(200).send({ success: true, data: user});
+      }).catch(error => {
+          res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+      res.status(201).send({ success: false, error: error })
+  }
+})
