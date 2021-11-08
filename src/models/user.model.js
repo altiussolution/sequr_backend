@@ -83,6 +83,10 @@ const UserSchema = Schema({
     type: String,
     required: true
   },
+  new_pass_req : {
+    type: Boolean,
+    default: false
+  },
   created_at: {
     type: Date,
     default: Date.now
