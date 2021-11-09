@@ -1,10 +1,13 @@
 const {stockAllocationModel} = require('../models')
+const { createLog } = require('../middleware/crud.middleware')
+
 exports.allocateStock = ((req,res) =>{
     try{
         var stock = new stockAllocationModel(req.body)
         stock.save((err)=>{
             if(!err){
                 res.status(200).send({ success: true, message: 'Stock Allocated Successfully' });
+                createLog(req.headers['authorization'], 'Itemoncube', 2)
             }else{
                 res.status(201).send({status:false, message:err.name})
             }
@@ -42,6 +45,7 @@ exports.updateStockAllocation = ((req,res) =>{
             stockAllocationModel.findByIdAndUpdate(stockId, req.body).then(stockUpdate =>{
                 if(stockUpdate){
                     res.status(200).send({ success: true, message: 'Stock Updated Successfully!' });
+                    createLog(req.headers['authorization'], 'Itemoncube', 1)
                 }else{
                     res.status(200).send({ success: false, message: 'No Record found for given id' });
                 }
@@ -64,6 +68,7 @@ exports.deleteStockAllocation = ((req,res) =>{
             stockAllocationModel.findByIdAndUpdate(stockId, {status:0}).then(stockDelete =>{
                 if(stockDelete){
                     res.status(200).send({ success: true, message: 'Stock Deactivated Successfully!' });
+                    createLog(req.headers['authorization'], 'Itemoncube', 0)
                 }else{
                     res.status(200).send({ success: false, message: 'No Record found for given id' });
                 }

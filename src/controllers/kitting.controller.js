@@ -1,6 +1,8 @@
 const { kitModel, stockAllocationModel, CartModel } = require('../models')
 const cartModel = require('../models/cart.model')
 var { appRouteModels, Cart } = require('../utils/enum.utils')
+const { createLog } = require('../middleware/crud.middleware')
+
 
 exports.createKit = async (req, res) => {
   var body = req.body
@@ -13,6 +15,7 @@ exports.createKit = async (req, res) => {
           res
             .status(200)
             .send({ success: true, message: 'Kit Created Successfully!' })
+            createLog(req.headers['authorization'], 'Kitting', 2)
         } else {
           res.status(200).send({
             success: false,
@@ -119,6 +122,7 @@ exports.updateKit = async (req, res) => {
           res
             .status(200)
             .send({ success: true, message: 'Kit Updated Successfully!' })
+            createLog(req.headers['authorization'], 'Kitting', 1)
         })
         .catch(error => {
           res
@@ -145,6 +149,7 @@ exports.deleteKit = (req, res) => {
         res
           .status(200)
           .send({ success: true, message: 'Kit Deactivated Successfully!' })
+          createLog(req.headers['authorization'], 'Kitting', 0)
       })
       .catch(err => {
         res.status(200).send({ success: false, message: 'Kit Not Found' })

@@ -1,6 +1,6 @@
 const { departmentModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
-
+const { createLog } = require('../middleware/crud.middleware')
 
 
 exports.createDepartment = (req, res) => {
@@ -9,6 +9,7 @@ exports.createDepartment = (req, res) => {
         newDepartment.save(async(err) => {
             if (!err) {
                 res.status(200).send({ success: true, message: 'Department Created Successfully!' });
+                createLog(req.headers['authorization'], 'Department', 2)
             }
             else {
                 const name = await departmentModel.findOne(({department_name :req.body.department_name, active_status : 1})).exec()
@@ -56,6 +57,7 @@ exports.updateDepartment = (req, res) => {
     try {
         departmentModel.findByIdAndUpdate(req.params.id, req.body).then(department => {
             res.status(200).send({ success: true, message: 'Department Updated Successfully!' });
+            createLog(req.headers['authorization'], 'Department', 1)
         }).catch(error => {
             res.status(200).send({ success: false, error: error, message: 'An Error Occured' });
         })
@@ -68,6 +70,7 @@ exports.deleteDepartment = (req,res) =>{
     try{
         departmentModel.findByIdAndUpdate(req.params.id, {active_status: 0}).then(department =>{
             res.status(200).send({ success: true, message: 'Department Deleted Successfully!' });
+            createLog(req.headers['authorization'], 'Department', 0)
         }).catch(err =>{
             res.status(200).send({ success: false, message: 'Department Not Found' });
         })

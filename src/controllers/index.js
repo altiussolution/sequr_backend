@@ -18,6 +18,7 @@ CartController = require('./cart.controller')
 DashboardController = require('./dashboard.controller')
 ServiceCubeMaintenanceController= require('./serviceCubeMaintenance.controller')
 analyticsController= require('./analytics.controller')
+LogController = require('./log.controller')
 
 module.exports = {
   UsersController,
@@ -39,6 +40,7 @@ module.exports = {
   CartController,
   DashboardController,
   ServiceCubeMaintenanceController,
-  analyticsController
+  analyticsController,
+  LogController
 
 }

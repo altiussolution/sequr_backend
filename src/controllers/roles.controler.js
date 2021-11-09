@@ -1,5 +1,6 @@
 const { rolesModel, userModel } = require("../models");
 const {Permissions} = require("../utils/enum.utils")
+const { createLog } = require('../middleware/crud.middleware')
 
 // Roles
 exports.createRole = (async (req, res) => {
@@ -18,6 +19,7 @@ exports.createRole = (async (req, res) => {
                 }
                 else {
                     res.status(200).send({ success: true, message: 'Role Added Successfully!' });
+                    createLog(req.headers['authorization'], 'Roles', 2)
                 }
             });
         }else{
@@ -61,6 +63,7 @@ exports.deleteRole = (async (req, res) => {
                     else {
                         res.send(err.message);
                     }
+                    createLog(req.headers['authorization'], 'Roles', 0)
                 })
             } else {
                 res.status(200).send({
@@ -81,7 +84,9 @@ exports.updateRole = ((req, res) => {
             res.status(200).send({
                 status: 'Success',
                 message: 'Role updated sucessfully'
+                
             })
+            createLog(req.headers['authorization'], 'Roles', 1)
         }).catch(error => {
             res.status(400).send({status : false, error : error, message : "Error Occured"})
         })
@@ -98,6 +103,7 @@ exports.addPermission = ((req, res) => {
                 status: 'Success',
                 message: 'Permissions added sucessfully'
             })
+            createLog(req.headers['authorization'], 'Permission', 2)
         }).catch(error => {
             res.status(400).send(error)
         })
@@ -115,6 +121,7 @@ exports.updatePermission = ((req, res) => {
                 status: 'Success',
                 message: 'Permissions updated sucessfully'
             })
+            createLog(req.headers['authorization'], 'Permission', 1)
         }).catch(error => {
             res.status(400).send(error)
         })
@@ -152,6 +159,7 @@ exports.deletePermission = (async (req, res) => {
             else {
                 res.send(err.message);
             }
+            createLog(req.headers['authorization'], 'Permission', 0)
         })
 
     } catch (error) {

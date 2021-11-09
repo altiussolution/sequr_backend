@@ -1,6 +1,6 @@
 const { branchModel } = require("../models");
 var { error_code } = require('../utils/enum.utils')
-
+const { createLog } = require('../middleware/crud.middleware')
 
 
 exports.createBranch = (async(req, res) => {
@@ -48,6 +48,7 @@ exports.createBranch = (async(req, res) => {
             newBranch.save(async(err) => {
                 if (!err) {
                     res.status(200).send({ success: true, message: 'Branch Created Successfully!' });
+                    createLog(req.headers['authorization'], 'Branch', 2)
                 }
             //    else {
             //     const name = await branchModel.findOne(({ branch_name , active_status: 1 })).exec()
@@ -98,6 +99,7 @@ exports.updateBranch = (req, res) => {
     try {
         branchModel.findByIdAndUpdate(req.params.id, req.body).then(branch => {
             res.status(200).send({ success: true, message: 'Branch Updated Successfully!' });
+            createLog(req.headers['authorization'], 'Branch', 1)
         }).catch(error => {
             res.status(200).send({ success: false, error: error, message: 'An Error Occured' });
         })
@@ -110,6 +112,7 @@ exports.deleteBranch = (req, res) => {
     try {
         branchModel.findByIdAndUpdate(req.params.id, { active_status: 0 }).then(branch => {
             res.status(200).send({ success: true, message: 'Branch Deleted Successfully!' });
+            createLog(req.headers['authorization'], 'Branch', 0)
         }).catch(err => {
             res.status(200).send({ success: false, message: 'Branch Not Found' });
         })

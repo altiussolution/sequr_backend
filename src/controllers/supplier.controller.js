@@ -1,5 +1,6 @@
 const { supplierModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
+const { createLog } = require('../middleware/crud.middleware')
 
 exports.createSupplier =(async (req, res) => {
     try {
@@ -46,6 +47,7 @@ exports.createSupplier =(async (req, res) => {
             newSupplier.save(async(err) => {
                 if (!err) {
                     res.status(200).send({ success: true, message: 'Supplier Created Successfully!' });
+                    createLog(req.headers['authorization'], 'Supplier', 2)
                 }
             
             });
@@ -80,6 +82,7 @@ exports.updateSupplier = (req, res) => {
     try {
         supplierModel.findByIdAndUpdate(req.params.id, req.body).then(supplier => {
             res.status(200).send({ success: true, message: 'Supplier Updated Successfully!' });
+            createLog(req.headers['authorization'], 'Supplier', 1)
         }).catch(error => {
             res.status(200).send({ success: false, error: error, message: 'An Error Occured' });
         })
@@ -93,6 +96,7 @@ exports.deleteSupplier = (req, res) => {
     try {
         supplierModel.findByIdAndUpdate(req.params.id, { active_status: 0 }).then(supplier => {
             res.status(200).send({ success: true, message: 'Supplier Deleted Successfully!' });
+            createLog(req.headers['authorization'], 'Supplier', 0)
         }).catch(err => {
             res.status(200).send({ success: false, message: 'Supplier Not Found' });
         })
