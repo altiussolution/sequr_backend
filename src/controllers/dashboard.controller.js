@@ -323,7 +323,7 @@ exports.getMachineUsage = async (req, res) => {
   var query = req.query.branch_id
     ? { active_status: 1, branch: req.query.branch_id }
     : { active_status: 1 }
-  try {
+  // try {
     cubes = await cubeModel
       .find({
         query
@@ -398,9 +398,9 @@ exports.getMachineUsage = async (req, res) => {
       await oveallmachineUsage.push(eachCubeUsage)
     }
     res.status(200).send({ success: true, data: oveallmachineUsage })
-  } catch (error) {
-    res.status(201).send({ success: false, error: error })
-  }
+  // } catch (error) {
+  //   res.status(201).send({ success: false, error: error })
+  // }
 }
 
 exports.itemAlert = async (req, res) => {
