@@ -47,7 +47,7 @@ const ItemSchema = Schema({
     type: String
   },
   image_path: {
-    type: String
+    type: Array
   },
   video_path: {
     type: String
