@@ -16,10 +16,12 @@ exports.columnShortage = async (req, res) => {
     overallShortageReport = []
     for await (let cube of cubes) {
       eachCube = {}
-      totalBinCount = await binModel
+      activeColumns = await binModel
         .find({
           cube_id: cube._id,
-          active_status: 1
+          active_status: 1,
+          is_removed: false
+
         })
         .exec()
       removedBinCount = await binModel
@@ -30,7 +32,7 @@ exports.columnShortage = async (req, res) => {
         })
         .exec()
       eachCube['cube'] = cube
-      eachCube['total_columns'] = totalBinCount
+      eachCube['active_columns'] = activeColumns
       eachCube['removed_columns'] = removedBinCount
       await overallShortageReport.push(eachCube)
     }

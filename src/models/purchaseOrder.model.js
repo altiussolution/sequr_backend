@@ -47,7 +47,6 @@ const PurchaseOrderSchema = Schema({
     },
     invoice_path: {
         type: String,
-        required: true
     },
     status: {
         type: Number,

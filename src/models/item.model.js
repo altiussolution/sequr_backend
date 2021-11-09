@@ -84,6 +84,9 @@ const ItemSchema = Schema({
   returnable: {
     type: Boolean,
     default: false
+  },
+  generate_po_for: {
+    type: Number,
   }
 })
 
