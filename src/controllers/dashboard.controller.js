@@ -320,10 +320,13 @@ exports.addMachineUsage = async (req, res) => {
 var ObjectId = require('mongodb').ObjectID
 
 exports.getMachineUsage = async (req, res) => {
+  var query = req.query.branch_id
+    ? { active_status: 1, branch: req.query.branch_id }
+    : { active_status: 1 }
   try {
     cubes = await cubeModel
       .find({
-        active_status: 1
+        query
       })
       .exec()
 
@@ -354,7 +357,7 @@ exports.getMachineUsage = async (req, res) => {
       console.log(cubeUsage[0].sum)
       eachCubeUsage[cube.cube_name] = {}
       eachCubeUsage[cube.cube_name]['cube_id'] = cube.cube_id
-      if (cubeUsage[0].sum) {
+      if (cubeUsage.length > 0) {
         eachCubeUsage[cube.cube_name]['cube_usage'] = cubeUsage[0].sum
       } else {
         eachCubeUsage[cube.cube_name]['cube_usage'] = 0
@@ -497,13 +500,13 @@ exports.calibrationMonthNotification = async (req, res) => {
     res.status(201).send(error.name)
   }
 }
-exports.outOfStockItems = async (req, res) =>   {
+exports.outOfStockItems = async (req, res) => {
   try {
     await itemModel
       .find({
         active_status: 1,
         returnable: false,
-        $where: "this.generate_po_on >= this.in_stock"
+        $where: 'this.generate_po_on >= this.in_stock'
       })
       .then(async items => {
         res.status(200).send({ success: true, data: items })
@@ -513,16 +516,36 @@ exports.outOfStockItems = async (req, res) =>   {
   }
 }
 
-exports.getForgotpassword = (async (req, res) => {
-  var query = ( { new_pass_req : true,active_status:1 })
+exports.getForgotpassword = async (req, res) => {
+  var query = { new_pass_req: true, active_status: 1 }
   try {
-     await User.find(query).then(user => {
-          console.log(user)
-          res.status(200).send({ success: true, data: user});
-      }).catch(error => {
-          res.status(400).send({ success: false, error: error })
+    await User.find(query)
+      .then(user => {
+        console.log(user)
+        res.status(200).send({ success: true, data: user })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
       })
   } catch (error) {
-      res.status(201).send({ success: false, error: error })
+    res.status(201).send({ success: false, error: error })
   }
-})
+}
+
+exports.poAlert = (req, res) => {
+  var query = { active_status: 1, is_received: false, is_auto_po: true }
+  try {
+    purchaseOrderModel
+      .find(query)
+      .populate('item_id')
+      .populate('sub_category_id')
+      .then(purchaseOrder => {
+        res.status(200).send({ success: true, data: purchaseOrder })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
+}

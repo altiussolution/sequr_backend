@@ -4,12 +4,16 @@ const {
   binModel,
   stockAllocationModel
 } = require('../models')
+var ObjectId = require('mongodb').ObjectID
 
 exports.columnShortage = async (req, res) => {
+  var query = req.query.branch_id
+    ? { active_status: 1, branch: req.query.branch_id }
+    : { active_status: 1 }
   try {
     cubes = await cubeModel
       .find({
-        active_status: 1
+        query
       })
       .exec()
 
@@ -21,7 +25,6 @@ exports.columnShortage = async (req, res) => {
           cube_id: cube._id,
           active_status: 1,
           is_removed: false
-
         })
         .exec()
       removedBinCount = await binModel
@@ -42,7 +45,25 @@ exports.columnShortage = async (req, res) => {
   }
 }
 exports.itemShortage = async (req, res) => {
-    try {
+  console.log(req.query.branch_id)
+  var filterBranch = req.query.branch_id
+    ? {
+        $match: {
+          'cube_doc.branch_id': ObjectId(req.query.branch_id),
+          'cube_doc.active_status': 1,
+          'item_doc.active_status': 1,
+          'draw_doc.active_status': 1
+          
+        }
+      }
+    : {
+        $match: {
+          'item_doc.active_status': 1,
+          'draw_doc.active_status': 1,
+          'cube_doc.active_status': 1
+        }
+      }
+  // try {
   itemOnCube = await stockAllocationModel
     .aggregate([
       {
@@ -50,6 +71,7 @@ exports.itemShortage = async (req, res) => {
           _id: '$item',
           item: { $push: '$item' },
           compartment: { $push: '$compartment' },
+          cube: { $push: '$cube' },
           available: { $sum: '$quantity' },
           total_quantity: { $sum: '$total_quantity' }
         }
@@ -70,18 +92,25 @@ exports.itemShortage = async (req, res) => {
           foreignField: '_id',
           as: 'draw_doc'
         }
-      }
+      },
+      {
+        $lookup: {
+          from: 'cubes',
+          localField: 'cube',
+          foreignField: '_id',
+          as: 'cube_doc'
+        }
+      },
+      filterBranch
     ])
     .exec()
 
-//   itemOnCube2 = await itemModel.populate(itemOnCube, { path: 'item' }).exec()
-//   console.log(itemOnCube2)
+  //   itemOnCube2 = await itemModel.populate(itemOnCube, { path: 'item' }).exec()
+  //   console.log(itemOnCube2)
   res.status(200).send({ success: true, data: itemOnCube })
-
-
-    } catch (error) {
-      res.status(201).send(error.name)
-    }
+  // } catch (error) {
+  //   res.status(201).send(error.name)
+  // }
 }
 
 exports.purchaseOrder = (req, res) => {}

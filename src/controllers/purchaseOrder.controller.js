@@ -6,7 +6,6 @@ var crontab = require('node-crontab')
 var generator = require('generate-password')
 const { createLog } = require('../middleware/crud.middleware')
 
-
 exports.addPurchaseOrder = async (req, res) => {
   try {
     var purchase_order = new purchaseOrderModel(req.body)
@@ -69,13 +68,19 @@ exports.updatePurchaseOrder = async (req, res) => {
   try {
     purchaseOrderModel
       .findByIdAndUpdate(req.params.id, req.body)
-      .then(purchaseOrderUpdate => {
+      .then(async purchaseOrderUpdate => {
         res.status(200).send({
           success: true,
           message: 'PurchaseOrder Updated Successfully!'
-          
         })
         createLog(req.headers['authorization'], 'PurchaseOrder', 1)
+        if (req.body.is_received) {
+          await itemModel
+            .findByIdAndUpdate(req.body.item_id, {
+              $inc: { in_stock: req.body.quantity }
+            })
+            .exec()
+        }
       })
       .catch(error => {
         res
@@ -128,65 +133,63 @@ exports.upload = async (req, res) => {
   }
 }
 async function autoPurchaseOrder () {
-  //   try {
-  await itemModel
-    .find({
-      active_status: 1,
-      returnable: false,
-      $where: 'this.generate_po_on >= this.in_stock',
-      auto_purchase_order: true
-    })
-    .populate('supplier.suppliedBy')
-    .then(async items => {
-      if (items.length > 0) {
-        for await (let item of items) {
-          console.log(item.supplier[0])
-          const locals = {
-            forgotPageLink: item.generate_po_for,
-            adminName: `SEQUR RX`,
-            logo: `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
-            background: `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
-          }
-          const email = new Email()
-          Promise.all([
-            email.render('../src/templates/adminForgotPassword', locals)
-          ]).then(async poOrder => {
-            await sendEmail(
-              item.supplier[0].suppliedBy.po_email,
-              'PO GENEEATE',
-              poOrder[0]
-            )
-            console.log('PO Mail Sent Succesfully')
-          })
+  try {
+    await itemModel
+      .find({
+        active_status: 1,
+        returnable: false,
+        $where: 'this.generate_po_on >= this.in_stock',
+        auto_purchase_order: true
+      })
+      .populate('supplier.suppliedBy')
+      .then(async items => {
+        if (items.length > 0) {
+          for await (let item of items) {
+            console.log(item.supplier[0])
+            const locals = {
+              forgotPageLink: item.generate_po_for,
+              adminName: `SEQUR RX`,
+              logo: `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
+              background: `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
+            }
+            const email = new Email()
+            Promise.all([
+              email.render('../src/templates/adminForgotPassword', locals)
+            ]).then(async poOrder => {
+              await sendEmail(
+                item.supplier[0].suppliedBy.po_email,
+                'PO GENEEATE',
+                poOrder[0]
+              )
+              console.log('PO Mail Sent Succesfully')
+            })
 
-          //Add Purchase Order
-          var poNumber = await generator.generate({
-            length: 6,
-            numbers: true
-          })
-          data = {
-            category_id: item.category_id,
-            sub_category_id: item.sub_category_id,
-            item_id: item._id,
-            supplier_id: item.supplier[0].suppliedBy._id,
-            po_number: poNumber,
-            quantity: item.generate_po_for,
-            po_date: new Date(),
-            description: 'Auto PO Generate'
+            //Add Purchase Order
+            var poNumber = await generator.generate({
+              length: 6,
+              numbers: true
+            })
+            data = {
+              category_id: item.category_id,
+              sub_category_id: item.sub_category_id,
+              item_id: item._id,
+              supplier_id: item.supplier[0].suppliedBy._id,
+              po_number: poNumber,
+              quantity: item.generate_po_for,
+              po_date: new Date(),
+              is_auto_po: true,
+              description: 'Auto PO Generate'
+            }
+            var purchase_order = new purchaseOrderModel(data)
+            await purchase_order.save()
           }
-          var purchase_order = new purchaseOrderModel(data)
-          await purchase_order.save()
         }
-      }
-    })
-  //   } catch (error) {
-  //   }
+      })
+  } catch (error) {}
 }
 // autoPurchaseOrder()
-// var jobId = crontab.scheduleJob('00 31 11 * * * ', async function () {
-//     if (process.env.NODE_APP_INSTANCE == 0) {
-//       console.log('*********** Cron Schedule Started ***********')
-//       await autoPurchaseOrder()
-//       console.log('*********** Mail has been sent ***********')
-//     }
-//   })
+var jobId = crontab.scheduleJob('00 01 13 * * * ', async function () {
+  console.log('*********** Cron Schedule Started ***********')
+  await autoPurchaseOrder()
+  console.log('*********** Mail has been sent ***********')
+})

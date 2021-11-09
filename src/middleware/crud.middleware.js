@@ -10,9 +10,7 @@ const jwt = require('jsonwebtoken')
 const config = process.env;
 
 exports.createLog = (token, module_name, action) => {
-//   try {
-console.log(token)
-console.log(token)
+  try {
     //Decode User Token
     const decoded = jwt.verify(token, config.TOKEN_KEY)
     var data = { user_id : decoded.user_id, module_name, action }
@@ -25,7 +23,7 @@ console.log(token)
         console.log('Log Not Created')
       }
     })
-//   } catch (error) {
-//     console.log('Something Went Wrong in Create Log')
-//   }
+  } catch (error) {
+    console.log('Something Went Wrong in Create Log')
+  }
 }

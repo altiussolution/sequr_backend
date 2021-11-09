@@ -2,7 +2,6 @@ const { itemModel, stockAllocationModel, binModel } = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
 
-
 exports.addItem = async (req, res) => {
   try {
     var newItem = new itemModel(req.body)
@@ -16,7 +15,7 @@ exports.addItem = async (req, res) => {
         res
           .status(200)
           .send({ success: true, message: 'Item Added Successfully!' })
-          createLog(req.headers['authorization'], 'Item', 2)
+        createLog(req.headers['authorization'], 'Item', 2)
       }
     })
   } catch (error) {
@@ -54,13 +53,20 @@ exports.getItem = (req, res) => {
 
 exports.updateItem = async (req, res) => {
   try {
-    itemModel.findByIdAndUpdate(req.params.id, req.body, (err, file) => {
-      if (file)
+    itemModel.findByIdAndUpdate(req.params.id, req.body, async (err, file) => {
+      if (file) {
         res.send({
           status: 'Success',
           message: 'item Updated'
         })
-      else {
+        if (req.body.is_received) {
+          await itemModel
+            .findByIdAndUpdate(req.body.item_id, {
+              $inc: { in_stock: -req.body.total_quantity }
+            })
+            .exec()
+        }
+      } else {
         res.send({ message: 'Not Found' })
       }
       createLog(req.headers['authorization'], 'Item', 1)
@@ -169,7 +175,7 @@ exports.deleteItems = (req, res) => {
         res
           .status(200)
           .send({ success: true, message: 'Item  Deleted Successfully!' })
-          createLog(req.headers['authorization'], 'Item', 0)
+        createLog(req.headers['authorization'], 'Item', 0)
       })
       .catch(err => {
         res.status(200).send({ success: false, message: 'Item Not Found' })
