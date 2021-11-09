@@ -354,7 +354,6 @@ exports.getMachineUsage = async (req, res) => {
           { $group: { _id: null, sum: { $sum: '$machine_usage' } } }
         ])
         .exec()
-      console.log(cubeUsage[0].sum)
       eachCubeUsage[cube.cube_name] = {}
       eachCubeUsage[cube.cube_name]['cube_id'] = cube.cube_id
       if (cubeUsage.length > 0) {
@@ -385,7 +384,6 @@ exports.getMachineUsage = async (req, res) => {
             { $group: { _id: null, sum: { $sum: '$machine_usage' } } }
           ])
           .exec()
-        console.log(binUsage)
         eachBin['column_id'] = bin.bin_id
         eachBin['column_name'] = bin.bin_name
         if (binUsage.length > 0) {
