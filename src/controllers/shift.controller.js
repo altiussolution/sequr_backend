@@ -1,5 +1,5 @@
 const { shift_timeModel } = require("../models");
-
+const { createLog } = require('../middleware/crud.middleware')
 
 
 exports.addShift = (async (req, res) => {
@@ -28,6 +28,7 @@ exports.addShift = (async (req, res) => {
                 }
                 else {
                     res.status(200).send({ success: true, message: 'Shift Time Added Successfully!' });
+                    createLog(req.headers['authorization'], 'ShiftTime', 2)
                 }
             });
         } catch (error) {
@@ -65,6 +66,7 @@ exports.updateShift = (async (req, res) => {
             else {
                 res.send(err.message);
             }
+            createLog(req.headers['authorization'], 'ShiftTime', 1)
         });
     } catch (error) {
         res.send("An error occured");
@@ -83,6 +85,7 @@ exports.deleteShift = (async (req, res) => {
             else {
                 res.send(err.message);
             }
+            createLog(req.headers['authorization'], 'ShiftTime', 0)
         });
     } catch (error) {
         res.send("An error occured");

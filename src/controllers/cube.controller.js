@@ -1,6 +1,6 @@
 const { cubeModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
-
+const { createLog } = require('../middleware/crud.middleware')
 
 
 exports.createCube = (req, res) => {
@@ -9,6 +9,7 @@ exports.createCube = (req, res) => {
         newCube.save((err) => {
             if (!err) {
                 res.status(200).send({ success: true, message: 'Cube Created Successfully!' });
+                createLog(req.headers['authorization'], 'Cube', 2)
             }
             else {
                 var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Cube code or name' : err)
@@ -44,6 +45,7 @@ exports.updateCube = (req, res) => {
     try {
         cubeModel.findByIdAndUpdate(req.params.id, req.body).then(cube => {
             res.status(200).send({ success: true, message: 'Cube Updated Successfully!' });
+            createLog(req.headers['authorization'], 'Cube', 1)
         }).catch(error => {
             res.status(200).send({ success: false, error: error, message: 'An Error Occured' });
         })

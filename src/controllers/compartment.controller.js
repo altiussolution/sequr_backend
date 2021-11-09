@@ -1,6 +1,6 @@
 const { compartmentModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
-
+const { createLog } = require('../middleware/crud.middleware')
 
 
 exports.createCompartment = (req, res) => {
@@ -9,6 +9,7 @@ exports.createCompartment = (req, res) => {
         newCompartment.save(async(err) => {
             if (!err) {
                 res.status(200).send({ success: true, message: 'Compartment Created Successfully!' });
+                createLog(req.headers['authorization'], 'Compartment', 2)
             }
             else {
                 const name = await compartmentModel.findOne(({compartment_name: req.body.compartment_name ,active_status: 1 })).exec()
@@ -72,6 +73,7 @@ exports.updateCompartment = (req, res) => {
     try {
         compartmentModel.findByIdAndUpdate(req.params.id, req.body).then(compartment => {
             res.status(200).send({ success: true, message: 'Compartment Updated Successfully!' });
+            createLog(req.headers['authorization'], 'Compartment', 1)
         }).catch(error => {
             res.status(200).send({ success: false, error: error, message: 'An Error Occured' });
         })

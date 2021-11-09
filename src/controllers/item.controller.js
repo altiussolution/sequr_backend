@@ -1,5 +1,7 @@
 const { itemModel, stockAllocationModel, binModel } = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
+const { createLog } = require('../middleware/crud.middleware')
+
 
 exports.addItem = async (req, res) => {
   try {
@@ -14,6 +16,7 @@ exports.addItem = async (req, res) => {
         res
           .status(200)
           .send({ success: true, message: 'Item Added Successfully!' })
+          createLog(req.headers['authorization'], 'Item', 2)
       }
     })
   } catch (error) {
@@ -60,6 +63,7 @@ exports.updateItem = async (req, res) => {
       else {
         res.send({ message: 'Not Found' })
       }
+      createLog(req.headers['authorization'], 'Item', 1)
     })
   } catch (error) {
     res.send('An error occured')
@@ -165,6 +169,7 @@ exports.deleteItems = (req, res) => {
         res
           .status(200)
           .send({ success: true, message: 'Item  Deleted Successfully!' })
+          createLog(req.headers['authorization'], 'Item', 0)
       })
       .catch(err => {
         res.status(200).send({ success: false, message: 'Item Not Found' })

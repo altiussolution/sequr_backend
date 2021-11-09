@@ -104,6 +104,7 @@ exports.updateBin = async (req, res) => {
         res
           .status(200)
           .send({ success: true, message: 'Bin Updated Successfully!' })
+          createLog(req.headers['authorization'], 'Columns', 1)
       })
       .catch(error => {
         res
@@ -125,6 +126,7 @@ exports.deleteBin = (req, res) => {
         res
           .status(200)
           .send({ success: true, message: 'Bin Deactivated Successfully!' })
+          createLog(req.headers['authorization'], 'Columns', 0)
       })
       .catch(err => {
         res.status(200).send({ success: false, message: 'Bin Not Found' })

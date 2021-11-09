@@ -1,5 +1,6 @@
 const { subCategoryModel } = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
+const { createLog } = require('../middleware/crud.middleware')
 
 exports.addsubCategory = async (req, res) => {
   try {
@@ -10,6 +11,7 @@ exports.addsubCategory = async (req, res) => {
           success: true,
           message: 'Sub Category Created Successfully!'
         })
+        createLog(req.headers['authorization'], 'SubCategory', 2)
       } else {
         res.status(200).send({
           success: false,
@@ -63,6 +65,7 @@ exports.updatesubCategory = async (req, res) => {
           success: true,
           message: 'Sub Category Updated Successfully!'
         })
+        createLog(req.headers['authorization'], 'SubCategory', 1)
       })
       .catch(error => {
         res

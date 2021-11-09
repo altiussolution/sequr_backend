@@ -9,6 +9,7 @@ const Joi = require('joi')
 var generator = require('generate-password')
 var fs = require('fs')
 const Email = require('email-templates')
+const { createLog } = require('../middleware/crud.middleware')
 
 
   exports.add = async (req, res) => {
@@ -105,7 +106,7 @@ const Email = require('email-templates')
       const email = new Email()
       Promise.all([email.render('../src/templates/registerMail', locals)]).then(
         async registerMail => {
-          console.log(registerMail[0])
+          //console.log(registerMail[0])
           await sendEmail(
             email_id,
             'New User Signup',
@@ -114,6 +115,7 @@ const Email = require('email-templates')
         }
       )
       res.status(201).json(user)
+      createLog(req.headers['authorization'], 'Employee', 2)
     } catch (err) {
       console.log(err)
     }
@@ -180,6 +182,7 @@ exports.update = async (req, res) => {
     User.findByIdAndUpdate(userId, updateUser, (err, isExist) => {
       if (isExist) {
         res.status(200).send({ message: 'Employee Updated Sucessfully' })
+        createLog(req.headers['authorization'], 'Employee', 1)
       } else {
         res.status(201).send({ message: 'Employee Not Found' })
       }
@@ -199,6 +202,7 @@ exports.delete = (req, res) => {
           success: true,
           message: 'Employee Deactivated Successfully!'
         })
+        createLog(req.headers['authorization'], 'Employee', 0)
       } else {
         res
           .status(200)

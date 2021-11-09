@@ -1,6 +1,8 @@
 const { result } = require('lodash');
 const {categoryModel,subCategoryModel,itemModel, stockAllocationModel} = require('../models')
 var {error_code,appRouteModels} = require('../utils/enum.utils')
+const { createLog } = require('../middleware/crud.middleware')
+
 exports.addCategory = (async (req, res) => {
    try{
        var category = new categoryModel(req.body);
@@ -9,6 +11,7 @@ exports.addCategory = (async (req, res) => {
         category.save((err) =>{  
             if(!err){
                 res.status(200).send({ success: true, message: 'Category Created Successfully!' });
+                createLog(req.headers['authorization'], 'Category', 2)
             }else{
                 var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Category code or name' : err)
                 res.status(200).send({
@@ -50,6 +53,7 @@ exports.updateCategory = (async (req, res) => {
     try{
         categoryModel.findByIdAndUpdate(req.params.id, req.body).then(binUpdate =>{
             res.status(200).send({ success: true, message: 'Category Updated Successfully!' });
+            createLog(req.headers['authorization'], 'Category', 1)
         }).catch(error =>{
             res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
         }) 
@@ -77,6 +81,7 @@ exports.deleteCategory = (async(req,res) =>{
                 subCategoryModel.deleteMany({},{category_id :catId }).then(subResult =>{
                     itemModel.deleteMany({},{category_id :catId }).then(itemRestul =>{
                         res.status(200).send({status : true, message : 'Category and all the references were deleted'})
+                        createLog(req.headers['authorization'], 'Category', 0)
                     })
                 })
             }else{

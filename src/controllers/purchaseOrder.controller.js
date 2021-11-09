@@ -1,5 +1,7 @@
 const { purchaseOrderModel, itemModel } = require('../models')
 const { error_code, appRouteModels } = require('../utils/enum.utils')
+const { createLog } = require('../middleware/crud.middleware')
+
 
 exports.addPurchaseOrder = async (req, res) => {
   try {
@@ -14,6 +16,7 @@ exports.addPurchaseOrder = async (req, res) => {
             success: true,
             message: 'PurchaseOrder Created Successfully!'
           })
+          createLog(req.headers['authorization'], 'PurchaseOrder', 2)
         } else {
           var errorMessage =
             err.code == error_code.isDuplication
@@ -66,7 +69,9 @@ exports.updatePurchaseOrder = async (req, res) => {
         res.status(200).send({
           success: true,
           message: 'PurchaseOrder Updated Successfully!'
+          
         })
+        createLog(req.headers['authorization'], 'PurchaseOrder', 1)
       })
       .catch(error => {
         res
@@ -88,6 +93,7 @@ exports.deletePurchaseOrder = (req, res) => {
           success: true,
           message: 'PurchaseOrder Deleted Successfully!'
         })
+        createLog(req.headers['authorization'], 'PurchaseOrder', 0)
       })
       .catch(err => {
         res
