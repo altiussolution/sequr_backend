@@ -20,5 +20,6 @@ route.delete('/delete/:id', CategoryController.deleteCategory)
 route.get('/getCategorylist',auth, CategoryController.getCategorylist)
 route.get('/getCategoryfilter',auth, CategoryController.getCategoryfilter)
 route.get('/getCategoryMachine/:column_ids', CategoryController.getCategoryMachine)
+route.get('/getUserCategory', auth, CategoryController.getUserCategory)
 
 module.exports = route
