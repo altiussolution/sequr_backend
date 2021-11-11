@@ -19,5 +19,6 @@ route.post('/upload',auth, upload.single('category'),CategoryController.upload)
 route.delete('/delete/:id', CategoryController.deleteCategory)
 route.get('/getCategorylist',auth, CategoryController.getCategorylist)
 route.get('/getCategoryfilter',auth, CategoryController.getCategoryfilter)
+route.get('/getCategoryMachine/:column_ids', CategoryController.getCategoryMachine)
 
 module.exports = route

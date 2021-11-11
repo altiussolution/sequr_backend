@@ -1,4 +1,8 @@
-const { subCategoryModel } = require('../models')
+const {
+  subCategoryModel,
+  binModel,
+  stockAllocationModel
+} = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
 
@@ -122,15 +126,7 @@ exports.getsubCategoryfilter = async (req, res) => {
 }
 
 exports.getSubCategoryMachine = (req, res) => {
-  var columnIds = JSON.parse(req.query.column_ids)
-  var offset =
-    req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-  var categoryId = req.query.category_id
-
-  var searchString = req.query.searchString
-  var categoryId = req.query.category_id
-
+  var columnIds = JSON.parse(req.params.column_ids)
   try {
     //Find all Columns Ids
     binModel
@@ -144,8 +140,7 @@ exports.getSubCategoryMachine = (req, res) => {
             console.log(sub_cat)
             var query = {
               active_status: 1,
-              category_id: categoryId,
-              $text: { $search: searchString },
+              category_id: req.params.category_id,
               _id: { $in: sub_cat }
             }
             console.log(sub_cat)
@@ -154,17 +149,15 @@ exports.getSubCategoryMachine = (req, res) => {
             subCategoryModel
               .find(query)
               .populate('category_id')
-              .skip(offset)
-              .limit(limit)
               .then(sub_category => {
-                res.status(200).send({ success: true, item: sub_category })
+                res.status(200).send({ success: true, data: sub_category })
               })
               .catch(error => {
-                res.status(400).send({ success: false, error: error })
+                res.status(400).send({ success: false, error: error.name })
               })
           })
           .catch(error => {
-            res.status(400).send({ success: false, error: error })
+            res.status(400).send({ success: false, error: error.name })
           })
       })
       .catch(error => {

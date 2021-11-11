@@ -7,19 +7,37 @@ var generator = require('generate-password')
 const { createLog } = require('../middleware/crud.middleware')
 
 exports.addPurchaseOrder = async (req, res) => {
-  try {
-    var purchase_order = new purchaseOrderModel(req.body)
-    var isPurchaseOrderExist = await purchaseOrderModel
-      .findOne({ $or: [{ po_number: req.body.po_number }] })
-      .exec()
-    if (!isPurchaseOrderExist) {
-      purchase_order.save(err => {
+  // try {
+  var purchase_order = new purchaseOrderModel(req.body)
+  var isPurchaseOrderExist = await purchaseOrderModel
+    .findOne({ $or: [{ po_number: req.body.po_number }] })
+    .exec()
+  if (!isPurchaseOrderExist) {
+    purchase_order
+      .save(err => {
         if (!err) {
           res.status(200).send({
             success: true,
             message: 'PurchaseOrder Created Successfully!'
           })
           createLog(req.headers['authorization'], 'PurchaseOrder', 2)
+          purchaseOrderModel
+            .findOne({
+              active_status: 1,
+              quantity: req.body.quantity,
+              po_number: req.body.po_number
+            })
+            .populate('item_id')
+            .populate('supplier_id')
+            .then(purchaseOrder => {
+              sendMailToSupplier(
+                purchaseOrder.supplier_id.po_email,
+                purchaseOrder.supplier_id.supplier_name,
+                purchaseOrder.item_id.item_name,
+                purchaseOrder.quantity,
+                purchaseOrder.po_number
+              )
+            })
         } else {
           var errorMessage =
             err.code == error_code.isDuplication
@@ -31,15 +49,20 @@ exports.addPurchaseOrder = async (req, res) => {
           })
         }
       })
-    } else {
-      res.status(200).send({
-        success: false,
-        message: 'Given PurchaseOrder Already Exist'
+      .populate('item_id')
+      .populate('supplier_id')
+      .then(pO => {
+        sendMailToSupplier(1, 2, 3, pO, pO)
       })
-    }
-  } catch (err) {
-    res.status(201).send({ success: false, error: err.name })
+  } else {
+    res.status(200).send({
+      success: false,
+      message: 'Given PurchaseOrder Already Exist'
+    })
   }
+  // } catch (err) {
+  //   res.status(201).send({ success: false, error: err.name })
+  // }
 }
 
 exports.getPurchaseOrder = (req, res) => {
@@ -143,32 +166,27 @@ async function autoPurchaseOrder () {
       })
       .populate('supplier.suppliedBy')
       .then(async items => {
+        console.log(items)
         if (items.length > 0) {
           for await (let item of items) {
             console.log(item.supplier[0])
-            const locals = {
-              forgotPageLink: item.generate_po_for,
-              adminName: `SEQUR RX`,
-              logo: `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
-              background: `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
-            }
-            const email = new Email()
-            Promise.all([
-              email.render('../src/templates/adminForgotPassword', locals)
-            ]).then(async poOrder => {
-              await sendEmail(
-                item.supplier[0].suppliedBy.po_email,
-                'PO GENEEATE',
-                poOrder[0]
-              )
-              console.log('PO Mail Sent Succesfully')
-            })
-
-            //Add Purchase Order
             var poNumber = await generator.generate({
               length: 6,
               numbers: true
             })
+
+            //Send Mail To Supplier
+            sendMailToSupplier(
+              item.supplier[0].suppliedBy.po_email,
+              item.supplier[0].suppliedBy.supplier_name,
+              item.item_name,
+              item.generate_po_for,
+              poNumber
+            )
+            //Send Mail To Supplier
+
+            //Add Purchase Order
+
             data = {
               category_id: item.category_id,
               sub_category_id: item.sub_category_id,
@@ -187,8 +205,29 @@ async function autoPurchaseOrder () {
       })
   } catch (error) {}
 }
+
+//Send Mail To Supplier
+async function sendMailToSupplier (mail, supplier, item, poQty, poNumber) {
+  console.log(poNumber)
+  const locals = {
+    supplierName: supplier,
+    itemName: item,
+    poQty: poQty,
+    poNumber: poNumber,
+    logo: `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
+    background: `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
+  }
+  const email = new Email()
+  Promise.all([email.render('../src/templates/purchaseOrder', locals)]).then(
+    async poOrder => {
+      await sendEmail(mail, 'SEQUR RX Item Purchase Order', poOrder[0])
+      console.log('PO Mail Sent Succesfully')
+    }
+  )
+}
+
 // autoPurchaseOrder()
-var jobId = crontab.scheduleJob('00 01 13 * * * ', async function () {
+var jobId = crontab.scheduleJob('00 26 10 * * * ', async function () {
   console.log('*********** Cron Schedule Started ***********')
   await autoPurchaseOrder()
   console.log('*********** Mail has been sent ***********')

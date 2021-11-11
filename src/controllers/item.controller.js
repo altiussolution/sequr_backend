@@ -285,7 +285,8 @@ exports.uploadImage = async (req, res) => {
 }
 
 exports.getItemMachine = (req, res) => {
-  var columnIds = JSON.parse(req.query.column_ids)
+  console.log(req.params)
+  var columnIds = JSON.parse(req.params.column_ids)
 
   try {
     //Find all Columns Ids
@@ -314,7 +315,7 @@ exports.getItemMachine = (req, res) => {
               .populate('sub_category_id')
               .populate('supplier.suppliedBy')
               .then(item => {
-                res.status(200).send({ success: true, item: item })
+                res.status(200).send({ success: true, data: item })
               })
               .catch(error => {
                 res.status(400).send({ success: false, error: error })

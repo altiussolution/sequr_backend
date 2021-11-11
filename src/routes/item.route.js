@@ -27,9 +27,9 @@ route.get('/getItemfilter', ItemController.getItemfilter)
 route.post(
   '/uploadImage',
   auth,
-  upload.array('image'),
+  upload.array('image-video'),
   ItemController.uploadImage
 )
-route.get('/getItemMachine', ItemController.getItemMachine)
+route.get('/getItemMachine/:category_id/:sub_category_id/:column_ids', ItemController.getItemMachine)
 
 module.exports = route
