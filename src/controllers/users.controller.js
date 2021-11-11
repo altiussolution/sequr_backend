@@ -382,7 +382,7 @@ exports.changePassword = async (req, res) => {
   console.log(userId)
   if (userId) {
     if (passwordDetails.newpassword) {
-      await User.findOne({ userId: userId }, async function (err, user) {
+      await User.findOne({ _id: userId }, async function (err, user) {
         console.log(user)
         if (!err && user) {
           //console.log(user.authenticate(passwordDetails.oldpassword));
