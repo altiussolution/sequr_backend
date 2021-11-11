@@ -26,7 +26,7 @@ exports.createSupplier =(async (req, res) => {
           if (id){
             return res
             .status(409)
-            .send( {status: false, message: 'Supplier id already exists'})
+            .send( {status: false, message: 'Supplier code already exists'})
           }
           if (oldaddress){
             return res
