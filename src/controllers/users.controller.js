@@ -177,7 +177,7 @@ exports.upload = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    var userId = req.query.id
+    var userId = req.params._id
     var updateUser = req.body
     User.findByIdAndUpdate(userId, updateUser, (err, isExist) => {
       if (isExist) {
