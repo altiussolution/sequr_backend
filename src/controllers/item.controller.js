@@ -266,6 +266,7 @@ exports.getItemfilter = (req, res) => {
 
 exports.uploadImage = async (req, res) => {
   try {
+    console.log(req.files)
     totalImages = []
     for (let image of req.files) {
       fileLocations = {}
@@ -276,7 +277,7 @@ exports.uploadImage = async (req, res) => {
       totalImages.push(fileLocations)
     }
     res.status(200).send({
-      message: 'Profile Added Sucessfully',
+      message: 'Image Added Sucessfully',
       fileLocations: totalImages
     })
   } catch (err) {
