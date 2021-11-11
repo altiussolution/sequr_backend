@@ -36,7 +36,8 @@ const PurchaseOrderSchema = Schema({
   },
   is_received: {
     type: Boolean,
-    default: false
+    enum: [0, 1, 2],
+    default: 0
   },
   received_date: {
     type: Date,

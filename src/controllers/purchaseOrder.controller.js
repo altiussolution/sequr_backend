@@ -49,11 +49,6 @@ exports.addPurchaseOrder = async (req, res) => {
           })
         }
       })
-      .populate('item_id')
-      .populate('supplier_id')
-      .then(pO => {
-        sendMailToSupplier(1, 2, 3, pO, pO)
-      })
   } else {
     res.status(200).send({
       success: false,
@@ -97,7 +92,7 @@ exports.updatePurchaseOrder = async (req, res) => {
           message: 'PurchaseOrder Updated Successfully!'
         })
         createLog(req.headers['authorization'], 'PurchaseOrder', 1)
-        if (req.body.is_received) {
+        if (req.body.is_received == 2) {
           await itemModel
             .findByIdAndUpdate(req.body.item_id, {
               $inc: { in_stock: req.body.quantity }
@@ -175,31 +170,38 @@ async function autoPurchaseOrder () {
               numbers: true
             })
 
-            //Send Mail To Supplier
-            sendMailToSupplier(
-              item.supplier[0].suppliedBy.po_email,
-              item.supplier[0].suppliedBy.supplier_name,
-              item.item_name,
-              item.generate_po_for,
-              poNumber
-            )
+            if (item.supplier.length == 1) {
+              //Send Mail To Supplier
+              sendMailToSupplier(
+                item.supplier[0].suppliedBy.po_email,
+                item.supplier[0].suppliedBy.supplier_name,
+                item.item_name,
+                item.generate_po_for,
+                poNumber
+              )
+              await createPo(1)
+            } else if (item.supplier.length > 1) {
+              await createPo(0)
+            }
             //Send Mail To Supplier
 
             //Add Purchase Order
-
-            data = {
-              category_id: item.category_id,
-              sub_category_id: item.sub_category_id,
-              item_id: item._id,
-              supplier_id: item.supplier[0].suppliedBy._id,
-              po_number: poNumber,
-              quantity: item.generate_po_for,
-              po_date: new Date(),
-              is_auto_po: true,
-              description: 'Auto PO Generate'
+            async function createPo (auto_po_or_inprogress) {
+              data = {
+                category_id: item.category_id,
+                sub_category_id: item.sub_category_id,
+                item_id: item._id,
+                supplier_id: item.supplier[0].suppliedBy._id,
+                po_number: poNumber,
+                quantity: item.generate_po_for,
+                po_date: new Date(),
+                is_auto_po: true,
+                description: 'Auto PO Generate',
+                is_received: auto_po_or_inprogress
+              }
+              var purchase_order = new purchaseOrderModel(data)
+              await purchase_order.save()
             }
-            var purchase_order = new purchaseOrderModel(data)
-            await purchase_order.save()
           }
         }
       })

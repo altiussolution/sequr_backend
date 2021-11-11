@@ -383,7 +383,11 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         }
         values.total_quantity =
           values.total_quantity - values.kitting[index]['qty']
-          values.kitting = await dedup_and_sum(values.kitting, 'kit_id', 'cart_status')
+        values.kitting = await dedup_and_sum(
+          values.kitting,
+          'kit_id',
+          'cart_status'
+        )
         CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
           if (err) {
             console.log(err.name)
@@ -491,27 +495,29 @@ exports.itemHistory = async (req, res) => {
     var kitData = []
     for await (let [i, item] of KitHistory.entries()) {
       for (let [j, val] of item.kitting.entries()) {
+        stockDataArray = []
         for (let [k, data] of val.kit_id.kit_data.entries()) {
           stockData = await stockAllocationModel
-            .find({ item: data.item_id._id })
+            .findOne({ item: data.item_id._id })
             .populate('item', ['item_name', 'image_path'])
             .populate('cube', ['cube_name', 'cube_id'])
             .populate('bin', ['bin_name', 'bin_id'])
             .populate('compartment', ['compartment_name', 'compartment_id'])
             .exec()
-          kitData.push({
-            cart_id: item._id,
-            update_kit_id: val._id,
-            kit_id: val.kit_id,
-            kit_cart_id: val._id,
-            kit_status: val.kit_status,
-            qty: val.qty,
-            kit_name: val.kit_id.kit_name,
-            kit_item_details: stockData,
-            created_at: val.created_at,
-            updated_at: val.updated_at
-          })
+          await stockDataArray.push(stockData)
         }
+        kitData.push({
+          cart_id: item._id,
+          update_kit_id: val._id,
+          kit_id: val.kit_id,
+          kit_cart_id: val._id,
+          kit_status: val.kit_status,
+          qty: val.qty,
+          kit_name: val.kit_id.kit_name,
+          kit_item_details: stockDataArray,
+          created_at: val.created_at,
+          updated_at: val.updated_at
+        })
       }
     }
 
@@ -520,8 +526,6 @@ exports.itemHistory = async (req, res) => {
     res.status(201).send({ status: false, message: err.name })
   }
 }
-
-
 
 async function dedup_and_sum (arr, prop, prop1) {
   var seen = {},
@@ -544,7 +548,7 @@ async function dedup_and_sum (arr, prop, prop1) {
     }
   })
 
-  return order.map(function (k) {    
+  return order.map(function (k) {
     delete seen[k].undefined
     return seen[k]
   })
