@@ -177,7 +177,7 @@ exports.upload = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    var userId = req.query.id
+    var userId = req.params._id
     var updateUser = req.body
     User.findByIdAndUpdate(userId, updateUser, (err, isExist) => {
       if (isExist) {
@@ -382,7 +382,7 @@ exports.changePassword = async (req, res) => {
   console.log(userId)
   if (userId) {
     if (passwordDetails.newpassword) {
-      await User.findOne({ userId: userId }, async function (err, user) {
+      await User.findOne({ _id: userId }, async function (err, user) {
         console.log(user)
         if (!err && user) {
           //console.log(user.authenticate(passwordDetails.oldpassword));
