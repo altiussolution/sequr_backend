@@ -10,7 +10,7 @@ route.put('/permission/add/:id', auth, RolesController.addPermission)
 route.put('/permission/update/:id', auth, RolesController.updatePermission)
 route.get('/permission/get', auth, RolesController.getPermission)
 route.put('/permission/delete/:id', auth, RolesController.deletePermission)
-route.get('/permission/list/get', RolesController.listPermission)
+route.get('/permission/list/get',auth, RolesController.listPermission)
 route.get('/getRolesfilter', auth, RolesController.getRolesfilter)
 
 module.exports = route

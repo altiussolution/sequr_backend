@@ -1,5 +1,6 @@
 const {PurchaseOrderController} = require('../controllers')
 let route = require('express').Router()
+const auth = require("../middleware/auth.middleware");
 var multer = require("multer");
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -11,11 +12,11 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage })
 
-route.post('/add', PurchaseOrderController.addPurchaseOrder)
-route.get('/get',PurchaseOrderController.getPurchaseOrder)
-route.put('/update/:id',PurchaseOrderController.updatePurchaseOrder);
-route.put('/delete/:id',PurchaseOrderController.deletePurchaseOrder);
-route.post('/upload', upload.single('purchaseOrder'),PurchaseOrderController.upload)
+route.post('/add',auth, PurchaseOrderController.addPurchaseOrder)
+route.get('/get',auth,PurchaseOrderController.getPurchaseOrder)
+route.put('/update/:id',auth,PurchaseOrderController.updatePurchaseOrder);
+route.put('/delete/:id',auth,PurchaseOrderController.deletePurchaseOrder);
+route.post('/upload',auth, upload.single('purchaseOrder'),PurchaseOrderController.upload)
 
 
 

@@ -1,10 +1,11 @@
 const { SupplierController } = require('../controllers');
 let route = require('express').Router()
+const auth = require("../middleware/auth.middleware");
 
-route.post('/add',SupplierController.createSupplier);
-route.get('/get', SupplierController.getSupplier);
-route.put('/update/:id',SupplierController.updateSupplier);
-route.put('/delete/:id',SupplierController.deleteSupplier);
-route.get('/getSupplierfilter', SupplierController.getSupplierfilter);
+route.post('/add',auth,SupplierController.createSupplier);
+route.get('/get',auth, SupplierController.getSupplier);
+route.put('/update/:id',auth,SupplierController.updateSupplier);
+route.put('/delete/:id',auth,SupplierController.deleteSupplier);
+route.get('/getSupplierfilter',auth, SupplierController.getSupplierfilter);
 
 module.exports = route;

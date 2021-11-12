@@ -16,10 +16,10 @@ route.post('/add', auth, CategoryController.addCategory)
 route.get('/get', auth, CategoryController.getCategory)
 route.put('/update/:id', auth, CategoryController.updateCategory)
 route.post('/upload',auth, upload.single('category'),CategoryController.upload)
-route.delete('/delete/:id', CategoryController.deleteCategory)
+route.delete('/delete/:id',auth, CategoryController.deleteCategory)
 route.get('/getCategorylist',auth, CategoryController.getCategorylist)
 route.get('/getCategoryfilter',auth, CategoryController.getCategoryfilter)
-route.get('/getCategoryMachine/:column_ids', CategoryController.getCategoryMachine)
+route.get('/getCategoryMachine/:column_ids',auth, CategoryController.getCategoryMachine)
 route.get('/getUserCategory', auth, CategoryController.getUserCategory)
 
 module.exports = route
