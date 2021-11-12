@@ -140,6 +140,7 @@ exports.getSubCategoryMachine = (req, res) => {
             console.log(sub_cat)
             var query = {
               active_status: 1,
+              is_active: true,
               category_id: req.params.category_id,
               _id: { $in: sub_cat }
             }

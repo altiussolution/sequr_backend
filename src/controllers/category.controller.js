@@ -208,6 +208,7 @@ exports.getCategoryMachine = (req, res) => {
             console.log(category)
             var query = {
               active_status: 1,
+              is_active: true,
               _id: { $in: category }
             }
             console.log(category)

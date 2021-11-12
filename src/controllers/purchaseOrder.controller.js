@@ -7,7 +7,7 @@ var generator = require('generate-password')
 const { createLog } = require('../middleware/crud.middleware')
 
 exports.addPurchaseOrder = async (req, res) => {
-  // try {
+  try {
   var purchase_order = new purchaseOrderModel(req.body)
   var isPurchaseOrderExist = await purchaseOrderModel
     .findOne({ $or: [{ po_number: req.body.po_number }] })
@@ -55,9 +55,9 @@ exports.addPurchaseOrder = async (req, res) => {
       message: 'Given PurchaseOrder Already Exist'
     })
   }
-  // } catch (err) {
-  //   res.status(201).send({ success: false, error: err.name })
-  // }
+  } catch (err) {
+    res.status(201).send({ success: false, error: err.name })
+  }
 }
 
 exports.getPurchaseOrder = (req, res) => {
