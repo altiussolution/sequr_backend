@@ -531,7 +531,7 @@ exports.getForgotpassword = async (req, res) => {
 }
 
 exports.poAlert = (req, res) => {
-  var query = { active_status: 1, is_received: false, is_auto_po: true }
+  var query = { active_status: 1, is_received: 0, is_auto_po: true }
   try {
     purchaseOrderModel
       .find(query)
