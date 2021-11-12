@@ -86,18 +86,30 @@ exports.updatePurchaseOrder = async (req, res) => {
   try {
     purchaseOrderModel
       .findByIdAndUpdate(req.params.id, req.body)
-      .then(async purchaseOrderUpdate => {
+      .populate('item_id')
+      .populate('supplier_id')
+      .then(async purchaseOrder => {
         res.status(200).send({
           success: true,
           message: 'PurchaseOrder Updated Successfully!'
         })
         createLog(req.headers['authorization'], 'PurchaseOrder', 1)
+        console.log(purchaseOrder)
         if (req.body.is_received == 2) {
           await itemModel
             .findByIdAndUpdate(req.body.item_id, {
               $inc: { in_stock: req.body.quantity }
             })
             .exec()
+        }
+        else if(req.body.is_received == 1){
+          sendMailToSupplier(
+            purchaseOrder.supplier_id.po_email,
+            purchaseOrder.supplier_id.supplier_name,
+            purchaseOrder.item_id.item_name,
+            purchaseOrder.quantity,
+            purchaseOrder.po_number
+          )
         }
       })
       .catch(error => {
@@ -161,10 +173,8 @@ async function autoPurchaseOrder () {
       })
       .populate('supplier.suppliedBy')
       .then(async items => {
-        console.log(items)
         if (items.length > 0) {
           for await (let item of items) {
-            console.log(item.supplier[0])
             var poNumber = await generator.generate({
               length: 6,
               numbers: true
@@ -210,7 +220,6 @@ async function autoPurchaseOrder () {
 
 //Send Mail To Supplier
 async function sendMailToSupplier (mail, supplier, item, poQty, poNumber) {
-  console.log(poNumber)
   const locals = {
     supplierName: supplier,
     itemName: item,
@@ -229,7 +238,7 @@ async function sendMailToSupplier (mail, supplier, item, poQty, poNumber) {
 }
 
 // autoPurchaseOrder()
-var jobId = crontab.scheduleJob('00 26 10 * * * ', async function () {
+var jobId = crontab.scheduleJob('00 17 13 * * * ', async function () {
   console.log('*********** Cron Schedule Started ***********')
   await autoPurchaseOrder()
   console.log('*********** Mail has been sent ***********')

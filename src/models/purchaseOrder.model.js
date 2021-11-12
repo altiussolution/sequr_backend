@@ -35,7 +35,7 @@ const PurchaseOrderSchema = Schema({
     required: true
   },
   is_received: {
-    type: Boolean,
+    type: Number,
     enum: [0, 1, 2],
     default: 0
   },
