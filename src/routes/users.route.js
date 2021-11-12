@@ -2,13 +2,21 @@ let route = require('express').Router()
 var controllers = require('../controllers/index');
 const auth = require("../middleware/auth.middleware");
 var multer = require("multer");
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './src/public/uploads')
-    },
-    filename: function (req, file, cb) {
-      cb(null, `${req.user.user_id}.${file.originalname.split('.').pop()}`)
-    }
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, './src/public/uploads')
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null, `${req.user.user_id}.${file.originalname.split('.').pop()}`)
+//     }
+// })
+const storage = multer.diskStorage({
+  destination: function (req, files, cb) {
+    cb(null, './src/public/uploads')
+  },
+  filename: function (req, files, cb) {
+    cb(null, files.originalname)
+  }
 })
 var upload = multer({ storage: storage })
 

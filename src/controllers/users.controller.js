@@ -158,14 +158,30 @@ exports.login = async (req, res) => {
   }
 }
 
+// exports.upload = async (req, res) => {
+//   try {
+//     if (req.file) {
+//       var filename = `${req.user.user_id}.${req.file.originalname
+//         .split('.')
+//         .pop()}`
+//       res.status(200).send({
+//         message: 'Profile Added Sucessfully',
+//         Path: `${req.file.destination.replace(
+//           './src/public/',
+//           appRouteModels.BASEURL
+//         )}/${filename}`
+//       })
+//     }
+//   } catch (err) {
+//     res.status(400).send(err.name)
+//   }
+// }
 exports.upload = async (req, res) => {
   try {
     if (req.file) {
-      var filename = `${req.user.user_id}.${req.file.originalname
-        .split('.')
-        .pop()}`
+      const filename = req.file.originalname
       res.status(200).send({
-        message: 'Profile Added Sucessfully',
+        Message: 'Image Added Sucessfully',
         Path: `${req.file.destination.replace(
           './src/public/',
           appRouteModels.BASEURL
@@ -173,7 +189,7 @@ exports.upload = async (req, res) => {
       })
     }
   } catch (err) {
-    res.status(400).send(err.name)
+    res.status(400).send(err)
   }
 }
 
