@@ -4,18 +4,15 @@ var mongoose = require('mongoose'),
 const BranchSchema = Schema({
     branch_name: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     branch_code: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     branch_address: {
         type: String,
-        required: true,
-        unique : true
+        required: true
     },
     country_id: {
         type: Schema.Types.ObjectId,
@@ -36,8 +33,7 @@ const BranchSchema = Schema({
     },
     phone_number: {
         type: String,
-        required: true,
-        unique : true
+        required: true
     },
     fax: {
         type: String,
@@ -45,8 +41,7 @@ const BranchSchema = Schema({
     },
     email_id: {
         type: String,
-        required: true,
-        unique : true
+        required: true
     },
     created_at: {
         type: Date,
