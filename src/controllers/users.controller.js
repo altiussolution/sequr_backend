@@ -179,7 +179,7 @@ exports.update = async (req, res) => {
   try {
     var userId = req.params._id
     var updateUser = req.body
-    User.findByIdAndUpdate(userId, updateUser, (err, isExist) => {
+    User.updateOne({_id : userId, active_status : 1}, updateUser, (err, isExist) => {
       if (isExist) {
         res.status(200).send({ message: 'Employee Updated Sucessfully' })
         createLog(req.headers['authorization'], 'Employee', 1)
