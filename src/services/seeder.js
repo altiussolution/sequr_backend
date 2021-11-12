@@ -34,15 +34,15 @@ var citiesByCode = csc.City.getCitiesOfCountry('GB')
 // Import into DB
 const importData = async () => {
   try {
-  // await Country.create(countries);  
-  // console.log(' **** Country ****')
-   // await State.create(states);
-   // console.log(' **** State ****')
-      // await City.create(cities);
-      await City.create(citiesByCode);
-    console.log(' **** City ****')
-  // await Language.create(language_list)
-  // console.log(' **** Language ****')
+  await Country.create(countries);  
+  console.log(' **** Country ****')
+   await State.create(states);
+   console.log(' **** State ****')
+      await City.create(cities);
+      // await City.create(citiesByCode);
+    // console.log(' **** City ****')
+  await Language.create(language_list)
+  console.log(' **** Language ****')
     console.log("Data Imported...");
     process.exit();
   } catch (err) {
