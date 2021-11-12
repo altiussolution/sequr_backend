@@ -18,11 +18,11 @@ route.get('/getpurchaseOrdercount', auth,DashboardController.getPurchaseOrdercou
 route.get('/getCubecount', auth,DashboardController.getCubecount);
 route.get('/getPermissioncount', auth,DashboardController.getPermissioncount);
 route.get('/getshiftTimecount', auth,DashboardController.getshiftTimecount);
-route.post('/machineUsageAdd', DashboardController.addMachineUsage);
-route.get('/getMachineUsage', DashboardController.getMachineUsage);
-route.get('/itemAlert', DashboardController.itemAlert);
-route.get('/calibrationMonthNotification', DashboardController.calibrationMonthNotification);
-route.get('/outOfStockItems', DashboardController.outOfStockItems);
+route.post('/machineUsageAdd',auth, DashboardController.addMachineUsage);
+route.get('/getMachineUsage',auth, DashboardController.getMachineUsage);
+route.get('/itemAlert',auth, DashboardController.itemAlert);
+route.get('/calibrationMonthNotification',auth, DashboardController.calibrationMonthNotification);
+route.get('/outOfStockItems',auth, DashboardController.outOfStockItems);
 route.get('/getForgotpassword', auth,DashboardController.getForgotpassword);
 route.get('/poAlert', auth,DashboardController.poAlert);
 

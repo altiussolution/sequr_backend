@@ -13,7 +13,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage })
 
 route.post('/add', auth, ItemController.addItem)
-route.get('/get', ItemController.getItem)
+route.get('/get',auth, ItemController.getItem)
 route.put('/update/:id', auth, ItemController.updateItem)
 route.post('/upload', auth, upload.array('image-video'), ItemController.upload)
 route.get(
@@ -21,15 +21,15 @@ route.get(
   auth,
   ItemController.getItemByCategory
 )
-route.put('/delete/:id', ItemController.deleteItems)
+route.put('/delete/:id',auth, ItemController.deleteItems)
 route.get('/getItemById/:item', auth, ItemController.getItemById)
-route.get('/getItemfilter', ItemController.getItemfilter)
+route.get('/getItemfilter',auth, ItemController.getItemfilter)
 route.post(
   '/uploadImage',
   auth,
   upload.array('image-video'),
   ItemController.uploadImage
 )
-route.get('/getItemMachine/:category_id/:sub_category_id/:column_ids', ItemController.getItemMachine)
+route.get('/getItemMachine/:category_id/:sub_category_id/:column_ids',auth,ItemController.getItemMachine)
 
 module.exports = route
