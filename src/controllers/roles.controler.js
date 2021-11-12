@@ -5,31 +5,43 @@ const { createLog } = require('../middleware/crud.middleware')
 // Roles
 exports.createRole = (async (req, res) => {
     try {
-        let body = req.body
-        var isRoleExist = await rolesModel.find({ $or: [{role_name : body.role_name},{role_id: body.role_id} ] }).exec()
-        if(isRoleExist.length == 0){
-            var newRole = new rolesModel(req.body);
-            newRole.save(function (err) {
-                if (err) {
-                    res.status(200).send({
-                        success: false,
-                        message: 'error in adding role',
-                        error : err
-                    });
-                }
-                else {
-                    res.status(200).send({ success: true, message: 'Role Added Successfully!' });
-                    createLog(req.headers['authorization'], 'Roles', 2)
-                }
-            });
-        }else{
-            res.status(200).send({ success: false, message: 'Role Duplication occured' });
+        const newRole = new rolesModel(req.body)
+        var isRoleExist = await rolesModel.findOne({ $or: [{role_name : req.body.role_name},{role_id: req.body.role_id} ] }).exec()
+        if(isRoleExist){
+            const name = await rolesModel.findOne(({role_name: req.body.role_name ,active_status: 1 })).exec()
+            const id = await rolesModel.findOne(({ role_id:req.body.role_id ,  active_status: 1 })).exec()
+            if(name){
+                res.status(200).send({
+                    success: false,
+                    message: 'Role name Already Exist'
+                });
+            }
+         else   if(id){
+                res.status(200).send({
+                    success: false,
+                    message: 'Role ID Already Exist'
+                });
+            }
+        }
+        else if(!isRoleExist){
+            newRole.save(err=>{
+                if (!err) {
+                    res
+                      .status(200)
+                      .send({
+                        success: true,
+                        message: 'Role Created Successfully!'
+                          })
+                      createLog(req.headers['authorization'], 'Roles', 2)
+                  }
+            })
         }
        
     } catch (error) {
         res.send({status : false , message : error.name});
     }
 })
+
 
 exports.getRoles = ((req, res) => {
     try {

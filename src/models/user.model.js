@@ -37,8 +37,7 @@ const UserSchema = Schema({
   },
   employee_id: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   item_max_quantity: {
     type: String,
@@ -73,6 +72,7 @@ const UserSchema = Schema({
   },
   profile_pic: {
     type: String,
+    unique:true
   },
   status: {
     type: Number,

@@ -9,45 +9,43 @@ const {
 var { error_code, appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
 
-exports.addCategory = async (req, res) => {
-  try {
-    var category = new categoryModel(req.body)
-    var isCategoryExist = await categoryModel
-      .findOne({
-        $or: [
-          { category_name: req.body.category_name },
-          { category_code: req.body.category_code }
-        ]
-      })
-      .exec()
-    if (!isCategoryExist) {
-      category.save(err => {
-        if (!err) {
-          res
-            .status(200)
-            .send({ success: true, message: 'Category Created Successfully!' })
-          createLog(req.headers['authorization'], 'Category', 2)
-        } else {
-          var errorMessage =
-            err.code == error_code.isDuplication
-              ? 'Duplication occured in Category code or name'
-              : err
-          res.status(200).send({
-            success: false,
-            message: errorMessage
+exports.addCategory = (async (req, res) => {
+  try{
+      var category = new categoryModel(req.body);
+      var isCategoryExist = await categoryModel.findOne({ $or: [{category_name : req.body.category_name},{category_code: req.body.category_code} ] }).exec()
+      if(isCategoryExist){
+       const name = await categoryModel.findOne(({category_name: req.body.category_name ,active_status: 1 })).exec()
+       const code = await categoryModel.findOne(({ category_code:req.body.category_code ,  active_status: 1 })).exec()
+       if(name){
+           res.status(200).send({
+               success: false,
+               message: 'Category Name Already Exist'
+           });
+       }
+       if(code){
+           res.status(200).send({
+               success: false,
+               message: 'Category code Already Exist'
+           });
+       }
+      
+
+      }
+      else if(!isCategoryExist){
+       category.save((err) =>{  
+           if(!err){
+               res.status(200).send({ success: true, message: 'Category Created Successfully!' });
+               createLog(req.headers['authorization'], 'Category', 2)
+           }
           })
-        }
-      })
-    } else {
-      res.status(200).send({
-        success: false,
-        message: 'Given Category is Already Exist'
-      })
-    }
-  } catch (err) {
-    res.status(201).send({ success: false, error: err.name })
+      }
+      
+     
+  }catch(err){
+   res.status(201).send({success: false, error : err.name})
   }
-}
+})
+
 
 exports.getCategory = async (req, res) => {
   var offset =
