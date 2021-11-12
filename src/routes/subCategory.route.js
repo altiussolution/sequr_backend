@@ -18,5 +18,6 @@ route.put('/update/:id', auth, SubCategoryController.updatesubCategory)
 route.post('/upload', upload.single('sub-category'), SubCategoryController.upload)
 route.get('/getsubCategoryfilter', auth, SubCategoryController.getsubCategoryfilter)
 route.get('/getSubCategoryMachine/:category_id/:column_ids', SubCategoryController.getSubCategoryMachine)
+route.get('/getUsersubCategory', SubCategoryController.getUsersubCategory)
 
 module.exports = route

@@ -234,3 +234,20 @@ exports.getCategoryMachine = (req, res) => {
     res.status(201).send({ success: false, error: error })
   }
 }
+
+
+exports.getUserCategory = (async (req, res) => {
+  var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
+  var searchString = req.query.searchString
+  var query = (searchString ? {active_status: 1, $text: {$search: searchString},is_active:true} : {active_status: 1})
+  try{
+      categoryModel.find(query).skip(offset).limit(limit).then(categories =>{
+          res.status(200).send({ success: true, data: categories });
+      }).catch(error => {
+          res.status(400).send({success: false, error : error})
+      })
+  } catch(error){
+      res.status(201).send({success: false, error : error})
+  }
+})
