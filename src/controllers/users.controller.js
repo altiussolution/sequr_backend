@@ -10,6 +10,8 @@ var generator = require('generate-password')
 var fs = require('fs')
 const Email = require('email-templates')
 const { createLog } = require('../middleware/crud.middleware')
+var ObjectId = require('mongodb').ObjectID
+
 
 
   exports.add = async (req, res) => {
@@ -177,7 +179,7 @@ exports.upload = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    var userId = req.params._id
+    var userId = ObjectId(req.params._id)
     var updateUser = req.body
     User.updateOne({_id : userId, active_status : 1}, updateUser, (err, isExist) => {
       if (isExist) {
