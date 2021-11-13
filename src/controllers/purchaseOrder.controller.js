@@ -8,36 +8,37 @@ const { createLog } = require('../middleware/crud.middleware')
 
 exports.addPurchaseOrder = async (req, res) => {
   try {
-  var purchase_order = new purchaseOrderModel(req.body)
-  var isPurchaseOrderExist = await purchaseOrderModel
-    .findOne({ $or: [{ po_number: req.body.po_number }] })
-    .exec()
-  if (!isPurchaseOrderExist) {
-    purchase_order
-      .save(err => {
+    var purchase_order = new purchaseOrderModel(req.body)
+    var isPurchaseOrderExist = await purchaseOrderModel
+      .findOne({ $or: [{ po_number: req.body.po_number }] })
+      .exec()
+    if (!isPurchaseOrderExist) {
+      purchase_order.save(err => {
         if (!err) {
           res.status(200).send({
             success: true,
             message: 'PurchaseOrder Created Successfully!'
           })
           createLog(req.headers['authorization'], 'PurchaseOrder', 2)
-          purchaseOrderModel
-            .findOne({
-              active_status: 1,
-              quantity: req.body.quantity,
-              po_number: req.body.po_number
-            })
-            .populate('item_id')
-            .populate('supplier_id')
-            .then(purchaseOrder => {
-              sendMailToSupplier(
-                purchaseOrder.supplier_id.po_email,
-                purchaseOrder.supplier_id.supplier_name,
-                purchaseOrder.item_id.item_name,
-                purchaseOrder.quantity,
-                purchaseOrder.po_number
-              )
-            })
+          if (req.body.is_received == 1) {
+            purchaseOrderModel
+              .findOne({
+                active_status: 1,
+                quantity: req.body.quantity,
+                po_number: req.body.po_number
+              })
+              .populate('item_id')
+              .populate('supplier_id')
+              .then(purchaseOrder => {
+                sendMailToSupplier(
+                  purchaseOrder.supplier_id.po_email,
+                  purchaseOrder.supplier_id.supplier_name,
+                  purchaseOrder.item_id.item_name,
+                  purchaseOrder.quantity,
+                  purchaseOrder.po_number
+                )
+              })
+          }
         } else {
           var errorMessage =
             err.code == error_code.isDuplication
@@ -49,12 +50,12 @@ exports.addPurchaseOrder = async (req, res) => {
           })
         }
       })
-  } else {
-    res.status(200).send({
-      success: false,
-      message: 'Given PurchaseOrder Already Exist'
-    })
-  }
+    } else {
+      res.status(200).send({
+        success: false,
+        message: 'Given PurchaseOrder Already Exist'
+      })
+    }
   } catch (err) {
     res.status(201).send({ success: false, error: err.name })
   }
@@ -98,11 +99,11 @@ exports.updatePurchaseOrder = async (req, res) => {
         if (req.body.is_received == 2) {
           await itemModel
             .findByIdAndUpdate(req.body.item_id, {
-              $inc: { in_stock: req.body.quantity }
+              $inc: { in_stock: req.body.quantity },
+              is_auto_po_generated: false
             })
             .exec()
-        }
-        else if(req.body.is_received == 1){
+        } else if (req.body.is_received == 1) {
           sendMailToSupplier(
             purchaseOrder.supplier_id.po_email,
             purchaseOrder.supplier_id.supplier_name,
@@ -169,7 +170,8 @@ async function autoPurchaseOrder () {
         active_status: 1,
         returnable: false,
         $where: 'this.generate_po_on >= this.in_stock',
-        auto_purchase_order: true
+        auto_purchase_order: true,
+        is_auto_po_generated: false
       })
       .populate('supplier.suppliedBy')
       .then(async items => {
@@ -209,6 +211,12 @@ async function autoPurchaseOrder () {
                 description: 'Auto PO Generate',
                 is_received: auto_po_or_inprogress
               }
+              // Mark this item is auto PO Generated one
+              await itemModel
+                .findByIdAndUpdate(item._id, {
+                  is_auto_po_generated: true
+                })
+                .exec()
               var purchase_order = new purchaseOrderModel(data)
               await purchase_order.save()
             }

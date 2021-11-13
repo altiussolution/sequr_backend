@@ -86,7 +86,11 @@ const ItemSchema = Schema({
     default: false
   },
   generate_po_for: {
-    type: Number,
+    type: Number
+  },
+  is_auto_po_generated: {
+    type: Boolean,
+    default: false
   }
 })
 
