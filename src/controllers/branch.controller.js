@@ -3,81 +3,28 @@ var { error_code } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
 
 
-exports.createBranch = (async(req, res) => {
+exports.createBranch = (req, res) => {
     try {
         var newBranch = new branchModel(req.body);
-        const {
-            branch_name,
-            branch_code,
-            branch_address,
-            email_id,
-            phone_number,
-            active_status
-        } = req.body
-        const name = await branchModel.findOne(({ branch_name , active_status: 1 }))
-       const id = await branchModel.findOne(({ branch_code ,  active_status: 1 }))
-        const oldaddress = await branchModel.findOne({branch_address  , active_status: 1 })
-        const oldemail = await branchModel.findOne({email_id, active_status: 1 })
-        const oldmobilenumber = await branchModel.findOne({phone_number, active_status:1 })
-        if (name){
-            return res
-            .status(409)
-            .send( {status: false, message: 'Branch name already exists'})
-          }
-          if (id){
-            return res
-            .status(409)
-            .send( {status: false, message: 'Branch id already exists'})
-          }
-          if (oldaddress){
-            return res
-            .status(409)
-            .send( {status: false, message: 'Branch address already exists'})
-          }
-          if (oldemail){
-            return res
-            .status(409)
-            .send( {status: false, message: 'Email already exists'})
-          }
-          if (oldmobilenumber){
-            return res
-            .status(409)
-            .send( {status: false, message: 'Mobile Number already exists'})
-          }
-          if(!name && !id && !oldaddress && !oldemail && !oldmobilenumber){
-            newBranch.save(async(err) => {
-                if (!err) {
-                    res.status(200).send({ success: true, message: 'Branch Created Successfully!' });
-                    createLog(req.headers['authorization'], 'Branch', 2)
-                }
-            //    else {
-            //     const name = await branchModel.findOne(({ branch_name , active_status: 1 })).exec()
-            //     const id = await branchModel.findOne(({ branch_code ,  active_status: 1 })).exec()
-            //         if(name){
-            //             var errorMessage = (err.code == error_code.isDuplication ? `Branch name already exists` : err)
-            //             console.log(err)
-            //             res.status(200).send({
-            //                 success: false,
-            //                 message: errorMessage
-            //             });  
-            //         }else if(id){
-            //             var errorMessage = (err.code == error_code.isDuplication ? `Branch code already exists` : err)
-            //             console.log(err)
-            //             res.status(200).send({
-            //                 success: false,
-            //                 message: errorMessage
-            //             });
-            //         } 
-                  
-            //     }
-            });
-          }
-      
-    } catch (err) {
-        // res.status(201).send(err)
-        console.log(err)
+        newBranch.save((err) => {
+            if (!err) {
+                res.status(200).send({ success: true, message: 'Branch Created Successfully!' });
+                createLog(req.headers['authorization'], 'Branch', 2)
+            }
+            else {
+                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Branch name or code' : err)
+                res.status(200).send({
+                    success: false,
+                    message: errorMessage
+                });
+            }
+        });
+    } catch (error) {
+        res.status(201).send(error)
     }
-})
+} 
+  
+
 
 exports.getBranch = (req, res) => {
     var offset = parseInt(req.query.offset);
@@ -165,3 +112,79 @@ exports.getBranchfilter = (req, res) => {
         res.status(201).send({ success: false, error: error })
     }
 }
+
+// exports.createBranch = (async(req, res) => {
+//     try {
+//         var newBranch = new branchModel(req.body);
+//         const {
+//             branch_name,
+//             branch_code,
+//             branch_address,
+//             email_id,
+//             phone_number,
+//             active_status
+//         } = req.body
+//         const name = await branchModel.findOne(({ branch_name , active_status: 1 }))
+//        const id = await branchModel.findOne(({ branch_code ,  active_status: 1 }))
+//         const oldaddress = await branchModel.findOne({branch_address  , active_status: 1 })
+//         const oldemail = await branchModel.findOne({email_id, active_status: 1 })
+//         const oldmobilenumber = await branchModel.findOne({phone_number, active_status:1 })
+//         if (name){
+//             return res
+//             .status(409)
+//             .send( {status: false, message: 'Branch name already exists'})
+//           }
+//           if (id){
+//             return res
+//             .status(409)
+//             .send( {status: false, message: 'Branch id already exists'})
+//           }
+//           if (oldaddress){
+//             return res
+//             .status(409)
+//             .send( {status: false, message: 'Branch address already exists'})
+//           }
+//           if (oldemail){
+//             return res
+//             .status(409)
+//             .send( {status: false, message: 'Email already exists'})
+//           }
+//           if (oldmobilenumber){
+//             return res
+//             .status(409)
+//             .send( {status: false, message: 'Mobile Number already exists'})
+//           }
+//           if(!name && !id && !oldaddress && !oldemail && !oldmobilenumber){
+//             newBranch.save(async(err) => {
+//                 if (!err) {
+//                     res.status(200).send({ success: true, message: 'Branch Created Successfully!' });
+//                     createLog(req.headers['authorization'], 'Branch', 2)
+//                 }
+//             //    else {
+//             //     const name = await branchModel.findOne(({ branch_name , active_status: 1 })).exec()
+//             //     const id = await branchModel.findOne(({ branch_code ,  active_status: 1 })).exec()
+//             //         if(name){
+//             //             var errorMessage = (err.code == error_code.isDuplication ? `Branch name already exists` : err)
+//             //             console.log(err)
+//             //             res.status(200).send({
+//             //                 success: false,
+//             //                 message: errorMessage
+//             //             });  
+//             //         }else if(id){
+//             //             var errorMessage = (err.code == error_code.isDuplication ? `Branch code already exists` : err)
+//             //             console.log(err)
+//             //             res.status(200).send({
+//             //                 success: false,
+//             //                 message: errorMessage
+//             //             });
+//             //         } 
+                  
+//             //     }
+//             });
+//           }
+      
+//     } catch (err) {
+//         // res.status(201).send(err)
+//         console.log(err)
+//     }
+// })

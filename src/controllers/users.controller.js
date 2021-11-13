@@ -48,24 +48,24 @@ var ObjectId = require('mongodb').ObjectID
       ) {
         res.status(400).send('All input is required')
       }
-      const oldEmployee_id = await User.findOne({ employee_id , active_status: 1 })
-      const oldmobilenumber = await User.findOne({ contact_no , active_status: 1 })
-      const oldemail_id = await User.findOne({ email_id , active_status: 1 })
-      if (oldEmployee_id) {
-        return res
-          .status(409)
-          .send({ status: false, message: 'Employee_id already exist' })
-      }
-      if (oldemail_id){
-        return res
-        .status(409)
-        .send( {status: false, message: 'Email id already exists'})
-      }
-      if (oldmobilenumber){
-        return res
-        .status(409)
-        .send( {status: false, message: 'Contact number already exists'})
-      }
+      // const oldEmployee_id = await User.findOne({ employee_id , active_status: 1 })
+      // const oldmobilenumber = await User.findOne({ contact_no , active_status: 1 })
+      // const oldemail_id = await User.findOne({ email_id , active_status: 1 })
+      // if (oldEmployee_id) {
+      //   return res
+      //     .status(409)
+      //     .send({ status: false, message: 'Employee_id already exist' })
+      // }
+      // if (oldemail_id){
+      //   return res
+      //   .status(409)
+      //   .send( {status: false, message: 'Email id already exists'})
+      // }
+      // if (oldmobilenumber){
+      //   return res
+      //   .status(409)
+      //   .send( {status: false, message: 'Contact number already exists'})
+      // }
       console.log(password)
       encryptedPassword = await bcrypt.hash(password, 10)
       const user = await User.create({
