@@ -12,12 +12,25 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage })
 
-route.get('/get',auth, SubCategoryController.getsubCategory)
-route.post('/add',auth, SubCategoryController.addsubCategory)
+route.get('/get', auth, SubCategoryController.getsubCategory)
+route.post('/add', auth, SubCategoryController.addsubCategory)
 route.put('/update/:id', auth, SubCategoryController.updatesubCategory)
-route.post('/upload',auth, upload.single('sub-category'), SubCategoryController.upload)
-route.get('/getsubCategoryfilter', auth, SubCategoryController.getsubCategoryfilter)
-route.get('/getSubCategoryMachine/:category_id/:column_ids',auth, SubCategoryController.getSubCategoryMachine)
-route.get('/getUsersubCategory',auth, SubCategoryController.getUsersubCategory)
+route.post(
+  '/upload',
+  auth,
+  upload.single('sub-category'),
+  SubCategoryController.upload
+)
+route.get(
+  '/getsubCategoryfilter',
+  auth,
+  SubCategoryController.getsubCategoryfilter
+)
+route.get(
+  '/getSubCategoryMachine/:category_id/:column_ids',
+  auth,
+  SubCategoryController.getSubCategoryMachine
+)
+route.get('/getUsersubCategory', auth, SubCategoryController.getUsersubCategory)
 
 module.exports = route

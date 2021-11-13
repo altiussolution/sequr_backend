@@ -1,4 +1,9 @@
-const { itemModel, stockAllocationModel, binModel } = require('../models')
+const {
+  itemModel,
+  stockAllocationModel,
+  binModel,
+  compartmentModel
+} = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
 
@@ -292,38 +297,53 @@ exports.getItemMachine = (req, res) => {
   try {
     //Find all Columns Ids
     binModel
-      .distinct('_id', { active_status: 1, bin_id: { $in: columnIds } })
+      .distinct('_id', {
+        active_status: 1,
+        bin_id: { $in: columnIds },
+        is_removed: false
+      })
       .then(binList => {
         console.log(binList)
-        //Find all Item Ids in stock allocation
-        stockAllocationModel
-          .distinct('item', { active_status: 1, bin: { $in: binList } })
-          .then(itemsList => {
-            console.log(itemsList)
-            var query = {
-              active_status: 1,
-              is_active: true,
-              category_id: req.params.category_id,
-              sub_category_id: req.params.sub_category_id,
-              _id: { $in: itemsList }
-            }
-            console.log(itemsList)
+        compartmentModel
+          .distinct('_id', {
+            active_status: 1,
+            bin_id: { $in: binList },
+            is_removed: false
+          })
+          .then(drawList => {
+            //Find all Item Ids in stock allocation
+            stockAllocationModel
+              .distinct('item', {
+                active_status: 1,
+                compartment: { $in: drawList }
+              })
+              .then(itemsList => {
+                console.log(itemsList)
+                var query = {
+                  active_status: 1,
+                  is_active: true,
+                  category_id: req.params.category_id,
+                  sub_category_id: req.params.sub_category_id,
+                  _id: { $in: itemsList }
+                }
+                console.log(itemsList)
 
-            // Find All items in machine
-            itemModel
-              .find(query)
-              .populate('category_id')
-              .populate('sub_category_id')
-              .populate('supplier.suppliedBy')
-              .then(item => {
-                res.status(200).send({ success: true, data: item })
+                // Find All items in machine
+                itemModel
+                  .find(query)
+                  .populate('category_id')
+                  .populate('sub_category_id')
+                  .populate('supplier.suppliedBy')
+                  .then(item => {
+                    res.status(200).send({ success: true, data: item })
+                  })
+                  .catch(error => {
+                    res.status(400).send({ success: false, error: error })
+                  })
               })
               .catch(error => {
                 res.status(400).send({ success: false, error: error })
               })
-          })
-          .catch(error => {
-            res.status(400).send({ success: false, error: error })
           })
       })
       .catch(error => {

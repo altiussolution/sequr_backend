@@ -69,7 +69,7 @@ exports.updateStockAllocation = (req, res) => {
             console.log(req.body.total_quantity)
             await itemModel
               .findByIdAndUpdate(req.body.item, {
-                $inc: { in_stock: -req.body.total_quantity }
+                $inc: { in_stock: req.body.total_quantity }
               })
               .exec()
           } else {

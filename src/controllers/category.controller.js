@@ -4,48 +4,56 @@ const {
   subCategoryModel,
   itemModel,
   stockAllocationModel,
-  binModel
+  binModel,
+  compartmentModel
 } = require('../models')
 var { error_code, appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
 
-exports.addCategory = (async (req, res) => {
-  try{
-      var category = new categoryModel(req.body);
-      var isCategoryExist = await categoryModel.findOne({ $or: [{category_name : req.body.category_name},{category_code: req.body.category_code} ] }).exec()
-      if(isCategoryExist){
-       const name = await categoryModel.findOne(({category_name: req.body.category_name ,active_status: 1 })).exec()
-       const code = await categoryModel.findOne(({ category_code:req.body.category_code ,  active_status: 1 })).exec()
-       if(name){
-           res.status(200).send({
-               success: false,
-               message: 'Category Name Already Exist'
-           });
-       }
-       if(code){
-           res.status(200).send({
-               success: false,
-               message: 'Category code Already Exist'
-           });
-       }
-      
-
+exports.addCategory = async (req, res) => {
+  try {
+    var category = new categoryModel(req.body)
+    var isCategoryExist = await categoryModel
+      .findOne({
+        $or: [
+          { category_name: req.body.category_name },
+          { category_code: req.body.category_code }
+        ]
+      })
+      .exec()
+    if (isCategoryExist) {
+      const name = await categoryModel
+        .findOne({ category_name: req.body.category_name, active_status: 1 })
+        .exec()
+      const code = await categoryModel
+        .findOne({ category_code: req.body.category_code, active_status: 1 })
+        .exec()
+      if (name) {
+        res.status(200).send({
+          success: false,
+          message: 'Category Name Already Exist'
+        })
       }
-      else if(!isCategoryExist){
-       category.save((err) =>{  
-           if(!err){
-               res.status(200).send({ success: true, message: 'Category Created Successfully!' });
-               createLog(req.headers['authorization'], 'Category', 2)
-           }
-          })
+      if (code) {
+        res.status(200).send({
+          success: false,
+          message: 'Category code Already Exist'
+        })
       }
-      
-     
-  }catch(err){
-   res.status(201).send({success: false, error : err.name})
+    } else if (!isCategoryExist) {
+      category.save(err => {
+        if (!err) {
+          res
+            .status(200)
+            .send({ success: true, message: 'Category Created Successfully!' })
+          createLog(req.headers['authorization'], 'Category', 2)
+        }
+      })
+    }
+  } catch (err) {
+    res.status(201).send({ success: false, error: err.name })
   }
-})
-
+}
 
 exports.getCategory = async (req, res) => {
   var offset =
@@ -97,15 +105,13 @@ exports.upload = async (req, res) => {
   try {
     if (req.file) {
       var filename = req.file.originalname
-      res
-        .status(200)
-        .send({
-          message: 'Category Image Sucessfully',
-          Path: `${req.file.destination.replace(
-            './src/public/',
-            appRouteModels.BASEURL
-          )}/${filename}`
-        })
+      res.status(200).send({
+        message: 'Category Image Sucessfully',
+        Path: `${req.file.destination.replace(
+          './src/public/',
+          appRouteModels.BASEURL
+        )}/${filename}`
+      })
     }
   } catch (err) {
     res.status(400).send(err)
@@ -125,12 +131,10 @@ exports.deleteCategory = async (req, res) => {
               itemModel
                 .deleteMany({}, { category_id: catId })
                 .then(itemRestul => {
-                  res
-                    .status(200)
-                    .send({
-                      status: true,
-                      message: 'Category and all the references were deleted'
-                    })
+                  res.status(200).send({
+                    status: true,
+                    message: 'Category and all the references were deleted'
+                  })
                   createLog(req.headers['authorization'], 'Category', 0)
                 })
             })
@@ -196,26 +200,45 @@ exports.getCategoryMachine = (req, res) => {
   try {
     //Find all Columns Ids
     binModel
-      .distinct('_id', { active_status: 1, bin_id: { $in: columnIds } })
+      .distinct('_id', {
+        active_status: 1,
+        bin_id: { $in: columnIds },
+        is_removed: false
+      })
       .then(binList => {
         console.log(binList)
-        //Find all Item Ids in stock allocation
-        stockAllocationModel
-          .distinct('category', { active_status: 1, bin: { $in: binList } })
-          .then(category => {
-            console.log(category)
-            var query = {
-              active_status: 1,
-              is_active: true,
-              _id: { $in: category }
-            }
-            console.log(category)
-
-            // Find All items in machine
-            categoryModel
-              .find(query)
+        compartmentModel
+          .distinct('_id', {
+            active_status: 1,
+            bin_id: { $in: binList },
+            is_removed: false
+          })
+          .then(drawList => {
+            console.log(binList)
+            //Find all Item Ids in stock allocation
+            stockAllocationModel
+              .distinct('category', {
+                active_status: 1,
+                compartment: { $in: drawList }
+              })
               .then(category => {
-                res.status(200).send({ success: true, data: category })
+                console.log(category)
+                var query = {
+                  active_status: 1,
+                  is_active: true,
+                  _id: { $in: category }
+                }
+                console.log(category)
+
+                // Find All items in machine
+                categoryModel
+                  .find(query)
+                  .then(category => {
+                    res.status(200).send({ success: true, data: category })
+                  })
+                  .catch(error => {
+                    res.status(400).send({ success: false, error: error })
+                  })
               })
               .catch(error => {
                 res.status(400).send({ success: false, error: error })
@@ -225,6 +248,27 @@ exports.getCategoryMachine = (req, res) => {
             res.status(400).send({ success: false, error: error })
           })
       })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
+}
+
+exports.getUserCategory = async (req, res) => {
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var searchString = req.query.searchString
+  var query = searchString
+    ? { active_status: 1, $text: { $search: searchString }, is_active: true }
+    : { active_status: 1 }
+  try {
+    categoryModel
+      .find(query)
+      .skip(offset)
+      .limit(limit)
+      .then(categories => {
+        res.status(200).send({ success: true, data: categories })
+      })
       .catch(error => {
         res.status(400).send({ success: false, error: error })
       })
@@ -232,20 +276,3 @@ exports.getCategoryMachine = (req, res) => {
     res.status(201).send({ success: false, error: error })
   }
 }
-
-
-exports.getUserCategory = (async (req, res) => {
-  var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
-  var searchString = req.query.searchString
-  var query = (searchString ? {active_status: 1, $text: {$search: searchString},is_active:true} : {active_status: 1})
-  try{
-      categoryModel.find(query).skip(offset).limit(limit).then(categories =>{
-          res.status(200).send({ success: true, data: categories });
-      }).catch(error => {
-          res.status(400).send({success: false, error : error})
-      })
-  } catch(error){
-      res.status(201).send({success: false, error : error})
-  }
-})
