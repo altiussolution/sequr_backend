@@ -216,8 +216,12 @@ exports.deleteBranch = (req, res) => {
           }
         },
 
+        //********************************** */
+
+
+
+        // Get all refered documents
         // *** 1 ***
-        // Get refered users with filter active status 1
         {
           $lookup: {
             from: 'users', // model name
@@ -227,7 +231,6 @@ exports.deleteBranch = (req, res) => {
           }
         },
         // *** 2 ***
-        // Get refered cubes with filter active status 1
         {
           $lookup: {
             from: 'cubes', // model name
@@ -236,22 +239,32 @@ exports.deleteBranch = (req, res) => {
             as: 'cube_doc' // name of the document contains all cubes
           }
         }
+
+        //********************************** */
       ])
-      .then(async docs => {
-        //Pull messages if there is any documents refered
+      .then(async doc => {
+        //Push messages if there is any documents refered
         message = []
 
         //push message if there is any referenced document
-        for await (let doc of docs) {
-          // *** 1 ***
-          if (doc.user_doc.length > 0) {
-            message.push('Please delete all the refered users by this branch')
-          }
-          // *** 2 ***
-          if (doc.cube_doc.length > 0) {
-            message.push('Please delete all the refered cubes by this branch')
-          }
+        //********************************** */
+
+
+        // *** 1 ***
+        if (doc[0].user_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered users by this branch'
+          )
         }
+        // *** 2 ***
+        if (doc[0].cube_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered cubes by this branch'
+          )
+        }
+        //********************************** */
+
+
 
         // Check if any referenced document with active_status 1 is present id DB
         if (message.length > 0) {
