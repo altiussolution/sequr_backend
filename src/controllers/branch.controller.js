@@ -207,7 +207,7 @@ exports.getBranchfilter = (req, res) => {
 
 exports.deleteBranch = (req, res) => {
   try {
-    branchModel
+    branchModel //(paste your model)
       .aggregate([
         //Find branch id and active_status is 1
         {
@@ -215,32 +215,24 @@ exports.deleteBranch = (req, res) => {
             $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
           }
         },
+
+        // *** 1 ***
         // Get refered users with filter active status 1
         {
           $lookup: {
             from: 'users', // model name
-            pipeline: [
-              {
-                $match: {
-                  active_status: 1 // filter users with active_sttaus 1
-                }
-              }
-            ],
+            localField: '_id',
+            foreignField: 'branch_id',
             as: 'user_doc' // name of the document contains all users
           }
         },
-
+        // *** 2 ***
         // Get refered cubes with filter active status 1
         {
           $lookup: {
             from: 'cubes', // model name
-            pipeline: [
-              {
-                $match: {
-                  active_status: 1 // filter users with active_sttaus 1
-                }
-              }
-            ],
+            localField: '_id',
+            foreignField: 'branch_id',
             as: 'cube_doc' // name of the document contains all cubes
           }
         }
@@ -249,12 +241,13 @@ exports.deleteBranch = (req, res) => {
         //Pull messages if there is any documents refered
         message = []
 
+        //push message if there is any referenced document
         for await (let doc of docs) {
-          //push message if there is any referenced document
+          // *** 1 ***
           if (doc.user_doc.length > 0) {
             message.push('Please delete all the refered users by this branch')
           }
-          //push message if there is any referenced document
+          // *** 2 ***
           if (doc.cube_doc.length > 0) {
             message.push('Please delete all the refered cubes by this branch')
           }
@@ -267,7 +260,7 @@ exports.deleteBranch = (req, res) => {
           // Delet the document if there is no any referenced document
         } else if (message.length == 0) {
           branchModel
-            .findByIdAndUpdate(ObjectId(req.params.id), { active_status: 0 })
+            .remove({ _id: ObjectId(req.params.id), active_status: 0 })
             .then(branch => {
               res.status(200).send({
                 success: true,
@@ -289,7 +282,6 @@ exports.deleteBranch = (req, res) => {
       .catch(err => {
         res.status(200).send({ success: false, message: 'Branch Not Found' })
       })
-    // Delet the document if there is no any referenced document
   } catch (err) {
     res
       .status(200)
