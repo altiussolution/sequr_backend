@@ -353,7 +353,10 @@ exports.getMachineUsage = async (req, res) => {
           },
           { $group: { _id: null, sum: { $sum: '$machine_usage' } } }
         ])
+        .sort({ created_at: 1 })
         .exec()
+      // .sort({ created_at: 1 })
+
       eachCubeUsage[cube.cube_name] = {}
       eachCubeUsage[cube.cube_name]['cube_id'] = cube.cube_id
       if (cubeUsage.length > 0) {

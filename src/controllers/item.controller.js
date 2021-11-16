@@ -64,6 +64,7 @@ exports.updateItem = async (req, res) => {
           status: 'Success',
           message: 'item Updated'
         })
+        createLog(req.headers['authorization'], 'Item', 1)
         if (req.body.is_received) {
           await itemModel
             .findByIdAndUpdate(req.body.item_id, {
@@ -74,7 +75,6 @@ exports.updateItem = async (req, res) => {
       } else {
         res.send({ message: 'Not Found' })
       }
-      createLog(req.headers['authorization'], 'Item', 1)
     })
   } catch (error) {
     res.send('An error occured')
