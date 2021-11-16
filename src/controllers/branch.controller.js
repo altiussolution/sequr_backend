@@ -245,28 +245,24 @@ exports.deleteBranch = (req, res) => {
           }
         }
       ])
-      .then(async branches => {
-       
+      .then(async docs => {
         //Pull messages if there is any documents refered
         message = []
 
-
-        for await (let branch of branches) {
-          if (branch.user_doc.length > 0) {
+        for await (let doc of docs) {
+          //push message if there is any referenced document
+          if (doc.user_doc.length > 0) {
             message.push('Please delete all the refered users by this branch')
           }
-          if (branch.cube_doc.length > 0) {
+          //push message if there is any referenced document
+          if (doc.cube_doc.length > 0) {
             message.push('Please delete all the refered cubes by this branch')
           }
         }
 
-        
-
         // Check if any referenced document with active_status 1 is present id DB
         if (message.length > 0) {
           res.status(200).send({ success: true, message: message })
-
-          
 
           // Delet the document if there is no any referenced document
         } else if (message.length == 0) {
@@ -294,8 +290,6 @@ exports.deleteBranch = (req, res) => {
         res.status(200).send({ success: false, message: 'Branch Not Found' })
       })
     // Delet the document if there is no any referenced document
-
-
   } catch (err) {
     res
       .status(200)
