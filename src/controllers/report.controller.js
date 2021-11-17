@@ -4,8 +4,8 @@ var moment = require('moment')
 const { search } = require('../routes/users.route')
 
 exports.getTransactionReport = (req, res) => {
-  var offset = req.query.offset != undefined ? parseInt(req.query.offset) : 20
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : 20
+  var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
 
   var searchString = req.query.searchString // Search Query
   var dateFrom = req.query.date // Direct Query
@@ -147,5 +147,31 @@ exports.getTransactionReport = (req, res) => {
 }
 
 exports.overallStockReport = (req, res) => {
-
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var searchString = req.query.searchString
+  var in_stock = req.query.in_stock
+  var query = searchString
+    ? { active_status: 1, $text: { $search: searchString } }
+    : { active_status: 1 }
+  if (in_stock) {
+    query['in_stock'] = parseInt(in_stock)
+  }
+  try {
+    itemModel
+      .find(query)
+      .populate('category_id')
+      .populate('sub_category_id')
+      .skip(offset)
+      .limit(limit)
+      .then(item => {
+        res.status(200).send({ success: true, item: item })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
 }

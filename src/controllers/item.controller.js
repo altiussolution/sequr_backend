@@ -6,7 +6,8 @@ const {
 } = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
-
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 exports.addItem = async (req, res) => {
   try {
     var newItem = new itemModel(req.body)
@@ -173,22 +174,109 @@ exports.getItemById = async (req, res) => {
 }
 
 exports.deleteItems = (req, res) => {
+  // try {
+  //   itemModel
+  //     .findByIdAndUpdate(req.params.id, { active_status: 0 })
+  //     .then(item => {
+  //       res
+  //         .status(200)
+  //         .send({ success: true, message: 'Item  Deleted Successfully!' })
+  //       createLog(req.headers['authorization'], 'Item', 0)
+  //     })
+  //     .catch(err => {
+  //       res.status(200).send({ success: false, message: 'Item Not Found' })
+  //     })
+  // } catch (err) {
+  //   res
+  //     .status(200)
+  //     .send({ success: false, error: err, message: 'An Error Catched' })
+  // }
   try {
-    itemModel
-      .findByIdAndUpdate(req.params.id, { active_status: 0 })
-      .then(item => {
-        res
-          .status(200)
-          .send({ success: true, message: 'Item  Deleted Successfully!' })
-        createLog(req.headers['authorization'], 'Item', 0)
-      })
-      .catch(err => {
-        res.status(200).send({ success: false, message: 'Item Not Found' })
-      })
-  } catch (err) {
+    itemModel.aggregate([
+      {
+        $match: {
+          $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+        }
+      },
+      {
+        $lookup: {
+          from: 'stockallocation', 
+          localField: '_id',
+          foreignField: 'item',
+          as: 'stock_doc' 
+        }
+      },
+      {
+        $lookup: {
+          from: 'kit', 
+          localField: '_id',
+          foreignField: 'kit_data.item_id',
+          as: 'kit_doc' 
+        }
+      },
+      {
+        $lookup: {
+          from: 'purchaseorder',
+          localField: '_id',
+          foreignField: 'item_id',
+          as: 'po_doc' 
+        }
+      },
+      {
+        $lookup: {
+          from: 'cart',
+          localField: '_id',
+          foreignField: 'cart.item',
+          as: 'cart_doc' 
+        }
+      },
+    ]).then(async doc =>{
+      message = []
+        if (doc[0].stock_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered stocks by this item'
+          )
+        }
+        if (doc[0].kit_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered kits by this item'
+          )
+        }
+        if (doc[0].po_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered purchase orders by this item'
+          )
+        }
+        if (doc[0].cart_doc.length > 0) {
+          await message.push(
+            'Please remove this item in the cart'
+          )
+        }
+      if (message.length > 0) {
+          res.status(200).send({ success: true, message: message })
+        } else if (message.length == 0) {
+          itemModel
+            .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+            .then(branch => {
+              res.status(200).send({
+                success: true,
+                message: 'Item Deleted Successfully!'
+              })
+              createLog(req.headers['authorization'], 'Item', 0)
+            })
+            .catch(err => {
+              res
+                .status(200)
+                .send({ success: false, message: 'Item Not Found' })
+            })
+
+        
+        }
+    })
+  }catch (err) {
     res
-      .status(200)
-      .send({ success: false, error: err, message: 'An Error Catched' })
+    .status(200)
+    .send({ success: false, error: err, message: 'An Error Catched' })
   }
 }
 

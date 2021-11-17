@@ -7,6 +7,7 @@ route.get('/get', auth,CompartmentController.getCompartment);
 route.get('/getCompartmentByCube',auth, CompartmentController.getCompartmentByCube);
 route.put('/update/:id', auth,CompartmentController.updateCompartment);
 route.get('/getCompartmentfilter', auth,CompartmentController.getCompartmentfilter);
+route.delete('/delete/:id', auth,CompartmentController.deleteCompartment)
 
 
 module.exports = route;

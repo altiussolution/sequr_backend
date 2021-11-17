@@ -1,7 +1,8 @@
 const { compartmentModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
-
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 
 exports.createCompartment = (req, res) => {
     try {
@@ -119,5 +120,60 @@ compartmentModel.find(query).populate("cube_id").populate("bin_id").then(compart
 })
 } catch (error) {
 res.status(201).send({ success: false, error: error })
+}
+}
+
+exports.deleteCompartment = (req, res) => {
+try{
+    compartmentModel 
+    .aggregate([
+      {
+        $match: {
+          $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+        }
+      },
+      {
+        $lookup: {
+          from: 'stockallocation', 
+          localField: '_id',
+          foreignField: 'compartment',
+          as: 'stock_doc' 
+        }
+      }
+    ]).then(async doc=>{
+        message = []
+        if (doc[0].stock_doc.length > 0) {
+            await message.push(
+              'Please delete all the refered Stocks by this compartment'
+            )
+          }
+        if (message.length > 0) {
+            res.status(200).send({ success: true, message: message })
+          } else if (message.length == 0) {
+            compartmentModel
+              .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+              .then(branch => {
+                res.status(200).send({
+                  success: true,
+                  message: 'Compartment Deleted Successfully!'
+                })
+                createLog(req.headers['authorization'], 'Compartment', 0)
+              })
+              .catch(err => {
+                res
+                  .status(200)
+                  .send({ success: false, message: 'Compartment Not Found' })
+              })
+  
+          
+          }
+    })
+    .catch(err => {
+        res.status(200).send({ success: false, message: 'Compartment Not Found' })
+      })
+}catch (err) {
+    res
+    .status(200)
+    .send({ success: false, error: err, message: 'An Error Catched' })
 }
 }

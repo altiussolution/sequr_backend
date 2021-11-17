@@ -1,6 +1,8 @@
 const { cubeModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 
 
 exports.createCube = (req, res) => {
@@ -94,3 +96,124 @@ try {
     res.status(201).send({ success: false, error: error })
 }
 }
+
+exports.deleteCube = (req, res) => {
+    try {
+      cubeModel //(paste your model)
+        .aggregate([
+          //Find cube id and active_status is 1
+          {
+            $match: {
+              $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+            }
+          },
+  
+          //********************************** */
+  
+  
+  
+          // Get all refered documents
+          // *** 1 ***
+          {
+            $lookup: {
+              from: 'branch', // model name
+              localField: '_id',
+              foreignField: 'cube_id',
+              as: 'branch_doc' // name of the document contains all users
+            }
+          },
+          // *** 2 ***
+          {
+            $lookup: {
+              from: 'bin', // model name
+              localField: '_id',
+              foreignField: 'cube_id',
+              as: 'bin_doc' // name of the document contains all cubes
+            }
+          },
+          {
+            $lookup: {
+              from: 'stockAllocation', // model name
+              localField: '_id',
+              foreignField: 'cube_id',
+              as: 'stockAllocation_doc' // name of the document contains all cubes
+            }
+          },
+          {
+            $lookup: {
+              from: 'compartment', // model name
+              localField: '_id',
+              foreignField: 'cube_id',
+              as: 'compartment_doc' // name of the document contains all cubes
+            }
+          }
+          //********************************** */
+        ])
+        .then(async doc => {
+          //Push messages if there is any documents refered
+          message = []
+  
+          //push message if there is any referenced document
+          //********************************** */
+  
+  
+          // *** 1 ***
+          if (doc[0].branch_doc.length > 0) {
+            await message.push(
+              'Please delete all the refered branch by this cube'
+            )
+          }
+          // *** 2 ***
+          if (doc[0].bin_doc.length > 0) {
+            await message.push(
+              'Please delete all the refered bin by this cube'
+            )
+          }
+          if (doc[0].stockAllocation_doc.length > 0) {
+            await message.push(
+              'Please delete all the refered stockAllocation by this cube'
+            )
+          }
+          if (doc[0].compartment_doc.length > 0) {
+            await message.push(
+              'Please delete all the refered compartment by this cube'
+            )
+          }
+          //********************************** */
+  
+  
+  
+          // Check if any referenced document with active_status 1 is present id DB
+          if (message.length > 0) {
+            res.status(200).send({ success: true, message: message })
+  
+            // Delet the document if there is no any referenced document
+          } else if (message.length == 0) {
+            cubeModel
+              .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+              .then(cube => {
+                res.status(200).send({
+                  success: true,
+                  message: 'Cube Deleted Successfully!'
+                })
+                createLog(req.headers['authorization'], 'Cube', 0)
+              })
+              .catch(err => {
+                res
+                  .status(200)
+                  .send({ success: false, message: 'Cube Not Found' })
+              })
+  
+          
+          }
+        })
+        .catch(err => {
+          res.status(200).send({ success: false, message: 'Cube Not Found' })
+        })
+    } catch (err) {
+      res
+        .status(200)
+        .send({ success: false, error: err, message: 'An Error Catched' })
+    }
+  }
+  

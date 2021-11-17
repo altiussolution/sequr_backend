@@ -1,6 +1,8 @@
 const { rolesModel, userModel } = require("../models");
 const {Permissions} = require("../utils/enum.utils")
 const { createLog } = require('../middleware/crud.middleware')
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 
 // Roles
 exports.createRole = (async (req, res) => {
@@ -62,33 +64,33 @@ exports.getRoles = ((req, res) => {
     }
 })
 
-exports.deleteRole = (async (req, res) => {
-    try {
-        userModel.countDocuments({ role_id: req.params.id, active_status: 1 }, (err, count) => {
-            if (count == 0) {
-                rolesModel.findByIdAndUpdate(req.params.id, { active_status: 0 }, (err, file) => {
-                    if (!err)
-                        res.status(200).send({
-                            status: true,
-                            message: 'Role deleted'
-                        });
-                    else {
-                        res.send(err.message);
-                    }
-                    createLog(req.headers['authorization'], 'Roles', 0)
-                })
-            } else {
-                res.status(200).send({
-                    status: false,
-                    message: `${count} Employees are in this Role`
-                });
-            }
-        })
-    } catch (error) {
-        res.send({status : false , error : error.name});
-        console.log(error);
-    }
-})
+// exports.deleteRole = (async (req, res) => {
+//     try {
+//         userModel.countDocuments({ role_id: req.params.id, active_status: 1 }, (err, count) => {
+//             if (count == 0) {
+//                 rolesModel.findByIdAndUpdate(req.params.id, { active_status: 0 }, (err, file) => {
+//                     if (!err)
+//                         res.status(200).send({
+//                             status: true,
+//                             message: 'Role deleted'
+//                         });
+//                     else {
+//                         res.send(err.message);
+//                     }
+//                     createLog(req.headers['authorization'], 'Roles', 0)
+//                 })
+//             } else {
+//                 res.status(200).send({
+//                     status: false,
+//                     message: `${count} Employees are in this Role`
+//                 });
+//             }
+//         })
+//     } catch (error) {
+//         res.send({status : false , error : error.name});
+//         console.log(error);
+//     }
+// })
 
 exports.updateRole = ((req, res) => {
     try {
@@ -106,6 +108,91 @@ exports.updateRole = ((req, res) => {
         res.send({status : false , error : error.name});
     }
 })
+
+exports.deleteRole = (req, res) => {
+    try {
+      rolesModel //(paste your model)
+        .aggregate([
+          //Find role id and active_status is 1
+          {
+            $match: {
+              $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+            }
+          },
+  
+          //********************************** */
+  
+  
+  
+          // Get all refered documents
+          // *** 1 ***
+          {
+            $lookup: {
+              from: 'users', // model name
+              localField: '_id',
+              foreignField: 'role_id',
+              as: 'user_doc' // name of the document contains all users
+            }
+          },
+          // *** 2 ***
+          
+  
+          //********************************** */
+        ])
+        .then(async doc => {
+          //Push messages if there is any documents refered
+          message = []
+  
+          //push message if there is any referenced document
+          //********************************** */
+  
+  
+          // *** 1 ***
+          if (doc[0].user_doc.length > 0) {
+            await message.push(
+              'Please delete all the refered users by this role'
+            )
+          }
+          // *** 2 ***
+         
+          //********************************** */
+  
+  
+  
+          // Check if any referenced document with active_status 1 is present id DB
+          if (message.length > 0) {
+            res.status(200).send({ success: true, message: message })
+  
+            // Delet the document if there is no any referenced document
+          } else if (message.length == 0) {
+            rolesModel
+              .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+              .then(roles => {
+                res.status(200).send({
+                  success: true,
+                  message: 'Role Deleted Successfully!'
+                })
+                createLog(req.headers['authorization'], 'Role', 0)
+              })
+              .catch(err => {
+                res
+                  .status(200)
+                  .send({ success: false, message: 'Role Not Found' })
+              })
+  
+          
+          }
+        })
+        .catch(err => {
+          res.status(200).send({ success: false, message: 'Role Not Found' })
+        })
+    } catch (err) {
+      res
+        .status(200)
+        .send({ success: false, error: err, message: 'An Error Catched' })
+    }
+  }
+  
 
 // Permissions
 exports.addPermission = ((req, res) => {
@@ -178,6 +265,7 @@ exports.deletePermission = (async (req, res) => {
         res.send({status : false , error : error.name});
     }
 })
+
 
 exports.listPermission = ((req,res) =>{
     delete Permissions.Employee;

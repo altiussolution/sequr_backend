@@ -268,7 +268,7 @@ exports.deleteBranch = (req, res) => {
           // Delet the document if there is no any referenced document
         } else if (message.length == 0) {
           branchModel
-            .remove({ _id: ObjectId(req.params.id), active_status: 0 })
+            .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
             .then(branch => {
               res.status(200).send({
                 success: true,
@@ -281,6 +281,8 @@ exports.deleteBranch = (req, res) => {
                 .status(200)
                 .send({ success: false, message: 'Branch Not Found' })
             })
+
+        
         }
       })
       .catch(err => {
