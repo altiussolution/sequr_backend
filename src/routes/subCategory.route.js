@@ -32,5 +32,5 @@ route.get(
   SubCategoryController.getSubCategoryMachine
 )
 route.get('/getUsersubCategory', auth, SubCategoryController.getUsersubCategory)
-
+route.delete('/delete/:id', auth, SubCategoryController.deletesubCategory)
 module.exports = route

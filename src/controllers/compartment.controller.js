@@ -134,7 +134,7 @@ try{
       },
       {
         $lookup: {
-          from: 'stockallocation', 
+          from: 'stockallocations', 
           localField: '_id',
           foreignField: 'compartment',
           as: 'stock_doc' 

@@ -9,6 +9,8 @@ const {
 } = require('../models')
 var { error_code, appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 
 exports.addCategory = async (req, res) => {
   try {
@@ -119,34 +121,134 @@ exports.upload = async (req, res) => {
 }
 
 exports.deleteCategory = async (req, res) => {
+  // try {
+  //   var catId = req.params.id
+  //   categoryModel
+  //     .deleteOne({ _id: catId })
+  //     .then(result => {
+  //       if (result.deletedCount) {
+  //         subCategoryModel
+  //           .deleteMany({}, { category_id: catId })
+  //           .then(subResult => {
+  //             itemModel
+  //               .deleteMany({}, { category_id: catId })
+  //               .then(itemRestul => {
+  //                 res.status(200).send({
+  //                   status: true,
+  //                   message: 'Category and all the references were deleted'
+  //                 })
+  //                 createLog(req.headers['authorization'], 'Category', 0)
+  //               })
+  //           })
+  //       } else {
+  //         res.status(200).send({ status: true, message: 'Category not found' })
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.log(err, 'catch error')
+  //     })
+  // } catch (err) {
+  //   res.status(400).send(err)
+  // }
   try {
-    var catId = req.params.id
-    categoryModel
-      .deleteOne({ _id: catId })
-      .then(result => {
-        if (result.deletedCount) {
-          subCategoryModel
-            .deleteMany({}, { category_id: catId })
-            .then(subResult => {
-              itemModel
-                .deleteMany({}, { category_id: catId })
-                .then(itemRestul => {
-                  res.status(200).send({
-                    status: true,
-                    message: 'Category and all the references were deleted'
-                  })
-                  createLog(req.headers['authorization'], 'Category', 0)
-                })
-            })
-        } else {
-          res.status(200).send({ status: true, message: 'Category not found' })
+    categoryModel.aggregate([
+      {
+        $match: {
+          $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
         }
-      })
-      .catch(err => {
-        console.log(err, 'catch error')
-      })
+      },
+      {
+        $lookup: {
+          from: 'items', 
+          localField: '_id',
+          foreignField: 'category_id',
+          as: 'item_doc' 
+        }
+      },
+      {
+        $lookup: {
+          from: 'kits', 
+          localField: '_id',
+          foreignField: 'kit_data[0].category_id',
+          as: 'kit_doc' 
+        }
+      },
+      {
+        $lookup: {
+          from: 'purchaseorders',
+          localField: '_id',
+          foreignField: 'category_id',
+          as: 'po_doc' 
+        }
+      },
+      {
+        $lookup: {
+          from: 'stockallocations',
+          localField: '_id',
+          foreignField: 'category',
+          as: 'stock_doc' 
+        }
+      },
+      {
+        $lookup: {
+          from: 'subcategories',
+          localField: '_id',
+          foreignField: 'category_id',
+          as: 'subCat_doc' 
+        }
+      },
+    ]).then(async doc =>{
+      message = []
+      if (doc[0].item_doc.length > 0) {
+        await message.push(
+          'Please delete all the refered items by this category'
+        )
+      }
+      if (doc[0].kit_doc.length > 0) {
+        await message.push(
+          'Please delete all the refered kits by this category'
+        )
+      }
+      if (doc[0].po_doc.length > 0) {
+        await message.push(
+          'Please delete all the refered purchase orders by this category'
+        )
+      }
+      if (doc[0].stock_doc.length > 0) {
+        await message.push(
+          'Please delete all the refered stocks by this category'
+        )
+      }
+      if (doc[0].subCat_doc.length > 0) {
+        await message.push(
+          'Please delete all the refered subCategory by this category'
+        )
+      }
+    if (message.length > 0) {
+        res.status(200).send({ success: true, message: message })
+      } else if (message.length == 0) {
+        categoryModel
+          .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+          .then(branch => {
+            res.status(200).send({
+              success: true,
+              message: 'Category Deleted Successfully!'
+            })
+            createLog(req.headers['authorization'], 'Category', 0)
+          })
+          .catch(err => {
+            res
+              .status(200)
+              .send({ success: false, message: 'Category Not Found' })
+          })
+
+      
+      }
+    })
   } catch (err) {
-    res.status(400).send(err)
+    res
+    .status(200)
+    .send({ success: false, error: err, message: 'An Error Catched' })
   }
 }
 

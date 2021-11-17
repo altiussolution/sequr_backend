@@ -1,6 +1,7 @@
 const { shift_timeModel } = require("../models");
 const { createLog } = require('../middleware/crud.middleware')
-
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 
 exports.addShift = (async (req, res) => {
         try {
@@ -74,24 +75,62 @@ exports.updateShift = (async (req, res) => {
     }
 })
 
-exports.deleteShift = (async (req, res) => {
+exports.deleteShift= (req, res) => {
     try {
-        shift_timeModel.findByIdAndUpdate(req.params.id, { active_status: 0 }, (err, file) => {
-            if (!err)
-                res.send({
-                    status: 'Success',
-                    message: 'shift deleted'
-                });
-            else {
-                res.send(err.message);
+      shift_timeModel 
+        .aggregate([
+          {
+            $match: {
+              $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
             }
-            createLog(req.headers['authorization'], 'ShiftTime', 0)
-        });
-    } catch (error) {
-        res.send("An error occured");
-        console.log(error);
+          },
+          {
+            $lookup: {
+              from: 'users', 
+              localField: '_id',
+              foreignField: 'shift_time_id',
+              as: 'user_doc' 
+            }
+          }
+        ])
+        .then(async doc => {
+         
+          message = []
+          if (doc[0].user_doc.length > 0) {
+            await message.push(
+              'Please delete all the refered users by this shifttime'
+            )
+          }
+          if (message.length > 0) {
+            res.status(200).send({ success: true, message: message })
+          } else if (message.length == 0) {
+            shift_timeModel
+              .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+              .then(shift_time => {
+                res.status(200).send({
+                  success: true,
+                  message: 'Shift Deleted Successfully!'
+                })
+                createLog(req.headers['authorization'], 'ShiftTime', 0)
+              })
+              .catch(err => {
+                res
+                  .status(200)
+                  .send({ success: false, message: 'Role Not Found' })
+              })
+  
+          
+          }
+        })
+        .catch(err => {
+          res.status(200).send({ success: false, message: 'ShiftTime Not Found' })
+        })
+    } catch (err) {
+      res
+        .status(200)
+        .send({ success: false, error: err, message: 'An Error Catched' })
     }
-})
+  }
 
 exports.getShiftfilter =  (req, res) => {
     var shift_type = req.query.shift_type;

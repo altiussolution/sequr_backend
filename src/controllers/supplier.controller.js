@@ -1,7 +1,8 @@
 const { supplierModel } = require("../models");
 var {error_code} = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
-
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 exports.createSupplier = (req, res) => {
     try {
         var newSupplier = new supplierModel(req.body);
@@ -24,8 +25,8 @@ exports.createSupplier = (req, res) => {
 }
 
 exports.getSupplier = (req, res) => {
-    var offset = parseInt(req.query.offset);
-    var limit = parseInt(req.query.limit);
+    var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
     var searchString = req.query.searchString;
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
@@ -56,18 +57,84 @@ exports.updateSupplier = (req, res) => {
 
 exports.deleteSupplier = (req, res) => {
     
-    try {
-        supplierModel.findByIdAndUpdate(req.params.id, { active_status: 0 }).then(supplier => {
-            res.status(200).send({ success: true, message: 'Supplier Deleted Successfully!' });
-            createLog(req.headers['authorization'], 'Supplier', 0)
-        }).catch(err => {
-            res.status(200).send({ success: false, message: 'Supplier Not Found' });
-        })
-    }
-    catch (err) {
-        res.status(200).send({ success: false, error: err, message: 'An Error Catched' });
-    }
-
+    // try {
+    //     supplierModel.findByIdAndUpdate(req.params.id, { active_status: 0 }).then(supplier => {
+    //         res.status(200).send({ success: true, message: 'Supplier Deleted Successfully!' });
+    //         createLog(req.headers['authorization'], 'Supplier', 0)
+    //     }).catch(err => {
+    //         res.status(200).send({ success: false, message: 'Supplier Not Found' });
+    //     })
+    // }
+    // catch (err) {
+    //     res.status(200).send({ success: false, error: err, message: 'An Error Catched' });
+    // }
+try {
+    supplierModel.aggregate([
+        {
+          $match: {
+            $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+          }
+        },
+        {
+          $lookup: {
+            from: 'items', 
+            localField: '_id',
+            foreignField: 'supplier.suppliedBy',
+            as: 'item_doc' 
+          }
+        },
+        {
+            $lookup: {
+              from: 'purchaseorders', 
+              localField: '_id',
+              foreignField: 'supplier_id',
+              as: 'po_doc' 
+            }
+          },
+          {
+            $lookup: {
+              from: 'stockallocations', 
+              localField: '_id',
+              foreignField: 'supplier',
+              as: 'stock_doc' 
+            }
+          }
+      ]).then(async doc=>{
+        message = []
+        if (doc[0].item_doc.length > 0) {
+          await message.push(
+            'Please delete all the items refered to this supplier'
+          )
+        }
+        if (doc[0].po_doc.length > 0) {
+            await message.push(
+              'Please delete all the purchase orders refered to this supplier'
+            )
+          }
+      if (message.length > 0) {
+          res.status(200).send({ success: true, message: message })
+        } else if (message.length == 0) {
+          supplierModel
+            .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+            .then(branch => {
+              res.status(200).send({
+                success: true,
+                message: 'Supplier Deleted Successfully!'
+              })
+              createLog(req.headers['authorization'], 'Supplier', 0)
+            })
+            .catch(err => {
+              res
+                .status(200)
+                .send({ success: false, message: 'Supplier Not Found' })
+            })
+        }
+      })
+} catch (err) {
+    res
+    .status(200)
+    .send({ success: false, error: err, message: 'An Error Catched' })
+}
 }
 
 exports.getSupplierfilter = (req, res) => {
