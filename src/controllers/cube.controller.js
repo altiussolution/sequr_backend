@@ -4,6 +4,7 @@ const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 
+
 exports.createCube = (req, res) => {
     try {
         var newCube = new cubeModel(req.body);
@@ -95,6 +96,7 @@ try {
     res.status(201).send({ success: false, error: error })
 }
 }
+
 exports.deleteCube = (req, res) => {
     try {
       cubeModel //(paste your model)
@@ -112,11 +114,18 @@ exports.deleteCube = (req, res) => {
   
           // Get all refered documents
           // *** 1 ***
-        
+          {
+            $lookup: {
+              from: 'branch', // model name
+              localField: '_id',
+              foreignField: 'cube_id',
+              as: 'branch_doc' // name of the document contains all users
+            }
+          },
           // *** 2 ***
           {
             $lookup: {
-              from: 'bins', // model name
+              from: 'bin', // model name
               localField: '_id',
               foreignField: 'cube_id',
               as: 'bin_doc' // name of the document contains all cubes
@@ -149,7 +158,11 @@ exports.deleteCube = (req, res) => {
   
   
           // *** 1 ***
-        
+          if (doc[0].branch_doc.length > 0) {
+            await message.push(
+              'Please delete all the refered branch by this cube'
+            )
+          }
           // *** 2 ***
           if (doc[0].bin_doc.length > 0) {
             await message.push(
@@ -203,4 +216,5 @@ exports.deleteCube = (req, res) => {
         .send({ success: false, error: err, message: 'An Error Catched' })
     }
   }
+  
   

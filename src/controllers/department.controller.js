@@ -4,6 +4,7 @@ const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 
+
 exports.createDepartment = (req, res) => {
     try {
         var newDepartment = new departmentModel(req.body);
@@ -66,6 +67,21 @@ exports.updateDepartment = (req, res) => {
         res.status(200).send({ success: false, error: err, message: 'An Error Catched' });
     }
 }
+
+// exports.deleteDepartment = (req,res) =>{
+//     try{
+//         departmentModel.findByIdAndUpdate(req.params.id, {active_status: 0}).then(department =>{
+//             res.status(200).send({ success: true, message: 'Department Deleted Successfully!' });
+//             createLog(req.headers['authorization'], 'Department', 0)
+//         }).catch(err =>{
+//             res.status(200).send({ success: false, message: 'Department Not Found' });
+//         })
+//     }
+//     catch(err){
+//         res.status(200).send({ success: false, error: err, message : 'An Error Catched' });  
+//     }
+   
+// }
 
 exports.deleteDepartment = (req, res) => {
     try {

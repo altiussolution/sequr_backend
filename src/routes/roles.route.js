@@ -4,7 +4,7 @@ const auth = require("../middleware/auth.middleware");
 
 route.post('/add', auth, RolesController.createRole)
 route.get('/get', auth, RolesController.getRoles)
-route.put('/delete/:id', auth, RolesController.deleteRole)
+route.delete('/delete/:id', auth, RolesController.deleteRole)
 route.put('/update/:id', auth, RolesController.updateRole)
 route.put('/permission/add/:id', auth, RolesController.addPermission)
 route.put('/permission/update/:id', auth, RolesController.updatePermission)
