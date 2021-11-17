@@ -218,8 +218,6 @@ exports.deleteBranch = (req, res) => {
 
         //********************************** */
 
-
-
         // Get all refered documents
         // *** 1 ***
         {
@@ -249,7 +247,6 @@ exports.deleteBranch = (req, res) => {
         //push message if there is any referenced document
         //********************************** */
 
-
         // *** 1 ***
         if (doc[0].user_doc.length > 0) {
           await message.push(
@@ -263,8 +260,6 @@ exports.deleteBranch = (req, res) => {
           )
         }
         //********************************** */
-
-
 
         // Check if any referenced document with active_status 1 is present id DB
         if (message.length > 0) {
@@ -286,10 +281,6 @@ exports.deleteBranch = (req, res) => {
                 .status(200)
                 .send({ success: false, message: 'Branch Not Found' })
             })
-
-          res
-            .status(200)
-            .send({ success: true, message: 'Branch Deleted Successfully!' })
         }
       })
       .catch(err => {

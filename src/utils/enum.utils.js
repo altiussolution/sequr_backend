@@ -69,9 +69,9 @@ const enumVariables = {
         isDuplication : 11000
     },
     action : {
-        created : 2,
+        created : 2, // For Item Return from Machine
         updated : 1,
-        deleted : 0
+        deleted : 0  // For Item Taken from Machine
     },
     po_is_received : {
         po_inProgress : 0,

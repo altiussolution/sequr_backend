@@ -13,9 +13,15 @@ const logSchema = mongoose.Schema(
       required: true
     },
     action: {
-      type: Number,
-      enum: [0, 1, 2],
+      type: String,
       required: true
+    },
+    stock_allocation_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'stockallocation'
+    },
+    trasaction_qty: {
+      type: Number
     },
     created_at: {
       type: Date,

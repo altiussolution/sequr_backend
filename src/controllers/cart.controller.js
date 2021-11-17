@@ -2,6 +2,7 @@ const { CartModel, itemModel, stockAllocationModel } = require('../models')
 const AddCart = require('../services/cart.services')
 const { Cart } = require('../utils/enum.utils')
 var ObjectId = require('mongodb').ObjectID
+const { createLog } = require('../middleware/crud.middleware')
 
 exports.addToCart = (req, res) => {
   var body = req.body
@@ -343,7 +344,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
 
     for await (let item of take_item) {
       let stockAllocationItems = await stockAllocationModel
-        .findById(item.stock_allocation_id)
+        .findById(ObjectId(item.stock_allocation_id))
         .exec()
       if (cart_status == 2) {
         if (stockAllocationItems.quantity >= item.qty) {
@@ -352,8 +353,22 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         } else if (stockAllocationItems.quantity < item.qty) {
           stockAllocationItems.quantity = 0
         }
+        createLog(
+          req.headers['authorization'],
+          'Taken',
+          0,
+          stockAllocationItems._id,
+          item.qty
+        )
       } else if (cart_status == 3) {
         stockAllocationItems.quantity = stockAllocationItems.quantity + item.qty
+        createLog(
+          req.headers['authorization'],
+          'Return',
+          2,
+          stockAllocationItems._id,
+          item.qty
+        )
       }
 
       await stockAllocationModel
@@ -399,7 +414,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
 
     for await (let item of take_item) {
       let stockAllocationItems = await stockAllocationModel
-        .findById(item.stock_allocation_id)
+        .findById(ObjectId(item.stock_allocation_id))
         .exec()
       console.log(stockAllocationItems)
       if (kit_status == 2) {
@@ -409,9 +424,23 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         } else if (stockAllocationItems.quantity < item.qty) {
           stockAllocationItems.quantity = 0
         }
+        createLog(
+          req.headers['authorization'],
+          'Machine Item',
+          'Take',
+          stockAllocationItems._id,
+          item.qty
+        )
       } else if (kit_status == 3) {
         stockAllocationItems.quantity =
           stockAllocationItems.quantity + item.qty * take_item[0].kit_qty
+        createLog(
+          req.headers['authorization'],
+          'Machine Item',
+          'Return',
+          stockAllocationItems._id,
+          item.qty
+        )
       }
 
       await stockAllocationModel
