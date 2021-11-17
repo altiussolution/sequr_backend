@@ -30,8 +30,8 @@ exports.createBranch = (req, res) => {
 }
 
 exports.getBranch = (req, res) => {
-  var offset = parseInt(req.query.offset)
-  var limit = parseInt(req.query.limit)
+    var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
   var searchString = req.query.searchString
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }

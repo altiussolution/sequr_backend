@@ -1,5 +1,7 @@
 const route = require('express').Router()
 const { ReportController } = require('../controllers')
 
-route.get('/getTransactionReport', ReportController.getTransactionReport)
+route.get('/transactionReport', ReportController.transactionReport)
+route.get('/overallStockReport', ReportController.overallStockReport)
+route.get('/deadStockReport', ReportController.deadStockReport)
 module.exports = route
