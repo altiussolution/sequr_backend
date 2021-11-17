@@ -1,7 +1,8 @@
 const { binModel, cubeModel } = require('../models')
 var { error_code } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
-
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 exports.createBin = async (req, res) => {
   try {
     var body = req.body
@@ -119,21 +120,86 @@ exports.updateBin = async (req, res) => {
 }
 
 exports.deleteBin = (req, res) => {
+  // try {
+  //   binModel
+  //     .findByIdAndUpdate(req.params.id, { active_status: 0 })
+  //     .then(binDelete => {
+  //       res
+  //         .status(200)
+  //         .send({ success: true, message: 'Bin Deactivated Successfully!' })
+  //         createLog(req.headers['authorization'], 'Columns', 0)
+  //     })
+  //     .catch(err => {
+  //       res.status(200).send({ success: false, message: 'Bin Not Found' })
+  //     })
+  // } catch (err) {
+  //   res
+  //     .status(200)
+  //     .send({ success: false, error: err.name, message: 'An Error Catched' })
+  // }
   try {
-    binModel
-      .findByIdAndUpdate(req.params.id, { active_status: 0 })
-      .then(binDelete => {
-        res
-          .status(200)
-          .send({ success: true, message: 'Bin Deactivated Successfully!' })
-          createLog(req.headers['authorization'], 'Columns', 0)
+    binModel 
+      .aggregate([
+        {
+          $match: {
+            $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+          }
+        },
+        {
+          $lookup: {
+            from: 'compartment',
+            localField: '_id',
+            foreignField: 'cube_id',
+            as: 'compartment_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'stockallocation', 
+            localField: '_id',
+            foreignField: 'bin',
+            as: 'stock_doc' 
+          }
+        },
+      ]).then(async doc => {
+        message = []
+        if (doc[0].compartment_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered compartments by this bin'
+          )
+        }
+        if (doc[0].stock_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered stocks by this bin'
+          )
+        }
+        if (message.length > 0) {
+          res.status(200).send({ success: true, message: message })
+
+        
+        } else if (message.length == 0) {
+          binModel
+            .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+            .then(branch => {
+              res.status(200).send({
+                success: true,
+                message: 'Bin Deleted Successfully!'
+              })
+              createLog(req.headers['authorization'], 'Columns', 0)
+            })
+            .catch(err => {
+              res
+                .status(200)
+                .send({ success: false, message: 'Bin Not Found' })
+            })
+          }
       })
       .catch(err => {
         res.status(200).send({ success: false, message: 'Bin Not Found' })
       })
-  } catch (err) {
-    res
-      .status(200)
-      .send({ success: false, error: err.name, message: 'An Error Catched' })
-  }
+}catch (err) {
+  res
+    .status(200)
+    .send({ success: false, error: err, message: 'An Error Catched' })
+}
 }

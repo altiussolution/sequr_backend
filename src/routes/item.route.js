@@ -21,7 +21,7 @@ route.get(
   auth,
   ItemController.getItemByCategory
 )
-route.put('/delete/:id',auth, ItemController.deleteItems)
+route.delete('/delete/:id',auth, ItemController.deleteItems)
 route.get('/getItemById/:item', auth, ItemController.getItemById)
 route.get('/getItemfilter',auth, ItemController.getItemfilter)
 route.post(
