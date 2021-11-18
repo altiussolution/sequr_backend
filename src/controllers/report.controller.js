@@ -137,9 +137,11 @@ exports.transactionReport = (req, res) => {
           $match: {
             $or: searchQuery
           }
-        }
+        },
+        { $limit: limit }
+
       ])
-      .sort({ created_at: 1 })
+      .sort({ created_at: -1 })
       //   .skip(offset)
       .limit(limit)
       .then(logs => {
@@ -185,7 +187,7 @@ exports.overallStockReport = (req, res) => {
 exports.deadStockReport = async (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : 20
 
   var searchString = req.query.searchString // Search Query
   var dateFrom = req.query.date // Direct Query
@@ -294,9 +296,11 @@ exports.deadStockReport = async (req, res) => {
           $match: {
             $or: searchQuery
           }
-        }
+        },
+        { $limit: limit }
+
       ])
-      .sort({ created_at: 1 })
+      .sort({ created_at: -1 })
       //   .skip(offset)
       //   .limit(limit)
       .then(logs => {
@@ -312,7 +316,7 @@ exports.deadStockReport = async (req, res) => {
 exports.stockShortageReport = async (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : 20
 
   var searchString = req.query.searchString // Search Query
   var cubeId = req.query.cube // Direct Query
@@ -411,9 +415,10 @@ exports.stockShortageReport = async (req, res) => {
           $match: {
             $or: searchQuery
           }
-        }
+        },
+        
       ])
-      .sort({ created_at: 1 })
+      .sort({ created_at: -1 })
       //   .skip(offset)
       //   .limit(limit)
       .then(async itemOnCube => {
@@ -501,7 +506,7 @@ exports.orderReport = async (req, res) => {
 
   // Aggregation Queries
 
-//   try {
+  try {
     purchaseOrderModel
       .aggregate([
         //Find branch id and active_status is 1
@@ -537,21 +542,20 @@ exports.orderReport = async (req, res) => {
             $or: searchQuery
           }
         },
-        { $sort: { created_at: -1 } },
         { $limit: limit }
       ])
-      .sort({ created_at: 1 })
+      .sort({ created_at: -1 })
       //   .skip(offset)
       //   .limit(limit)
       .then(async order => {
         res.status(200).send({ success: true, data: order })
       })
-    //   .catch(error => {
-    //     res.status(400).send({ success: false, error: error })
-    //   })
-//   } catch (error) {
-//     res.status(201).send({ success: false, error: error })
-//   }
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
 }
 
 async function calculatDate (subtractDay) {

@@ -26,7 +26,7 @@ route.get('/getCategorylist', auth, CategoryController.getCategorylist)
 route.get('/getCategoryfilter', auth, CategoryController.getCategoryfilter)
 route.get(
   '/getCategoryMachine/',
-  // auth,
+  auth,
   CategoryController.getCategoryMachine
 )
 route.get('/getUserCategory', auth, CategoryController.getUserCategory)
