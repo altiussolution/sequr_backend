@@ -25,7 +25,7 @@ route.delete('/delete/:id', auth, CategoryController.deleteCategory)
 route.get('/getCategorylist', auth, CategoryController.getCategorylist)
 route.get('/getCategoryfilter', auth, CategoryController.getCategoryfilter)
 route.get(
-  '/getCategoryMachine/:column_ids',
+  '/getCategoryMachine/',
   auth,
   CategoryController.getCategoryMachine
 )

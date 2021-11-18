@@ -1,5 +1,10 @@
 const { ObjectId } = require('bson')
-const { logModel, stockAllocationModel, itemModel } = require('../models')
+const {
+  logModel,
+  stockAllocationModel,
+  itemModel,
+  purchaseOrderModel
+} = require('../models')
 var moment = require('moment')
 const { search } = require('../routes/users.route')
 
@@ -420,6 +425,122 @@ exports.stockShortageReport = async (req, res) => {
           }
         }
         res.status(200).send({ success: true, data: belowMinItems })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
+}
+exports.orderReport = async (req, res) => {
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+
+  var searchString = req.query.searchString // Search Query
+
+  var ceratedDateFrom = req.query.ceratedDateFrom // Direct Query
+  var ceratedDateTo = req.query.ceratedDateTo // Direct Query
+  var receivedDateFrom = req.query.ceratedDateTo // Direct Query
+  var receivedDateTo = req.query.ceratedDateTo // Direct Query
+  var status = req.query.status // Direct Query
+  var supplier_id = req.query.status // Direct Query
+
+  var columnId = req.query.columnId // Direct Query
+
+  var directQuery = {}
+  var filterQuery = {}
+  var searchQuery = [{}]
+
+  // Aggregation Queries
+
+  // Direct Queries
+  if (ceratedDateFrom) {
+    var fromDate = moment(ceratedDateFrom).format('YYYY-MM-DD 00:00:00')
+    var toDate = moment(ceratedDateTo).format('YYYY-MM-DD 23:59:59')
+    directQuery['created_at'] = {
+      $gt: new Date(fromDate),
+      $lt: new Date(toDate)
+    }
+  }
+  if (receivedDateFrom) {
+    var fromDate = moment(receivedDateFrom).format('YYYY-MM-DD 00:00:00')
+    var toDate = moment(receivedDateTO).format('YYYY-MM-DD 23:59:59')
+    directQuery['received_at'] = {
+      $gt: new Date(fromDate),
+      $lt: new Date(toDate)
+    }
+  }
+  if (supplier_id) directQuery['supplier_id'] = ObjectId(supplier_id)
+  if (status) directQuery['status'] = ObjectId(status)
+  // Direct Queries
+
+  if (searchString) {
+    searchQuery = [
+      {
+        'supplier_doc.supplier_name': { $regex: searchString }
+      },
+      {
+        'item_doc.item_name': { $regex: searchString }
+      }
+    ]
+    
+    //Convert number into string
+    inProgess = "InProgress"
+    sent = "sent"
+    received = "Received"
+    if(inProgess.includes(searchString)) directQuery['status'] = 0
+    if(sent.includes(searchString)) directQuery['status'] = 1
+    if(received.includes(searchString)) directQuery['status'] = 2
+  }
+  console.log(directQuery)
+  console.log(searchQuery)
+
+  // Aggregation Queries
+
+  try {
+    purchaseOrderModel
+      .aggregate([
+        //Find branch id and active_status is 1
+        {
+          $match: {
+            $and: [directQuery]
+          }
+        },
+        // *** 1 ***
+        // *** 2 ***
+        // *** 3 ***
+        {
+          $lookup: {
+            from: 'suppliers',
+            localField: 'supplier_id',
+            foreignField: '_id',
+            as: 'supplier_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'items',
+            localField: 'item',
+            foreignField: '_id',
+            as: 'item_doc'
+          }
+        },
+        {
+          $match: filterQuery
+        },
+        {
+          $match: {
+            $or: searchQuery
+          }
+        }
+      ])
+      .sort({ created_at: 1 })
+      //   .skip(offset)
+      //   .limit(limit)
+      .then(async order => {
+        res.status(200).send({ success: true, data: order })
       })
       .catch(error => {
         res.status(400).send({ success: false, error: error })
