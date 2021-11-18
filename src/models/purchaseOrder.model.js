@@ -75,6 +75,8 @@ const PurchaseOrderSchema = Schema({
     type: Boolean,
     default: false
   }
-})
+},
+{ timestamps: { updatedAt: 'updated_at' } }
+)
 
 module.exports = mongoose.model('purchaseorder', PurchaseOrderSchema)

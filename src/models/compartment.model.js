@@ -72,7 +72,9 @@ const CompartmentSchema = Schema({
         enum: [0,1],
         default: 1
     }
-})
+},
+{ timestamps: { updatedAt: 'updated_at' } }
+)
 
 CompartmentSchema.index({'$**': 'text'});
 module.exports = mongoose.model('compartment', CompartmentSchema);

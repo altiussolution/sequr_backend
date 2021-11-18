@@ -59,7 +59,9 @@ const BinSchema = Schema({
         enum: [0,1],
         default: 1
     }
-})
+},
+{ timestamps: { updatedAt: 'updated_at' } }
+)
 
 BinSchema.index({'$**': 'text'});
 module.exports = mongoose.model('bin', BinSchema);

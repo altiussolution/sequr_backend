@@ -54,7 +54,9 @@ const CubeSchema = Schema({
         enum: [0,1],
         default: 1
     }
-})
+},
+{ timestamps: { updatedAt: 'updated_at' } }
+)
 
 CubeSchema.index({'$**': 'text'});
 module.exports = mongoose.model('cube', CubeSchema);

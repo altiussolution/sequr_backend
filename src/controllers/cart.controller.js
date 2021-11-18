@@ -370,7 +370,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
           item.qty
         )
       }
-
+      stockAllocationItems.updated_at = new Date()
       await stockAllocationModel
         .findByIdAndUpdate(item.stock_allocation_id, stockAllocationItems)
         .exec()
@@ -442,7 +442,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
           item.qty
         )
       }
-
+      stockAllocationItems.updated_at = new Date()
       await stockAllocationModel
         .findByIdAndUpdate(item.stock_allocation_id, stockAllocationItems)
         .exec()

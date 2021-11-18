@@ -1,28 +1,30 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
-const citySchema = mongoose.Schema({
+const citySchema = mongoose.Schema(
+  {
     name: {
-        type: String,
-        // required: true
+      type: String
+      // required: true
     },
     countryCode: {
-        type: String,
-        // required: true
+      type: String
+      // required: true
     },
     stateCode: {
-        type: String,
-        // required: true
+      type: String
+      // required: true
     },
     created_at: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now
     }
-}, { strict: true })
+  },
+  { strict: true }
+)
 
-
-var City = module.exports = mongoose.model('city', citySchema);
+var City = (module.exports = mongoose.model('city', citySchema))
 
 module.exports.get = function (callback, limit) {
-    City.find(callback).limit(limit)
+  City.find(callback).limit(limit)
 }

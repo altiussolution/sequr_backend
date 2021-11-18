@@ -75,7 +75,8 @@ const CartSchema = Schema({
       updated_at: {
         type: Date,
         default: Date.now
-      }, 
-})
-
+    }
+},
+{ timestamps: { updatedAt: 'updated_at' } }
+)
 module.exports = mongoose.model('cart', CartSchema);

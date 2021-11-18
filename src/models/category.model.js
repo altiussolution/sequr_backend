@@ -37,7 +37,9 @@ const CategorySchema = Schema({
         enum: [0,1],
         default: 1
     }
-})
+},
+{ timestamps: { updatedAt: 'updated_at' } }
+)
 
 
 module.exports = mongoose.model('category', CategorySchema);
