@@ -3,6 +3,9 @@ const { binModel, cubeModel, machineUsageModel } = require('../models')
 var moment = require('moment')
 
 exports.cubeIdleHours = async (req, res) => {
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   try {
     cubes = await cubeModel
       .find({
@@ -58,7 +61,9 @@ exports.cubeIdleHours = async (req, res) => {
                 foreignField: '_id',
                 as: 'bin_doc'
               }
-            }
+            },
+            { $sort: { created_at: -1 } },
+            { $limit: limit }
           ])
           .exec()
         eachCubeUsage['date'] = dateForUsage
@@ -85,7 +90,8 @@ exports.cubeIdleHours = async (req, res) => {
 
 exports.filterCubeIdleHours = async (req, res) => {
   body = req.query
-
+  req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   Cubequery = {}
   machineUsageQuery = {}
   startDay = moment(body.date).format('YYYY-MM-DD 00:00:01')
@@ -119,7 +125,9 @@ exports.filterCubeIdleHours = async (req, res) => {
               ]
             }
           },
-          { $group: { _id: null, sum: { $sum: '$machine_usage' } } }
+          { $group: { _id: null, sum: { $sum: '$machine_usage' } } },
+          { $sort: { created_at: -1 } },
+          { $limit: limit }
         ])
         .exec()
       eachCubeUsage['date'] = startDay

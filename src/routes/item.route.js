@@ -30,6 +30,6 @@ route.post(
   upload.array('image-video'),
   ItemController.uploadImage
 )
-route.get('/getItemMachine/:category_id/:sub_category_id/:column_ids',auth,ItemController.getItemMachine)
+route.get('/getItemMachine/:category_id/:sub_category_id',auth,ItemController.getItemMachine)
 
 module.exports = route

@@ -297,7 +297,7 @@ exports.getCategoryfilter = (req, res) => {
 }
 
 exports.getCategoryMachine = (req, res) => {
-  var columnIds = JSON.parse(req.params.column_ids)
+  var columnIds = JSON.parse(req.query.column_ids)
 
   try {
     //Find all Columns Ids
