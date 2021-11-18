@@ -30,8 +30,8 @@ exports.createBranch = (req, res) => {
 }
 
 exports.getBranch = (req, res) => {
-    var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
-    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
+  var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
   var searchString = req.query.searchString
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
@@ -50,7 +50,8 @@ exports.getBranch = (req, res) => {
       .catch(error => {
         res.status(400).send({ success: false, error: error })
       })
-  } catch (error) {
+  }
+   catch (error) {
     res.status(201).send({ success: false, error: error })
   }
 }
@@ -220,14 +221,7 @@ exports.deleteBranch = (req, res) => {
 
         // Get all refered documents
         // *** 1 ***
-        {
-          $lookup: {
-            from: 'users', // model name
-            localField: '_id',
-            foreignField: 'branch_id',
-            as: 'user_doc' // name of the document contains all users
-          }
-        },
+      
         // *** 2 ***
         {
           $lookup: {
@@ -236,7 +230,15 @@ exports.deleteBranch = (req, res) => {
             foreignField: 'branch_id',
             as: 'cube_doc' // name of the document contains all cubes
           }
-        }
+        },
+        {
+          $lookup: {
+            from: 'users', // model name
+            localField: '_id',
+            foreignField: 'branch_id',
+            as: 'user_doc' // name of the document contains all users
+          }
+        },
 
         //********************************** */
       ])
@@ -248,15 +250,16 @@ exports.deleteBranch = (req, res) => {
         //********************************** */
 
         // *** 1 ***
+      
+        // *** 2 ***
+        if (doc[0].cube_doc.length > 0) {
+          await message(
+            'Please delete all the refered cubes by this branch'
+          )
+        }
         if (doc[0].user_doc.length > 0) {
           await message.push(
             'Please delete all the refered users by this branch'
-          )
-        }
-        // *** 2 ***
-        if (doc[0].cube_doc.length > 0) {
-          await message.push(
-            'Please delete all the refered cubes by this branch'
           )
         }
         //********************************** */

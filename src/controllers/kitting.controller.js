@@ -2,7 +2,8 @@ const { kitModel, stockAllocationModel, CartModel } = require('../models')
 const cartModel = require('../models/cart.model')
 var { appRouteModels, Cart } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
-
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 
 exports.createKit = async (req, res) => {
   var body = req.body
@@ -142,22 +143,68 @@ exports.updateKit = async (req, res) => {
 }
 
 exports.deleteKit = (req, res) => {
+  // try {
+  //   kitModel
+  //     .findByIdAndUpdate(req.params.id, { active_status: 0 })
+  //     .then(kitDeactivate => {
+  //       res
+  //         .status(200)
+  //         .send({ success: true, message: 'Kit Deactivated Successfully!' })
+  //         createLog(req.headers['authorization'], 'Kitting', 0)
+  //     })
+  //     .catch(err => {
+  //       res.status(200).send({ success: false, message: 'Kit Not Found' })
+  //     })
+  // } catch (err) {
+  //   res
+  //     .status(200)
+  //     .send({ success: false, error: err.name, message: 'An Error Catched' })
+  // }
   try {
+kitModel.aggregate([
+  {
+    $match: {
+      $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+    }
+  },
+  {
+    $lookup: {
+      from: 'carts', 
+      localField: '_id',
+      foreignField: 'kitting.kit_id',
+      as: 'cart_doc' 
+    }
+  }
+]).then(async doc=>{
+  message = []
+  if (doc[0].cart_doc.length > 0) {
+    await message.push(
+      'Please delete all the cart items refered to this kit'
+    )
+  }
+if (message.length > 0) {
+    res.status(200).send({ success: true, message: message })
+  } else if (message.length == 0) {
     kitModel
-      .findByIdAndUpdate(req.params.id, { active_status: 0 })
-      .then(kitDeactivate => {
-        res
-          .status(200)
-          .send({ success: true, message: 'Kit Deactivated Successfully!' })
-          createLog(req.headers['authorization'], 'Kitting', 0)
+      .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+      .then(branch => {
+        res.status(200).send({
+          success: true,
+          message: 'Kit Deleted Successfully!'
+        })
+        createLog(req.headers['authorization'], 'Kitting', 0)
       })
       .catch(err => {
-        res.status(200).send({ success: false, message: 'Kit Not Found' })
+        res
+          .status(200)
+          .send({ success: false, message: 'Kit Not Found' })
       })
+  }
+})
   } catch (err) {
     res
-      .status(200)
-      .send({ success: false, error: err.name, message: 'An Error Catched' })
+    .status(200)
+    .send({ success: false, error: err, message: 'An Error Catched' })
   }
 }
 

@@ -6,6 +6,8 @@ const {
 } = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 
 exports.addsubCategory = async (req, res) => {
   try {
@@ -244,4 +246,83 @@ exports.getUsersubCategory = async (req, res) => {
   } catch (error) {
     res.status(201).send({ success: false, error: error })
   }
+}
+
+exports.deletesubCategory = async (req, res) => {
+try {
+  subCategoryModel.aggregate([
+    {
+      $match: {
+        $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+      }
+    },
+    {
+      $lookup: {
+        from: 'stockallocations', 
+        localField: '_id',
+        foreignField: 'sub_category',
+        as: 'stock_doc' 
+      }
+    },
+    {
+      $lookup: {
+        from: 'kits', 
+        localField: '_id',
+        foreignField: 'kit_data.sub_category_id',
+        as: 'kit_doc' 
+      }
+    },
+    {
+      $lookup: {
+        from: 'purchaseorders',
+        localField: '_id',
+        foreignField: 'sub_category_id',
+        as: 'po_doc' 
+      }
+    },
+   
+  ]).then(async doc =>{
+    message = []
+      if (doc[0].stock_doc.length > 0) {
+        await message.push(
+          'Please delete all the refered stocks by this subcategory'
+        )
+      }
+      if (doc[0].kit_doc.length > 0) {
+        await message.push(
+          'Please delete all the refered kits by this subcategory'
+        )
+      }
+      if (doc[0].po_doc.length > 0) {
+        await message.push(
+          'Please delete all the refered purchase orders by this subcategory'
+        )
+      }
+
+    if (message.length > 0) {
+        res.status(200).send({ success: true, message: message })
+      } else if (message.length == 0) {
+        subCategoryModel
+          .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+          .then(subCategory => {
+            res.status(200).send({
+              success: true,
+              message: 'Subcategory Deleted Successfully!'
+            })
+            createLog(req.headers['authorization'], 'SubCategory', 0)
+          })
+          .catch(err => {
+            res
+              .status(200)
+              .send({ success: false, message: 'SubCategory Not Found' })
+          })
+
+      
+      }
+  })
+}catch (err) {
+  res
+  .status(200)
+  .send({ success: false, error: err, message: 'An Error Catched' })
+}
 }

@@ -200,7 +200,7 @@ exports.deleteItems = (req, res) => {
       },
       {
         $lookup: {
-          from: 'stockallocation', 
+          from: 'stockallocations', 
           localField: '_id',
           foreignField: 'item',
           as: 'stock_doc' 
@@ -208,7 +208,7 @@ exports.deleteItems = (req, res) => {
       },
       {
         $lookup: {
-          from: 'kit', 
+          from: 'kits', 
           localField: '_id',
           foreignField: 'kit_data.item_id',
           as: 'kit_doc' 
@@ -216,7 +216,7 @@ exports.deleteItems = (req, res) => {
       },
       {
         $lookup: {
-          from: 'purchaseorder',
+          from: 'purchaseorders',
           localField: '_id',
           foreignField: 'item_id',
           as: 'po_doc' 
@@ -224,7 +224,7 @@ exports.deleteItems = (req, res) => {
       },
       {
         $lookup: {
-          from: 'cart',
+          from: 'carts',
           localField: '_id',
           foreignField: 'cart.item',
           as: 'cart_doc' 

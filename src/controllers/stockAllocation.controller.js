@@ -1,6 +1,7 @@
 const { stockAllocationModel, itemModel } = require('../models')
 const { createLog } = require('../middleware/crud.middleware')
-
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 exports.allocateStock = (req, res) => {
   try {
     var stock = new stockAllocationModel(req.body)
@@ -95,43 +96,7 @@ exports.updateStockAllocation = (req, res) => {
   }
 }
 
-exports.deleteStockAllocation = (req, res) => {
-  var stockId = req.params.id
-  try {
-    if (stockId) {
-      stockAllocationModel
-        .findByIdAndUpdate(stockId, { status: 0 })
-        .then(stockDelete => {
-          if (stockDelete) {
-            res
-              .status(200)
-              .send({
-                success: true,
-                message: 'Stock Deactivated Successfully!'
-              })
-            createLog(req.headers['authorization'], 'Itemoncube', 0)
-          } else {
-            res
-              .status(200)
-              .send({ success: false, message: 'No Record found for given id' })
-          }
-        })
-        .catch(error => {
-          res
-            .status(201)
-            .send({ success: false, error: error, message: 'An Error Occured' })
-        })
-    } else {
-      res
-        .status(201)
-        .send({ success: false, message: 'An Error Occured stock id required' })
-    }
-  } catch (err) {
-    res
-      .status(201)
-      .send({ success: false, error: err.name, message: 'An Error Catched' })
-  }
-}
+
 
 exports.getItemById = (req, res) => {
   try {
@@ -323,4 +288,57 @@ exports.getStockAllocationsfilter = (req, res) => {
     console.log(error.name)
     res.status(201).send({ success: false, error: error })
   }
+}
+
+exports.deleteStockAllocation = (req, res) => {
+try {
+  stockAllocationModel.aggregate([
+    {
+      $match: {
+        $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+      }
+    },
+    {
+      $lookup: {
+        from: 'carts', 
+        localField: '_id',
+        foreignField: 'cart.allocation',
+        as: 'cart_doc' 
+      }
+    },
+    
+  ]).then(async doc =>{
+    message = []
+      if (doc[0].cart_doc.length > 0) {
+        await message.push(
+          'Please delete all the cart items refered to this stock'
+        )
+      }
+      
+    if (message.length > 0) {
+        res.status(200).send({ success: true, message: message })
+      } else if (message.length == 0) {
+        stockAllocationModel
+          .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+          .then(stockAllocation => {
+            res.status(200).send({
+              success: true,
+              message: 'StockAllocation Deleted Successfully!'
+            })
+            createLog(req.headers['authorization'], 'stockAllocation', 0)
+          })
+          .catch(err => {
+            res
+              .status(200)
+              .send({ success: false, message: 'StockAllocation Not Found' })
+          })
+
+      
+      }
+  })
+}catch (err) {
+  res
+  .status(200)
+  .send({ success: false, error: err, message: 'An Error Catched' })
+}
 }

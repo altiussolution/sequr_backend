@@ -133,15 +133,15 @@ exports.deleteCube = (req, res) => {
           },
           {
             $lookup: {
-              from: 'stockAllocation', // model name
+              from: 'stockallocations', // model name
               localField: '_id',
-              foreignField: 'cube_id',
+              foreignField: 'cube',
               as: 'stockAllocation_doc' // name of the document contains all cubes
             }
           },
           {
             $lookup: {
-              from: 'compartment', // model name
+              from: 'compartments', // model name
               localField: '_id',
               foreignField: 'cube_id',
               as: 'compartment_doc' // name of the document contains all cubes
@@ -216,4 +216,5 @@ exports.deleteCube = (req, res) => {
         .send({ success: false, error: err, message: 'An Error Catched' })
     }
   }
+  
   

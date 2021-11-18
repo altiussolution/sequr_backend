@@ -147,15 +147,15 @@ exports.deleteBin = (req, res) => {
         },
         {
           $lookup: {
-            from: 'compartment',
+            from: 'compartments',
             localField: '_id',
-            foreignField: 'cube_id',
+            foreignField: 'bin_id',
             as: 'compartment_doc'
           }
         },
         {
           $lookup: {
-            from: 'stockallocation', 
+            from: 'stockallocations', 
             localField: '_id',
             foreignField: 'bin',
             as: 'stock_doc' 
