@@ -28,6 +28,12 @@ exports.getStockAllocations = (req, res) => {
   var query = searchString
     ? { active_status: 1, status: 1, $text: { $search: searchString } }
     : { active_status: 1, status: 1 }
+  if (req.query.sub_category_id) {
+    query['category'] = ObjectId(req.query.sub_category_id)
+  }
+  if (req.query.category_id) {
+    query['sub_category'] = ObjectId(req.query.category_id)
+  }
   try {
     stockAllocationModel
       .find(query)
@@ -95,8 +101,6 @@ exports.updateStockAllocation = (req, res) => {
       .send({ success: false, error: err.name, message: 'An Error Catched' })
   }
 }
-
-
 
 exports.getItemById = (req, res) => {
   try {
@@ -291,54 +295,53 @@ exports.getStockAllocationsfilter = (req, res) => {
 }
 
 exports.deleteStockAllocation = (req, res) => {
-try {
-  stockAllocationModel.aggregate([
-    {
-      $match: {
-        $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
-      }
-    },
-    {
-      $lookup: {
-        from: 'carts', 
-        localField: '_id',
-        foreignField: 'cart.allocation',
-        as: 'cart_doc' 
-      }
-    },
-    
-  ]).then(async doc =>{
-    message = []
-      if (doc[0].cart_doc.length > 0) {
-        await message.push(
-          'Please delete all the cart items refered to this stock'
-        )
-      }
-      
-    if (message.length > 0) {
-        res.status(200).send({ success: true, message: message })
-      } else if (message.length == 0) {
-        stockAllocationModel
-          .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
-          .then(stockAllocation => {
-            res.status(200).send({
-              success: true,
-              message: 'StockAllocation Deleted Successfully!'
-            })
-            createLog(req.headers['authorization'], 'stockAllocation', 0)
-          })
-          .catch(err => {
-            res
-              .status(200)
-              .send({ success: false, message: 'StockAllocation Not Found' })
-          })
+  try {
+    stockAllocationModel
+      .aggregate([
+        {
+          $match: {
+            $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+          }
+        },
+        {
+          $lookup: {
+            from: 'carts',
+            localField: '_id',
+            foreignField: 'cart.allocation',
+            as: 'cart_doc'
+          }
+        }
+      ])
+      .then(async doc => {
+        message = []
+        if (doc[0].cart_doc.length > 0) {
+          await message.push(
+            'Please delete all the cart items refered to this stock'
+          )
+        }
 
-      
-      }
-  })
-}catch (err) {
-  res
-  .status(200)
-  .send({ success: false, error: err, message: 'An Error Catched' })
-}
+        if (message.length > 0) {
+          res.status(200).send({ success: true, message: message })
+        } else if (message.length == 0) {
+          stockAllocationModel
+            .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+            .then(stockAllocation => {
+              res.status(200).send({
+                success: true,
+                message: 'StockAllocation Deleted Successfully!'
+              })
+              createLog(req.headers['authorization'], 'stockAllocation', 0)
+            })
+            .catch(err => {
+              res
+                .status(200)
+                .send({ success: false, message: 'StockAllocation Not Found' })
+            })
+        }
+      })
+  } catch (err) {
+    res
+      .status(200)
+      .send({ success: false, error: err, message: 'An Error Catched' })
+  }
 }

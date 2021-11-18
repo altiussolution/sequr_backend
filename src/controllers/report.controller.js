@@ -11,7 +11,8 @@ const { search } = require('../routes/users.route')
 exports.transactionReport = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : 20
+  console.log(limit)
 
   var searchString = req.query.searchString // Search Query
   var dateFrom = req.query.date // Direct Query
@@ -436,7 +437,7 @@ exports.stockShortageReport = async (req, res) => {
 exports.orderReport = async (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : 20
 
   var searchString = req.query.searchString // Search Query
 
@@ -466,8 +467,8 @@ exports.orderReport = async (req, res) => {
   }
   if (receivedDateFrom) {
     var fromDate = moment(receivedDateFrom).format('YYYY-MM-DD 00:00:00')
-    var toDate = moment(receivedDateTO).format('YYYY-MM-DD 23:59:59')
-    directQuery['received_at'] = {
+    var toDate = moment(receivedDateTo).format('YYYY-MM-DD 23:59:59')
+    directQuery['received_date'] = {
       $gt: new Date(fromDate),
       $lt: new Date(toDate)
     }
@@ -477,29 +478,30 @@ exports.orderReport = async (req, res) => {
   // Direct Queries
 
   if (searchString) {
-    searchQuery = [
-      {
-        'supplier_doc.supplier_name': { $regex: searchString }
-      },
-      {
-        'item_doc.item_name': { $regex: searchString }
-      }
-    ]
-    
     //Convert number into string
-    inProgess = "InProgress"
-    sent = "sent"
-    received = "Received"
-    if(inProgess.includes(searchString)) directQuery['status'] = 0
-    if(sent.includes(searchString)) directQuery['status'] = 1
-    if(received.includes(searchString)) directQuery['status'] = 2
+    inProgess = 'InProgress'
+    sent = 'sent'
+    received = 'Received'
+    if (inProgess.includes(searchString)) directQuery['status'] = 0
+    else if (sent.includes(searchString)) directQuery['status'] = 1
+    else if (received.includes(searchString)) directQuery['status'] = 2
+    else {
+      searchQuery = [
+        {
+          'supplier_doc.supplier_name': { $regex: searchString }
+        },
+        {
+          'item_doc.item_name': { $regex: searchString }
+        }
+      ]
+    }
   }
   console.log(directQuery)
   console.log(searchQuery)
 
   // Aggregation Queries
 
-  try {
+//   try {
     purchaseOrderModel
       .aggregate([
         //Find branch id and active_status is 1
@@ -522,7 +524,7 @@ exports.orderReport = async (req, res) => {
         {
           $lookup: {
             from: 'items',
-            localField: 'item',
+            localField: 'item_id',
             foreignField: '_id',
             as: 'item_doc'
           }
@@ -534,7 +536,9 @@ exports.orderReport = async (req, res) => {
           $match: {
             $or: searchQuery
           }
-        }
+        },
+        { $sort: { created_at: -1 } },
+        { $limit: limit }
       ])
       .sort({ created_at: 1 })
       //   .skip(offset)
@@ -542,12 +546,12 @@ exports.orderReport = async (req, res) => {
       .then(async order => {
         res.status(200).send({ success: true, data: order })
       })
-      .catch(error => {
-        res.status(400).send({ success: false, error: error })
-      })
-  } catch (error) {
-    res.status(201).send({ success: false, error: error })
-  }
+    //   .catch(error => {
+    //     res.status(400).send({ success: false, error: error })
+    //   })
+//   } catch (error) {
+//     res.status(201).send({ success: false, error: error })
+//   }
 }
 
 async function calculatDate (subtractDay) {
