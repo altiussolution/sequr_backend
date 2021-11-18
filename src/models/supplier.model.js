@@ -4,15 +4,18 @@ var mongoose = require('mongoose'),
 const SupplierSchema = Schema({
     supplier_name: {
         type: String,
-        required: true
+        required: true,
+        unique : true
     },
     supplier_code: {
         type: String,
-        required: true
+        required: true,
+        unique : true
     },
     supplier_address: {
         type: String,
-        required: true
+        required: true,
+        unique : true
     },
     country_id: {
         type: Schema.Types.ObjectId,
@@ -34,7 +37,8 @@ const SupplierSchema = Schema({
     },
     phone_number: {
         type: String,
-        required: true
+        required: true,
+        unique : true
     },
     fax: {
         type: String,
@@ -42,7 +46,8 @@ const SupplierSchema = Schema({
     },
     email_id: {
         type: String,
-        required: true
+        required: true,
+        unique : true
     },
     po_email: {
         type: String,
