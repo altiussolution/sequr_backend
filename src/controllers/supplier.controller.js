@@ -11,18 +11,47 @@ exports.createSupplier = (req, res) => {
                 res.status(200).send({ success: true, message: 'Supplier Created Successfully!' });
                 createLog(req.headers['authorization'], 'Supplier', 2)
             }
-            else {
-                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Supplier name or code' : err)
-                res.status(200).send({
-                    success: false,
-                    message: errorMessage
-                });
+           else {
+            if (err.keyValue.supplier_name){
+             var errorMessage =
+               err.code == error_code.isDuplication
+                 ? 'Supplier Name is already exist'
+                 : err
+            } else if(err.keyValue.supplier_code){
+             var errorMessage =
+             err.code == error_code.isDuplication
+               ? 'Supplier Code is already exist'
+               : err
             }
-        });
-    } catch (error) {
-        res.status(201).send(error)
-    }
-}
+            else if(err.keyValue.supplier_address){
+             var errorMessage =
+             err.code == error_code.isDuplication
+               ? 'Address is already exist'
+               : err
+            }
+            else if(err.keyValue.phone_number){
+             var errorMessage =
+             err.code == error_code.isDuplication
+               ? 'Phonenumber  is already exist'
+               : err
+            }
+            else if(err.keyValue.email_id){
+             var errorMessage =
+             err.code == error_code.isDuplication
+               ? 'Email Id is already exist'
+               : err
+            }
+             res.status(200).send({
+               success: false,
+               message: errorMessage
+     
+             })
+           }
+         })
+       } catch (error) {
+         res.status(201).send(error)
+       }
+     }
 
 exports.getSupplier = (req, res) => {
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;

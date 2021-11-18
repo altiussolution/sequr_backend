@@ -14,13 +14,39 @@ exports.createBranch = (req, res) => {
           .send({ success: true, message: 'Branch Created Successfully!' })
         createLog(req.headers['authorization'], 'Branch', 2)
       } else {
+       if (err.keyValue.branch_name){
         var errorMessage =
           err.code == error_code.isDuplication
-            ? 'Duplication occured in Branch name or code'
+            ? 'Branch Name is already exist'
             : err
+       } else if(err.keyValue.branch_code){
+        var errorMessage =
+        err.code == error_code.isDuplication
+          ? 'Branch Code is already exist'
+          : err
+       }
+       else if(err.keyValue.branch_address){
+        var errorMessage =
+        err.code == error_code.isDuplication
+          ? 'Address is already exist'
+          : err
+       }
+       else if(err.keyValue.phone_number){
+        var errorMessage =
+        err.code == error_code.isDuplication
+          ? 'Phonenumber  is already exist'
+          : err
+       }
+       else if(err.keyValue.email_id){
+        var errorMessage =
+        err.code == error_code.isDuplication
+          ? 'Email Id is already exist'
+          : err
+       }
         res.status(200).send({
           success: false,
           message: errorMessage
+
         })
       }
     })
