@@ -586,103 +586,34 @@ exports.orderReport = async (req, res) => {
     res.status(201).send({ success: false, error: error })
   }
 }
-
 exports.kittingReport = async (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : 20
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var searchString = req.query.searchString
+  var category_id = req.query.category_id
+  var sub_category_id = req.query.sub_category_id
+  var query = searchString
+    ? { active_status: 1, $text: { $search: searchString } }
+    : { active_status: 1 }
+  if (category_id) query['category_id'] = category_id
+  if (sub_category_id) query['sub_category_id'] = sub_category_id
 
-  var searchString = req.query.searchString // Search Query
-
-  var ceratedDateFrom = req.query.ceratedDateFrom // Direct Query
-  var ceratedDateTo = req.query.ceratedDateTo // Direct Query
-  var status = req.query.status // Direct Query
-  var supplier_id = req.query.status // Direct Query
-
-  var directQuery = {}
-  var filterQuery = {}
-  var searchQuery = [{}]
-
-  // Aggregation Queries
-
-  // Direct Queries
-  if (ceratedDateFrom) {
-    var fromDate = moment(ceratedDateFrom).format('YYYY-MM-DD 00:00:00')
-    var toDate = moment(ceratedDateTo).format('YYYY-MM-DD 23:59:59')
-    directQuery['created_at'] = {
-      $gt: new Date(fromDate),
-      $lt: new Date(toDate)
-    }
-  }
-  if (supplier_id) directQuery['supplier_id'] = ObjectId(supplier_id)
-  if (status) directQuery['status'] = ObjectId(status)
-  // Direct Queries
-
-  if (searchString) {
-    searchQuery = [
-      {
-        'supplier_doc.supplier_name': { $regex: searchString }
-      },
-      {
-        'item_doc.item_name': { $regex: searchString }
-      }
-    ]
-  }
-  console.log(directQuery)
-  console.log(searchQuery)
-
-  // Aggregation Queries
-
-//   try {
+  kit_details = []
+  try {
     kitModel
-      .aggregate([
-        //Find branch id and active_status is 1
-        {
-          $match: {
-            $and: [directQuery]
-          }
-        },
-        // *** 1 ***
-        // *** 2 ***
-        // *** 3 ***
-        {
-          $lookup: {
-            from: 'items',
-            let: { item_id: '$_id' },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $in: ['$$item_id', '$kit_data.item_id']
-                  }
-                }
-              }
-            ],
-            as: 'details'
-          }
-        },
-        {
-          $match: filterQuery
-        },
-        {
-          $match: {
-            $or: searchQuery
-          }
-        },
-        { $limit: limit }
-      ])
-      .sort({ created_at: -1 })
-      //   .skip(offset)
-      //   .limit(limit)
-      .then(async order => {
-        res.status(200).send({ success: true, data: order })
+      .find(query)
+      .populate('kit_data.item_id')
+      .populate('kit_data.sub_category_id')
+      .populate('kit_data.category_id')
+      .skip(offset)
+      .limit(limit)
+      .then(async kits => {
+        res.status(200).send({ success: true, data: await kits })
       })
-//       .catch(error => {
-//         res.status(400).send({ success: false, error: error })
-//       })
-//   } catch (error) {
-//     res.status(201).send({ success: false, error: error })
-//   }
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
 }
 
 async function calculatDate (subtractDay) {

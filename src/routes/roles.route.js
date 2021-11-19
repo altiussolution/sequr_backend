@@ -12,5 +12,9 @@ route.get('/permission/get', auth, RolesController.getPermission)
 route.put('/permission/delete/:id', auth, RolesController.deletePermission)
 route.get('/permission/list/get',auth, RolesController.listPermission)
 route.get('/getRolesfilter', auth, RolesController.getRolesfilter)
+route.post('/addSuperAdmin', RolesController.createRole)
+route.get('/getSuperAdmin', RolesController.getRoles)
+
+
 
 module.exports = route

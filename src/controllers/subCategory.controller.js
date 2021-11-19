@@ -158,8 +158,10 @@ exports.getsubCategoryfilter = async (req, res) => {
 }
 
 exports.getSubCategoryMachine = (req, res) => {
+  var columnIds = []
+  if(req.query.column_ids){
   var columnIds = JSON.parse(req.query.column_ids)
-  console.log(req.query)
+}
   try {
     //Find all Columns Ids
     binModel

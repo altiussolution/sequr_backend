@@ -12,8 +12,8 @@ exports.getLog = (req, res) => {
     try {
       logModel
         .find(query)
-        .sort({ created_at: -1 })
         .populate('user_id')
+        .sort({ created_at: -1 })        
         .skip(offset)
         .limit(limit)
         .then(logs => {

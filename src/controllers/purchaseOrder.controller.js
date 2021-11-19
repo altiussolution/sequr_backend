@@ -13,7 +13,7 @@ exports.addPurchaseOrder = async (req, res) => {
       .findOne({ $or: [{ po_number: req.body.po_number }] })
       .exec()
     if (!isPurchaseOrderExist) {
-      purchase_order.save(err => {
+      purchase_order.save(async err => {
         if (!err) {
           res.status(200).send({
             success: true,
@@ -38,6 +38,12 @@ exports.addPurchaseOrder = async (req, res) => {
                   purchaseOrder.po_number
                 )
               })
+          } else if (req.body.is_received == 2) {
+            await itemModel
+              .findByIdAndUpdate(req.body.item_id, {
+                $inc: { in_stock: req.body.quantity },
+              })
+              .exec()
           }
         } else {
           var errorMessage =

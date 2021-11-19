@@ -96,6 +96,7 @@ var ObjectId = require('mongodb').ObjectID
           expiresIn: '2h'
         }
       )
+      // role = await rolesModel
       const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
       const locals = {
         employee_id: employee_id,

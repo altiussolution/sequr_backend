@@ -379,9 +379,11 @@ exports.uploadImage = async (req, res) => {
 }
 
 exports.getItemMachine = (req, res) => {
-  console.log(req.query)
+  var columnIds = []
+  if(req.query.column_ids){
   var columnIds = JSON.parse(req.query.column_ids)
-
+}
+console.log(req.query)
   try {
     //Find all Columns Ids
     binModel
@@ -399,6 +401,7 @@ exports.getItemMachine = (req, res) => {
             is_removed: false
           })
           .then(drawList => {
+            console.log(drawList)
             //Find all Item Ids in stock allocation
             stockAllocationModel
               .distinct('item', {

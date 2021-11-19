@@ -297,9 +297,10 @@ exports.getCategoryfilter = (req, res) => {
 }
 
 exports.getCategoryMachine = (req, res) => {
-  console.log(req.query)
+  var columnIds = []
+  if(req.query.column_ids){
   var columnIds = JSON.parse(req.query.column_ids)
-
+}
   try {
     //Find all Columns Ids
     binModel
