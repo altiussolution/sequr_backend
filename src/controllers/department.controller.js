@@ -25,7 +25,7 @@ exports.createDepartment = (req, res) => {
                 });
             } else if (id){
                 var errorMessage = (err.code == error_code.isDuplication ? 'Department id already exists' : err)
-                res.status(200).send({
+                res.status(409).send({
                     success: false,
                     message: errorMessage
                 });

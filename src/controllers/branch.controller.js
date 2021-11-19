@@ -43,7 +43,7 @@ exports.createBranch = (req, res) => {
           ? 'Email Id is already exist'
           : err
        }
-        res.status(200).send({
+        res.status(409).send({
           success: false,
           message: errorMessage
 
