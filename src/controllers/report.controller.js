@@ -3,7 +3,8 @@ const {
   logModel,
   stockAllocationModel,
   itemModel,
-  purchaseOrderModel
+  purchaseOrderModel,
+  kitModel
 } = require('../models')
 var moment = require('moment')
 const { search } = require('../routes/users.route')
@@ -20,7 +21,12 @@ exports.transactionReport = (req, res) => {
   var cubeId = req.query.cube // Filter Query
   var user_id = req.query.user_id // Direct Query
   var action = req.query.type // Direct query
-  var directQuery = { stock_allocation_id: { $exists: true } }
+  var itemLimit = req.query.itemLimit // filter query
+  if (req.query.administation == false) {
+    var directQuery = {}
+  } else {
+    var directQuery = { stock_allocation_id: { $exists: true } }
+  }
   var filterQuery = {}
   var searchQuery = [{}]
 
@@ -36,6 +42,7 @@ exports.transactionReport = (req, res) => {
   if (user_id) directQuery['user_id'] = ObjectId(user_id)
   if (action) directQuery['action'] = action
   if (cubeId) filterQuery['stock_allocation_doc.cube_id'] = ObjectId(cubeId)
+  if (itemLimit) filterQuery['user_doc.item_max_quantity'] = parseInt(itemLimit)
   if (searchString) {
     searchQuery = [
       {
@@ -58,7 +65,14 @@ exports.transactionReport = (req, res) => {
       },
       {
         trasaction_qty: parseInt(searchString)
-      }
+      },
+      {
+        'user_doc.item_max_quantity': parseInt(searchString)
+      },
+      {
+        'role_doc.role_name': { $regex: searchString }
+      },
+      role_doc
     ]
   }
   console.log(directQuery)
@@ -131,6 +145,14 @@ exports.transactionReport = (req, res) => {
           }
         },
         {
+          $lookup: {
+            from: 'roles',
+            localField: 'user_doc.role_id',
+            foreignField: '_id',
+            as: 'role_doc'
+          }
+        },
+        {
           $match: filterQuery
         },
         {
@@ -139,7 +161,6 @@ exports.transactionReport = (req, res) => {
           }
         },
         { $limit: limit }
-
       ])
       .sort({ created_at: -1 })
       //   .skip(offset)
@@ -161,11 +182,21 @@ exports.overallStockReport = (req, res) => {
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
   var in_stock = req.query.in_stock
+  var dateFrom = req.query.dateFrom
+  var dateTo = req.query.dateTo
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
     : { active_status: 1 }
   if (in_stock) {
     query['in_stock'] = parseInt(in_stock)
+  }
+  if (dateFrom) {
+    var fromDate = moment(dateFrom).format('YYYY-MM-DD 00:00:00')
+    var toDate = moment(dateTo).format('YYYY-MM-DD 23:59:59')
+    query['calibration_month'] = {
+      $gt: new Date(fromDate),
+      $lt: new Date(toDate)
+    }
   }
   try {
     itemModel
@@ -298,7 +329,6 @@ exports.deadStockReport = async (req, res) => {
           }
         },
         { $limit: limit }
-
       ])
       .sort({ created_at: -1 })
       //   .skip(offset)
@@ -415,8 +445,7 @@ exports.stockShortageReport = async (req, res) => {
           $match: {
             $or: searchQuery
           }
-        },
-        
+        }
       ])
       .sort({ created_at: -1 })
       //   .skip(offset)
@@ -556,6 +585,104 @@ exports.orderReport = async (req, res) => {
   } catch (error) {
     res.status(201).send({ success: false, error: error })
   }
+}
+
+exports.kittingReport = async (req, res) => {
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : 20
+
+  var searchString = req.query.searchString // Search Query
+
+  var ceratedDateFrom = req.query.ceratedDateFrom // Direct Query
+  var ceratedDateTo = req.query.ceratedDateTo // Direct Query
+  var status = req.query.status // Direct Query
+  var supplier_id = req.query.status // Direct Query
+
+  var directQuery = {}
+  var filterQuery = {}
+  var searchQuery = [{}]
+
+  // Aggregation Queries
+
+  // Direct Queries
+  if (ceratedDateFrom) {
+    var fromDate = moment(ceratedDateFrom).format('YYYY-MM-DD 00:00:00')
+    var toDate = moment(ceratedDateTo).format('YYYY-MM-DD 23:59:59')
+    directQuery['created_at'] = {
+      $gt: new Date(fromDate),
+      $lt: new Date(toDate)
+    }
+  }
+  if (supplier_id) directQuery['supplier_id'] = ObjectId(supplier_id)
+  if (status) directQuery['status'] = ObjectId(status)
+  // Direct Queries
+
+  if (searchString) {
+    searchQuery = [
+      {
+        'supplier_doc.supplier_name': { $regex: searchString }
+      },
+      {
+        'item_doc.item_name': { $regex: searchString }
+      }
+    ]
+  }
+  console.log(directQuery)
+  console.log(searchQuery)
+
+  // Aggregation Queries
+
+//   try {
+    kitModel
+      .aggregate([
+        //Find branch id and active_status is 1
+        {
+          $match: {
+            $and: [directQuery]
+          }
+        },
+        // *** 1 ***
+        // *** 2 ***
+        // *** 3 ***
+        {
+          $lookup: {
+            from: 'items',
+            let: { item_id: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $in: ['$$item_id', '$kit_data.item_id']
+                  }
+                }
+              }
+            ],
+            as: 'details'
+          }
+        },
+        {
+          $match: filterQuery
+        },
+        {
+          $match: {
+            $or: searchQuery
+          }
+        },
+        { $limit: limit }
+      ])
+      .sort({ created_at: -1 })
+      //   .skip(offset)
+      //   .limit(limit)
+      .then(async order => {
+        res.status(200).send({ success: true, data: order })
+      })
+//       .catch(error => {
+//         res.status(400).send({ success: false, error: error })
+//       })
+//   } catch (error) {
+//     res.status(201).send({ success: false, error: error })
+//   }
 }
 
 async function calculatDate (subtractDay) {

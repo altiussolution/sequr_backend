@@ -297,6 +297,7 @@ exports.getCategoryfilter = (req, res) => {
 }
 
 exports.getCategoryMachine = (req, res) => {
+  console.log(req.query)
   var columnIds = JSON.parse(req.query.column_ids)
 
   try {

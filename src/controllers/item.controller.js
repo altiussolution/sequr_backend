@@ -379,7 +379,7 @@ exports.uploadImage = async (req, res) => {
 }
 
 exports.getItemMachine = (req, res) => {
-  console.log(req.params)
+  console.log(req.query)
   var columnIds = JSON.parse(req.query.column_ids)
 
   try {
