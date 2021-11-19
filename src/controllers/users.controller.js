@@ -129,7 +129,7 @@ exports.login = async (req, res) => {
       res.status(400).send({ status: false, message: 'All input is required' })
     }
 
-    const user = await User.findOne({ employee_id }).populate('role_id').exec()
+    const user = await User.findOne({ employee_id }).populate('role_id').populate('country_id').populate('state_id').populate('city_id').exec()
 
     if (
       user &&
@@ -327,7 +327,7 @@ exports.resetPassword = async (req, res) => {
 }
 
 exports.userProfile = async (req, res) => {
-  var userId = req.params.id
+  var userId = req.params._id
   try {
     var userDetails = await User.findOne({
       _id: userId,
@@ -345,7 +345,6 @@ exports.userProfile = async (req, res) => {
       .send({ success: false, error: err.name, message: 'An Error Catched' })
   }
 }
-
 exports.EmployeeForgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({
@@ -562,16 +561,25 @@ User.find(query).populate('department_id').populate('role_id').populate('branch_
 
 }
 
-exports.updateForgotpassword = (req, res) => {
-  try{
-    User.updateOne({employee_id : req.params.employee_id, active_status : 1}, {new_pass_req : true}).then(Update =>{
 
-
-        res.status(200).send({ success: true, message: 'Employee Updated Successfully!' });
-    }).catch(error =>{
-        res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
-    }) 
-}catch(err){
-    res.status(200).send({ success: false, error: err, message : 'An Error Catched' });  
-}
-}
+  exports.updateForgotpassword = async(req, res) => {
+    try{
+      var exist = await User.findOne({employee_id : req.params.employee_id, active_status : 1}).exec();
+      console.log(exist)
+      if(exist){
+        User.updateOne({employee_id : req.params.employee_id, active_status : 1}, {new_pass_req : true}).then(Update =>{
+          
+  
+  
+          res.status(200).send({ success: true, message: 'Employee Updated Successfully!' });
+      }).catch(error =>{
+          res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
+      }) 
+      }else if(!exist){
+        res.status(200).send({ success: true, message: 'Employee does not Exist!' });
+      }
+      
+  }catch(err){
+      res.status(200).send({ success: false, error: err, message : 'An Error Catched' });  
+  }
+  }

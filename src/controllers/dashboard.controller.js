@@ -258,7 +258,7 @@ exports.getPurchaseOrdercount = async (req, res) => {
 }
 
 exports.getPermissioncount = async (req, res) => {
-  var query = { active_status: 1 }
+  var query = ({ active_status: 1},{ $where: "this.permission.length > 1"  })
   try {
     await rolesModel
       .count(query)
