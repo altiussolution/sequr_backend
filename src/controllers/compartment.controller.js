@@ -17,13 +17,13 @@ exports.createCompartment = (req, res) => {
                 const id = await compartmentModel.findOne(({ compartment_id:req.body.compartment_id ,  active_status: 1 })).exec()
                 if(name){
                 var errorMessage = (err.code == error_code.isDuplication ? 'Compartment name already exists' : err)
-                res.status(200).send({
+                res.status(409).send({
                     success: false,
                     message: errorMessage
                 });
             }else if(id){
                 var errorMessage = (err.code == error_code.isDuplication ? 'Compartment id already exists' : err)
-                res.status(200).send({
+                res.status(409).send({
                     success: false,
                     message: errorMessage
                 });

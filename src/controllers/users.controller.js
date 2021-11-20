@@ -48,24 +48,24 @@ var ObjectId = require('mongodb').ObjectID
       ) {
         res.status(400).send('All input is required')
       }
-      // const oldEmployee_id = await User.findOne({ employee_id , active_status: 1 })
-      // const oldmobilenumber = await User.findOne({ contact_no , active_status: 1 })
-      // const oldemail_id = await User.findOne({ email_id , active_status: 1 })
-      // if (oldEmployee_id) {
-      //   return res
-      //     .status(409)
-      //     .send({ status: false, message: 'Employee_id already exist' })
-      // }
-      // if (oldemail_id){
-      //   return res
-      //   .status(409)
-      //   .send( {status: false, message: 'Email id already exists'})
-      // }
-      // if (oldmobilenumber){
-      //   return res
-      //   .status(409)
-      //   .send( {status: false, message: 'Contact number already exists'})
-      // }
+      const oldEmployee_id = await User.findOne({ employee_id , active_status: 1 })
+      const oldmobilenumber = await User.findOne({ contact_no , active_status: 1 })
+      const oldemail_id = await User.findOne({ email_id , active_status: 1 })
+      if (oldEmployee_id) {
+        return res
+          .status(409)
+          .send({ status: false, message: 'Employee_id already exist' })
+      }
+      if (oldemail_id){
+        return res
+        .status(409)
+        .send( {status: false, message: 'Email id already exists'})
+      }
+      if (oldmobilenumber){
+        return res
+        .status(409)
+        .send( {status: false, message: 'Contact number already exists'})
+      }
       console.log(password)
       encryptedPassword = await bcrypt.hash(password, 10)
       const user = await User.create({
@@ -236,11 +236,21 @@ exports.listEmployees = (req, res) => {
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
+  var role_id = req.query.role_id;
+  var branch_id= req.query.branch_id;
+  var status = req.query.status;
+  var department_id = req.query.department_id;
+  var shift_time_id = req.query.shift_time_id;
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
     : { active_status: 1 }
+    if (role_id) query['role_id'] = role_id
+    if (branch_id) query['branch_id'] = branch_id
+    if (department_id) query['department_id'] = department_id
+    if (status) query['status'] = status
+    if (shift_time_id) query['shift_time_id'] = shift_time_id
   User.find(query)
-    .populate('department_id').populate('country_id').populate('state_id').populate('city_id')
+    .populate('department_id').populate('branch_id').populate('role_id').populate('shift_time_id')
     .skip(offset)
     .limit(limit)
     .then(result => {

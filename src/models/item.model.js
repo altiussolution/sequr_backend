@@ -9,7 +9,8 @@ const ItemSchema = Schema(
     },
     item_number: {
       type: String,
-      required: true
+      required: true,
+      unique: true
     },
     sub_category_id: {
       type: Schema.Types.ObjectId,

@@ -25,15 +25,26 @@ exports.getStockAllocations = (req, res) => {
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
+  var category = req.query.category
+  var sub_category = req.query.sub_category
+  var status = req.query.status;
+  var supplier = req.query.supplier;
+  var cube = req.query.cube;
+  var bin = req.query.bin;
+  var compartment = req.query.compartment;
+  var is_active = req.query.is_active
   var query = searchString
-    ? { active_status: 1, status: 1, $text: { $search: searchString } }
-    : { active_status: 1, status: 1 }
-  if (req.query.sub_category_id) {
-    query['category'] = ObjectId(req.query.sub_category_id)
-  }
-  if (req.query.category_id) {
-    query['sub_category'] = ObjectId(req.query.category_id)
-  }
+    ? { active_status: 1, $text: { $search: searchString } }
+    : { active_status: 1 }
+  if (category) query['category'] = category
+  if (sub_category) query['sub_category'] = sub_category
+  if (is_active) query['is_active'] = is_active
+  if (status) query['status'] = status
+  if (supplier) query['supplier'] = supplier
+  if (cube) query['cube'] = cube
+  if (bin) query['bin'] = bin
+  if (compartment) query['compartment'] = compartment
+  
   try {
     stockAllocationModel
       .find(query)

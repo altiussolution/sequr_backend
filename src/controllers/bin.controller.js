@@ -57,9 +57,13 @@ exports.getBin = (req, res) => {
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
+  var cube_id = req.query.cube_id
+  var is_removed = req.query.is_removed
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
     : { active_status: 1 }
+    if (cube_id) query['cube_id'] = cube_id
+    if (is_removed) query['is_removed'] = is_removed
   try {
     binModel
       .find(query)
