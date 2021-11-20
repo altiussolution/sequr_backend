@@ -74,11 +74,11 @@ exports.updateStockAllocation = (req, res) => {
             createLog(req.headers['authorization'], 'Itemoncube', 1)
             console.log(req.body.item)
             console.log(req.body.total_quantity)
-            await itemModel
-              .findByIdAndUpdate(req.body.item, {
-                $inc: { in_stock: req.body.total_quantity }
-              })
-              .exec()
+            // await itemModel
+            //   .findByIdAndUpdate(req.body.item, {
+            //     $inc: { in_stock: req.body.total_quantity }
+            //   })
+            //   .exec()
           } else {
             res
               .status(200)

@@ -8,6 +8,8 @@ const {
 } = require('../models')
 var moment = require('moment')
 const { search } = require('../routes/users.route')
+var crontab = require('node-crontab')
+
 
 exports.transactionReport = (req, res) => {
   var offset =
@@ -16,8 +18,8 @@ exports.transactionReport = (req, res) => {
   console.log(limit)
 
   var searchString = req.query.searchString // Search Query
-  var dateFrom = req.query.date // Direct Query
-  var dateTo = req.query.date // Direct Query
+  var dateFrom = req.query.dateFrom // Direct Query
+  var dateTo = req.query.dateTo // Direct Query
   var cubeId = req.query.cube // Filter Query
   var user_id = req.query.user_id // Direct Query
   var action = req.query.type // Direct query
@@ -90,7 +92,7 @@ exports.transactionReport = (req, res) => {
             $and: [directQuery]
           }
         },
-        { $sort: {created_at : -1} },
+        { $sort: { created_at: -1 } },
         { $skip: offset },
         { $limit: limit },
 
@@ -165,7 +167,7 @@ exports.transactionReport = (req, res) => {
           }
         }
       ])
-    //   .sort({ created_at: -1 })
+      //   .sort({ created_at: -1 })
       //   .skip(offset)
       .limit(limit)
       .then(logs => {
@@ -285,7 +287,7 @@ exports.deadStockReport = async (req, res) => {
             $and: [directQuery]
           }
         },
-        { $sort: {created_at : -1} },
+        { $sort: { created_at: -1 } },
         { $skip: offset },
         { $limit: limit },
         // *** 1 ***
@@ -335,7 +337,7 @@ exports.deadStockReport = async (req, res) => {
           }
         }
       ])
-    //   .sort({ created_at: -1 })
+      //   .sort({ created_at: -1 })
       //   .skip(offset)
       //   .limit(limit)
       .then(logs => {
@@ -401,7 +403,7 @@ exports.stockShortageReport = async (req, res) => {
             $and: [directQuery]
           }
         },
-        { $sort: {created_at : -1} },
+        { $sort: { created_at: -1 } },
         { $skip: offset },
         { $limit: limit },
         // *** 1 ***
@@ -549,7 +551,7 @@ exports.orderReport = async (req, res) => {
             $and: [directQuery]
           }
         },
-        { $sort: {created_at : -1} },
+        { $sort: { created_at: -1 } },
         { $skip: offset },
         { $limit: limit },
         // *** 1 ***
@@ -581,7 +583,7 @@ exports.orderReport = async (req, res) => {
         },
         { $limit: limit }
       ])
-    //   .sort({ created_at: -1 })
+      //   .sort({ created_at: -1 })
       //   .skip(offset)
       //   .limit(limit)
       .then(async order => {
@@ -616,7 +618,7 @@ exports.kittingReport = async (req, res) => {
       .populate('kit_data.category_id')
       .skip(offset)
       .limit(limit)
-      .sort({created_at : -1})
+      .sort({ created_at: -1 })
       .then(async kits => {
         res.status(200).send({ success: true, data: await kits })
       })
@@ -624,7 +626,111 @@ exports.kittingReport = async (req, res) => {
     res.status(201).send({ success: false, error: error })
   }
 }
+exports.usageReport = async (req, res) => {
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var dateFrom = req.query.dateFrom // Direct Query
+  var dateTo = req.query.dateTo // Direct Query
+  var searchString = req.query.searchString
 
+  var query = searchString
+    ? { active_status: 1, $text: { $search: searchString } }
+    : { active_status: 1 }
+  if (dateFrom) {
+    var fromDate = moment(dateFrom).format('YYYY-MM-DD 00:00:00')
+    var toDate = moment(dateTo).format('YYYY-MM-DD 23:59:59')
+    query['updated_at'] = {
+      $gt: new Date(fromDate),
+      $lt: new Date(toDate)
+    }
+  }
+  stockItems = await stockAllocationModel.distinct('item', query).exec()
+  totalUsageReport = []
+  for await (let item of stockItems) {
+    isItemNonReturnable = await itemModel.findOne({
+      _id: item,
+      returnable: false
+    })
+    if (isItemNonReturnable) {
+      // Get Item Added on cube
+      stockAlloted_item = await stockAllocationModel
+        .distinct('_id', {
+          item: item,
+          updated_at: query.updated_at
+        })
+        .exec()
+      console.log(stockAlloted_item)
+      itemAdded = await logModel.aggregate([
+        {
+          $match: {
+            $and: [
+              {
+                action: 'Item added on cube',
+                stock_allocation_id: { $in: stockAlloted_item },
+                updated_at: query.updated_at
+              }
+            ]
+          }
+        },
+        { $group: { _id: null, trasaction_qty: { $sum: '$trasaction_qty' } } }
+      ])
+      // Get Item Added on cube for month
+      itemTaken = await logModel.aggregate([
+        {
+          $match: {
+            $and: [
+              {
+                action: 'Take',
+                stock_allocation_id: { $in: stockAlloted_item },
+                updated_at: query.updated_at
+              }
+            ]
+          }
+        },
+        { $group: { _id: null, trasaction_qty: { $sum: '$trasaction_qty' } } }
+      ])
+      itemDetail = await stockAllocationModel
+        .findOne({ item: item })
+        .populate('item')
+        .exec()
+
+      item_usage = JSON.parse(JSON.stringify(itemDetail))
+      item_usage['item_alloted'] = itemAdded[0].trasaction_qty
+      item_usage['item_taken'] = itemTaken[0].trasaction_qty
+      item_usage['item_usage'] =
+        (itemTaken[0].trasaction_qty / itemAdded[0].trasaction_qty) * 100
+      totalUsageReport.push(item_usage)
+    }
+  }
+  res.status(200).send({ success: true, item: totalUsageReport })
+}
+
+// Add Remaing Item Quantity at every first date of the month
+async function addRemainingItemQty () {
+  try {
+    stockAlloted_item = await stockAllocationModel.find().exec()
+    logData = []
+    for await (let item of stockAlloted_item) {
+      let data = {}
+      data['module_name'] = 'Item added on cube'
+      data['action'] = 'Item added on cube'
+      data['stock_allocation_id'] = item._id
+      data['trasaction_qty'] = item.quantity
+      logData.push(data)
+    }
+    await logModel.insertMany(logData)
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// Auto Add Remaing Item in Log
+var jobId = crontab.scheduleJob('* * 1 * *', async function () {
+  console.log('*********** Cron Schedule Started ***********')
+  await addRemainingItemQty()
+  console.log('*********** Auto Item Added On Log ***********')
+})
 
 async function calculatDate (subtractDay) {
   var d = new Date()

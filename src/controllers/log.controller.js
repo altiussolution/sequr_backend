@@ -7,7 +7,7 @@ exports.getLog = (req, res) => {
     var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
     var searchString = req.query.searchString
     var query = searchString
-      ? {$text: { $search: searchString, stock_allocation_id: {$exists: false}} }
+      ? {$text: { $search: searchString}, stock_allocation_id: {$exists: false} }
       : {stock_allocation_id: {$exists: false}}
     try {
       logModel

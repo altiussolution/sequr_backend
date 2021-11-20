@@ -5,7 +5,6 @@ const logSchema = mongoose.Schema(
   {
     user_id: {
       type: Schema.Types.ObjectId,
-      required: true,
       ref: 'users'
     },
     module_name: {
@@ -24,6 +23,11 @@ const logSchema = mongoose.Schema(
       type: Number
     },
     created_at: {
+      type: Date,
+      default: Date.now,
+      required: true
+    },
+    updated_at: {
       type: Date,
       default: Date.now,
       required: true
