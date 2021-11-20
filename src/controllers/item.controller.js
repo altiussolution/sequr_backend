@@ -8,36 +8,55 @@ const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
-exports.addItem = async (req, res) => {
+exports.addItem = (async (req, res) => {
   try {
-    var newItem = new itemModel(req.body)
-    newItem.save(function (err) {
-      if (err) {
-        res.status(200).send({
-          success: false,
-          message: 'error in adding item'
-        })
-      } else {
-        res
-          .status(200)
-          .send({ success: true, message: 'Item Added Successfully!' })
-        createLog(req.headers['authorization'], 'Item', 2)
-      }
-    })
-  } catch (error) {
-    res.send('An error occured')
-    console.log(error)
-  }
-}
+      var newItem = new itemModel(req.body);
+      newItem.save(function (err) {
+          if (err) 
+          {console.log(err)
+            if (err.keyValue.item_number){
+              var errorMessage =
+                err.code == error_code.isDuplication
+                  ? 'Item Number is already exist'
+                  : err
 
+            } 
+            res.status(409).send({
+              success: false,
+              message: errorMessage
+    
+            })
+           }
+          else {
+              res.status(200).send({ success: true, message: 'Item Added Successfully!' });
+          }
+      });
+  } catch (error) {
+      res.send("An error occured");
+      console.log(error);
+  }
+})
 exports.getItem = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
+  var category_id = req.query.category_id
+  var sub_category_id = req.query.sub_category_id
+  var is_active = req.query.is_active
+  var is_item = req.query.is_item
+  var is_gages = req.query.is_gages
+  var supplier = req.query.supplier
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
     : { active_status: 1 }
+  if (category_id) query['category_id'] = category_id
+  if (sub_category_id) query['sub_category_id'] = sub_category_id
+  if (is_active) query['is_active'] = is_active
+  if (is_item) query['is_active'] = is_item
+  if (is_gages) query['is_gages'] = is_gages
+  if (supplier) query['supplier'] = supplier
+
   try {
     itemModel
       .find(query)
@@ -57,31 +76,23 @@ exports.getItem = (req, res) => {
   }
 }
 
-exports.updateItem = async (req, res) => {
-  try {
-    itemModel.findByIdAndUpdate(req.params.id, req.body, async (err, file) => {
-      if (file) {
-        res.send({
-          status: 'Success',
-          message: 'item Updated'
-        })
-        createLog(req.headers['authorization'], 'Item', 1)
-        if (req.body.is_received) {
-          await itemModel
-            .findByIdAndUpdate(req.body.item_id, {
-              $inc: { in_stock: -req.body.total_quantity }
-            })
-            .exec()
-        }
-      } else {
-        res.send({ message: 'Not Found' })
-      }
-    })
-  } catch (error) {
-    res.send('An error occured')
-    console.log(error)
-  }
-}
+exports.updateItem = (async (req, res) => {
+    try {
+        itemModel.findByIdAndUpdate(req.params.id, req.body, (err, file) => {
+            if (file)
+                res.send({
+                    status: 'Success',
+                    message: 'item Updated'  
+                });
+            else {
+                res.send({message : 'Not Found'});
+            }
+        });
+    } catch (error) {
+        res.send("An error occured");
+        console.log(error);
+    }
+})
 
 exports.upload = async (req, res) => {
   try {
@@ -281,66 +292,11 @@ exports.deleteItems = (req, res) => {
 }
 
 exports.getItemfilter = (req, res) => {
-  var category_name = req.query.category_name
-  var sub_category_name = req.query.sub_category_name
-  var is_active = req.query.is_active
-  var is_gages = req.query.is_gages
-
-  if (category_name && sub_category_name && is_active && is_gages) {
-    var query = {
-      category_name: category_name,
-      sub_category_name: sub_category_name,
-      is_active: is_active,
-      is_gages: is_gages
-    }
-  } else if (category_name && sub_category_name && is_gages) {
-    var query = {
-      category_name: category_name,
-      sub_category_name: sub_category_name,
-      is_gages: is_gages
-    }
-  } else if (category_name && is_active && sub_category_name) {
-    var query = {
-      category_name: category_name,
-      is_active: is_active,
-      sub_category_name: sub_category_name
-    }
-  } else if (sub_category_name && is_active && is_gages) {
-    var query = {
-      sub_category_name: sub_category_name,
-      is_active: is_active,
-      is_gages: is_gages
-    }
-  } else if (category_name && is_active && is_gages) {
-    var query = {
-      category_name: category_name,
-      is_active: is_active,
-      is_gages: is_gages
-    }
-  } else if (category_name && sub_category_name) {
-    var query = {
-      category_name: category_name,
-      sub_category_name: sub_category_name
-    }
-  } else if (category_name && is_gages) {
-    var query = { category_name: category_name, is_gages: is_gages }
-  } else if (category_name && is_active) {
-    var query = { category_name: category_name, is_active: is_active }
-  } else if (sub_category_name && is_gages) {
-    var query = { sub_category_name: sub_category_name, is_gages: is_gages }
-  } else if (sub_category_name && is_active) {
-    var query = { sub_category_name: sub_category_name, is_active: is_active }
-  } else if (is_active && is_gages) {
-    var query = { is_active: is_active, is_gages: is_gages }
-  } else if (is_gages) {
-    var query = { is_gages: is_gages }
-  } else if (category_name) {
-    var query = { category_name: category_name }
-  } else if (sub_category_name) {
-    var query = { sub_category_name: sub_category_name }
-  } else if (is_active) {
-    var query = { is_active: is_active }
-  }
+  var query = searchString
+  ? { active_status: 1, $text: { $search: searchString } }
+  : { active_status: 1 }
+if (category_id) query['category_id'] = category_id
+if (sub_category_id) query['sub_category_id'] = sub_category_id
   try {
     itemModel
       .find(query)

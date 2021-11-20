@@ -5,7 +5,6 @@ const CubeSchema = Schema({
     cube_name: {
         type: String,
         required: true,
-        unique: true
     },
     cube_id: {
         type: String,

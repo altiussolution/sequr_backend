@@ -14,11 +14,13 @@ const UserSchema = Schema({
   },
   email_id: {
     type: String,
-    required: true
+    required: true,
+    unique : true
   },
   contact_no: {
     type: String,
-    required: true
+    required: true,
+    unique : true
   },
   date_of_birth: {
     type: Date,
@@ -37,7 +39,8 @@ const UserSchema = Schema({
   },
   employee_id: {
     type: String,
-    required: true
+    required: true,
+    unique : true
   },
   item_max_quantity: {
     type: String,

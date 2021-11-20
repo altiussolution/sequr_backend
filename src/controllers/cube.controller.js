@@ -14,8 +14,8 @@ exports.createCube = (req, res) => {
                 createLog(req.headers['authorization'], 'Cube', 2)
             }
             else {
-                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Cube code or name' : err)
-                res.status(200).send({
+                var errorMessage = (err.code == error_code.isDuplication ? 'Cube Id is Already exist' : err)
+                res.status(409).send({
                     success: false,
                     message: errorMessage
                 });
