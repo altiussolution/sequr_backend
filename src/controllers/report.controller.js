@@ -12,7 +12,7 @@ const { search } = require('../routes/users.route')
 exports.transactionReport = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : 20
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   console.log(limit)
 
   var searchString = req.query.searchString // Search Query
@@ -90,6 +90,10 @@ exports.transactionReport = (req, res) => {
             $and: [directQuery]
           }
         },
+        { $sort: {created_at : -1} },
+        { $skip: offset },
+        { $limit: limit },
+
         // *** 1 ***
         {
           $lookup: {
@@ -159,10 +163,9 @@ exports.transactionReport = (req, res) => {
           $match: {
             $or: searchQuery
           }
-        },
-        { $limit: limit }
+        }
       ])
-      .sort({ created_at: -1 })
+    //   .sort({ created_at: -1 })
       //   .skip(offset)
       .limit(limit)
       .then(logs => {
@@ -282,6 +285,9 @@ exports.deadStockReport = async (req, res) => {
             $and: [directQuery]
           }
         },
+        { $sort: {created_at : -1} },
+        { $skip: offset },
+        { $limit: limit },
         // *** 1 ***
         // *** 2 ***
         // *** 3 ***
@@ -327,10 +333,9 @@ exports.deadStockReport = async (req, res) => {
           $match: {
             $or: searchQuery
           }
-        },
-        { $limit: limit }
+        }
       ])
-      .sort({ created_at: -1 })
+    //   .sort({ created_at: -1 })
       //   .skip(offset)
       //   .limit(limit)
       .then(logs => {
@@ -396,6 +401,9 @@ exports.stockShortageReport = async (req, res) => {
             $and: [directQuery]
           }
         },
+        { $sort: {created_at : -1} },
+        { $skip: offset },
+        { $limit: limit },
         // *** 1 ***
         // *** 2 ***
         // *** 3 ***
@@ -447,9 +455,6 @@ exports.stockShortageReport = async (req, res) => {
           }
         }
       ])
-      .sort({ created_at: -1 })
-      //   .skip(offset)
-      //   .limit(limit)
       .then(async itemOnCube => {
         belowMinItems = []
         if (itemOnCube.length > 0) {
@@ -544,6 +549,9 @@ exports.orderReport = async (req, res) => {
             $and: [directQuery]
           }
         },
+        { $sort: {created_at : -1} },
+        { $skip: offset },
+        { $limit: limit },
         // *** 1 ***
         // *** 2 ***
         // *** 3 ***
@@ -573,7 +581,7 @@ exports.orderReport = async (req, res) => {
         },
         { $limit: limit }
       ])
-      .sort({ created_at: -1 })
+    //   .sort({ created_at: -1 })
       //   .skip(offset)
       //   .limit(limit)
       .then(async order => {
@@ -608,6 +616,7 @@ exports.kittingReport = async (req, res) => {
       .populate('kit_data.category_id')
       .skip(offset)
       .limit(limit)
+      .sort({created_at : -1})
       .then(async kits => {
         res.status(200).send({ success: true, data: await kits })
       })
@@ -615,6 +624,7 @@ exports.kittingReport = async (req, res) => {
     res.status(201).send({ success: false, error: error })
   }
 }
+
 
 async function calculatDate (subtractDay) {
   var d = new Date()
