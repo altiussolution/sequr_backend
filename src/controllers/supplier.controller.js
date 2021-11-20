@@ -3,55 +3,114 @@ var {error_code} = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
-exports.createSupplier = (req, res) => {
-    try {
-        var newSupplier = new supplierModel(req.body);
-        newSupplier.save((err) => {
-            if (!err) {
-                res.status(200).send({ success: true, message: 'Supplier Created Successfully!' });
-                createLog(req.headers['authorization'], 'Supplier', 2)
-            }
-           else {
-            if (err.keyValue.supplier_name){
-             var errorMessage =
-               err.code == error_code.isDuplication
-                 ? 'Supplier Name is already exist'
-                 : err
-            } else if(err.keyValue.supplier_code){
-             var errorMessage =
-             err.code == error_code.isDuplication
-               ? 'Supplier Code is already exist'
-               : err
-            }
-            else if(err.keyValue.supplier_address){
-             var errorMessage =
-             err.code == error_code.isDuplication
-               ? 'Address is already exist'
-               : err
-            }
-            else if(err.keyValue.phone_number){
-             var errorMessage =
-             err.code == error_code.isDuplication
-               ? 'Phonenumber  is already exist'
-               : err
-            }
-            else if(err.keyValue.email_id){
-             var errorMessage =
-             err.code == error_code.isDuplication
-               ? 'Email Id is already exist'
-               : err
-            }
-             res.status(200).send({
-               success: false,
-               message: errorMessage
+
+
+// exports.createSupplier = (req, res) => {
+//     try {
+//         var newSupplier = new supplierModel(req.body);
+//         newSupplier.save((err) => {
+//             if (!err) {
+//                 res.status(200).send({ success: true, message: 'Supplier Created Successfully!' });
+//                 createLog(req.headers['authorization'], 'Supplier', 2)
+//             }
+//            else {
+//              console.log(err)
+//             if (err.keyValue.supplier_name){
+//              var errorMessage =
+//                err.code == error_code.isDuplication
+//                  ? 'Supplier Name is already exist'
+//                  : err
+//             } else if(err.keyValue.supplier_code){
+//              var errorMessage =
+//              err.code == error_code.isDuplication
+//                ? 'Supplier Code is already exist'
+//                : err
+//             }
+//             else if(err.keyValue.supplier_address){
+//              var errorMessage =
+//              err.code == error_code.isDuplication
+//                ? 'Address is already exist'
+//                : err
+//             }
+//             else if(err.keyValue.phone_number){
+//              var errorMessage =
+//              err.code == error_code.isDuplication
+//                ? 'Phonenumber  is already exist'
+//                : err
+//             }
+//             else if(err.keyValue.email_id){
+//              var errorMessage =
+//              err.code == error_code.isDuplication
+//                ? 'Email Id is already exist'
+//                : err
+//             }
+//              res.status(409).send({
+//                success: false,
+//                message: errorMessage
      
-             })
-           }
-         })
-       } catch (error) {
-         res.status(201).send(error)
-       }
-     }
+//              })
+//            }
+//          })
+//        } catch (error) {
+//          res.status(201).send(error)
+//        }
+//      }
+
+exports.createSupplier = async (req, res) => {
+  try {
+      var body = req.body;
+      var supplier = new supplierModel(req.body);
+      const {
+          supplier_name,
+          supplier_code,
+          supplier_address,
+          phone_number,
+          email_id,
+      } = req.body
+      const oldUser = await supplierModel.findOne({supplier_name })
+      const code = await supplierModel.findOne({supplier_code  })
+    const address = await supplierModel.findOne({supplier_address })
+    const email = await supplierModel.findOne({email_id  })
+    const phone = await supplierModel.findOne({phone_number })
+      
+      if (oldUser){
+          return res
+          .status(409)
+          .send( {status: false, message: 'Supplier name already exists'})
+        }
+       if (code){
+          return res
+          .status(409)
+          .send( {status: false, message: 'Supplier code already exists'})
+        }
+        if (address){
+            return res
+            .status(409)
+            .send( {status: false, message: 'Supplier address  already exists'})
+          }
+      if (email){
+              return res
+              .status(409)
+              .send( {status: false, message: 'Email  already exists'})
+            }
+          if (phone){
+                return res
+                .status(409)
+                .send( {status: false, message: 'Phone Number  already exists'})
+              }
+              supplier.save((err)=>{
+                  if(!err){
+                      res.status(200).send({ success: true, message: 'Supplier Created Successfully!' });
+                     } 
+              })
+              
+    
+     
+  } catch (err) {
+      
+      console.log(err)
+  }
+}
 
 exports.getSupplier = (req, res) => {
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
