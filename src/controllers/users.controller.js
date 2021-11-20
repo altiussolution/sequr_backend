@@ -250,7 +250,7 @@ exports.listEmployees = (req, res) => {
     if (status) query['status'] = status
     if (shift_time_id) query['shift_time_id'] = shift_time_id
   User.find(query)
-    .populate('department_id').populate('branch_id').populate('role_id')
+    .populate('department_id')
     .populate('country_id').populate('state_id').populate('city_id')
     .skip(offset)
     .limit(limit)
