@@ -47,6 +47,9 @@ exports.getItem = (req, res) => {
   var is_item = req.query.is_item
   var is_gages = req.query.is_gages
   var supplier = req.query.supplier
+  var moment = require('moment')
+  var dateFrom = req.query.dateFrom // Direct Query
+  var dateTo = req.query.dateTo // Direct Query
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
     : { active_status: 1 }
@@ -56,6 +59,17 @@ exports.getItem = (req, res) => {
   if (is_item) query['is_active'] = is_item
   if (is_gages) query['is_gages'] = is_gages
   if (supplier) query['supplier'] = supplier
+  if (dateFrom) {
+    var fromDate = moment(dateFrom).format('YYYY-MM-DD 00:00:00')
+    var toDate = moment(dateTo).format('YYYY-MM-DD 23:59:59')
+    query['calibration_month'] = {
+      $gt: new Date(fromDate),
+      $lt: new Date(toDate)
+    }
+  }
+  // Date Filter
+
+
 
   try {
     itemModel
