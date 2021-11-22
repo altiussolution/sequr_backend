@@ -483,11 +483,7 @@ exports.getEmployeefilter = (req, res) => {
           if (department_id) query['department_id'] = department_id
           if (status) query['status'] = status
           if (shift_time_id) query['shift_time_id'] = shift_time_id
-        User.find(query)
-          .populate('department_id')
-          .populate('country_id').populate('state_id').populate('city_id')
-          .skip(offset)
-          .limit(limit)
+
      
 User.find(query).populate('department_id').populate('role_id').populate('branch_id').populate('shift_time_id').skip(offset).limit(limit).then(user =>{
   res.status(200).send({ success: true, user: user });
