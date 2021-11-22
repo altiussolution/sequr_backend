@@ -22,6 +22,11 @@ const logSchema = mongoose.Schema(
     trasaction_qty: {
       type: Number
     },
+    company_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'company',
+      //required : true
+  },
     created_at: {
       type: Date,
       default: Date.now,

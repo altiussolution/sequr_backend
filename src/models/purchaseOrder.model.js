@@ -54,6 +54,11 @@ const PurchaseOrderSchema = Schema({
     enum: [1, 2],
     default: 1
   },
+  company_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'company',
+    //required : true
+  },
   created_at: {
     type: Date,
     default: Date.now

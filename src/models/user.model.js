@@ -77,6 +77,15 @@ const UserSchema = Schema({
     type: String,
     unique:true
   },
+  company_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'company',
+    //required : true
+  },
+  created_by: {
+    type: Schema.Types.ObjectId,
+    ref: 'users'
+  },
   status: {
     type: Number,
     enum: [0, 1],

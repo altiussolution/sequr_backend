@@ -53,6 +53,11 @@ const SupplierSchema = Schema({
         type: String,
         required: true,
     },
+    company_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'company',
+        //required : true
+      },
     status: {
         type: Boolean,
         default: false
