@@ -21,7 +21,8 @@ var { error_code } = require('../utils/enum.utils')
 // const { createLog } = require('../middleware/crud.middleware')
 
 exports.getUsercount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id : company_id}
   try {
     await User.count(query)
       .then(user => {
@@ -37,7 +38,8 @@ exports.getUsercount = async (req, res) => {
 }
 
 exports.getBranchcount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id:company_id}
   try {
     await branchModel
       .count(query)
@@ -54,7 +56,8 @@ exports.getBranchcount = async (req, res) => {
 }
 
 exports.getItemcount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1, company_id:company_id }
   try {
     await itemModel
       .count(query)
@@ -71,7 +74,8 @@ exports.getItemcount = async (req, res) => {
 }
 
 exports.getCategorycount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1,company_id:company_id }
   try {
     await categoryModel
       .count(query)
@@ -88,7 +92,8 @@ exports.getCategorycount = async (req, res) => {
 }
 
 exports.getsubCategorycount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id:company_id}
   try {
     await subCategoryModel
       .count(query)
@@ -105,7 +110,8 @@ exports.getsubCategorycount = async (req, res) => {
 }
 
 exports.getRolescount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id:company_id}
   try {
     await rolesModel
       .count(query)
@@ -122,7 +128,8 @@ exports.getRolescount = async (req, res) => {
 }
 
 exports.getstockAllocationcount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id:company_id}
   try {
     await stockAllocationModel
       .count(query)
@@ -139,7 +146,8 @@ exports.getstockAllocationcount = async (req, res) => {
 }
 
 exports.getBincount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id:company_id}
   try {
     await binModel
       .count(query)
@@ -156,7 +164,8 @@ exports.getBincount = async (req, res) => {
 }
 
 exports.getCompartmentcount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1,company_id:company_id }
   try {
     await compartmentModel
       .count(query)
@@ -173,7 +182,8 @@ exports.getCompartmentcount = async (req, res) => {
 }
 
 exports.getKitcount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1,company_id:company_id }
   try {
     await kitModel
       .count(query)
@@ -190,7 +200,8 @@ exports.getKitcount = async (req, res) => {
 }
 
 exports.getSuppliercount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1,company_id:company_id }
   try {
     await supplierModel
       .count(query)
@@ -207,7 +218,8 @@ exports.getSuppliercount = async (req, res) => {
 }
 
 exports.getCubecount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id:company_id}
   try {
     await cubeModel
       .count(query)
@@ -224,7 +236,8 @@ exports.getCubecount = async (req, res) => {
 }
 
 exports.getDepartmentcount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id:company_id}
   try {
     await departmentModel
       .count(query)
@@ -241,7 +254,8 @@ exports.getDepartmentcount = async (req, res) => {
 }
 
 exports.getPurchaseOrdercount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id:company_id}
   try {
     await purchaseOrderModel
       .count(query)
@@ -258,7 +272,8 @@ exports.getPurchaseOrdercount = async (req, res) => {
 }
 
 exports.getPermissioncount = async (req, res) => {
-  var query = ({ active_status: 1},{ $where: "this.permission.length > 1"  })
+  var company_id = req.query.company_id
+  var query = ({ active_status: 1,company_id:company_id},{ $where: "this.permission.length > 1"  })
   try {
     await rolesModel
       .count(query)
@@ -275,7 +290,8 @@ exports.getPermissioncount = async (req, res) => {
 }
 
 exports.getshiftTimecount = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id:company_id}
   try {
     await shift_timeModel
       .count(query)
@@ -320,9 +336,10 @@ exports.addMachineUsage = async (req, res) => {
 var ObjectId = require('mongodb').ObjectID
 
 exports.getMachineUsage = async (req, res) => {
+  var company_id = req.query.company_id
   var query = req.query.branch_id
-    ? { active_status: 1, branch: req.query.branch_id }
-    : { active_status: 1 }
+    ? { active_status: 1, branch: req.query.branch_id ,company_id:company_id}
+    : { active_status: 1 ,company_id:company_id}
   try {
     cubes = await cubeModel
       .find({
@@ -463,9 +480,11 @@ exports.itemAlert = async (req, res) => {
 
 exports.calibrationMonthNotification = async (req, res) => {
   try {
+    var company_id = req.query.company_id
     await itemModel
       .find({
         active_status: 1,
+        company_id:company_id,
         is_gages: true,
         calibration_month: { $exists: true, $ne: null }
       })
@@ -502,9 +521,11 @@ exports.calibrationMonthNotification = async (req, res) => {
 }
 exports.outOfStockItems = async (req, res) => {
   try {
+    var company_id = req.query.company_id
     await itemModel
       .find({
         active_status: 1,
+        company_id:company_id,
         returnable: false,
         $where: 'this.generate_po_on >= this.in_stock'
       })
@@ -517,7 +538,8 @@ exports.outOfStockItems = async (req, res) => {
 }
 
 exports.getForgotpassword = async (req, res) => {
-  var query = { new_pass_req: true, active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { new_pass_req: true, active_status: 1 ,company_id:company_id}
   try {
     await User.find(query)
       .then(user => {
@@ -533,7 +555,8 @@ exports.getForgotpassword = async (req, res) => {
 }
 
 exports.poAlert = (req, res) => {
-  var query = { active_status: 1, is_received: 0, is_auto_po: true }
+  var company_id = req.query.company_id
+  var query = { active_status: 1, is_received: 0, is_auto_po: true , company_id:company_id }
   try {
     purchaseOrderModel
       .find(query)

@@ -8,8 +8,9 @@ var ObjectId = require('mongodb').ObjectID
 
 exports.columnShortage = async (req, res) => {
   var query = req.query.branch_id
-    ? { active_status: 1, branch: req.query.branch_id }
-    : { active_status: 1 }
+  var company_id = req.query.company_id
+    ? { active_status: 1, branch: req.query.branch_id ,company_id:company_id}
+    : { active_status: 1 ,company_id:company_id}
   try {
     cubes = await cubeModel
       .find({
@@ -46,6 +47,7 @@ exports.columnShortage = async (req, res) => {
 }
 exports.itemShortage = async (req, res) => {
   console.log(req.query.branch_id)
+  var company_id = req.query.company_id
   var filterBranch = req.query.branch_id
     ? {
         $match: {

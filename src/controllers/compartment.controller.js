@@ -39,7 +39,8 @@ exports.getCompartment = (req, res) => {
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
     var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
     var searchString = req.query.searchString;
-    var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
+    var company_id = req.query.company_id
+    var query = (searchString ? { active_status: 1, $text: { $search: searchString },company_id:company_id } : { active_status: 1 , company_id : company_id })
     try {
         compartmentModel.find(query).populate("cube_id").populate("bin_id").skip(offset).limit(limit).then(compartment => {
             console.log(compartment)
@@ -56,8 +57,9 @@ exports.getCompartmentByCube = (req,res) =>{
     try{
         var cube_id = req.query.cube_id;
         var bin_id = req.query.bin_id;
-        if(cube_id && bin_id){
-            compartmentModel.find({cube_id:cube_id,bin_id:bin_id}).then(compartments =>{
+        var company_id = req.query.company_id
+        if(cube_id && bin_id && company_id){
+            compartmentModel.find({cube_id:cube_id,bin_id:bin_id,company_id:company_id}).then(compartments =>{
                 res.status(200).send({ success: true, data: compartments });
             }).catch(err=>{
                 res.status(201).send({success: false, message : err})
@@ -87,29 +89,30 @@ exports.getCompartmentfilter = (req, res) => {
 
     var cube_name = req.query.cube_name;
     var bin_name = req.query.bin_name;
+    var company_id = req.query.company_id;
     var is_removed = req.query.is_removed;
 
-if (cube_name && bin_name  && is_removed){
-var query = {cube_name : cube_name, bin_name  : bin_name,is_removed:is_removed}
+if (cube_name && bin_name  && is_removed && company_id){
+var query = {cube_name : cube_name, bin_name  : bin_name,is_removed:is_removed,company_id:company_id}
 }
-else if( cube_name && bin_name ){
-var query = { cube_name: cube_name,bin_name : bin_name }
+else if( cube_name && bin_name && company_id){
+var query = { cube_name: cube_name,bin_name : bin_name ,company_id: company_id}
 }
-else if( bin_name  && is_removed ){
-var query = {bin_name   : bin_name, is_removed :is_removed}
+else if( bin_name  && is_removed && company_id){
+var query = {bin_name   : bin_name, is_removed :is_removed, company_id:company_id}
 }
-else if( cube_name && is_removed ){
-var query = {cube_name  : cube_name, is_removed :is_removed}
+else if( cube_name && is_removed && company_id){
+var query = {cube_name  : cube_name, is_removed :is_removed,company_id:company_id}
 }
                                                                                                 
-else if( cube_name ){
-var query = { cube_name :cube_name}
+else if( cube_name && company_id){
+var query = { cube_name :cube_name,company_id:company_id}
 }
-else if(  is_removed ){
-var query = { is_removed:is_removed  }
+else if(  is_removed && company_id){
+var query = { is_removed:is_removed ,company_id:company_id }
 }
-else if( bin_name  ){
-var query = { bin_name  :bin_name }
+else if( bin_name && company_id ){
+var query = { bin_name  :bin_name ,company_id:company_id}
 }
 try {
 compartmentModel.find(query).populate("cube_id").populate("bin_id").then(compartment => {

@@ -130,7 +130,7 @@ exports.login = async (req, res) => {
       res.status(400).send({ status: false, message: 'All input is required' })
     }
 
-    const user = await User.findOne({ employee_id }).populate('role_id').populate('country_id').populate('state_id').populate('city_id').exec()
+    const user = await User.findOne({ employee_id }).populate('role_id').populate('country_id').populate('state_id').populate('city_id').populate('company_id').exec()
 
     if (
       user &&

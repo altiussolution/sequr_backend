@@ -58,10 +58,11 @@ exports.getBin = (req, res) => {
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
   var cube_id = req.query.cube_id
+  var company_id = req.query.company_id
   var is_removed = req.query.is_removed
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    : { active_status: 1 , company_id : company_id} 
     if (cube_id) query['cube_id'] = cube_id
     if (is_removed) query['is_removed'] = is_removed
   try {
@@ -83,10 +84,11 @@ exports.getBin = (req, res) => {
 
 exports.getBinByCube = (req, res) => {
   try {
+    var company_id = req.query.company_id
     var cube_id = req.query.cube_id
-    if (cube_id) {
+    if (cube_id && company_id) {
       binModel
-        .find({ cube_id: cube_id })
+        .find({ cube_id: cube_id ,company_id:company_id})
         .then(bins => {
           res.status(200).send({ success: true, data: bins })
         })
