@@ -10,7 +10,6 @@ var moment = require('moment')
 const { search } = require('../routes/users.route')
 var crontab = require('node-crontab')
 
-
 exports.transactionReport = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
@@ -24,10 +23,13 @@ exports.transactionReport = (req, res) => {
   var user_id = req.query.user_id // Direct Query
   var action = req.query.type // Direct query
   var itemLimit = req.query.itemLimit // filter query
-  if (req.query.administation == false) {
-    var directQuery = {}
+  var role_id = req.query.role_id
+  if (req.query.administration == true) {
+    var directQuery = { module_name: { $nin: 'Item added on cube' } }
   } else {
-    var directQuery = { stock_allocation_id: { $exists: true } }
+    var directQuery = {
+      module_name: 'Machine Item'
+    }
   }
   var filterQuery = {}
   var searchQuery = [{}]
@@ -45,6 +47,7 @@ exports.transactionReport = (req, res) => {
   if (action) directQuery['action'] = action
   if (cubeId) filterQuery['stock_allocation_doc.cube_id'] = ObjectId(cubeId)
   if (itemLimit) filterQuery['user_doc.item_max_quantity'] = parseInt(itemLimit)
+  if (role_id) filterQuery['role_doc._id'] = ObjectId(role_id)
   if (searchString) {
     searchQuery = [
       {
@@ -488,9 +491,6 @@ exports.orderReport = async (req, res) => {
   var receivedDateTo = req.query.ceratedDateTo // Direct Query
   var status = req.query.status // Direct Query
   var supplier_id = req.query.status // Direct Query
-
-  var columnId = req.query.columnId // Direct Query
-
   var directQuery = {}
   var filterQuery = {}
   var searchQuery = [{}]
@@ -695,12 +695,14 @@ exports.usageReport = async (req, res) => {
         .populate('item')
         .exec()
 
-      item_usage = JSON.parse(JSON.stringify(itemDetail))
-      item_usage['item_alloted'] = itemAdded[0].trasaction_qty
-      item_usage['item_taken'] = itemTaken[0].trasaction_qty
-      item_usage['item_usage'] =
-        (itemTaken[0].trasaction_qty / itemAdded[0].trasaction_qty) * 100
-      totalUsageReport.push(item_usage)
+      if (itemTaken.length > 0 && itemAdded > 0) {
+        item_usage = JSON.parse(JSON.stringify(itemDetail))
+        item_usage['item_alloted'] = itemAdded[0].trasaction_qty
+        item_usage['item_taken'] = itemTaken[0].trasaction_qty
+        item_usage['item_usage'] =
+          (itemTaken[0].trasaction_qty / itemAdded[0].trasaction_qty) * 100
+        totalUsageReport.push(item_usage)
+      }
     }
   }
   res.status(200).send({ success: true, item: totalUsageReport })
