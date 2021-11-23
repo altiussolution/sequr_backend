@@ -18,9 +18,15 @@ exports.createLog = (token, module_name, action, stock_id, qty) => {
     else if (action == 1) var action = 'Updated'
     else if (action == 2) var action = 'Created'
     var data = !stock_id
-      ? { user_id: decoded.user_id, module_name, action }
+      ? {
+          user_id: decoded.user_id,
+          module_name,
+          action
+          // company_id : decoded.company_id
+        }
       : {
           user_id: decoded.user_id,
+          // company_id : decoded.company_id
           module_name,
           action,
           stock_allocation_id: stock_id,

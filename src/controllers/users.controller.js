@@ -140,7 +140,7 @@ exports.login = async (req, res) => {
       user.active_status
     ) {
       const token = jwt.sign(
-        { user_id: user._id, employee_id },
+        { user_id: user._id, employee_id, role_id : user.role_id },
         process.env.TOKEN_KEY,
         {
           expiresIn: '2h'
@@ -244,6 +244,8 @@ exports.listEmployees = (req, res) => {
   var status = req.query.status;
   var department_id = req.query.department_id;
   var shift_time_id = req.query.shift_time_id;
+  var company_id = req.query.company_id;
+  var created_by = req.query.created_by;
   var query = searchString
     ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
     : { active_status: 1 , company_id : company_id }
@@ -252,6 +254,8 @@ exports.listEmployees = (req, res) => {
     if (department_id) query['department_id'] = department_id
     if (status) query['status'] = status
     if (shift_time_id) query['shift_time_id'] = shift_time_id
+    if (company_id) query['company_id'] = shift_time_id
+    if (created_by) query['created_by'] = created_by
   User.find(query)
     .populate('department_id')
     .populate('country_id').populate('state_id').populate('city_id')

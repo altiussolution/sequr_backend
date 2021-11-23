@@ -1,12 +1,11 @@
-const { CompanyController } = require('../controllers');
-const auth = require("../middleware/auth.middleware");
+const { CompanyController } = require('../controllers')
+const { verifySuperAdmin } = require('../middleware/athentication.middleware')
 let route = require('express').Router()
 
-route.post('/add', auth,CompanyController.createCompany);
-route.get('/get',auth, CompanyController.getCompany);
-route.put('/update/:id', auth,CompanyController.updateCompany);
-route.delete('/delete/:id', auth,CompanyController.deleteCompany);
-
-
-
-module.exports = route;
+route.post('/add', verifySuperAdmin, CompanyController.createCompany)
+route.get('/get', verifySuperAdmin, CompanyController.getCompany)
+route.put('/update/:id', verifySuperAdmin, CompanyController.updateCompany)
+route.delete('/delete/:id', verifySuperAdmin, CompanyController.deleteCompany)
+route.post('/addSuperAdmin', CompanyController.createCompany)
+route.get('/getSuperAdmin', CompanyController.getCompany)
+module.exports = route
