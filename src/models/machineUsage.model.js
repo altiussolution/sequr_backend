@@ -13,6 +13,11 @@ const machineUsageSchema = mongoose.Schema(
       required: true,
       ref: 'bin'
     },
+    company_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'company',
+      //required : true
+    },
     created_at: {
       type: Date,
       default: Date.now,

@@ -21,6 +21,7 @@ const subCategoryModel = require("./subCategory.model")
 const CartModel = require("./cart.model")
 const machineUsageModel = require("./machineUsage.model")
 const logModel = require("./log.model")
+const companyModel = require("./company.model")
 
 
 module.exports = {
@@ -46,5 +47,6 @@ module.exports = {
     subCategoryModel,
     CartModel,
     machineUsageModel,
-    logModel
+    logModel,
+    companyModel
 }

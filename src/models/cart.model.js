@@ -59,6 +59,11 @@ const CartSchema = Schema({
         type : Number,
         default : 0
     },
+    company_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'company',
+        //required : true
+    },
     status : {
         type : Number,
         enum : [0,1],

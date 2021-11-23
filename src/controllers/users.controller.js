@@ -250,7 +250,8 @@ exports.listEmployees = (req, res) => {
     if (status) query['status'] = status
     if (shift_time_id) query['shift_time_id'] = shift_time_id
   User.find(query)
-    .populate('department_id').populate('branch_id').populate('role_id').populate('shift_time_id')
+    .populate('department_id')
+    .populate('country_id').populate('state_id').populate('city_id')
     .skip(offset)
     .limit(limit)
     .then(result => {
@@ -465,112 +466,33 @@ exports.changePassword = async (req, res) => {
 }
 
 exports.getEmployeefilter = (req, res) => {
-  var role_name = req.query.role_name;
-  var branch_name= req.query.branch_name;
-  var status = req.query.status;
-  var department_name = req.query.department_name;
-  var shift_type = req.query.shift_type;
- 
-  if (role_name && branch_name && status && department_name && shift_type){
-      var query = {role_name:role_name,branch_name :branch_name , status  : status ,department_name:department_name, shift_type:shift_type}
-  }
-  else if(role_name && branch_name && department_name && shift_type){
-      var query = {role_name: role_name, branch_name : branch_name ,department_name:department_name,shift_type:shift_type }
-  }
-  else if( role_name && status  && branch_name && shift_type){
-      var query = { role_name: role_name ,  status : status ,branch_name : branch_name,shift_type:shift_type}
-  }
-  else if( branch_name  && status  && department_name && shift_type){
-      var query = {branch_name  : branch_name  , status : status ,department_name :department_name,shift_type:shift_type}
-  }
-  else if( role_name  && status && department_name && shift_type ){
-      var query = {role_name  : role_name  , status :status ,department_name :department_name,shift_type:shift_type}
-  }
-    else if( role_name  && status && department_name && branch_name ){
-      var query = {role_name  : role_name  , status :status ,department_name :department_name,branch_name:branch_name}
-  }
-  else if( role_name && branch_name && shift_type){
-      var query = {role_name:role_name , branch_name : branch_name,shift_type:shift_type}
-  }                                                                                                     
-  else if(role_name && department_name && shift_type){
-      var query = { role_name :role_name ,department_name:department_name,shift_type : shift_type}
-  }
-  else if( role_name && status && shift_type){
-      var query = { role_name :role_name , status:status,shift_type:shift_type}
-  }
-  
-  else if( branch_name && department_name && shift_type){
-      var query = {branch_name : branch_name, department_name:department_name,shift_type:shift_type}
-  }
-  else if( branch_name && status && shift_type ){
-      var query = {branch_name : branch_name, status:status,shift_type:shift_type}
-  }
-  else if( status && department_name && shift_type){
-      var query = { status :status,department_name:department_name,shift_type:shift_type  }
-  }
-else if(role_name && department_name && branch_name){
-      var query = { role_name :role_name ,department_name:department_name,branch_name:branch_name}
-  }
-else if(role_name && status && branch_name){
-      var query = { role_name :role_name , status: status,branch_name:branch_name}
-  }
-else if(department_name && status && branch_name){
-      var query = { department_name :department_name , status: status,branch_name:branch_name}
-  }
+        var offset =
+          req.query.offset != undefined ? parseInt(req.query.offset) : false
+        var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+        var searchString = req.query.searchString
+        var role_id = req.query.role_id;
+        var branch_id= req.query.branch_id;
+        var status = req.query.status;
+        var department_id = req.query.department_id;
+        var shift_time_id = req.query.shift_time_id;
+        var query = searchString
+          ? { active_status: 1, $text: { $search: searchString } }
+          : { active_status: 1 }
+          if (role_id) query['role_id'] = role_id
+          if (branch_id) query['branch_id'] = branch_id
+          if (department_id) query['department_id'] = department_id
+          if (status) query['status'] = status
+          if (shift_time_id) query['shift_time_id'] = shift_time_id
 
-else if( role_name && branch_name){
-      var query = {role_name:role_name , branch_name : branch_name}
-  }                                                                                                     
-  else if(role_name && department_name){
-      var query = { role_name :role_name ,department_name:department_name}
-  }
-  else if( role_name && status){
-      var query = { role_name :role_name , status:status}
-  }
-  else if( branch_name && department_name){
-      var query = {branch_name : branch_name, department_name:department_name}
-  }
-  else if( branch_name && status ){
-      var query = {branch_name : branch_name, status:status}
-  }
-  else if( status && department_name){
-      var query = { status :status,department_name:department_name  }
-  }
- else if( role_name && shift_type){
-      var query = { role_name :role_name ,shift_type:shift_type  }
-  }
- else if(  shift_type && department_name){
-      var query = { shift_type :shift_type,department_name:department_name  }
-  }
- else if( branch_name && shift_type){
-      var query = {branch_name :branch_name ,shift_type:shift_type  }
-  }
- else if( status && shift_type){
-      var query = { status :status,shift_type:shift_type  }
-  }
-else if( department_name ){
-    var query = { department_name :department_name}
-}
-else if( role_name ){
-    var query = { role_name :role_name}
-}
-else if( branch_name ){
-    var query = { first_name :first_name}
-}
-else if( status  ){
-    var query = {  status: status}
-}
-else if( shift_type  ){
-  var query = {  shift_type: shift_type}
-}
-
-User.find(query).populate('department_id').populate('role_id').populate('branch_id').populate('shift_time_id').then(user =>{
+     
+User.find(query).populate('department_id').populate('role_id').populate('branch_id').populate('shift_time_id').skip(offset).limit(limit).then(user =>{
   res.status(200).send({ success: true, user: user });
 }).catch(error => {
   res.status(400).send({success: false, error : error})
 })
-
 }
+
+
 
 
   exports.updateForgotpassword = async(req, res) => {

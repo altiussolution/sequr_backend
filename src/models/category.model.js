@@ -32,6 +32,11 @@ const CategorySchema = Schema({
         type: Date,
         default: Date.now
     },
+    company_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'company',
+        //required : true
+      },
     active_status: {
         type: Number,
         enum: [0,1],

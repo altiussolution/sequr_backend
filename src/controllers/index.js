@@ -20,6 +20,7 @@ ServiceCubeMaintenanceController= require('./serviceCubeMaintenance.controller')
 analyticsController= require('./analytics.controller')
 LogController = require('./log.controller')
 ReportController = require('./report.controller')
+CompanyController = require('./company.controller')
 
 module.exports = {
   UsersController,
@@ -43,6 +44,7 @@ module.exports = {
   ServiceCubeMaintenanceController,
   analyticsController,
   LogController,
-  ReportController
+  ReportController,
+  CompanyController
 
 }

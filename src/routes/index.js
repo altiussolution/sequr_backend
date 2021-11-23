@@ -20,6 +20,8 @@ const ServiceCubeMaintenance = require('./serviceCubeMaintenance.route')
 const Analytics = require('./analytics.route')
 const Log =  require('./log.route');
 const Report =  require('./report.route');
+const Company =  require('./company.route');
+
 
 module.exports = (app) => {
     app.use('/employee', Users)
@@ -44,4 +46,5 @@ module.exports = (app) => {
     app.use('/analytics',Analytics)
     app.use('/log', Log)
     app.use('/report', Report)
+    app.use('/company', Company)
 }
