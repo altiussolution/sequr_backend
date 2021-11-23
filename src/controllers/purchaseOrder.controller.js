@@ -69,8 +69,9 @@ exports.addPurchaseOrder = async (req, res) => {
 
 exports.getPurchaseOrder = (req, res) => {
   var searchString = req.query.searchString
+  var company_id = req.query.company_id
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
+    ? { active_status: 1,company_id : company_id, $text: { $search: searchString } }
     : { active_status: 1 }
   try {
     purchaseOrderModel

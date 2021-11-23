@@ -185,13 +185,14 @@ exports.overallStockReport = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var company_id = req.query.company_id;
   var searchString = req.query.searchString
   var in_stock = req.query.in_stock
   var dateFrom = req.query.dateFrom
   var dateTo = req.query.dateTo
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    ? { active_status: 1,company_id:company_id ,$text: { $search: searchString } }
+    : { active_status: 1 ,company_id:company_id}
   if (in_stock) {
     query['in_stock'] = parseInt(in_stock)
   }
@@ -600,12 +601,13 @@ exports.kittingReport = async (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var company_id = req.query.company_id;
   var searchString = req.query.searchString
   var category_id = req.query.category_id
   var sub_category_id = req.query.sub_category_id
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    ? { active_status: 1,company_id:company_id,$text: { $search: searchString } }
+    : { active_status: 1,company_id:company_id }
   if (category_id) query['category_id'] = category_id
   if (sub_category_id) query['sub_category_id'] = sub_category_id
 
@@ -633,10 +635,11 @@ exports.usageReport = async (req, res) => {
   var dateFrom = req.query.dateFrom // Direct Query
   var dateTo = req.query.dateTo // Direct Query
   var searchString = req.query.searchString
+  var company_id = req.query.company_id;
 
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
+    : { active_status: 1,company_id:company_id }
   if (dateFrom) {
     var fromDate = moment(dateFrom).format('YYYY-MM-DD 00:00:00')
     var toDate = moment(dateTo).format('YYYY-MM-DD 23:59:59')

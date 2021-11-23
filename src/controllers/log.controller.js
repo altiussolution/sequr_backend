@@ -6,9 +6,10 @@ exports.getLog = (req, res) => {
       req.query.offset != undefined ? parseInt(req.query.offset) : false
     var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
     var searchString = req.query.searchString
+    var company_id = req.query.company_id
     var query = searchString
-      ? {$text: { $search: searchString}, stock_allocation_id: {$exists: false} }
-      : {stock_allocation_id: {$exists: false}}
+      ? {$text: { $search: searchString}, stock_allocation_id: {$exists: false},company_id : company_id }
+      : {stock_allocation_id: {$exists: false},company_id:company_id}
     try {
       logModel
         .find(query)

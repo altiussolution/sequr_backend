@@ -116,7 +116,8 @@ exports.getSupplier = (req, res) => {
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
     var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
     var searchString = req.query.searchString;
-    var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
+    var company_id = req.query.company_id
+    var query = (searchString ? { active_status: 1,company_id:company_id, $text: { $search: searchString } } : { active_status: 1,company_id:company_id })
     try {
         supplierModel.find(query).populate("country_id").populate("state_id").populate("city_id").skip(offset).limit(limit).then(supplier => {
             res.status(200).send({ success: true, data: supplier });
@@ -233,6 +234,7 @@ exports.getSupplierfilter = (req, res) => {
     var city_id  = req.query.city_id;
     var status = req.query.status;
 
+
     if (country_id && state_id && city_id && status){
         var query = {country_id:country_id,state_id :state_id , city_id  : city_id ,status:status}
     }
@@ -280,6 +282,7 @@ exports.getSupplierfilter = (req, res) => {
     else if( city_id ){
         var query = {  city_id: city_id}
     }
+    query['company_id'] =  req.query.company_id
     try {
         supplierModel.find(query).populate("country_id").populate("state_id").populate("city_id").then(supplier => {
             res.status(200).send({ success: true, data: supplier });

@@ -38,8 +38,9 @@ exports.addShift = (async (req, res) => {
         }
     })
 exports.getShift = (async (req, res) => {
+  var company_id = req.query.company_id
     try {
-        shift_timeModel.find({ active_status: 1 }, (err, shift) => {
+        shift_timeModel.find({ active_status: 1,company_id:company_id }, (err, shift) => {
             if (!err) {
                 res.send({
                     status: 'Success',
@@ -153,9 +154,10 @@ exports.deleteShift= (req, res) => {
 
 exports.getShiftfilter =  (req, res) => {
     var shift_type = req.query.shift_type;
+    var company_id = req.query.company_id;
    
     if( shift_type ){
-        var query = { shift_type :shift_type }
+        var query = { shift_type :shift_type, company_id : company_id }
     }
     try {
        shift_timeModel.find(query).then(shift_time => {
