@@ -24,8 +24,9 @@ exports.transactionReport = (req, res) => {
   var action = req.query.type // Direct query
   var itemLimit = req.query.itemLimit // filter query
   var role_id = req.query.role_id
-  if (req.query.administration == true) {
-    var directQuery = { module_name: { $nin: 'Item added on cube' } }
+  console.log(req.query)
+  if (req.query.administration == 'true' || req.query.administration == true) {
+    var directQuery = { module_name: { $nin: ['Item added on cube'] } }
   } else {
     var directQuery = {
       module_name: 'Machine Item'
