@@ -85,32 +85,16 @@ exports.updateCompartment = (req, res) => {
 
 exports.getCompartmentfilter = (req, res) => {
 
-    var cube_name = req.query.cube_name;
-    var bin_name = req.query.bin_name;
+    var cube_type = req.query.cube_type;
+    var bin_id = req.query.bin_id;
     var is_removed = req.query.is_removed;
-
-if (cube_name && bin_name  && is_removed){
-var query = {cube_name : cube_name, bin_name  : bin_name,is_removed:is_removed}
-}
-else if( cube_name && bin_name ){
-var query = { cube_name: cube_name,bin_name : bin_name }
-}
-else if( bin_name  && is_removed ){
-var query = {bin_name   : bin_name, is_removed :is_removed}
-}
-else if( cube_name && is_removed ){
-var query = {cube_name  : cube_name, is_removed :is_removed}
-}
-                                                                                                
-else if( cube_name ){
-var query = { cube_name :cube_name}
-}
-else if(  is_removed ){
-var query = { is_removed:is_removed  }
-}
-else if( bin_name  ){
-var query = { bin_name  :bin_name }
-}
+    var searchString = req.query.searchString
+    var query = searchString
+    ? { active_status: 1, $text: { $search: searchString } }
+    : { active_status: 1 }
+  if (bin_id) query['bin_id'] = bin_id
+  if (cube_type) query['cube_type'] = cube_type
+  if (is_removed) query['is_removed'] = is_removed
 try {
 compartmentModel.find(query).populate("cube_id").populate("bin_id").then(compartment => {
    console.log(compartment)
