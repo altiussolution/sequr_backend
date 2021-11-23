@@ -41,8 +41,9 @@ exports.getKit = (req, res) => {
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
+  var company_id = req.query.company_id
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
+    ? { active_status: 1,company_id: company_id, $text: { $search: searchString } }
     : { active_status: 1 }
   var _ = require('lodash')
   var binDatas = []

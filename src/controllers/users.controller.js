@@ -39,6 +39,7 @@ var ObjectId = require('mongodb').ObjectID
         city_id,
         country_id,
         state_id,
+        company_id,
         status,
         active_status 
       } = req.body
@@ -84,6 +85,7 @@ var ObjectId = require('mongodb').ObjectID
         country_id,
         city_id,
         state_id,
+        company_id,
         status,
         email_id: email_id, // sanitize: convert email to lowercase
         password: encryptedPassword,
@@ -237,13 +239,14 @@ exports.listEmployees = (req, res) => {
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
   var role_id = req.query.role_id;
+  var company_id = req.query.company_id;
   var branch_id= req.query.branch_id;
   var status = req.query.status;
   var department_id = req.query.department_id;
   var shift_time_id = req.query.shift_time_id;
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
+    : { active_status: 1 , company_id : company_id }
     if (role_id) query['role_id'] = role_id
     if (branch_id) query['branch_id'] = branch_id
     if (department_id) query['department_id'] = department_id
@@ -340,11 +343,13 @@ exports.resetPassword = async (req, res) => {
 
 exports.userProfile = async (req, res) => {
   var userId = req.params._id
+  var company_id = req.query.company_id
   try {
     var userDetails = await User.findOne({
       _id: userId,
       active_status: 1,
-      status: 1
+      status: 1,
+      company_id : company_id
     }).exec()
     if (userDetails) {
       res.status(200).send({ status: true, data: userDetails })
@@ -475,9 +480,10 @@ exports.getEmployeefilter = (req, res) => {
         var status = req.query.status;
         var department_id = req.query.department_id;
         var shift_time_id = req.query.shift_time_id;
+        var company_id = req.query.company_id;
         var query = searchString
-          ? { active_status: 1, $text: { $search: searchString } }
-          : { active_status: 1 }
+          ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
+          : { active_status: 1 , company_id : company_id }
           if (role_id) query['role_id'] = role_id
           if (branch_id) query['branch_id'] = branch_id
           if (department_id) query['department_id'] = department_id
