@@ -140,7 +140,7 @@ exports.login = async (req, res) => {
       user.active_status
     ) {
       const token = jwt.sign(
-        { user_id: user._id, employee_id, role_id : user.role_id },
+        { user_id: user._id, employee_id, role_id : user.role_id, company_id : user.company_id._id, role_id : user.role_id._id },
         process.env.TOKEN_KEY,
         {
           expiresIn: '2h'
@@ -239,7 +239,6 @@ exports.listEmployees = (req, res) => {
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
   var role_id = req.query.role_id;
-  var company_id = req.query.company_id;
   var branch_id= req.query.branch_id;
   var status = req.query.status;
   var department_id = req.query.department_id;
@@ -254,7 +253,6 @@ exports.listEmployees = (req, res) => {
     if (department_id) query['department_id'] = department_id
     if (status) query['status'] = status
     if (shift_time_id) query['shift_time_id'] = shift_time_id
-    if (company_id) query['company_id'] = shift_time_id
     if (created_by) query['created_by'] = created_by
   User.find(query)
     .populate('department_id')
@@ -348,23 +346,24 @@ exports.resetPassword = async (req, res) => {
 exports.userProfile = async (req, res) => {
   var userId = req.params._id
   var company_id = req.query.company_id
-  try {
+  // try {
     var userDetails = await User.findOne({
       _id: userId,
       active_status: 1,
-      status: 1,
-      company_id : company_id
-    }).exec()
+      status: true,
+      // company_id : company_id
+    }).populate('language_prefered').populate('city_id').populate('state_id').populate('country_id').exec()
+    console.log(userDetails)
     if (userDetails) {
       res.status(200).send({ status: true, data: userDetails })
     } else {
       res.status(201).send({ status: false, message: 'Not a valid User' })
     }
-  } catch (err) {
-    res
-      .status(200)
-      .send({ success: false, error: err.name, message: 'An Error Catched' })
-  }
+  // } catch (err) {
+    // res
+    //   .status(200)
+    //   .send({ success: false, error: err.name, message: 'An Error Catched' })
+  // }
 }
 exports.EmployeeForgotPassword = async (req, res) => {
   try {

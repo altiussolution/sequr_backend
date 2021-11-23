@@ -53,7 +53,7 @@ exports.getItem = (req, res) => {
   var dateTo = req.query.dateTo // Direct Query
   var query = searchString
     ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
-    : { active_status: 1 }
+    : { active_status: 1 ,company_id:company_id}
   if (category_id) query['category_id'] = category_id
   if (sub_category_id) query['sub_category_id'] = sub_category_id
   if (is_active) query['is_active'] = is_active

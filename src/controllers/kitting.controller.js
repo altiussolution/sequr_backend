@@ -44,7 +44,7 @@ exports.getKit = (req, res) => {
   var company_id = req.query.company_id
   var query = searchString
     ? { active_status: 1,company_id: company_id, $text: { $search: searchString } }
-    : { active_status: 1 }
+    : { active_status: 1 , company_id:company_id}
   var _ = require('lodash')
   var binDatas = []
   var allocationDetais

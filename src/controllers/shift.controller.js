@@ -39,6 +39,7 @@ exports.addShift = (async (req, res) => {
     })
 exports.getShift = (async (req, res) => {
   var company_id = req.query.company_id
+  console.log(req.query)
     try {
         shift_timeModel.find({ active_status: 1,company_id:company_id }, (err, shift) => {
             if (!err) {
