@@ -2,7 +2,8 @@ const {
   subCategoryModel,
   binModel,
   stockAllocationModel,
-  compartmentModel
+  compartmentModel,
+  cubeModel
 } = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
@@ -72,7 +73,7 @@ exports.getsubCategory = async (req, res) => {
     ? {
         active_status: 1,
         category_id: categoryId,
-        company_id : company_id,
+        company_id: company_id,
         $text: { $search: searchString }
       }
     : { active_status: 1, category_id: categoryId }
@@ -163,61 +164,74 @@ exports.getsubCategoryfilter = async (req, res) => {
 exports.getSubCategoryMachine = (req, res) => {
   var columnIds = []
   var company_id = req.query.company_id
-  if(req.query.column_ids){
-  var columnIds = JSON.parse(req.query.column_ids)
-}
+  if (req.query.column_ids) {
+    var columnIds = JSON.parse(req.query.column_ids)
+  }
   try {
-    //Find all Columns Ids
-    binModel
+    cubeModel
       .distinct('_id', {
         active_status: 1,
-        company_id:company_id,
-        bin_id: { $in: columnIds },
-        is_removed: false
+        company_id: company_id,
+        employee_status: true
       })
-      .then(binList => {
-        console.log(binList)
-        compartmentModel
+      .then(cubeList => {
+        //Find all Columns Ids
+        binModel
           .distinct('_id', {
             active_status: 1,
-            bin_id: { $in: binList },
+            cube_id: { $in: cubeList },
+            bin_id: { $in: columnIds },
+            company_id: company_id,
             is_removed: false
           })
-          .then(drawList => {
-            console.log(drawList)
-            //Find all Item Ids in stock allocation
-            stockAllocationModel
-              .distinct('sub_category', {
+          .then(binList => {
+            console.log(binList)
+            compartmentModel
+              .distinct('_id', {
                 active_status: 1,
-                compartment: { $in: drawList }
+                bin_id: { $in: binList },
+                is_removed: false
               })
-              .then(sub_cat => {
-                console.log(sub_cat)
-                var query = {
-                  active_status: 1,
-                  is_active: true,
-                  category_id: req.params.category_id,
-                  _id: { $in: sub_cat }
-                }
-                console.log(sub_cat)
+              .then(drawList => {
+                console.log(drawList)
+                //Find all Item Ids in stock allocation
+                stockAllocationModel
+                  .distinct('sub_category', {
+                    active_status: 1,
+                    compartment: { $in: drawList }
+                  })
+                  .then(sub_cat => {
+                    console.log(sub_cat)
+                    var query = {
+                      active_status: 1,
+                      is_active: true,
+                      category_id: req.params.category_id,
+                      _id: { $in: sub_cat }
+                    }
+                    console.log(sub_cat)
 
-                // Find All items in machine
-                subCategoryModel
-                  .find(query)
-                  .populate('category_id')
-                  .then(sub_category => {
-                    res.status(200).send({ success: true, data: sub_category })
+                    // Find All items in machine
+                    subCategoryModel
+                      .find(query)
+                      .populate('category_id')
+                      .then(sub_category => {
+                        res
+                          .status(200)
+                          .send({ success: true, data: sub_category })
+                      })
+                      .catch(error => {
+                        res
+                          .status(400)
+                          .send({ success: false, error: error.name })
+                      })
                   })
                   .catch(error => {
                     res.status(400).send({ success: false, error: error.name })
                   })
               })
               .catch(error => {
-                res.status(400).send({ success: false, error: error.name })
+                res.status(400).send({ success: false, error: error })
               })
-          })
-          .catch(error => {
-            res.status(400).send({ success: false, error: error })
           })
       })
   } catch (error) {
@@ -235,7 +249,7 @@ exports.getUsersubCategory = async (req, res) => {
     ? {
         active_status: 1,
         category_id: categoryId,
-        company_id:company_id,
+        company_id: company_id,
         $text: { $search: searchString },
         is_active: true
       }
@@ -259,80 +273,79 @@ exports.getUsersubCategory = async (req, res) => {
 }
 
 exports.deletesubCategory = async (req, res) => {
-try {
-  subCategoryModel.aggregate([
-    {
-      $match: {
-        $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
-      }
-    },
-    {
-      $lookup: {
-        from: 'stockallocations', 
-        localField: '_id',
-        foreignField: 'sub_category',
-        as: 'stock_doc' 
-      }
-    },
-    {
-      $lookup: {
-        from: 'kits', 
-        localField: '_id',
-        foreignField: 'kit_data.sub_category_id',
-        as: 'kit_doc' 
-      }
-    },
-    {
-      $lookup: {
-        from: 'purchaseorders',
-        localField: '_id',
-        foreignField: 'sub_category_id',
-        as: 'po_doc' 
-      }
-    },
-   
-  ]).then(async doc =>{
-    message = []
-      if (doc[0].stock_doc.length > 0) {
-        await message.push(
-          'Please delete all the refered stocks by this subcategory'
-        )
-      }
-      if (doc[0].kit_doc.length > 0) {
-        await message.push(
-          'Please delete all the refered kits by this subcategory'
-        )
-      }
-      if (doc[0].po_doc.length > 0) {
-        await message.push(
-          'Please delete all the refered purchase orders by this subcategory'
-        )
-      }
+  try {
+    subCategoryModel
+      .aggregate([
+        {
+          $match: {
+            $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+          }
+        },
+        {
+          $lookup: {
+            from: 'stockallocations',
+            localField: '_id',
+            foreignField: 'sub_category',
+            as: 'stock_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'kits',
+            localField: '_id',
+            foreignField: 'kit_data.sub_category_id',
+            as: 'kit_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'purchaseorders',
+            localField: '_id',
+            foreignField: 'sub_category_id',
+            as: 'po_doc'
+          }
+        }
+      ])
+      .then(async doc => {
+        message = []
+        if (doc[0].stock_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered stocks by this subcategory'
+          )
+        }
+        if (doc[0].kit_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered kits by this subcategory'
+          )
+        }
+        if (doc[0].po_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered purchase orders by this subcategory'
+          )
+        }
 
-    if (message.length > 0) {
-        res.status(200).send({ success: true, message: message })
-      } else if (message.length == 0) {
-        subCategoryModel
-          .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
-          .then(subCategory => {
-            res.status(200).send({
-              success: true,
-              message: 'Subcategory Deleted Successfully!'
+        if (message.length > 0) {
+          res.status(200).send({ success: true, message: message })
+        } else if (message.length == 0) {
+          subCategoryModel
+            .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+            .then(subCategory => {
+              res.status(200).send({
+                success: true,
+                message: 'Subcategory Deleted Successfully!'
+              })
+              createLog(req.headers['authorization'], 'SubCategory', 0)
             })
-            createLog(req.headers['authorization'], 'SubCategory', 0)
-          })
-          .catch(err => {
-            res
-              .status(200)
-              .send({ success: false, message: 'SubCategory Not Found' })
-          })
-
-      
-      }
-  })
-}catch (err) {
-  res
-  .status(200)
-  .send({ success: false, error: err, message: 'An Error Catched' })
-}
+            .catch(err => {
+              res
+                .status(200)
+                .send({ success: false, message: 'SubCategory Not Found' })
+            })
+        }
+      })
+  } catch (err) {
+    res
+      .status(200)
+      .send({ success: false, error: err, message: 'An Error Catched' })
+  }
 }

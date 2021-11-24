@@ -5,7 +5,8 @@ const {
   itemModel,
   stockAllocationModel,
   binModel,
-  compartmentModel
+  compartmentModel,
+  cubeModel
 } = require('../models')
 var { error_code, appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
@@ -64,8 +65,12 @@ exports.getCategory = async (req, res) => {
   var searchString = req.query.searchString
   var company_id = req.query.company_id
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString },company_id : company_id}
-    : { active_status: 1 , company_id : company_id}
+    ? {
+        active_status: 1,
+        $text: { $search: searchString },
+        company_id: company_id
+      }
+    : { active_status: 1, company_id: company_id }
   try {
     categoryModel
       .find(query)
@@ -152,110 +157,110 @@ exports.deleteCategory = async (req, res) => {
   //   res.status(400).send(err)
   // }
   try {
-    categoryModel.aggregate([
-      {
-        $match: {
-          $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+    categoryModel
+      .aggregate([
+        {
+          $match: {
+            $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+          }
+        },
+        {
+          $lookup: {
+            from: 'items',
+            localField: '_id',
+            foreignField: 'category_id',
+            as: 'item_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'kits',
+            localField: '_id',
+            foreignField: 'kit_data[0].category_id',
+            as: 'kit_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'purchaseorders',
+            localField: '_id',
+            foreignField: 'category_id',
+            as: 'po_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'stockallocations',
+            localField: '_id',
+            foreignField: 'category',
+            as: 'stock_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'subcategories',
+            localField: '_id',
+            foreignField: 'category_id',
+            as: 'subCat_doc'
+          }
         }
-      },
-      {
-        $lookup: {
-          from: 'items', 
-          localField: '_id',
-          foreignField: 'category_id',
-          as: 'item_doc' 
+      ])
+      .then(async doc => {
+        message = []
+        if (doc[0].item_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered items by this category'
+          )
         }
-      },
-      {
-        $lookup: {
-          from: 'kits', 
-          localField: '_id',
-          foreignField: 'kit_data[0].category_id',
-          as: 'kit_doc' 
+        if (doc[0].kit_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered kits by this category'
+          )
         }
-      },
-      {
-        $lookup: {
-          from: 'purchaseorders',
-          localField: '_id',
-          foreignField: 'category_id',
-          as: 'po_doc' 
+        if (doc[0].po_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered purchase orders by this category'
+          )
         }
-      },
-      {
-        $lookup: {
-          from: 'stockallocations',
-          localField: '_id',
-          foreignField: 'category',
-          as: 'stock_doc' 
+        if (doc[0].stock_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered stocks by this category'
+          )
         }
-      },
-      {
-        $lookup: {
-          from: 'subcategories',
-          localField: '_id',
-          foreignField: 'category_id',
-          as: 'subCat_doc' 
+        if (doc[0].subCat_doc.length > 0) {
+          await message.push(
+            'Please delete all the refered subCategory by this category'
+          )
         }
-      },
-    ]).then(async doc =>{
-      message = []
-      if (doc[0].item_doc.length > 0) {
-        await message.push(
-          'Please delete all the refered items by this category'
-        )
-      }
-      if (doc[0].kit_doc.length > 0) {
-        await message.push(
-          'Please delete all the refered kits by this category'
-        )
-      }
-      if (doc[0].po_doc.length > 0) {
-        await message.push(
-          'Please delete all the refered purchase orders by this category'
-        )
-      }
-      if (doc[0].stock_doc.length > 0) {
-        await message.push(
-          'Please delete all the refered stocks by this category'
-        )
-      }
-      if (doc[0].subCat_doc.length > 0) {
-        await message.push(
-          'Please delete all the refered subCategory by this category'
-        )
-      }
-    if (message.length > 0) {
-        res.status(200).send({ success: true, message: message })
-      } else if (message.length == 0) {
-        categoryModel
-          .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
-          .then(branch => {
-            res.status(200).send({
-              success: true,
-              message: 'Category Deleted Successfully!'
+        if (message.length > 0) {
+          res.status(200).send({ success: true, message: message })
+        } else if (message.length == 0) {
+          categoryModel
+            .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+            .then(branch => {
+              res.status(200).send({
+                success: true,
+                message: 'Category Deleted Successfully!'
+              })
+              createLog(req.headers['authorization'], 'Category', 0)
             })
-            createLog(req.headers['authorization'], 'Category', 0)
-          })
-          .catch(err => {
-            res
-              .status(200)
-              .send({ success: false, message: 'Category Not Found' })
-          })
-
-      
-      }
-    })
+            .catch(err => {
+              res
+                .status(200)
+                .send({ success: false, message: 'Category Not Found' })
+            })
+        }
+      })
   } catch (err) {
     res
-    .status(200)
-    .send({ success: false, error: err, message: 'An Error Catched' })
+      .status(200)
+      .send({ success: false, error: err, message: 'An Error Catched' })
   }
 }
 
 exports.getCategorylist = async (req, res) => {
   var company_id = req.query.company_id
-  var query = { active_status: 1 ,company_id: company_id}
+  var query = { active_status: 1, company_id: company_id }
   var categories = []
   try {
     await categoryModel
@@ -287,7 +292,7 @@ exports.getCategoryfilter = (req, res) => {
   //var query = (category_name ? { active_status: 1, category_name : category_name }(category_code ? { active_status: 1,  category_code : category_code } )
 
   if (is_active && company_id) {
-    var query = { is_active: is_active , company_id : company_id}
+    var query = { is_active: is_active, company_id: company_id }
   }
   categoryModel
     .find(query)
@@ -302,48 +307,60 @@ exports.getCategoryfilter = (req, res) => {
 exports.getCategoryMachine = (req, res) => {
   var columnIds = []
   var company_id = req.query.company_id
-  if(req.query.column_ids){
-  var columnIds = JSON.parse(req.query.column_ids)
-}
+  if (req.query.column_ids) {
+    var columnIds = JSON.parse(req.query.column_ids)
+  }
   try {
-    //Find all Columns Ids
-    binModel
+    cubeModel
       .distinct('_id', {
         active_status: 1,
-        bin_id: { $in: columnIds },
-        company_id : company_id,
-        is_removed: false
+        company_id: company_id,
+        employee_status: true
       })
-      .then(binList => {
-        console.log(binList)
-        compartmentModel
+      .then(cubeList => {
+        //Find all Columns Ids
+        binModel
           .distinct('_id', {
             active_status: 1,
-            bin_id: { $in: binList },
+            cube_id: { $in: cubeList },
+            bin_id: { $in: columnIds },
+            company_id: company_id,
             is_removed: false
           })
-          .then(drawList => {
+          .then(binList => {
             console.log(binList)
-            //Find all Item Ids in stock allocation
-            stockAllocationModel
-              .distinct('category', {
+            compartmentModel
+              .distinct('_id', {
                 active_status: 1,
-                compartment: { $in: drawList }
+                bin_id: { $in: binList },
+                is_removed: false
               })
-              .then(category => {
-                console.log(category)
-                var query = {
-                  active_status: 1,
-                  is_active: true,
-                  _id: { $in: category }
-                }
-                console.log(category)
-
-                // Find All items in machine
-                categoryModel
-                  .find(query)
+              .then(drawList => {
+                console.log(binList)
+                //Find all Item Ids in stock allocation
+                stockAllocationModel
+                  .distinct('category', {
+                    active_status: 1,
+                    compartment: { $in: drawList }
+                  })
                   .then(category => {
-                    res.status(200).send({ success: true, data: category })
+                    console.log(category)
+                    var query = {
+                      active_status: 1,
+                      is_active: true,
+                      _id: { $in: category }
+                    }
+                    console.log(category)
+
+                    // Find All items in machine
+                    categoryModel
+                      .find(query)
+                      .then(category => {
+                        res.status(200).send({ success: true, data: category })
+                      })
+                      .catch(error => {
+                        res.status(400).send({ success: false, error: error })
+                      })
                   })
                   .catch(error => {
                     res.status(400).send({ success: false, error: error })
@@ -352,9 +369,6 @@ exports.getCategoryMachine = (req, res) => {
               .catch(error => {
                 res.status(400).send({ success: false, error: error })
               })
-          })
-          .catch(error => {
-            res.status(400).send({ success: false, error: error })
           })
       })
   } catch (error) {
@@ -369,8 +383,13 @@ exports.getUserCategory = async (req, res) => {
   var searchString = req.query.searchString
   var company_id = req.query.company_id
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString }, is_active: true, company_id:company_id }
-    : { active_status: 1 , company_id : company_id}
+    ? {
+        active_status: 1,
+        $text: { $search: searchString },
+        is_active: true,
+        company_id: company_id
+      }
+    : { active_status: 1, company_id: company_id }
   try {
     categoryModel
       .find(query)

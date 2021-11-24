@@ -31,8 +31,17 @@ exports.getCompany = (req, res) => {
   var searchString = req.query.searchString
 
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    ? {
+        active_status: 1,
+        $text: { $search: searchString },
+        company_name: { $ne: 'Smart Tools' },
+        created_by: { $exists: true }
+      }
+    : {
+        active_status: 1,
+        company_name: { $ne: 'Smart Tools' },
+        created_by: { $exists: true }
+      }
   try {
     companyModel
       .find(query)
