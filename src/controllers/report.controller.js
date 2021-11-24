@@ -503,7 +503,7 @@ exports.orderReport = (req, res) => {
   var receivedDateFrom = req.query.ceratedDateTo // Direct Query
   var receivedDateTo = req.query.ceratedDateTo // Direct Query
   var status = req.query.status // Direct Query
-  var supplier_id = req.query.status // Direct Query
+  var supplier_id = req.query.supplier_id // Direct Query
   var directQuery = { company_id: ObjectId(req.query.company_id), active_status: 1 }
   var filterQuery = { active_status : 1  }
   var searchQuery = [{}]
@@ -531,7 +531,7 @@ exports.orderReport = (req, res) => {
     directQuery['supplier_id'] = ObjectId(supplier_id)
   }
   if (status) {
-    directQuery['status'] = ObjectId(status)
+    directQuery['status'] = status
   }
   // Direct Queries
 
