@@ -140,7 +140,7 @@ exports.login = async (req, res) => {
     if (
       user &&
       (await bcrypt.compare(password, user.password)) &&
-      user.active_status
+      user.active_status && user.company_id.status
     ) {
       const token = jwt.sign(
         {
