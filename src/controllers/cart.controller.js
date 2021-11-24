@@ -355,8 +355,8 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         }
         createLog(
           req.headers['authorization'],
+          'Machine Items',
           'Taken',
-          0,
           stockAllocationItems._id,
           item.qty
         )
@@ -364,8 +364,8 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         stockAllocationItems.quantity = stockAllocationItems.quantity + item.qty
         createLog(
           req.headers['authorization'],
+          'Machine Items',
           'Return',
-          2,
           stockAllocationItems._id,
           item.qty
         )

@@ -69,6 +69,7 @@ exports.itemShortage = async (req, res) => {
       {
         $group: {
           _id: '$item',
+          company_id : '$company_id', 
           item: { $push: '$item' },
           compartment: { $push: '$compartment' },
           cube: { $push: '$cube' },

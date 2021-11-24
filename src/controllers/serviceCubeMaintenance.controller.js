@@ -9,7 +9,8 @@ exports.cubeIdleHours = async (req, res) => {
   try {
     cubes = await cubeModel
       .find({
-        active_status: 1
+        active_status: 1,
+        company_id:req.query.company_id
       })
       .populate('branch_id')
       .exec()
@@ -101,7 +102,8 @@ exports.filterCubeIdleHours = async (req, res) => {
     cubes = await cubeModel
       .find({
         active_status: 1,
-        branch_id: body.branch_id
+        branch_id: body.branch_id,
+        company_id:req.query.company_id
       })
       .populate('branch_id')
       .exec()

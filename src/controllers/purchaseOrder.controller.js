@@ -215,7 +215,8 @@ async function autoPurchaseOrder () {
                 po_date: new Date(),
                 is_auto_po: true,
                 description: 'Auto PO Generate',
-                is_received: auto_po_or_inprogress
+                is_received: auto_po_or_inprogress,
+                company_id:item.company_id
               }
               // Mark this item is auto PO Generated one
               await itemModel

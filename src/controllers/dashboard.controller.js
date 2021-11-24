@@ -302,6 +302,7 @@ exports.addMachineUsage = async (req, res) => {
       eachMachineUsage['cube_id'] = bin.cube_id
       eachMachineUsage['bin_id'] = bin._id
       eachMachineUsage['machine_usage'] = cube.column_usage
+      eachMachineUsage['company_id'] = cube.company_id
       machineUsage.push(eachMachineUsage)
     }
 
@@ -321,8 +322,8 @@ var ObjectId = require('mongodb').ObjectID
 
 exports.getMachineUsage = async (req, res) => {
   var query = req.query.branch_id
-    ? { active_status: 1, branch: req.query.branch_id }
-    : { active_status: 1 }
+    ? { active_status: 1, branch: req.query.branch_id, company_id:req.query.company_id }
+    : { active_status: 1, company_id:req.query.company_id }
   try {
     cubes = await cubeModel
       .find({
@@ -411,6 +412,7 @@ exports.itemAlert = async (req, res) => {
         {
           $group: {
             _id: '$item',
+            company_id : '$company_id',
             compartment: { $push: '$compartment' },
             item: { $push: '$item' },
             available: { $sum: '$quantity' },
