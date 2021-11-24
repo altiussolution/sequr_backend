@@ -11,6 +11,8 @@ var fs = require('fs')
 const Email = require('email-templates')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
+const { rolesModel } = require("../models");
+
 
 exports.add = async (req, res) => {
   try {
@@ -260,7 +262,7 @@ exports.listEmployees = async (req, res) => {
   // Get Customer Role and Super Admin Role
   customerRole = await rolesModel.distinct('_id', {
     role_id: { $in: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
-  }).exec
+  }).exec()
 
   var query = searchString
     ? {
