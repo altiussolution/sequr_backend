@@ -43,7 +43,7 @@ const verifySuperAdmin = async (req, res, next) => {
       if (
         !isValidUser ||
         !isValidUser.active_status ||
-        isValidUser.role_id.role_id != 'SEQURE-SUPER-ADMIN'
+        isValidUser.role_id.role_id != '$ SEQUR SUPERADMIN $'
       ) {
         return res.status(401).send('Not a valid user')
       } else {

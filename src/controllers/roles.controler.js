@@ -48,7 +48,7 @@ exports.createRole = (async (req, res) => {
 exports.getRoles = ((req, res) => {
     var company_id = req.query.company_id
     try {
-        rolesModel.find({ active_status: 1 , company_id: company_id, role_id : {$nin : ['$ SEQUR SUPERADMIN $', '$SEQUR CUSTOMER $']} }, (err, roles) => {
+        rolesModel.find({ active_status: 1 , company_id: company_id, role_id : {$nin : ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $']} }, (err, roles) => {
             if (!err) {
                 res.status(200).send({
                     status: true,

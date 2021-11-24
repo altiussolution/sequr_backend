@@ -12,119 +12,114 @@ const Email = require('email-templates')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 
+exports.add = async (req, res) => {
+  try {
+    var password = generator.generate({
+      length: 6,
+      numbers: true
+    })
 
+    // var password  = '1q2w3e$R';
+    const {
+      first_name,
+      last_name,
+      email_id,
+      contact_no,
+      date_of_birth,
+      role_id,
+      language_prefered,
+      employee_id,
+      item_max_quantity,
+      branch_id,
+      shift_time_id,
+      department_id,
+      profile_pic,
+      city_id,
+      country_id,
+      state_id,
+      company_id,
+      status,
+      active_status
+    } = req.body
 
-  exports.add = async (req, res) => {
-    try {
-      var password = generator.generate({
-        length: 6,
-        numbers: true
-      })
-  
-      // var password  = '1q2w3e$R';
-      const {
-        first_name,
-        last_name,
-        email_id,
-        contact_no,
-        date_of_birth,
-        role_id,
-        language_prefered,
-        employee_id,
-        item_max_quantity,
-        branch_id,
-        shift_time_id,
-        department_id,
-        profile_pic,
-        city_id,
-        country_id,
-        state_id,
-        company_id,
-        status,
-        active_status 
-      } = req.body
-  
-      if (
-        !(email_id && employee_id && first_name && role_id && language_prefered)
-      ) {
-        res.status(400).send('All input is required')
-      }
-      const oldEmployee_id = await User.findOne({ employee_id , active_status: 1 })
-      const oldmobilenumber = await User.findOne({ contact_no , active_status: 1 })
-      const oldemail_id = await User.findOne({ email_id , active_status: 1 })
-      if (oldEmployee_id) {
-        return res
-          .status(409)
-          .send({ status: false, message: 'Employee_id already exist' })
-      }
-      if (oldemail_id){
-        return res
-        .status(409)
-        .send( {status: false, message: 'Email id already exists'})
-      }
-      if (oldmobilenumber){
-        return res
-        .status(409)
-        .send( {status: false, message: 'Contact number already exists'})
-      }
-      console.log(password)
-      encryptedPassword = await bcrypt.hash(password, 10)
-      const user = await User.create({
-        employee_id,
-        first_name,
-        last_name,
-        contact_no,
-        date_of_birth,
-        role_id,
-        language_prefered,
-        item_max_quantity,
-        branch_id,
-        shift_time_id,
-        department_id,
-        profile_pic,
-        country_id,
-        city_id,
-        state_id,
-        company_id,
-        status,
-        email_id: email_id, // sanitize: convert email to lowercase
-        password: encryptedPassword,
-        active_status: 1
-      })
-      const token = jwt.sign(
-        { user_id: user._id, employee_id },
-        process.env.TOKEN_KEY,
-        {
-          expiresIn: '2h'
-        }
-      )
-      // role = await rolesModel
-      const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
-      const locals = {
-        employee_id: employee_id,
-        password: password,
-        loginPage: process.env.STAGING,
-        logo : `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
-        background : `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
-      }
-      user.token = token
-      const email = new Email()
-      Promise.all([email.render('../src/templates/registerMail', locals)]).then(
-        async registerMail => {
-          //console.log(registerMail[0])
-          await sendEmail(
-            email_id,
-            'New User Signup',
-            registerMail[0],          
-          )
-        }
-      )
-      res.status(201).json(user)
-      createLog(req.headers['authorization'], 'Employee', 2)
-    } catch (err) {
-      console.log(err)
+    if (
+      !(email_id && employee_id && first_name && role_id && language_prefered)
+    ) {
+      res.status(400).send('All input is required')
     }
+    const oldEmployee_id = await User.findOne({ employee_id, active_status: 1 })
+    const oldmobilenumber = await User.findOne({ contact_no, active_status: 1 })
+    const oldemail_id = await User.findOne({ email_id, active_status: 1 })
+    if (oldEmployee_id) {
+      return res
+        .status(409)
+        .send({ status: false, message: 'Employee_id already exist' })
+    }
+    if (oldemail_id) {
+      return res
+        .status(409)
+        .send({ status: false, message: 'Email id already exists' })
+    }
+    if (oldmobilenumber) {
+      return res
+        .status(409)
+        .send({ status: false, message: 'Contact number already exists' })
+    }
+    console.log(password)
+    encryptedPassword = await bcrypt.hash(password, 10)
+    const user = await User.create({
+      employee_id,
+      first_name,
+      last_name,
+      contact_no,
+      date_of_birth,
+      role_id,
+      language_prefered,
+      item_max_quantity,
+      branch_id,
+      shift_time_id,
+      department_id,
+      profile_pic,
+      country_id,
+      city_id,
+      state_id,
+      company_id,
+      status,
+      email_id: email_id, // sanitize: convert email to lowercase
+      password: encryptedPassword,
+      active_status: 1
+    })
+    const token = jwt.sign(
+      { user_id: user._id, employee_id },
+      process.env.TOKEN_KEY,
+      {
+        expiresIn: '2h'
+      }
+    )
+    // role = await rolesModel
+    const hostname =
+      process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost'
+    const locals = {
+      employee_id: employee_id,
+      password: password,
+      loginPage: process.env.STAGING,
+      logo: `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
+      background: `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
+    }
+    user.token = token
+    const email = new Email()
+    Promise.all([email.render('../src/templates/registerMail', locals)]).then(
+      async registerMail => {
+        //console.log(registerMail[0])
+        await sendEmail(email_id, 'New User Signup', registerMail[0])
+      }
+    )
+    res.status(201).json(user)
+    createLog(req.headers['authorization'], 'Employee', 2)
+  } catch (err) {
+    console.log(err)
   }
+}
 exports.login = async (req, res) => {
   try {
     const { employee_id, password } = req.body
@@ -132,7 +127,13 @@ exports.login = async (req, res) => {
       res.status(400).send({ status: false, message: 'All input is required' })
     }
 
-    const user = await User.findOne({ employee_id }).populate('role_id').populate('country_id').populate('state_id').populate('city_id').populate('company_id').exec()
+    const user = await User.findOne({ employee_id })
+      .populate('role_id')
+      .populate('country_id')
+      .populate('state_id')
+      .populate('city_id')
+      .populate('company_id')
+      .exec()
 
     if (
       user &&
@@ -140,7 +141,13 @@ exports.login = async (req, res) => {
       user.active_status
     ) {
       const token = jwt.sign(
-        { user_id: user._id, employee_id, role_id : user.role_id, company_id : user.company_id._id, role_id : user.role_id._id },
+        {
+          user_id: user._id,
+          employee_id,
+          role_id: user.role_id,
+          company_id: user.company_id._id,
+          role_id: user.role_id._id
+        },
         process.env.TOKEN_KEY,
         {
           expiresIn: '2h'
@@ -200,14 +207,18 @@ exports.update = async (req, res) => {
   try {
     var userId = ObjectId(req.params._id)
     var updateUser = req.body
-    User.updateOne({_id : userId, active_status : 1}, updateUser, (err, isExist) => {
-      if (isExist) {
-        res.status(200).send({ message: 'Employee Updated Sucessfully' })
-        createLog(req.headers['authorization'], 'Employee', 1)
-      } else {
-        res.status(201).send({ message: 'Employee Not Found' })
+    User.updateOne(
+      { _id: userId, active_status: 1 },
+      updateUser,
+      (err, isExist) => {
+        if (isExist) {
+          res.status(200).send({ message: 'Employee Updated Sucessfully' })
+          createLog(req.headers['authorization'], 'Employee', 1)
+        } else {
+          res.status(201).send({ message: 'Employee Not Found' })
+        }
       }
-    })
+    )
   } catch (err) {
     res.status(400).send(err)
   }
@@ -233,30 +244,43 @@ exports.delete = (req, res) => {
   )
 }
 
-exports.listEmployees = (req, res) => {
+exports.listEmployees = async (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
-  var role_id = req.query.role_id;
-  var branch_id= req.query.branch_id;
-  var status = req.query.status;
-  var department_id = req.query.department_id;
-  var shift_time_id = req.query.shift_time_id;
-  var company_id = req.query.company_id;
-  var created_by = req.query.created_by;
+  var role_id = req.query.role_id
+  var branch_id = req.query.branch_id
+  var status = req.query.status
+  var department_id = req.query.department_id
+  var shift_time_id = req.query.shift_time_id
+  var company_id = req.query.company_id
+  var created_by = req.query.created_by
+
+  // Get Customer Role and Super Admin Role
+  customerRole = await rolesModel.distinct('_id', {
+    role_id: { $in: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
+  }).exec
+
   var query = searchString
-    ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
-    : { active_status: 1 , company_id : company_id }
-    if (role_id) query['role_id'] = role_id
-    if (branch_id) query['branch_id'] = branch_id
-    if (department_id) query['department_id'] = department_id
-    if (status) query['status'] = status
-    if (shift_time_id) query['shift_time_id'] = shift_time_id
-    if (created_by) query['created_by'] = created_by
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
+  if (customerRole) query['role_id'] = { $nin: customerRole }
+  if (role_id) query['role_id'] = role_id
+  if (branch_id) query['branch_id'] = branch_id
+  if (department_id) query['department_id'] = department_id
+  if (status) query['status'] = status
+  if (shift_time_id) query['shift_time_id'] = shift_time_id
+  if (created_by) query['created_by'] = created_by
   User.find(query)
     .populate('department_id')
-    .populate('country_id').populate('state_id').populate('city_id')
+    .populate('country_id')
+    .populate('state_id')
+    .populate('city_id')
     .skip(offset)
     .limit(limit)
     .then(result => {
@@ -293,22 +317,16 @@ exports.forgotPassword = async (req, res) => {
 
     const locals = {
       forgotPageLink: link,
-      adminName:`${user.first_name} ${user.last_name}`,
-      logo : `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
-      background : `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
+      adminName: `${user.first_name} ${user.last_name}`,
+      logo: `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
+      background: `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
     }
     const email = new Email()
-    Promise.all([email.render('../src/templates/adminForgotPassword', locals)]).then(
-      async adminForgotPassword => {
-        await sendEmail(
-          user.email_id,
-          'Password reset',
-          adminForgotPassword[0],          
-        )
-      }
-    )
-
-    
+    Promise.all([
+      email.render('../src/templates/adminForgotPassword', locals)
+    ]).then(async adminForgotPassword => {
+      await sendEmail(user.email_id, 'Password reset', adminForgotPassword[0])
+    })
 
     res.send('password reset link sent to your email account')
   } catch (error) {
@@ -347,22 +365,27 @@ exports.userProfile = async (req, res) => {
   var userId = req.params._id
   var company_id = req.query.company_id
   // try {
-    var userDetails = await User.findOne({
-      _id: userId,
-      active_status: 1,
-      status: true,
-      // company_id : company_id
-    }).populate('language_prefered').populate('city_id').populate('state_id').populate('country_id').exec()
-    console.log(userDetails)
-    if (userDetails) {
-      res.status(200).send({ status: true, data: userDetails })
-    } else {
-      res.status(201).send({ status: false, message: 'Not a valid User' })
-    }
+  var userDetails = await User.findOne({
+    _id: userId,
+    active_status: 1,
+    status: true
+    // company_id : company_id
+  })
+    .populate('language_prefered')
+    .populate('city_id')
+    .populate('state_id')
+    .populate('country_id')
+    .exec()
+  console.log(userDetails)
+  if (userDetails) {
+    res.status(200).send({ status: true, data: userDetails })
+  } else {
+    res.status(201).send({ status: false, message: 'Not a valid User' })
+  }
   // } catch (err) {
-    // res
-    //   .status(200)
-    //   .send({ success: false, error: err.name, message: 'An Error Catched' })
+  // res
+  //   .status(200)
+  //   .send({ success: false, error: err.name, message: 'An Error Catched' })
   // }
 }
 exports.EmployeeForgotPassword = async (req, res) => {
@@ -384,22 +407,16 @@ exports.EmployeeForgotPassword = async (req, res) => {
     const locals = {
       newPassword: newPassword,
       loginPage: process.env.STAGING_USER,
-      userName:`${user.first_name} ${user.last_name}`,
-      logo : `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
-      background : `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
+      userName: `${user.first_name} ${user.last_name}`,
+      logo: `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
+      background: `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
     }
     const email = new Email()
-    Promise.all([email.render('../src/templates/employeeNewPassword', locals)]).then(
-      async employeeNewPassword => {
-        await sendEmail(
-          user.email_id,
-          'New Password',
-          employeeNewPassword[0],          
-        )
-      }
-    )
-
-
+    Promise.all([
+      email.render('../src/templates/employeeNewPassword', locals)
+    ]).then(async employeeNewPassword => {
+      await sendEmail(user.email_id, 'New Password', employeeNewPassword[0])
+    })
 
     const encryptedPassword = await bcrypt.hash(newPassword, 10)
     await User.findByIdAndUpdate(req.body.id, {
@@ -474,54 +491,74 @@ exports.changePassword = async (req, res) => {
 }
 
 exports.getEmployeefilter = (req, res) => {
-        var offset =
-          req.query.offset != undefined ? parseInt(req.query.offset) : false
-        var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-        var searchString = req.query.searchString
-        var role_id = req.query.role_id;
-        var branch_id= req.query.branch_id;
-        var status = req.query.status;
-        var department_id = req.query.department_id;
-        var shift_time_id = req.query.shift_time_id;
-        var company_id = req.query.company_id;
-        var query = searchString
-          ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
-          : { active_status: 1 , company_id : company_id }
-          if (role_id) query['role_id'] = role_id
-          if (branch_id) query['branch_id'] = branch_id
-          if (department_id) query['department_id'] = department_id
-          if (status) query['status'] = status
-          if (shift_time_id) query['shift_time_id'] = shift_time_id
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var searchString = req.query.searchString
+  var role_id = req.query.role_id
+  var branch_id = req.query.branch_id
+  var status = req.query.status
+  var department_id = req.query.department_id
+  var shift_time_id = req.query.shift_time_id
+  var company_id = req.query.company_id
+  var query = searchString
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
+  if (role_id) query['role_id'] = role_id
+  if (branch_id) query['branch_id'] = branch_id
+  if (department_id) query['department_id'] = department_id
+  if (status) query['status'] = status
+  if (shift_time_id) query['shift_time_id'] = shift_time_id
 
-     
-User.find(query).populate('department_id').populate('role_id').populate('branch_id').populate('shift_time_id').skip(offset).limit(limit).then(user =>{
-  res.status(200).send({ success: true, user: user });
-}).catch(error => {
-  res.status(400).send({success: false, error : error})
-})
+  User.find(query)
+    .populate('department_id')
+    .populate('role_id')
+    .populate('branch_id')
+    .populate('shift_time_id')
+    .skip(offset)
+    .limit(limit)
+    .then(user => {
+      res.status(200).send({ success: true, user: user })
+    })
+    .catch(error => {
+      res.status(400).send({ success: false, error: error })
+    })
 }
 
-
-
-
-  exports.updateForgotpassword = async(req, res) => {
-    try{
-      var exist = await User.findOne({employee_id : req.params.employee_id, active_status : 1}).exec();
-      console.log(exist)
-      if(exist){
-        User.updateOne({employee_id : req.params.employee_id, active_status : 1}, {new_pass_req : true}).then(Update =>{
-          
-  
-  
-          res.status(200).send({ success: true, message: 'Employee Updated Successfully!' });
-      }).catch(error =>{
-          res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
-      }) 
-      }else if(!exist){
-        res.status(200).send({ success: true, message: 'Employee does not Exist!' });
-      }
-      
-  }catch(err){
-      res.status(200).send({ success: false, error: err, message : 'An Error Catched' });  
+exports.updateForgotpassword = async (req, res) => {
+  try {
+    var exist = await User.findOne({
+      employee_id: req.params.employee_id,
+      active_status: 1
+    }).exec()
+    console.log(exist)
+    if (exist) {
+      User.updateOne(
+        { employee_id: req.params.employee_id, active_status: 1 },
+        { new_pass_req: true }
+      )
+        .then(Update => {
+          res
+            .status(200)
+            .send({ success: true, message: 'Employee Updated Successfully!' })
+        })
+        .catch(error => {
+          res
+            .status(200)
+            .send({ success: false, error: error, message: 'An Error Occured' })
+        })
+    } else if (!exist) {
+      res
+        .status(200)
+        .send({ success: true, message: 'Employee does not Exist!' })
+    }
+  } catch (err) {
+    res
+      .status(200)
+      .send({ success: false, error: err, message: 'An Error Catched' })
   }
-  }
+}
