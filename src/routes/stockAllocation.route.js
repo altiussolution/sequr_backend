@@ -3,7 +3,7 @@ const { StockAllocationController } = require('../controllers')
 const auth = require('../middleware/auth.middleware')
 
 route.post('/add',auth, StockAllocationController.allocateStock)
-route.get('/get',auth, StockAllocationController.getStockAllocations)
+route.get('/get', StockAllocationController.getStockAllocations)
 route.put('/update/:id',auth, StockAllocationController.updateStockAllocation)
 route.delete('/delete/:id',auth, StockAllocationController.deleteStockAllocation)
 route.get('/getStockAllocationsfilter',auth, StockAllocationController.getStockAllocationsfilter)

@@ -32,10 +32,11 @@ exports.getStockAllocations = (req, res) => {
   var cube = req.query.cube;
   var bin = req.query.bin;
   var compartment = req.query.compartment;
-  var is_active = req.query.is_active
+  var is_active = req.query.is_active;
+  var company_id = req.query.company_id;
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    ? { active_status: 1, company_id: company_id, $text: { $search: searchString } }
+    : { active_status: 1 , company_id:company_id}
   if (category) query['category'] = category
   if (sub_category) query['sub_category'] = sub_category
   if (is_active) query['is_active'] = is_active
@@ -114,10 +115,11 @@ exports.updateStockAllocation = (req, res) => {
 }
 
 exports.getItemById = (req, res) => {
+  var company_id = req.query.company_id
   try {
     var item = req.params.item
     stockAllocationModel
-      .findOne({ item: item })
+      .findOne({ item: item ,company_id : company_id})
       .populate('item')
       .populate('cube')
       .populate('bin')

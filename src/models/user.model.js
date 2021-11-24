@@ -32,7 +32,7 @@ const UserSchema = Schema({
     ref: 'roles'
   },
   language_prefered: {
-    type: String,
+    type: Schema.Types.ObjectId,
     required: true,
     ref: 'language'
 

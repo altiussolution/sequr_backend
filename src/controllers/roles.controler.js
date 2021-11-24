@@ -46,8 +46,9 @@ exports.createRole = (async (req, res) => {
 
 
 exports.getRoles = ((req, res) => {
+    var company_id = req.query.company_id
     try {
-        rolesModel.find({ active_status: 1 }, (err, roles) => {
+        rolesModel.find({ active_status: 1 , company_id: company_id, role_id : {$nin : ['$ SEQUR SUPERADMIN $', '$SEQUR CUSTOMER $']} }, (err, roles) => {
             if (!err) {
                 res.status(200).send({
                     status: true,
@@ -230,8 +231,9 @@ exports.updatePermission = ((req, res) => {
 })
 
 exports.getPermission = ((req, res) => {
+    var company_id  = req.query.company_id
     try {
-        rolesModel.find({ active_status: 1, permission : {$exists:true}, $where:'this.permission.length>0' }, (err, roles) => {
+        rolesModel.find({ active_status: 1,company_id: company_id, permission : {$exists:true}, $where:'this.permission.length>0' }, (err, roles) => {
             if (!err) {
                 res.status(200).send({
                     status: 'Success',
@@ -276,7 +278,6 @@ exports.getRolesfilter = (req, res) => {
     var role_name = req.query.role_name;
     var role_id = req.query.role_id;
     var active_status = req.query.active_status;
-    
   if (role_name && role_id && active_status){
     var query = {role_name : role_name, role_id: role_id , active_status : active_status}
 }
@@ -289,6 +290,7 @@ else if( role_id ){
 else if( active_status ){
     var query = { active_status :active_status}
 }
+query['company_id'] =  req.query.company_id
 
     rolesModel.find(query).then(roles =>{
         res.status(200).send({ success: true,roles: roles });

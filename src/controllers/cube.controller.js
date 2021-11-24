@@ -31,7 +31,8 @@ exports.getCube = (req, res) => {
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
     var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
     var searchString = req.query.searchString;
-    var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
+    var company_id = req.query.company_id;
+    var query = (searchString ? { active_status: 1, $text: { $search: searchString } ,company_id:company_id} : { active_status: 1 , company_id:company_id})
     try {
         cubeModel.find(query).populate("branch_id").skip(offset).limit(limit).then(cube => {
             res.status(200).send({ success: true, data: cube });
@@ -61,29 +62,29 @@ exports.getCubefilter = (req, res) => {
     var branch_name = req.query.branch_name;
     var cube_type = req.query.cube_type;
     var employee_status = req.query.employee_status;
-
-    if (branch_name && cube_type && employee_status){
-        var query = {branch_name :branch_name ,cube_type :cube_type ,employee_status  :employee_status}
+var company_id = req.query.company_id
+    if (branch_name && cube_type && employee_status && company_id){
+        var query = {branch_name :branch_name ,cube_type :cube_type ,employee_status  :employee_status, company_id:company_id}
     }
-    else if(branch_name && cube_type ){
-        var query = {branch_name : branch_name , cube_type : cube_type  }
+    else if(branch_name && cube_type  && company_id){
+        var query = {branch_name : branch_name , cube_type : cube_type , company_id:company_id }
     }
-    else if( cube_type && employee_status  ){
-        var query = {cube_type  : cube_type, employee_status : employee_status }
+    else if( cube_type && employee_status  && company_id ){
+        var query = {cube_type  : cube_type, employee_status : employee_status , company_id:company_id}
     }
-    else if( branch_name  && employee_status  ){
-        var query = {branch_name : branch_name, employee_status :employee_status}
+    else if( branch_name  && employee_status  && company_id ){
+        var query = {branch_name : branch_name, employee_status :employee_status, company_id:company_id}
     }
                                                                                                         
-    else if(branch_name ){
-        var query = { branch_name:branch_name}
+    else if(branch_name  && company_id ){
+        var query = { branch_name:branch_name, company_id:company_id}
     }
 
-     else if( cube_type ){
-        var query = {cube_type : cube_type}
+     else if( cube_type  && company_id){
+        var query = {cube_type : cube_type, company_id:company_id}
     }
-    else if( employee_status ){
-        var query = {employee_status :employee_status  }
+    else if( employee_status  && company_id){
+        var query = {employee_status :employee_status , company_id:company_id }
     }
 
 try {

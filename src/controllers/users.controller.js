@@ -39,6 +39,7 @@ var ObjectId = require('mongodb').ObjectID
         city_id,
         country_id,
         state_id,
+        company_id,
         status,
         active_status 
       } = req.body
@@ -84,6 +85,7 @@ var ObjectId = require('mongodb').ObjectID
         country_id,
         city_id,
         state_id,
+        company_id,
         status,
         email_id: email_id, // sanitize: convert email to lowercase
         password: encryptedPassword,
@@ -130,7 +132,7 @@ exports.login = async (req, res) => {
       res.status(400).send({ status: false, message: 'All input is required' })
     }
 
-    const user = await User.findOne({ employee_id }).populate('role_id').populate('country_id').populate('state_id').populate('city_id').exec()
+    const user = await User.findOne({ employee_id }).populate('role_id').populate('country_id').populate('state_id').populate('city_id').populate('company_id').exec()
 
     if (
       user &&
@@ -138,7 +140,7 @@ exports.login = async (req, res) => {
       user.active_status
     ) {
       const token = jwt.sign(
-        { user_id: user._id, employee_id, role_id : user.role_id },
+        { user_id: user._id, employee_id, role_id : user.role_id, company_id : user.company_id._id, role_id : user.role_id._id },
         process.env.TOKEN_KEY,
         {
           expiresIn: '2h'
@@ -244,14 +246,13 @@ exports.listEmployees = (req, res) => {
   var company_id = req.query.company_id;
   var created_by = req.query.created_by;
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
+    : { active_status: 1 , company_id : company_id }
     if (role_id) query['role_id'] = role_id
     if (branch_id) query['branch_id'] = branch_id
     if (department_id) query['department_id'] = department_id
     if (status) query['status'] = status
     if (shift_time_id) query['shift_time_id'] = shift_time_id
-    if (company_id) query['company_id'] = shift_time_id
     if (created_by) query['created_by'] = created_by
   User.find(query)
     .populate('department_id')
@@ -344,22 +345,25 @@ exports.resetPassword = async (req, res) => {
 
 exports.userProfile = async (req, res) => {
   var userId = req.params._id
-  try {
+  var company_id = req.query.company_id
+  // try {
     var userDetails = await User.findOne({
       _id: userId,
       active_status: 1,
-      status: 1
-    }).exec()
+      status: true,
+      // company_id : company_id
+    }).populate('language_prefered').populate('city_id').populate('state_id').populate('country_id').exec()
+    console.log(userDetails)
     if (userDetails) {
       res.status(200).send({ status: true, data: userDetails })
     } else {
       res.status(201).send({ status: false, message: 'Not a valid User' })
     }
-  } catch (err) {
-    res
-      .status(200)
-      .send({ success: false, error: err.name, message: 'An Error Catched' })
-  }
+  // } catch (err) {
+    // res
+    //   .status(200)
+    //   .send({ success: false, error: err.name, message: 'An Error Catched' })
+  // }
 }
 exports.EmployeeForgotPassword = async (req, res) => {
   try {
@@ -479,9 +483,10 @@ exports.getEmployeefilter = (req, res) => {
         var status = req.query.status;
         var department_id = req.query.department_id;
         var shift_time_id = req.query.shift_time_id;
+        var company_id = req.query.company_id;
         var query = searchString
-          ? { active_status: 1, $text: { $search: searchString } }
-          : { active_status: 1 }
+          ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
+          : { active_status: 1 , company_id : company_id }
           if (role_id) query['role_id'] = role_id
           if (branch_id) query['branch_id'] = branch_id
           if (department_id) query['department_id'] = department_id

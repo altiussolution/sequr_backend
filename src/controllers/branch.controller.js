@@ -59,9 +59,10 @@ exports.getBranch = (req, res) => {
   var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
   var searchString = req.query.searchString
+  var company_id = req.query.company_id
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    : { active_status: 1 , company_id : company_id}
   try {
     branchModel
       .find(query)
@@ -139,6 +140,7 @@ exports.getBranchfilter = (req, res) => {
   } else if (state_id) {
     var query = { state_id: state_id }
   }
+  query['company_id'] =  req.query.company_id
   try {
     branchModel
       .find(query)

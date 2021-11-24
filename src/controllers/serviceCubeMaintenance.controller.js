@@ -6,11 +6,12 @@ exports.cubeIdleHours = async (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var company_id = req.query.company_id
   try {
     cubes = await cubeModel
       .find({
         active_status: 1,
-        company_id:req.query.company_id
+        company_id:company_id
       })
       .populate('branch_id')
       .exec()
@@ -93,6 +94,7 @@ exports.filterCubeIdleHours = async (req, res) => {
   body = req.query
   req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var company_id = req.query.company_id
   Cubequery = {}
   machineUsageQuery = {}
   startDay = moment(body.date).format('YYYY-MM-DD 00:00:01')
@@ -102,8 +104,8 @@ exports.filterCubeIdleHours = async (req, res) => {
     cubes = await cubeModel
       .find({
         active_status: 1,
-        branch_id: body.branch_id,
-        company_id:req.query.company_id
+        company_id:company_id,
+        branch_id: body.branch_id
       })
       .populate('branch_id')
       .exec()

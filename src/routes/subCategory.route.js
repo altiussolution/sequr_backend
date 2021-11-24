@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage: storage })
 
-route.get('/get', auth, SubCategoryController.getsubCategory)
+route.get('/get',auth, SubCategoryController.getsubCategory)
 route.post('/add', auth, SubCategoryController.addsubCategory)
 route.put('/update/:id', auth, SubCategoryController.updatesubCategory)
 route.post(

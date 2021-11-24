@@ -62,9 +62,10 @@ exports.getCategory = async (req, res) => {
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
+  var company_id = req.query.company_id
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    ? { active_status: 1, $text: { $search: searchString },company_id : company_id}
+    : { active_status: 1 , company_id : company_id}
   try {
     categoryModel
       .find(query)
@@ -253,7 +254,8 @@ exports.deleteCategory = async (req, res) => {
 }
 
 exports.getCategorylist = async (req, res) => {
-  var query = { active_status: 1 }
+  var company_id = req.query.company_id
+  var query = { active_status: 1 ,company_id: company_id}
   var categories = []
   try {
     await categoryModel
@@ -280,11 +282,12 @@ exports.getCategorylist = async (req, res) => {
 
 exports.getCategoryfilter = (req, res) => {
   var is_active = req.query.is_active
+  var company_id = req.query.company_id
   //var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 },(categoryCode ? { active_status: 1, $text: { $search: categoryCode } } : { active_status: 1 }))
   //var query = (category_name ? { active_status: 1, category_name : category_name }(category_code ? { active_status: 1,  category_code : category_code } )
 
-  if (is_active) {
-    var query = { is_active: is_active }
+  if (is_active && company_id) {
+    var query = { is_active: is_active , company_id : company_id}
   }
   categoryModel
     .find(query)
@@ -298,6 +301,7 @@ exports.getCategoryfilter = (req, res) => {
 
 exports.getCategoryMachine = (req, res) => {
   var columnIds = []
+  var company_id = req.query.company_id
   if(req.query.column_ids){
   var columnIds = JSON.parse(req.query.column_ids)
 }
@@ -307,6 +311,7 @@ exports.getCategoryMachine = (req, res) => {
       .distinct('_id', {
         active_status: 1,
         bin_id: { $in: columnIds },
+        company_id : company_id,
         is_removed: false
       })
       .then(binList => {
@@ -362,9 +367,10 @@ exports.getUserCategory = async (req, res) => {
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
+  var company_id = req.query.company_id
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString }, is_active: true }
-    : { active_status: 1 }
+    ? { active_status: 1, $text: { $search: searchString }, is_active: true, company_id:company_id }
+    : { active_status: 1 , company_id : company_id}
   try {
     categoryModel
       .find(query)

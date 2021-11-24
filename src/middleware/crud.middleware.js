@@ -21,12 +21,12 @@ exports.createLog = (token, module_name, action, stock_id, qty) => {
       ? {
           user_id: decoded.user_id,
           module_name,
-          action
-          // company_id : decoded.company_id
+          action,
+          company_id : decoded.company_id
         }
       : {
           user_id: decoded.user_id,
-          // company_id : decoded.company_id
+          company_id : decoded.company_id,
           module_name,
           action,
           stock_allocation_id: stock_id,

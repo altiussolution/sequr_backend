@@ -47,12 +47,13 @@ exports.getItem = (req, res) => {
   var is_item = req.query.is_item
   var is_gages = req.query.is_gages
   var supplier = req.query.supplier
+  var company_id = req.query.company_id
   var moment = require('moment')
   var dateFrom = req.query.dateFrom // Direct Query
   var dateTo = req.query.dateTo // Direct Query
   var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
+    ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
+    : { active_status: 1 ,company_id:company_id}
   if (category_id) query['category_id'] = category_id
   if (sub_category_id) query['sub_category_id'] = sub_category_id
   if (is_active) query['is_active'] = is_active
@@ -163,10 +164,12 @@ exports.upload = async (req, res) => {
 }
 
 exports.getItemByCategory = async (req, res) => {
+  var company_id = req.query.company_id
   try {
     var itemsInCategory = await itemModel
       .find({
         active_status: 1,
+        company_id:company_id,
         is_active: true,
         category_id: req.params.category_id,
         sub_category_id: req.params.sub_category_id
@@ -181,10 +184,11 @@ exports.getItemByCategory = async (req, res) => {
 
 exports.getItemById = async (req, res) => {
   try {
+    var company_id = req.query.company_id
     var item = req.params.item
     var itemDetails = await itemModel.findById(item).exec()
     var stockDetails = await stockAllocationModel
-      .findOne({ item: item })
+      .findOne({ item: item ,company_id:company_id})
       .populate('cube')
       .populate('bin')
       .populate('compartment')
@@ -349,6 +353,7 @@ exports.uploadImage = async (req, res) => {
 }
 
 exports.getItemMachine = (req, res) => {
+  var company_id = req.query.company_id
   var columnIds = []
   if(req.query.column_ids){
   var columnIds = JSON.parse(req.query.column_ids)
@@ -359,6 +364,7 @@ console.log(req.query)
     binModel
       .distinct('_id', {
         active_status: 1,
+        company_id:company_id,
         bin_id: { $in: columnIds },
         is_removed: false
       })

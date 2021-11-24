@@ -11,7 +11,7 @@ exports.createCompany = (req, res) => {
                 res.status(200).send({ success: true, message: 'Company Created Successfully!' });
             }
             else {
-                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Comapny name' : err)
+                var errorMessage = (err.code == error_code.isDuplication ? 'Duplication occured in Company name' : err)
                 res.status(200).send({
                     success: false,
                     message: errorMessage
@@ -28,6 +28,7 @@ exports.getCompany = (req, res) => {
     var offset = parseInt(req.query.offset);
     var limit = parseInt(req.query.limit);
     var searchString = req.query.searchString;
+    
     var query = (searchString ? { active_status: 1, $text: { $search: searchString } } : { active_status: 1 })
     try {
         companyModel.find(query).populate("country_id").populate("state_id").populate("city_id").skip(offset).limit(limit).then(company => {

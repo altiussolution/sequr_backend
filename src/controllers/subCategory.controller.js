@@ -66,10 +66,13 @@ exports.getsubCategory = async (req, res) => {
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
   var categoryId = req.query.category_id
+  var company_id = req.query.company_id
+
   var query = searchString
     ? {
         active_status: 1,
         category_id: categoryId,
+        company_id : company_id,
         $text: { $search: searchString }
       }
     : { active_status: 1, category_id: categoryId }
@@ -159,6 +162,7 @@ exports.getsubCategoryfilter = async (req, res) => {
 
 exports.getSubCategoryMachine = (req, res) => {
   var columnIds = []
+  var company_id = req.query.company_id
   if(req.query.column_ids){
   var columnIds = JSON.parse(req.query.column_ids)
 }
@@ -167,6 +171,7 @@ exports.getSubCategoryMachine = (req, res) => {
     binModel
       .distinct('_id', {
         active_status: 1,
+        company_id:company_id,
         bin_id: { $in: columnIds },
         is_removed: false
       })
@@ -225,10 +230,12 @@ exports.getUsersubCategory = async (req, res) => {
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
   var categoryId = req.query.category_id
+  var company_id = req.query.company_id
   var query = searchString
     ? {
         active_status: 1,
         category_id: categoryId,
+        company_id:company_id,
         $text: { $search: searchString },
         is_active: true
       }
