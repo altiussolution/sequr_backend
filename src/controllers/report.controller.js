@@ -26,10 +26,10 @@ exports.transactionReport = (req, res) => {
   var role_id = req.query.role_id
   console.log(req.query)
   if (req.query.administration == 'true' || req.query.administration == true) {
-    var directQuery = { module_name: { $nin: ['Item added on cube'] } }
+    var directQuery = { module_name: { $nin: ['Item added on cube'] }, company_id:req.query.company_id }
   } else {
     var directQuery = {
-      module_name: 'Machine Item'
+      module_name: 'Machine Item', company_id:req.query.company_id
     }
   }
   var filterQuery = {}
@@ -78,7 +78,6 @@ exports.transactionReport = (req, res) => {
       {
         'role_doc.role_name': { $regex: searchString }
       },
-      role_doc
     ]
   }
   console.log(directQuery)
@@ -241,7 +240,7 @@ exports.deadStockReport = async (req, res) => {
   var beforeOneMonth = moment(dateForOutOfStock).format('YYYY-MM-DD 00:00:00')
 
   var directQuery = {
-    updated_at: { $lt: new Date(beforeOneMonth) }
+    updated_at: { $lt: new Date(beforeOneMonth), company_id:req.query.company_id }
   }
   var filterQuery = {}
   var searchQuery = [{}]
@@ -364,8 +363,8 @@ exports.stockShortageReport = async (req, res) => {
   var cubeId = req.query.cube // Direct Query
   var columnId = req.query.columnId // Direct Query
 
-  var directQuery = {}
-  var filterQuery = {}
+  var directQuery = {company_id:req.query.company_id}
+  var filterQuery = {company_id:req.query.company_id}
   var searchQuery = [{}]
 
   // Aggregation Queries
@@ -493,8 +492,8 @@ exports.orderReport = async (req, res) => {
   var receivedDateTo = req.query.ceratedDateTo // Direct Query
   var status = req.query.status // Direct Query
   var supplier_id = req.query.status // Direct Query
-  var directQuery = {}
-  var filterQuery = {}
+  var directQuery = {company_id:req.query.company_id}
+  var filterQuery = {company_id:req.query.company_id}
   var searchQuery = [{}]
 
   // Aggregation Queries
@@ -723,6 +722,7 @@ async function addRemainingItemQty () {
       data['action'] = 'Item added on cube'
       data['stock_allocation_id'] = item._id
       data['trasaction_qty'] = item.quantity
+      data['company_id'] = data.company_id
       logData.push(data)
     }
     await logModel.insertMany(logData)
