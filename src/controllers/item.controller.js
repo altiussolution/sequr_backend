@@ -60,6 +60,7 @@ exports.getItem = (req, res) => {
   if (is_item) query['is_active'] = is_item
   if (is_gages) query['is_gages'] = is_gages
   if (supplier) query['supplier'] = supplier
+  if (company_id) query['company_id'] = company_id
   if (dateFrom) {
     var fromDate = moment(dateFrom).format('YYYY-MM-DD 00:00:00')
     var toDate = moment(dateTo).format('YYYY-MM-DD 23:59:59')
@@ -309,27 +310,27 @@ exports.deleteItems = (req, res) => {
   }
 }
 
-exports.getItemfilter = (req, res) => {
-  var query = searchString
-  ? { active_status: 1, $text: { $search: searchString } }
-  : { active_status: 1 }
-if (category_id) query['category_id'] = category_id
-if (sub_category_id) query['sub_category_id'] = sub_category_id
-  try {
-    itemModel
-      .find(query)
-      .populate('category_id')
-      .populate('sub_category_id')
-      .then(item => {
-        res.status(200).send({ success: true, item: item })
-      })
-      .catch(error => {
-        res.status(400).send({ success: false, error: error })
-      })
-  } catch (error) {
-    res.status(201).send({ success: false, error: error })
-  }
-}
+// exports.getItemfilter = (req, res) => {
+//   var query = searchString
+//   ? { active_status: 1, $text: { $search: searchString } }
+//   : { active_status: 1 }
+// if (category_id) query['category_id'] = category_id
+// if (sub_category_id) query['sub_category_id'] = sub_category_id
+//   try {
+//     itemModel
+//       .find(query)
+//       .populate('category_id')
+//       .populate('sub_category_id')
+//       .then(item => {
+//         res.status(200).send({ success: true, item: item })
+//       })
+//       .catch(error => {
+//         res.status(400).send({ success: false, error: error })
+//       })
+//   } catch (error) {
+//     res.status(201).send({ success: false, error: error })
+//   }
+// }
 
 exports.uploadImage = async (req, res) => {
   try {

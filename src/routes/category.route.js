@@ -29,6 +29,6 @@ route.get(
   auth,
   CategoryController.getCategoryMachine
 )
-route.get('/getUserCategory', auth, CategoryController.getUserCategory)
+//route.get('/getUserCategory', auth, CategoryController.getUserCategory)
 
 module.exports = route

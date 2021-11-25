@@ -5,6 +5,7 @@ const Email = require('email-templates')
 var crontab = require('node-crontab')
 var generator = require('generate-password')
 const { createLog } = require('../middleware/crud.middleware')
+const { purchaseOrder } = require('./analytics.controller')
 
 exports.addPurchaseOrder = async (req, res) => {
   try {
@@ -132,27 +133,58 @@ exports.updatePurchaseOrder = async (req, res) => {
   }
 }
 exports.deletePurchaseOrder = (req, res) => {
-  try {
-    purchaseOrderModel
-      .findByIdAndUpdate(req.params.id, { active_status: 0 })
-      .then(purchaseOrder => {
-        res.status(200).send({
-          success: true,
-          message: 'PurchaseOrder Deleted Successfully!'
+
+    try {
+      purchaseOrderModel
+        .aggregate([
+          {
+            $match: {
+              $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+            }
+          },
+          {
+            $lookup: {
+              from: 'stockallocations',
+              localField: '_id',
+              foreignField: 'purchase_order',
+              as: 'stock_doc'
+            }
+          }
+        ])
+        .then(async doc => {
+          message = []
+          if (doc[0].stock_doc.length > 0) {
+            await message.push(
+              'Please delete all the stock items refered to this purchaseOrder'
+            )
+          }
+  
+          if (message.length > 0) {
+            res.status(200).send({ success: true, message: message })
+          } else if (message.length == 0) {
+            purchaseOrderModel
+              .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+              .then(purchaseOrder => {
+                res.status(200).send({
+                  success: true,
+                  message: 'PurchaseOrder Deleted Successfully!'
+                })
+                createLog(req.headers['authorization'], 'purchaseOrder', 0)
+              })
+              .catch(err => {
+                res
+                  .status(200)
+                  .send({ success: false, message: 'purchaseOrder Not Found' })
+              })
+          }
         })
-        createLog(req.headers['authorization'], 'PurchaseOrder', 0)
-      })
-      .catch(err => {
-        res
-          .status(200)
-          .send({ success: false, message: 'PurchaseOrder Not Found' })
-      })
-  } catch (err) {
-    res
-      .status(200)
-      .send({ success: false, error: err, message: 'An Error Catched' })
+    } catch (err) {
+      res
+        .status(200)
+        .send({ success: false, error: err, message: 'An Error Catched' })
+    }
   }
-}
+  
 exports.upload = async (req, res) => {
   try {
     if (req.file) {

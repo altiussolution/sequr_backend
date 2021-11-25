@@ -22,7 +22,10 @@ var { error_code } = require('../utils/enum.utils')
 
 exports.getUsercount = async (req, res) => {
   var company_id = req.query.company_id
-  var query = { active_status: 1 ,company_id : company_id}
+  customerRole = await rolesModel.distinct('_id', {
+    role_id: { $in: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
+  }).exec()
+  var query = { active_status: 1 ,company_id : company_id,role_id : { $nin: customerRole }}
   try {
     await User.count(query)
       .then(user => {
@@ -93,7 +96,8 @@ exports.getCategorycount = async (req, res) => {
 
 exports.getsubCategorycount = async (req, res) => {
   var company_id = req.query.company_id
-  var query = { active_status: 1 ,company_id:company_id}
+  var categoryId = req.query.category_id
+  var query = { active_status: 1 ,company_id:company_id, category_id: categoryId}
   try {
     await subCategoryModel
       .count(query)
@@ -273,7 +277,7 @@ exports.getPurchaseOrdercount = async (req, res) => {
 
 exports.getPermissioncount = async (req, res) => {
   var company_id = req.query.company_id
-  var query = ({ active_status: 1,company_id:company_id},{ $where: "this.permission.length > 1"  })
+  var query = { active_status: 1, company_id:company_id, $where: "this.permission.length > 1"}
   try {
     await rolesModel
       .count(query)

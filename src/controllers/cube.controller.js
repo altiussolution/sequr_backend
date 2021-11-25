@@ -62,31 +62,14 @@ exports.getCubefilter = (req, res) => {
     var branch_name = req.query.branch_name;
     var cube_type = req.query.cube_type;
     var employee_status = req.query.employee_status;
-var company_id = req.query.company_id
-    if (branch_name && cube_type && employee_status && company_id){
-        var query = {branch_name :branch_name ,cube_type :cube_type ,employee_status  :employee_status, company_id:company_id}
-    }
-    else if(branch_name && cube_type  && company_id){
-        var query = {branch_name : branch_name , cube_type : cube_type , company_id:company_id }
-    }
-    else if( cube_type && employee_status  && company_id ){
-        var query = {cube_type  : cube_type, employee_status : employee_status , company_id:company_id}
-    }
-    else if( branch_name  && employee_status  && company_id ){
-        var query = {branch_name : branch_name, employee_status :employee_status, company_id:company_id}
-    }
-                                                                                                        
-    else if(branch_name  && company_id ){
-        var query = { branch_name:branch_name, company_id:company_id}
-    }
-
-     else if( cube_type  && company_id){
-        var query = {cube_type : cube_type, company_id:company_id}
-    }
-    else if( employee_status  && company_id){
-        var query = {employee_status :employee_status , company_id:company_id }
-    }
-
+    var company_id = req.query.company_id
+    var query = searchString
+    ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
+    : { active_status: 1 ,company_id:company_id}
+    if (branch_name) query['branch_name'] = branch_name
+    if (cube_type) query['cube_type'] = cube_type
+    if (employee_status) query['employee_status'] = employee_status
+    if (company_id) query['company_id'] = company_id
 try {
     cubeModel.find(query).populate("branch_id").then(cube => {
         res.status(200).send({ success: true, data: cube });

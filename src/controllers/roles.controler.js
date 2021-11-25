@@ -291,11 +291,13 @@ else if( active_status ){
     var query = { active_status :active_status}
 }
 query['company_id'] =  req.query.company_id
-
+try {
     rolesModel.find(query).then(roles =>{
         res.status(200).send({ success: true,roles: roles });
     }).catch(error => {
         res.status(400).send({success: false, error : error})
     })
-
+} catch (error) {
+    res.send({status : false , error : error.name});
+}
 }

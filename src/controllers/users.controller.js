@@ -214,6 +214,7 @@ exports.update = async (req, res) => {
 }
 
 exports.delete = (req, res) => {
+  try {
   User.findByIdAndUpdate(
     req.query.id,
     { active_status: 0, status: 0 },
@@ -231,9 +232,13 @@ exports.delete = (req, res) => {
       }
     }
   )
+  }catch (err) {
+    res.status(400).send(err)
+  }
 }
 
 exports.listEmployees = (req, res) => {
+  try {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
@@ -262,6 +267,9 @@ exports.listEmployees = (req, res) => {
     .then(result => {
       res.send(result)
     })
+  }catch (err) {
+    res.status(400).send(err)
+  }
 }
 
 exports.forgotPassword = async (req, res) => {
@@ -276,7 +284,9 @@ exports.forgotPassword = async (req, res) => {
 
     const user = await Models.userModel.findOne({ email_id: req.body.email_id })
     if (!user)
-      return res.status(400).send("user with given email doesn't exist")
+      return res
+      .status(409)
+      .send( {status: false, message: 'Please Enter Register Email ID'})
 
     let token = await Models.resetPasswordTokenModel.findOne({
       user_id: user._id
@@ -346,7 +356,7 @@ exports.resetPassword = async (req, res) => {
 exports.userProfile = async (req, res) => {
   var userId = req.params._id
   var company_id = req.query.company_id
-  // try {
+   try {
     var userDetails = await User.findOne({
       _id: userId,
       active_status: 1,
@@ -359,11 +369,11 @@ exports.userProfile = async (req, res) => {
     } else {
       res.status(201).send({ status: false, message: 'Not a valid User' })
     }
-  // } catch (err) {
-    // res
-    //   .status(200)
-    //   .send({ success: false, error: err.name, message: 'An Error Catched' })
-  // }
+  } catch (err) {
+    res
+      .status(200)
+      .send({ success: false, error: err.name, message: 'An Error Catched' })
+  }
 }
 exports.EmployeeForgotPassword = async (req, res) => {
   try {
@@ -413,6 +423,7 @@ exports.EmployeeForgotPassword = async (req, res) => {
 }
 
 exports.changePassword = async (req, res) => {
+  try {
   var passwordDetails = req.body
   console.log(req.body)
   var userId = req.params._id
@@ -470,10 +481,14 @@ exports.changePassword = async (req, res) => {
     res.status(401).send({
       message: 'User is not signed in'
     })
+  } }catch (err) {
+    res.status(400).send(err)
   }
+
 }
 
 exports.getEmployeefilter = (req, res) => {
+  try {
         var offset =
           req.query.offset != undefined ? parseInt(req.query.offset) : false
         var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
@@ -494,11 +509,15 @@ exports.getEmployeefilter = (req, res) => {
           if (shift_time_id) query['shift_time_id'] = shift_time_id
 
      
-User.find(query).populate('department_id').populate('role_id').populate('branch_id').populate('shift_time_id').skip(offset).limit(limit).then(user =>{
-  res.status(200).send({ success: true, user: user });
-}).catch(error => {
-  res.status(400).send({success: false, error : error})
+   User.find(query).populate('department_id').populate('role_id').populate('branch_id').populate('shift_time_id').skip(offset).limit(limit).then(user =>{
+    res.status(200).send({ success: true, user: user });
+    }).catch(error => {
+     res.status(400).send({success: false, error : error})
 })
+   }catch (err) {
+  res.status(400).send(err)
+}
+
 }
 
 
@@ -518,7 +537,7 @@ User.find(query).populate('department_id').populate('role_id').populate('branch_
           res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
       }) 
       }else if(!exist){
-        res.status(200).send({ success: true, message: 'Employee does not Exist!' });
+        res.status(409).send({ success: false, message: 'Employee does not Exist!' });
       }
       
   }catch(err){

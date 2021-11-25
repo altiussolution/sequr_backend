@@ -118,7 +118,7 @@ exports.deleteShift= (req, res) => {
               .catch(err => {
                 res
                   .status(200)
-                  .send({ success: false, message: 'Role Not Found' })
+                  .send({ success: false, message: 'ShiftTime Not Found' })
               })
   
           
@@ -158,8 +158,14 @@ exports.getShiftfilter =  (req, res) => {
     var company_id = req.query.company_id;
    
     if( shift_type ){
-        var query = { shift_type :shift_type, company_id : company_id }
+        var query = { shift_type :shift_type }
     }
+    if( shift_type && company_id){
+      var query = { shift_type :shift_type, company_id : company_id }
+  }
+  if( company_id  ){
+    var query = { company_id : company_id }
+}
     try {
        shift_timeModel.find(query).then(shift_time => {
             res.status(200).send({ success: true, data: shift_time});
