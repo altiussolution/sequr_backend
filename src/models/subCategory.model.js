@@ -26,6 +26,11 @@ const SubCategorySchema = Schema({
   image_path: {
     type: String
   },
+  company_id: {
+    type: Schema.Types.ObjectId,
+    ref: 'company',
+    required : true
+  },
   created_at: {
     type: Date,
     default: Date.now

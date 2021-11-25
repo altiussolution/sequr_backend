@@ -37,7 +37,7 @@ const KitSchema = Schema({
     company_id: {
         type: Schema.Types.ObjectId,
         ref: 'company',
-        //required : true
+        required : true
     },
     created_at: {
         type: Date,

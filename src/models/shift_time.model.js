@@ -32,7 +32,7 @@ const ShiftTimeSchema = Schema({
     company_id: {
         type: Schema.Types.ObjectId,
         ref: 'company',
-        //required : true
+        required : true
     },
     active_status: {
         type: Number,

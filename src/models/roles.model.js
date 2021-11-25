@@ -13,6 +13,15 @@ const RoleSchema = Schema({
     permission : {
         type : Array,
     },
+    created_by: {
+        type: Schema.Types.ObjectId,
+        ref: 'users'
+      },
+    company_id: {
+        type: Schema.Types.ObjectId,
+        ref: 'company',
+        required : true
+    },
     created_at: {
         type: Date,
         default: Date.now

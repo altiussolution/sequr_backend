@@ -198,7 +198,7 @@ exports.deleteShift= (req, res) => {
             $lookup: {
               from: 'users', // model name
               localField: '_id',
-              foreignField: 'shift_time',
+              foreignField: 'shift_time_id',
               as: 'user_doc' // name of the document contains all users
             }
           },
