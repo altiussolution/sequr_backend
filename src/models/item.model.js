@@ -102,6 +102,7 @@ const ItemSchema = Schema(
   },
   { timestamps: { updatedAt: 'updated_at' } }
 )
+ItemSchema.index({ item_name: 1, company_id: 1, item_number : 1 }, { unique: true });
 
 ItemSchema.index({ '$**': 'text' })
 module.exports = mongoose.model('item', ItemSchema)
