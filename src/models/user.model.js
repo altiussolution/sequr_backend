@@ -75,7 +75,7 @@ const UserSchema = Schema({
   },
   profile_pic: {
     type: String,
-    unique:true
+    // unique:true
   },
   company_id: {
     type: Schema.Types.ObjectId,
