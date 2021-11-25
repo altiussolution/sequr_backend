@@ -33,7 +33,7 @@ exports.transactionReport = (req, res) => {
     }
   } else {
     var directQuery = {
-      module_name: 'Machine Item',
+      module_name: 'Machine Items',
       company_id: ObjectId(req.query.company_id)
     }
   }
