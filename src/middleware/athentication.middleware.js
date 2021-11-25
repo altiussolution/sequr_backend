@@ -1,4 +1,7 @@
 const { User } = require('../models/user.model')
+const jwt = require("jsonwebtoken");
+const config = process.env;
+
 const authentication = async req => {
   var isAuthenticated = true
   var decoded = req.user
@@ -43,15 +46,16 @@ const verifySuperAdmin = async (req, res, next) => {
       if (
         !isValidUser ||
         !isValidUser.active_status ||
-        isValidUser.role_id.role_id != 'SEQURE-SUPER-ADMIN'
+        isValidUser.role_id.role_id != '$ SEQUR SUPERADMIN $'
       ) {
-        return res.status(401).send('Not a valid user')
-      } else {
-        // var isAthenticated = await authentication(req)
-        // if(!isAthenticated){
-        //   return res.status(401).send("Not Authorized");
-        // }
+        return res.status(401).send('Not a valid user !!!')
       }
+      //  else {
+      //   // var isAthenticated = await authentication(req)
+      //   // if(!isAthenticated){
+      //     return res.status(401).send("Not Authorized");
+      //   // }
+      // }
     }
   } catch (err) {
     return res.status(401).send({ message: 'Invalid Token', error: err.name })

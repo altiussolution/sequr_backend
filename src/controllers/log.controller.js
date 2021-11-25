@@ -1,4 +1,8 @@
 const { logModel, stockAllocationModel } = require('../models')
+var moment = require('moment')
+const { query } = require('express')
+var ObjectId = require('mongodb').ObjectID
+
 
 exports.getLog = (req, res) => {
     var offset =
@@ -29,17 +33,18 @@ exports.getLog = (req, res) => {
   exports.getUserTakenQuantity = async (req, res) => {
     var fromDate = moment((new Date())).format('YYYY-MM-DD 00:00:00')
     var toDate = moment((new Date())).format('YYYY-MM-DD 23:59:59')
+    var query = {}
     query['created_at'] = {
       $gt: new Date(fromDate),
       $lt: new Date(toDate)
-    }
-  
+    }  
     try {
       stockAlloted_item = await stockAllocationModel
         .distinct('_id', {
           item: req.query.item_id
         })
         .exec()
+        console.log(stockAlloted_item)
   
       itemTaken = await logModel.aggregate([
         {
@@ -47,7 +52,7 @@ exports.getLog = (req, res) => {
             $and: [
               {
                 action: 'Taken',
-                user_id : req.query.user_id,
+                user_id : ObjectId(req.query.user_id),
                 stock_allocation_id: { $in: stockAlloted_item },
                 created_at: query.created_at
               }

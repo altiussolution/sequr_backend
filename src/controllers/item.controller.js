@@ -2,40 +2,40 @@ const {
   itemModel,
   stockAllocationModel,
   binModel,
-  compartmentModel
+  compartmentModel,
+  cubeModel
 } = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
-exports.addItem = (async (req, res) => {
+exports.addItem = async (req, res) => {
   try {
-      var newItem = new itemModel(req.body);
-      newItem.save(function (err) {
-          if (err) 
-          {console.log(err)
-            if (err.keyValue.item_number){
-              var errorMessage =
-                err.code == error_code.isDuplication
-                  ? 'Item Number is already exist'
-                  : err
-
-            } 
-            res.status(409).send({
-              success: false,
-              message: errorMessage
-    
-            })
-           }
-          else {
-              res.status(200).send({ success: true, message: 'Item Added Successfully!' });
-          }
-      });
+    var newItem = new itemModel(req.body)
+    newItem.save(function (err) {
+      if (err) {
+        console.log(err)
+        if (err.keyValue.item_number) {
+          var errorMessage =
+            err.code == error_code.isDuplication
+              ? 'Item Number is already exist'
+              : err
+        }
+        res.status(409).send({
+          success: false,
+          message: errorMessage
+        })
+      } else {
+        res
+          .status(200)
+          .send({ success: true, message: 'Item Added Successfully!' })
+      }
+    })
   } catch (error) {
-      res.send("An error occured");
-      console.log(error);
+    res.send('An error occured')
+    console.log(error)
   }
-})
+}
 exports.getItem = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
@@ -52,8 +52,12 @@ exports.getItem = (req, res) => {
   var dateFrom = req.query.dateFrom // Direct Query
   var dateTo = req.query.dateTo // Direct Query
   var query = searchString
-    ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
-    : { active_status: 1 ,company_id:company_id}
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
   if (category_id) query['category_id'] = category_id
   if (sub_category_id) query['sub_category_id'] = sub_category_id
   if (is_active) query['is_active'] = is_active
@@ -70,8 +74,6 @@ exports.getItem = (req, res) => {
     }
   }
   // Date Filter
-
-
 
   try {
     itemModel
@@ -92,23 +94,23 @@ exports.getItem = (req, res) => {
   }
 }
 
-exports.updateItem = (async (req, res) => {
-    try {
-        itemModel.findByIdAndUpdate(req.params.id, req.body, (err, file) => {
-            if (file)
-                res.send({
-                    status: 'Success',
-                    message: 'item Updated'  
-                });
-            else {
-                res.send({message : 'Not Found'});
-            }
-        });
-    } catch (error) {
-        res.send("An error occured");
-        console.log(error);
-    }
-})
+exports.updateItem = async (req, res) => {
+  try {
+    itemModel.findByIdAndUpdate(req.params.id, req.body, (err, file) => {
+      if (file)
+        res.send({
+          status: 'Success',
+          message: 'item Updated'
+        })
+      else {
+        res.send({ message: 'Not Found' })
+      }
+    })
+  } catch (error) {
+    res.send('An error occured')
+    console.log(error)
+  }
+}
 
 exports.upload = async (req, res) => {
   try {
@@ -170,7 +172,7 @@ exports.getItemByCategory = async (req, res) => {
     var itemsInCategory = await itemModel
       .find({
         active_status: 1,
-        company_id:company_id,
+        company_id: company_id,
         is_active: true,
         category_id: req.params.category_id,
         sub_category_id: req.params.sub_category_id
@@ -189,7 +191,7 @@ exports.getItemById = async (req, res) => {
     var item = req.params.item
     var itemDetails = await itemModel.findById(item).exec()
     var stockDetails = await stockAllocationModel
-      .findOne({ item: item ,company_id:company_id})
+      .findOne({ item: item, company_id: company_id })
       .populate('cube')
       .populate('bin')
       .populate('compartment')
@@ -222,55 +224,55 @@ exports.deleteItems = (req, res) => {
   //     .send({ success: false, error: err, message: 'An Error Catched' })
   // }
   try {
-    itemModel.aggregate([
-      {
-        $match: {
-          $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+    itemModel
+      .aggregate([
+        {
+          $match: {
+            $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+          }
+        },
+        {
+          $lookup: {
+            from: 'stockallocations',
+            localField: '_id',
+            foreignField: 'item',
+            as: 'stock_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'kits',
+            localField: '_id',
+            foreignField: 'kit_data.item_id',
+            as: 'kit_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'purchaseorders',
+            localField: '_id',
+            foreignField: 'item_id',
+            as: 'po_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'carts',
+            localField: '_id',
+            foreignField: 'cart.item',
+            as: 'cart_doc'
+          }
         }
-      },
-      {
-        $lookup: {
-          from: 'stockallocations', 
-          localField: '_id',
-          foreignField: 'item',
-          as: 'stock_doc' 
-        }
-      },
-      {
-        $lookup: {
-          from: 'kits', 
-          localField: '_id',
-          foreignField: 'kit_data.item_id',
-          as: 'kit_doc' 
-        }
-      },
-      {
-        $lookup: {
-          from: 'purchaseorders',
-          localField: '_id',
-          foreignField: 'item_id',
-          as: 'po_doc' 
-        }
-      },
-      {
-        $lookup: {
-          from: 'carts',
-          localField: '_id',
-          foreignField: 'cart.item',
-          as: 'cart_doc' 
-        }
-      },
-    ]).then(async doc =>{
-      message = []
+      ])
+      .then(async doc => {
+        message = []
         if (doc[0].stock_doc.length > 0) {
           await message.push(
             'Please delete all the refered stocks by this item'
           )
         }
         if (doc[0].kit_doc.length > 0) {
-          await message.push(
-            'Please delete all the refered kits by this item'
-          )
+          await message.push('Please delete all the refered kits by this item')
         }
         if (doc[0].po_doc.length > 0) {
           await message.push(
@@ -278,11 +280,9 @@ exports.deleteItems = (req, res) => {
           )
         }
         if (doc[0].cart_doc.length > 0) {
-          await message.push(
-            'Please remove this item in the cart'
-          )
+          await message.push('Please remove this item in the cart')
         }
-      if (message.length > 0) {
+        if (message.length > 0) {
           res.status(200).send({ success: true, message: message })
         } else if (message.length == 0) {
           itemModel
@@ -299,14 +299,12 @@ exports.deleteItems = (req, res) => {
                 .status(200)
                 .send({ success: false, message: 'Item Not Found' })
             })
-
-        
         }
-    })
-  }catch (err) {
+      })
+  } catch (err) {
     res
-    .status(200)
-    .send({ success: false, error: err, message: 'An Error Catched' })
+      .status(200)
+      .send({ success: false, error: err, message: 'An Error Catched' })
   }
 }
 
@@ -356,61 +354,70 @@ exports.uploadImage = async (req, res) => {
 exports.getItemMachine = (req, res) => {
   var company_id = req.query.company_id
   var columnIds = []
-  if(req.query.column_ids){
-  var columnIds = JSON.parse(req.query.column_ids)
-}
-console.log(req.query)
+  if (req.query.column_ids) {
+    var columnIds = JSON.parse(req.query.column_ids)
+  }
+  console.log(req.query)
   try {
-    //Find all Columns Ids
-    binModel
+    cubeModel
       .distinct('_id', {
         active_status: 1,
-        company_id:company_id,
-        bin_id: { $in: columnIds },
-        is_removed: false
+        company_id: company_id,
+        employee_status: true
       })
-      .then(binList => {
-        console.log(binList)
-        compartmentModel
+      .then(cubeList => {
+        //Find all Columns Ids
+        binModel
           .distinct('_id', {
             active_status: 1,
-            bin_id: { $in: binList },
+            cube_id: { $in: cubeList },
+            bin_id: { $in: columnIds },
+            company_id: company_id,
             is_removed: false
           })
-          .then(drawList => {
-            console.log(drawList)
-            //Find all Item Ids in stock allocation
-            stockAllocationModel
-              .distinct('item', {
+          .then(binList => {
+            console.log(binList)
+            compartmentModel
+              .distinct('_id', {
                 active_status: 1,
-                compartment: { $in: drawList }
+                bin_id: { $in: binList },
+                is_removed: false
               })
-              .then(itemsList => {
-                console.log(itemsList)
-                var query = {
-                  active_status: 1,
-                  is_active: true,
-                  category_id: req.params.category_id,
-                  sub_category_id: req.params.sub_category_id,
-                  _id: { $in: itemsList }
-                }
-                console.log(itemsList)
+              .then(drawList => {
+                console.log(drawList)
+                //Find all Item Ids in stock allocation
+                stockAllocationModel
+                  .distinct('item', {
+                    active_status: 1,
+                    compartment: { $in: drawList }
+                  })
+                  .then(itemsList => {
+                    console.log(itemsList)
+                    var query = {
+                      active_status: 1,
+                      is_active: true,
+                      category_id: req.params.category_id,
+                      sub_category_id: req.params.sub_category_id,
+                      _id: { $in: itemsList }
+                    }
+                    console.log(itemsList)
 
-                // Find All items in machine
-                itemModel
-                  .find(query)
-                  .populate('category_id')
-                  .populate('sub_category_id')
-                  .populate('supplier.suppliedBy')
-                  .then(item => {
-                    res.status(200).send({ success: true, data: item })
+                    // Find All items in machine
+                    itemModel
+                      .find(query)
+                      .populate('category_id')
+                      .populate('sub_category_id')
+                      .populate('supplier.suppliedBy')
+                      .then(item => {
+                        res.status(200).send({ success: true, data: item })
+                      })
+                      .catch(error => {
+                        res.status(400).send({ success: false, error: error })
+                      })
                   })
                   .catch(error => {
                     res.status(400).send({ success: false, error: error })
                   })
-              })
-              .catch(error => {
-                res.status(400).send({ success: false, error: error })
               })
           })
       })

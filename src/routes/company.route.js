@@ -8,4 +8,5 @@ route.put('/update/:id', verifySuperAdmin, CompanyController.updateCompany)
 route.delete('/delete/:id', verifySuperAdmin, CompanyController.deleteCompany)
 route.post('/addSuperAdmin', CompanyController.createCompany)
 route.get('/getSuperAdmin', CompanyController.getCompany)
+route.get('/getRoles', verifySuperAdmin, CompanyController.getRoles)
 module.exports = route

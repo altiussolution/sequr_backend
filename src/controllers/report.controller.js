@@ -1,4 +1,3 @@
-const { ObjectId } = require('bson')
 const {
   logModel,
   stockAllocationModel,
@@ -9,6 +8,8 @@ const {
 var moment = require('moment')
 const { search } = require('../routes/users.route')
 var crontab = require('node-crontab')
+var ObjectId = require('mongodb').ObjectID
+const { find } = require('../models/item.model')
 
 exports.transactionReport = (req, res) => {
   var offset =
@@ -26,10 +27,14 @@ exports.transactionReport = (req, res) => {
   var role_id = req.query.role_id
   console.log(req.query)
   if (req.query.administration == 'true' || req.query.administration == true) {
-    var directQuery = { module_name: { $nin: ['Item added on cube'] }, company_id:req.query.company_id }
+    var directQuery = {
+      module_name: { $nin: ['Item added on cube'] },
+      company_id: ObjectId(req.query.company_id)
+    }
   } else {
     var directQuery = {
-      module_name: 'Machine Item', company_id:req.query.company_id
+      module_name: 'Machine Item',
+      company_id: ObjectId(req.query.company_id)
     }
   }
   var filterQuery = {}
@@ -77,7 +82,7 @@ exports.transactionReport = (req, res) => {
       },
       {
         'role_doc.role_name': { $regex: searchString }
-      },
+      }
     ]
   }
   console.log(directQuery)
@@ -188,14 +193,18 @@ exports.overallStockReport = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-  var company_id = req.query.company_id;
+  var company_id = req.query.company_id
   var searchString = req.query.searchString
   var in_stock = req.query.in_stock
   var dateFrom = req.query.dateFrom
   var dateTo = req.query.dateTo
   var query = searchString
-    ? { active_status: 1,company_id:company_id ,$text: { $search: searchString } }
-    : { active_status: 1 ,company_id:company_id}
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
   if (in_stock) {
     query['in_stock'] = parseInt(in_stock)
   }
@@ -240,9 +249,12 @@ exports.deadStockReport = async (req, res) => {
   var beforeOneMonth = moment(dateForOutOfStock).format('YYYY-MM-DD 00:00:00')
 
   var directQuery = {
-    updated_at: { $lt: new Date(beforeOneMonth), company_id:req.query.company_id }
+    updated_at: {
+      $lt: new Date(beforeOneMonth),
+      company_id: req.query.company_id
+    }
   }
-  var filterQuery = {}
+  var filterQuery = {active_status : 1}
   var searchQuery = [{}]
 
   // Aggregation Queries
@@ -363,8 +375,8 @@ exports.stockShortageReport = async (req, res) => {
   var cubeId = req.query.cube // Direct Query
   var columnId = req.query.columnId // Direct Query
 
-  var directQuery = {company_id:req.query.company_id}
-  var filterQuery = {company_id:req.query.company_id}
+  var directQuery = { company_id: req.query.company_id }
+  var filterQuery = { company_id: req.query.company_id }
   var searchQuery = [{}]
 
   // Aggregation Queries
@@ -479,10 +491,10 @@ exports.stockShortageReport = async (req, res) => {
     res.status(201).send({ success: false, error: error })
   }
 }
-exports.orderReport = async (req, res) => {
+exports.orderReport = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : 20
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
 
   var searchString = req.query.searchString // Search Query
 
@@ -491,9 +503,9 @@ exports.orderReport = async (req, res) => {
   var receivedDateFrom = req.query.ceratedDateTo // Direct Query
   var receivedDateTo = req.query.ceratedDateTo // Direct Query
   var status = req.query.status // Direct Query
-  var supplier_id = req.query.status // Direct Query
-  var directQuery = {company_id:req.query.company_id}
-  var filterQuery = {company_id:req.query.company_id}
+  var supplier_id = req.query.supplier_id // Direct Query
+  var directQuery = { company_id: ObjectId(req.query.company_id), active_status: 1 }
+  var filterQuery = { active_status : 1  }
   var searchQuery = [{}]
 
   // Aggregation Queries
@@ -515,8 +527,12 @@ exports.orderReport = async (req, res) => {
       $lt: new Date(toDate)
     }
   }
-  if (supplier_id) directQuery['supplier_id'] = ObjectId(supplier_id)
-  if (status) directQuery['status'] = ObjectId(status)
+  if (supplier_id) {
+    directQuery['supplier_id'] = ObjectId(supplier_id)
+  }
+  if (status) {
+    directQuery['status'] = status
+  }
   // Direct Queries
 
   if (searchString) {
@@ -546,18 +562,14 @@ exports.orderReport = async (req, res) => {
   try {
     purchaseOrderModel
       .aggregate([
-        //Find branch id and active_status is 1
         {
-          $match: {
-            $and: [directQuery]
+          '$match': {
+            '$and': [directQuery]
           }
         },
         { $sort: { created_at: -1 } },
         { $skip: offset },
         { $limit: limit },
-        // *** 1 ***
-        // *** 2 ***
-        // *** 3 ***
         {
           $lookup: {
             from: 'suppliers',
@@ -575,18 +587,14 @@ exports.orderReport = async (req, res) => {
           }
         },
         {
-          $match: filterQuery
+          '$match': filterQuery
         },
         {
-          $match: {
+          '$match': {
             $or: searchQuery
           }
-        },
-        { $limit: limit }
+        }
       ])
-      //   .sort({ created_at: -1 })
-      //   .skip(offset)
-      //   .limit(limit)
       .then(async order => {
         res.status(200).send({ success: true, data: order })
       })
@@ -601,15 +609,21 @@ exports.kittingReport = async (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-  var company_id = req.query.company_id;
+  var company_id = req.query.company_id
   var searchString = req.query.searchString
   var category_id = req.query.category_id
   var sub_category_id = req.query.sub_category_id
   var query = searchString
-    ? { active_status: 1,company_id:company_id,$text: { $search: searchString } }
-    : { active_status: 1,company_id:company_id }
-  if (category_id) query['category_id'] = category_id
-  if (sub_category_id) query['sub_category_id'] = sub_category_id
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
+  if (category_id)
+    query['kit_data'] = { $elemMatch: { category_id: category_id } }
+  if (sub_category_id)
+    query['kit_data'] = { $elemMatch: { sub_category_id: sub_category_id } }
 
   kit_details = []
   try {
@@ -635,11 +649,15 @@ exports.usageReport = async (req, res) => {
   var dateFrom = req.query.dateFrom // Direct Query
   var dateTo = req.query.dateTo // Direct Query
   var searchString = req.query.searchString
-  var company_id = req.query.company_id;
+  var company_id = req.query.company_id
 
   var query = searchString
-    ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
-    : { active_status: 1,company_id:company_id }
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
   if (dateFrom) {
     var fromDate = moment(dateFrom).format('YYYY-MM-DD 00:00:00')
     var toDate = moment(dateTo).format('YYYY-MM-DD 23:59:59')
