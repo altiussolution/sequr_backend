@@ -457,9 +457,9 @@ exports.updateCartAfterReturnTake = async (req, res) => {
 exports.myCart = async (req, res) => {
   try {
     // var userId = ObjectId('615d38fcb3b43020c778f381')
-    var userId = req.user.user_id
+    var userId = req.query.user_id
     var company_id = req.query.company_id
-    cartItems = await CartModel.find({ user: userId, status: Cart.In_Cart , company_id : company_id}, [
+    cartItems = await CartModel.find({ user: userId, status: Cart.In_Cart}, [
       'cart',
       'total_quantity',
       'cart_status'
