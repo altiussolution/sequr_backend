@@ -358,14 +358,11 @@ exports.getMachineUsage = async (req, res) => {
   var company_id = req.query.company_id
   var branch_id = req.query.branch_id
   var query = branch_id
-    ? { active_status: 1, branch_id: branch_id, company_id: company_id }
-    : { active_status: 1, company_id: company_id }
+    ? { active_status: 1, branch_id: ObjectId(branch_id), company_id: ObjectId(company_id) }
+    : { active_status: 1, company_id: ObjectId(company_id) }
+    console.log(query)
   try {
-    cubes = await cubeModel
-      .find({
-        query
-      })
-      .exec()
+    cubes = await cubeModel.find(query).exec()
 
     // Usage Between today and 7 day before
     today = new Date()
