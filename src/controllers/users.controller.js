@@ -140,6 +140,7 @@ exports.add = async (req, res) => {
         createLog(req.headers['authorization'], 'Employee', 2)
       })
       .catch(error => {
+        console.log(error)
         res
           .status(201)
           .send({ success: false, error: error, message: 'An Error Occured' })
