@@ -219,7 +219,7 @@ exports.upload = async (req, res) => {
   console.log(req.file)
   try {
     if (req.file) {
-      const [path, path1, path3, filename]  = req.file.path.split('\\')
+      const filename  = req.file.filename
       res.status(200).send({
         Message: 'Image Added Sucessfully',
         Path: `${req.file.destination.replace(
