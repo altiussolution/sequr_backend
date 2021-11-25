@@ -87,6 +87,7 @@ exports.add = async (req, res) => {
       city_id,
       state_id,
       company_id,
+      created_by,
       status,
       email_id: email_id, // sanitize: convert email to lowercase
       password: encryptedPassword,
@@ -284,6 +285,7 @@ exports.listEmployees =async (req, res) => {
   if (status) query['status'] = status
   if (shift_time_id) query['shift_time_id'] = shift_time_id
   if (created_by) query['created_by'] = created_by
+  
   User.find(query)
     .populate('department_id')
     .populate('country_id')

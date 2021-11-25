@@ -7,6 +7,7 @@ const {
 } = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
+var {error_code} = require('../utils/enum.utils')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 exports.addItem = async (req, res) => {
