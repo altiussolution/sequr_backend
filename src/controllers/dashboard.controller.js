@@ -290,7 +290,8 @@ exports.getPermissioncount = async (req, res) => {
   var query = {
     active_status: 1,
     company_id: company_id,
-    $where: 'this.permission.length > 1'
+    $where: 'this.permission.length > 0',
+    role_id: { $nin: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
   }
   try {
     await rolesModel

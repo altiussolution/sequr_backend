@@ -271,49 +271,53 @@ exports.delete = (req, res) => {
 
 exports.listEmployees = async (req, res) => {
   try {
-  var offset =
-    req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-  var searchString = req.query.searchString
-  var role_id = req.query.role_id
-  var branch_id = req.query.branch_id
-  var status = req.query.status
-  var department_id = req.query.department_id
-  var shift_time_id = req.query.shift_time_id
-  var company_id = req.query.company_id
-  var created_by = req.query.created_by
+    var offset =
+      req.query.offset != undefined ? parseInt(req.query.offset) : false
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+    var searchString = req.query.searchString
+    var role_id = req.query.role_id
+    var branch_id = req.query.branch_id
+    var status = req.query.status
+    var department_id = req.query.department_id
+    var shift_time_id = req.query.shift_time_id
+    var company_id = req.query.company_id
+    var created_by = req.query.created_by
 
-  // Get Customer Role and Super Admin Role
-  customerRole = await rolesModel.distinct('_id', {
-    role_id: { $in: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
-  }).exec()
+    var query = searchString
+      ? {
+          active_status: 1,
+          company_id: company_id,
+          $text: { $search: searchString }
+        }
+      : { active_status: 1, company_id: company_id }
+    if (role_id) {
+      query['role_id'] = role_id
+    } else {
+      // Get Customer Role and Super Admin Role
+      customerRole = await rolesModel
+        .distinct('_id', {
+          role_id: { $in: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
+        })
+        .exec()
+      query['role_id'] = { $nin: customerRole }
+    }
+    if (branch_id) query['branch_id'] = branch_id
+    if (department_id) query['department_id'] = department_id
+    if (status) query['status'] = status
+    if (shift_time_id) query['shift_time_id'] = shift_time_id
+    if (created_by) query['created_by'] = created_by
 
-  var query = searchString
-    ? {
-        active_status: 1,
-        company_id: company_id,
-        $text: { $search: searchString }
-      }
-    : { active_status: 1, company_id: company_id }
-  if (customerRole) query['role_id'] = { $nin: customerRole }
-  if (role_id) query['role_id'] = role_id
-  if (branch_id) query['branch_id'] = branch_id
-  if (department_id) query['department_id'] = department_id
-  if (status) query['status'] = status
-  if (shift_time_id) query['shift_time_id'] = shift_time_id
-  if (created_by) query['created_by'] = created_by
-  
-  User.find(query)
-    .populate('department_id')
-    .populate('country_id')
-    .populate('state_id')
-    .populate('city_id')
-    .skip(offset)
-    .limit(limit)
-    .then(result => {
-      res.send(result)
-    })
-  }catch (err) {
+    User.find(query)
+      .populate('department_id')
+      .populate('country_id')
+      .populate('state_id')
+      .populate('city_id')
+      .skip(offset)
+      .limit(limit)
+      .then(result => {
+        res.send(result)
+      })
+  } catch (err) {
     res.status(400).send(err)
   }
 }
