@@ -7,6 +7,10 @@ route.get('/get',auth, BranchController.getBranch);
 route.put('/update/:id', auth,BranchController.updateBranch);
 route.delete('/delete/:id', auth,BranchController.deleteBranch);
 route.get('/getBranchfilter', auth, BranchController.getBranchfilter)
+route.post('/addSuperAdmin', BranchController.createBranch);
+route.get('/getSuperAdmin', BranchController.getBranch);
+
+
 
 
 module.exports = route;

@@ -343,7 +343,7 @@ var ObjectId = require('mongodb').ObjectID
 exports.getMachineUsage = async (req, res) => {
   var company_id = req.query.company_id
   var query = req.query.branch_id
-    ? { active_status: 1, branch: req.query.branch_id ,company_id:company_id}
+    ? { active_status: 1, branch_id: req.query.branch_id ,company_id:company_id}
     : { active_status: 1 ,company_id:company_id}
   try {
     cubes = await cubeModel

@@ -11,8 +11,7 @@ var fs = require('fs')
 const Email = require('email-templates')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
-const { rolesModel } = require("../models");
-
+const { rolesModel } = require('../models')
 
 exports.add = async (req, res) => {
   try {
@@ -93,19 +92,37 @@ exports.add = async (req, res) => {
       active_status: 1
     })
     const token = jwt.sign(
-      { user_id: user._id, employee_id },
+      {
+        user_id: user._id,
+        employee_id,
+        company_id: user.company_id,
+        role_id: user.role_id
+      },
       process.env.TOKEN_KEY,
       {
         expiresIn: '2h'
       }
     )
     // role = await rolesModel
+
+    // Get Customer Role and Super Admin Role
+    isUserRole = await rolesModel.findOne({ _id: user.role_id }).exec()
+
+    if (
+      isUserRole.permission.includes('user') ||
+      !isUserRole.permission.includes('admin')
+    ) {
+      var loginPage = process.env.STAGING_USER
+    } else {
+      var loginPage = process.env.STAGING
+    }
+
     const hostname =
       process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost'
     const locals = {
       employee_id: employee_id,
       password: password,
-      loginPage: process.env.STAGING,
+      loginPage: loginPage,
       logo: `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
       background: `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
     }
@@ -141,13 +158,13 @@ exports.login = async (req, res) => {
     if (
       user &&
       (await bcrypt.compare(password, user.password)) &&
-      user.active_status && user.company_id.status
+      user.active_status &&
+      user.company_id.status
     ) {
       const token = jwt.sign(
         {
           user_id: user._id,
           employee_id,
-          role_id: user.role_id,
           company_id: user.company_id._id,
           role_id: user.role_id._id
         },
@@ -229,72 +246,74 @@ exports.update = async (req, res) => {
 
 exports.delete = (req, res) => {
   try {
-  User.findByIdAndUpdate(
-    req.query.id,
-    { active_status: 0, status: 0 },
-    function (err, branch) {
-      if (!err) {
-        res.status(200).send({
-          success: true,
-          message: 'Employee Deactivated Successfully!'
-        })
-        createLog(req.headers['authorization'], 'Employee', 0)
-      } else {
-        res
-          .status(200)
-          .send({ success: false, message: 'error in deactivating employee' })
+    User.findByIdAndUpdate(
+      req.query.id,
+      { active_status: 0, status: 0 },
+      function (err, branch) {
+        if (!err) {
+          res.status(200).send({
+            success: true,
+            message: 'Employee Deactivated Successfully!'
+          })
+          createLog(req.headers['authorization'], 'Employee', 0)
+        } else {
+          res
+            .status(200)
+            .send({ success: false, message: 'error in deactivating employee' })
+        }
       }
-    }
-  )
-  }catch (err) {
+    )
+  } catch (err) {
     res.status(400).send(err)
   }
 }
 
-exports.listEmployees =async (req, res) => {
+exports.listEmployees = async (req, res) => {
   try {
-  var offset =
-    req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-  var searchString = req.query.searchString
-  var role_id = req.query.role_id
-  var branch_id = req.query.branch_id
-  var status = req.query.status
-  var department_id = req.query.department_id
-  var shift_time_id = req.query.shift_time_id
-  var company_id = req.query.company_id
-  var created_by = req.query.created_by
+    var offset =
+      req.query.offset != undefined ? parseInt(req.query.offset) : false
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+    var searchString = req.query.searchString
+    var role_id = req.query.role_id
+    var branch_id = req.query.branch_id
+    var status = req.query.status
+    var department_id = req.query.department_id
+    var shift_time_id = req.query.shift_time_id
+    var company_id = req.query.company_id
+    var created_by = req.query.created_by
 
-  // Get Customer Role and Super Admin Role
-  customerRole = await rolesModel.distinct('_id', {
-    role_id: { $in: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
-  }).exec()
+    // Get Customer Role and Super Admin Role
+    customerRole = await rolesModel
+      .distinct('_id', {
+        role_id: { $in: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
+      })
+      .exec()
 
-  var query = searchString
-    ? {
-        active_status: 1,
-        company_id: company_id,
-        $text: { $search: searchString }
-      }
-    : { active_status: 1, company_id: company_id }
-  if (customerRole) query['role_id'] = { $nin: customerRole }
-  if (role_id) query['role_id'] = role_id
-  if (branch_id) query['branch_id'] = branch_id
-  if (department_id) query['department_id'] = department_id
-  if (status) query['status'] = status
-  if (shift_time_id) query['shift_time_id'] = shift_time_id
-  if (created_by) query['created_by'] = created_by
-  User.find(query)
-    .populate('department_id')
-    .populate('country_id')
-    .populate('state_id')
-    .populate('city_id')
-    .skip(offset)
-    .limit(limit)
-    .then(result => {
-      res.send(result)
-    })
-  }catch (err) {
+    var query = searchString
+      ? {
+          active_status: 1,
+          company_id: company_id,
+          $text: { $search: searchString }
+        }
+      : { active_status: 1, company_id: company_id }
+    if (customerRole) query['role_id'] = { $nin: customerRole }
+    if (role_id) query['role_id'] = role_id
+    if (branch_id) query['branch_id'] = branch_id
+    if (department_id) query['department_id'] = department_id
+    if (status) query['status'] = status
+    if (shift_time_id) query['shift_time_id'] = shift_time_id
+    if (created_by) query['created_by'] = created_by
+    User.find(query)
+      .populate('department_id')
+      .populate('country_id')
+      .populate('state_id')
+      .populate('city_id')
+      .skip(offset)
+      .limit(limit)
+      .then(result => {
+        res.send(result)
+      })
+  } catch (err) {
     res.status(400).send(err)
   }
 }
@@ -312,8 +331,8 @@ exports.forgotPassword = async (req, res) => {
     const user = await Models.userModel.findOne({ email_id: req.body.email_id })
     if (!user)
       return res
-      .status(409)
-      .send( {status: false, message: 'Please Enter Register Email ID'})
+        .status(409)
+        .send({ status: false, message: 'Please Enter Register Email ID' })
 
     let token = await Models.resetPasswordTokenModel.findOne({
       user_id: user._id
@@ -336,7 +355,7 @@ exports.forgotPassword = async (req, res) => {
     }
     const email = new Email()
     Promise.all([
-      email.render('../src/templates/adminForgotPassword', locals)
+      email.render('../src/templates/employeeNewPassword', locals)
     ]).then(async adminForgotPassword => {
       await sendEmail(user.email_id, 'Password reset', adminForgotPassword[0])
     })
@@ -377,13 +396,18 @@ exports.resetPassword = async (req, res) => {
 exports.userProfile = async (req, res) => {
   var userId = req.params._id
   var company_id = req.query.company_id
-   try {
+  try {
     var userDetails = await User.findOne({
       _id: userId,
       active_status: 1,
-      status: true,
+      status: true
       // company_id : company_id
-    }).populate('language_prefered').populate('city_id').populate('state_id').populate('country_id').exec()
+    })
+      .populate('language_prefered')
+      .populate('city_id')
+      .populate('state_id')
+      .populate('country_id')
+      .exec()
     console.log(userDetails)
     if (userDetails) {
       res.status(200).send({ status: true, data: userDetails })
@@ -421,7 +445,7 @@ exports.EmployeeForgotPassword = async (req, res) => {
     }
     const email = new Email()
     Promise.all([
-      email.render('../src/templates/employeeNewPassword', locals)
+      email.render('../src/templates/adminForgotPassword', locals)
     ]).then(async employeeNewPassword => {
       await sendEmail(user.email_id, 'New Password', employeeNewPassword[0])
     })
@@ -439,124 +463,142 @@ exports.EmployeeForgotPassword = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
   try {
-  var passwordDetails = req.body
-  console.log(req.body)
-  var userId = req.params._id
-  console.log(userId)
-  if (userId) {
-    if (passwordDetails.newpassword) {
-      await User.findOne({ _id: userId }, async function (err, user) {
-        console.log(user)
-        if (!err && user) {
-          //console.log(user.authenticate(passwordDetails.oldpassword));
-          var compare = await bcrypt.compare(
-            passwordDetails.oldpassword,
-            user.password
-          )
-          console.log(compare)
-          if (user && compare) {
-            user.password = await bcrypt.hash(passwordDetails.newpassword, 10)
-            //const user = await User.findOne({ employee_id });
+    var passwordDetails = req.body
+    console.log(req.body)
+    var userId = req.params._id
+    console.log(userId)
+    if (userId) {
+      if (passwordDetails.newpassword) {
+        await User.findOne({ _id: userId }, async function (err, user) {
+          console.log(user)
+          if (!err && user) {
+            //console.log(user.authenticate(passwordDetails.oldpassword));
+            var compare = await bcrypt.compare(
+              passwordDetails.oldpassword,
+              user.password
+            )
+            console.log(compare)
+            if (user && compare) {
+              user.password = await bcrypt.hash(passwordDetails.newpassword, 10)
+              //const user = await User.findOne({ employee_id });
 
-            user.save(function (err) {
-              if (err) {
-                return res.status(422).send({
-                  message: errorHandler.getErrorMessage(err)
-                })
-              } else {
-                //req.login(user, function (err) {
-                // console.log(user)
-                //if (err) {
-                //res.status(400).send(err);
-                //  } else {
-                res.send({
-                  message: 'Password changed successfully'
-                })
-                //  }
-                // });
-              }
-            })
+              user.save(function (err) {
+                if (err) {
+                  return res.status(422).send({
+                    message: errorHandler.getErrorMessage(err)
+                  })
+                } else {
+                  //req.login(user, function (err) {
+                  // console.log(user)
+                  //if (err) {
+                  //res.status(400).send(err);
+                  //  } else {
+                  res.send({
+                    message: 'Password changed successfully'
+                  })
+                  //  }
+                  // });
+                }
+              })
+            } else {
+              res.status(422).send({
+                message: 'Current password is incorrect'
+              })
+            }
           } else {
-            res.status(422).send({
-              message: 'Current password is incorrect'
+            res.status(400).send({
+              message: 'User is not found'
             })
           }
-        } else {
-          res.status(400).send({
-            message: 'User is not found'
-          })
-        }
-      })
+        })
+      } else {
+        res.status(422).send({
+          message: 'Please provide a new password'
+        })
+      }
     } else {
-      res.status(422).send({
-        message: 'Please provide a new password'
+      res.status(401).send({
+        message: 'User is not signed in'
       })
     }
-  } else {
-    res.status(401).send({
-      message: 'User is not signed in'
-    })
-  } }catch (err) {
+  } catch (err) {
     res.status(400).send(err)
   }
-
 }
 
 exports.getEmployeefilter = (req, res) => {
   try {
-        var offset =
-          req.query.offset != undefined ? parseInt(req.query.offset) : false
-        var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-        var searchString = req.query.searchString
-        var role_id = req.query.role_id;
-        var branch_id= req.query.branch_id;
-        var status = req.query.status;
-        var department_id = req.query.department_id;
-        var shift_time_id = req.query.shift_time_id;
-        var company_id = req.query.company_id;
-        var query = searchString
-          ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
-          : { active_status: 1 , company_id : company_id }
-          if (role_id) query['role_id'] = role_id
-          if (branch_id) query['branch_id'] = branch_id
-          if (department_id) query['department_id'] = department_id
-          if (status) query['status'] = status
-          if (shift_time_id) query['shift_time_id'] = shift_time_id
+    var offset =
+      req.query.offset != undefined ? parseInt(req.query.offset) : false
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+    var searchString = req.query.searchString
+    var role_id = req.query.role_id
+    var branch_id = req.query.branch_id
+    var status = req.query.status
+    var department_id = req.query.department_id
+    var shift_time_id = req.query.shift_time_id
+    var company_id = req.query.company_id
+    var query = searchString
+      ? {
+          active_status: 1,
+          company_id: company_id,
+          $text: { $search: searchString }
+        }
+      : { active_status: 1, company_id: company_id }
+    if (role_id) query['role_id'] = role_id
+    if (branch_id) query['branch_id'] = branch_id
+    if (department_id) query['department_id'] = department_id
+    if (status) query['status'] = status
+    if (shift_time_id) query['shift_time_id'] = shift_time_id
 
-     
-   User.find(query).populate('department_id').populate('role_id').populate('branch_id').populate('shift_time_id').skip(offset).limit(limit).then(user =>{
-    res.status(200).send({ success: true, user: user });
-    }).catch(error => {
-     res.status(400).send({success: false, error : error})
-})
-   }catch (err) {
-  res.status(400).send(err)
+    User.find(query)
+      .populate('department_id')
+      .populate('role_id')
+      .populate('branch_id')
+      .populate('shift_time_id')
+      .skip(offset)
+      .limit(limit)
+      .then(user => {
+        res.status(200).send({ success: true, user: user })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (err) {
+    res.status(400).send(err)
+  }
 }
 
-}
-
-
-
-
-
-  exports.updateForgotpassword = async(req, res) => {
-    try{
-      var exist = await User.findOne({employee_id : req.params.employee_id, active_status : 1}).exec();
-      console.log(exist)
-      if(exist){
-        User.updateOne({employee_id : req.params.employee_id, active_status : 1}, {new_pass_req : true}).then(Update =>{
-          
-  
-  
-          res.status(200).send({ success: true, message: 'Employee Updated Successfully!' });
-      }).catch(error =>{
-          res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
-      }) 
-      }else if(!exist){
-        res.status(409).send({ success: false, message: 'Employee does not Exist!' });
-      }
-      
-  }catch(err){
-      res.status(200).send({ success: false, error: err, message : 'An Error Catched' });  
+exports.updateForgotpassword = async (req, res) => {
+  try {
+    var exist = await User.findOne({
+      employee_id: req.params.employee_id,
+      active_status: 1
+    }).exec()
+    console.log(exist)
+    if (exist) {
+      User.updateOne(
+        { employee_id: req.params.employee_id, active_status: 1 },
+        { new_pass_req: true }
+      )
+        .then(Update => {
+          res
+            .status(200)
+            .send({ success: true, message: 'Employee Updated Successfully!' })
+        })
+        .catch(error => {
+          res
+            .status(200)
+            .send({ success: false, error: error, message: 'An Error Occured' })
+        })
+    } else if (!exist) {
+      res
+        .status(409)
+        .send({ success: false, message: 'Employee does not Exist!' })
+    }
+  } catch (err) {
+    res
+      .status(200)
+      .send({ success: false, error: err, message: 'An Error Catched' })
   }
 }

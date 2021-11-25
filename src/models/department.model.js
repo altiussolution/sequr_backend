@@ -4,11 +4,13 @@ var mongoose = require('mongoose'),
 const DepartmentSchema = Schema({
     department_name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     department_id: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     created_at: {
         type: Date,
