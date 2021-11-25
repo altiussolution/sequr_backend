@@ -69,7 +69,7 @@ exports.add = async (req, res) => {
     }
     console.log(password)
     encryptedPassword = await bcrypt.hash(password, 10)
-    const user = await User.create({
+    User.create({
       employee_id,
       first_name,
       last_name,
@@ -92,51 +92,58 @@ exports.add = async (req, res) => {
       password: encryptedPassword,
       active_status: 1
     })
-    const token = jwt.sign(
-      {
-        user_id: user._id,
-        employee_id,
-        company_id: user.company_id,
-        role_id: user.role_id
-      },
-      process.env.TOKEN_KEY,
-      {
-        expiresIn: '2h'
-      }
-    )
-    // role = await rolesModel
+      .then(async user => {
+        const token = jwt.sign(
+          {
+            user_id: user._id,
+            employee_id,
+            company_id: user.company_id,
+            role_id: user.role_id
+          },
+          process.env.TOKEN_KEY,
+          {
+            expiresIn: '2h'
+          }
+        )
+        // role = await rolesModel
 
-    // Get Customer Role and Super Admin Role
-    isUserRole = await rolesModel.findOne({ _id: user.role_id }).exec()
+        // Get Customer Role and Super Admin Role
+        isUserRole = await rolesModel.findOne({ _id: user.role_id }).exec()
 
-    if (
-      isUserRole.permission.includes('user') ||
-      !isUserRole.permission.includes('admin')
-    ) {
-      var loginPage = process.env.STAGING_USER
-    } else {
-      var loginPage = process.env.STAGING
-    }
+        if (
+          isUserRole.permission.includes('user') ||
+          !isUserRole.permission.includes('admin')
+        ) {
+          var loginPage = process.env.STAGING_USER
+        } else {
+          var loginPage = process.env.STAGING
+        }
 
-    const hostname =
-      process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost'
-    const locals = {
-      employee_id: employee_id,
-      password: password,
-      loginPage: loginPage,
-      logo: `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
-      background: `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
-    }
-    user.token = token
-    const email = new Email()
-    Promise.all([email.render('../src/templates/registerMail', locals)]).then(
-      async registerMail => {
-        //console.log(registerMail[0])
-        await sendEmail(email_id, 'New User Signup', registerMail[0])
-      }
-    )
-    res.status(201).json(user)
-    createLog(req.headers['authorization'], 'Employee', 2)
+        const hostname =
+          process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost'
+        const locals = {
+          employee_id: employee_id,
+          password: password,
+          loginPage: loginPage,
+          logo: `${appRouteModels.BASEURL}/mailAssets/logobg.png`,
+          background: `${appRouteModels.BASEURL}/mailAssets/bgbg.jpg`
+        }
+        user.token = token
+        const email = new Email()
+        Promise.all([
+          email.render('../src/templates/registerMail', locals)
+        ]).then(async registerMail => {
+          //console.log(registerMail[0])
+          await sendEmail(email_id, 'New User Signup', registerMail[0])
+        })
+        res.status(201).json(user)
+        createLog(req.headers['authorization'], 'Employee', 2)
+      })
+      .catch(error => {
+        res
+          .status(201)
+          .send({ success: false, error: error, message: 'An Error Occured' })
+      })
   } catch (err) {
     console.log(err)
   }
