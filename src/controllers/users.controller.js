@@ -228,6 +228,7 @@ exports.update = async (req, res) => {
 }
 
 exports.delete = (req, res) => {
+  try {
   User.findByIdAndUpdate(
     req.query.id,
     { active_status: 0, status: 0 },
@@ -245,9 +246,13 @@ exports.delete = (req, res) => {
       }
     }
   )
+  }catch (err) {
+    res.status(400).send(err)
+  }
 }
 
-exports.listEmployees = async (req, res) => {
+exports.listEmployees =async (req, res) => {
+  try {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
@@ -289,6 +294,9 @@ exports.listEmployees = async (req, res) => {
     .then(result => {
       res.send(result)
     })
+  }catch (err) {
+    res.status(400).send(err)
+  }
 }
 
 exports.forgotPassword = async (req, res) => {
@@ -303,7 +311,9 @@ exports.forgotPassword = async (req, res) => {
 
     const user = await Models.userModel.findOne({ email_id: req.body.email_id })
     if (!user)
-      return res.status(400).send("user with given email doesn't exist")
+      return res
+      .status(409)
+      .send( {status: false, message: 'Please Enter Register Email ID'})
 
     let token = await Models.resetPasswordTokenModel.findOne({
       user_id: user._id
@@ -367,29 +377,24 @@ exports.resetPassword = async (req, res) => {
 exports.userProfile = async (req, res) => {
   var userId = req.params._id
   var company_id = req.query.company_id
-  // try {
-  var userDetails = await User.findOne({
-    _id: userId,
-    active_status: 1,
-    status: true
-    // company_id : company_id
-  })
-    .populate('language_prefered')
-    .populate('city_id')
-    .populate('state_id')
-    .populate('country_id')
-    .exec()
-  console.log(userDetails)
-  if (userDetails) {
-    res.status(200).send({ status: true, data: userDetails })
-  } else {
-    res.status(201).send({ status: false, message: 'Not a valid User' })
+   try {
+    var userDetails = await User.findOne({
+      _id: userId,
+      active_status: 1,
+      status: true,
+      // company_id : company_id
+    }).populate('language_prefered').populate('city_id').populate('state_id').populate('country_id').exec()
+    console.log(userDetails)
+    if (userDetails) {
+      res.status(200).send({ status: true, data: userDetails })
+    } else {
+      res.status(201).send({ status: false, message: 'Not a valid User' })
+    }
+  } catch (err) {
+    res
+      .status(200)
+      .send({ success: false, error: err.name, message: 'An Error Catched' })
   }
-  // } catch (err) {
-  // res
-  //   .status(200)
-  //   .send({ success: false, error: err.name, message: 'An Error Catched' })
-  // }
 }
 exports.EmployeeForgotPassword = async (req, res) => {
   try {
@@ -433,6 +438,7 @@ exports.EmployeeForgotPassword = async (req, res) => {
 }
 
 exports.changePassword = async (req, res) => {
+  try {
   var passwordDetails = req.body
   console.log(req.body)
   var userId = req.params._id
@@ -490,78 +496,67 @@ exports.changePassword = async (req, res) => {
     res.status(401).send({
       message: 'User is not signed in'
     })
+  } }catch (err) {
+    res.status(400).send(err)
   }
+
 }
 
 exports.getEmployeefilter = (req, res) => {
-  var offset =
-    req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-  var searchString = req.query.searchString
-  var role_id = req.query.role_id
-  var branch_id = req.query.branch_id
-  var status = req.query.status
-  var department_id = req.query.department_id
-  var shift_time_id = req.query.shift_time_id
-  var company_id = req.query.company_id
-  var query = searchString
-    ? {
-        active_status: 1,
-        company_id: company_id,
-        $text: { $search: searchString }
-      }
-    : { active_status: 1, company_id: company_id }
-  if (role_id) query['role_id'] = role_id
-  if (branch_id) query['branch_id'] = branch_id
-  if (department_id) query['department_id'] = department_id
-  if (status) query['status'] = status
-  if (shift_time_id) query['shift_time_id'] = shift_time_id
+  try {
+        var offset =
+          req.query.offset != undefined ? parseInt(req.query.offset) : false
+        var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+        var searchString = req.query.searchString
+        var role_id = req.query.role_id;
+        var branch_id= req.query.branch_id;
+        var status = req.query.status;
+        var department_id = req.query.department_id;
+        var shift_time_id = req.query.shift_time_id;
+        var company_id = req.query.company_id;
+        var query = searchString
+          ? { active_status: 1,company_id:company_id, $text: { $search: searchString } }
+          : { active_status: 1 , company_id : company_id }
+          if (role_id) query['role_id'] = role_id
+          if (branch_id) query['branch_id'] = branch_id
+          if (department_id) query['department_id'] = department_id
+          if (status) query['status'] = status
+          if (shift_time_id) query['shift_time_id'] = shift_time_id
 
-  User.find(query)
-    .populate('department_id')
-    .populate('role_id')
-    .populate('branch_id')
-    .populate('shift_time_id')
-    .skip(offset)
-    .limit(limit)
-    .then(user => {
-      res.status(200).send({ success: true, user: user })
-    })
-    .catch(error => {
-      res.status(400).send({ success: false, error: error })
-    })
+     
+   User.find(query).populate('department_id').populate('role_id').populate('branch_id').populate('shift_time_id').skip(offset).limit(limit).then(user =>{
+    res.status(200).send({ success: true, user: user });
+    }).catch(error => {
+     res.status(400).send({success: false, error : error})
+})
+   }catch (err) {
+  res.status(400).send(err)
 }
 
-exports.updateForgotpassword = async (req, res) => {
-  try {
-    var exist = await User.findOne({
-      employee_id: req.params.employee_id,
-      active_status: 1
-    }).exec()
-    console.log(exist)
-    if (exist) {
-      User.updateOne(
-        { employee_id: req.params.employee_id, active_status: 1 },
-        { new_pass_req: true }
-      )
-        .then(Update => {
-          res
-            .status(200)
-            .send({ success: true, message: 'Employee Updated Successfully!' })
-        })
-        .catch(error => {
-          res
-            .status(200)
-            .send({ success: false, error: error, message: 'An Error Occured' })
-        })
-    } else if (!exist) {
-      res
-        .status(200)
-        .send({ success: true, message: 'Employee does not Exist!' })
-    }
-  } catch (err) {
-    res
-      .status(200)
-      .send({ success: false, error: err, message: 'An Error Catched' })
+}
+
+
+
+
+
+  exports.updateForgotpassword = async(req, res) => {
+    try{
+      var exist = await User.findOne({employee_id : req.params.employee_id, active_status : 1}).exec();
+      console.log(exist)
+      if(exist){
+        User.updateOne({employee_id : req.params.employee_id, active_status : 1}, {new_pass_req : true}).then(Update =>{
+          
+  
+  
+          res.status(200).send({ success: true, message: 'Employee Updated Successfully!' });
+      }).catch(error =>{
+          res.status(200).send({ success: false, error: error, message : 'An Error Occured' });
+      }) 
+      }else if(!exist){
+        res.status(409).send({ success: false, message: 'Employee does not Exist!' });
+      }
+      
+  }catch(err){
+      res.status(200).send({ success: false, error: err, message : 'An Error Catched' });  
   }
 }

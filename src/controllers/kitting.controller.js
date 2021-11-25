@@ -338,51 +338,51 @@ exports.deleteKitFromCart = async (req, res) => {
   }
 }
 
-exports.getoldKit = (req, res) => {
-  var offset =
-    req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-  var searchString = req.query.searchString
-  var query = searchString
-    ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 }
-  var _ = require('lodash')
-  var binDatas = []
-  var allocationDetais
-  try {
-    kitModel
-      .find(query)
-      .skip(offset)
-      .limit(limit)
-      .then(async kits => {
-        for (let kit of kits) {
-          var quantity = kit.kit_data.reduce((acc, curr) => acc + curr.qty, 0) // 6
-          for (let kitdata of kit.kit_data) {
-            allocationDetais = await stockAllocationModel
-              .find({ category: kitdata.category_id, item: kitdata.item_id })
-              .populate('item', ['item_name', 'image_path'])
-              .populate('cube', ['cube_name', 'cube_id'])
-              .populate('bin', ['bin_name', 'bin_id'])
-              .populate('compartment', ['compartment_name', 'compartment_id'])
-              .exec()
-          }
-          binDatas.push({
-            _id: kit._id,
-            kit_name: kit.kit_name,
-            available_item: kit.kit_data.length,
-            total_qty: quantity,
-            kit_data: allocationDetais,
-            image_path: kit.image_path
-          })
-        }
-        if (kits.length == binDatas.length) {
-          res.status(200).send({ success: true, data: binDatas })
-        }
-      })
-      .catch(error => {
-        res.status(400).send({ success: false, error: error })
-      })
-  } catch (error) {
-    res.status(201).send({ success: false, error: error })
-  }
-}
+// exports.getoldKit = (req, res) => {
+//   var offset =
+//     req.query.offset != undefined ? parseInt(req.query.offset) : false
+//   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+//   var searchString = req.query.searchString
+//   var query = searchString
+//     ? { active_status: 1, $text: { $search: searchString } }
+//     : { active_status: 1 }
+//   var _ = require('lodash')
+//   var binDatas = []
+//   var allocationDetais
+//   try {
+//     kitModel
+//       .find(query)
+//       .skip(offset)
+//       .limit(limit)
+//       .then(async kits => {
+//         for (let kit of kits) {
+//           var quantity = kit.kit_data.reduce((acc, curr) => acc + curr.qty, 0) // 6
+//           for (let kitdata of kit.kit_data) {
+//             allocationDetais = await stockAllocationModel
+//               .find({ category: kitdata.category_id, item: kitdata.item_id })
+//               .populate('item', ['item_name', 'image_path'])
+//               .populate('cube', ['cube_name', 'cube_id'])
+//               .populate('bin', ['bin_name', 'bin_id'])
+//               .populate('compartment', ['compartment_name', 'compartment_id'])
+//               .exec()
+//           }
+//           binDatas.push({
+//             _id: kit._id,
+//             kit_name: kit.kit_name,
+//             available_item: kit.kit_data.length,
+//             total_qty: quantity,
+//             kit_data: allocationDetais,
+//             image_path: kit.image_path
+//           })
+//         }
+//         if (kits.length == binDatas.length) {
+//           res.status(200).send({ success: true, data: binDatas })
+//         }
+//       })
+//       .catch(error => {
+//         res.status(400).send({ success: false, error: error })
+//       })
+//   } catch (error) {
+//     res.status(201).send({ success: false, error: error })
+//   }
+// }

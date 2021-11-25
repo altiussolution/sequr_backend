@@ -98,6 +98,8 @@ exports.getCompartmentfilter = (req, res) => {
   if (bin_id) query['bin_id'] = bin_id
   if (cube_type) query['cube_type'] = cube_type
   if (is_removed) query['is_removed'] = is_removed
+  if (company_id) query['company_id'] = company_id
+
 try {
 compartmentModel.find(query).populate("cube_id").populate("bin_id").then(compartment => {
    console.log(compartment)

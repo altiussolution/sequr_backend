@@ -136,30 +136,30 @@ exports.upload = async (req, res) => {
   }
 }
 
-exports.getsubCategoryfilter = async (req, res) => {
-  //var category_id = req.query.categoryId;
-  var sub_category_name = req.query.sub_category_name
-  var sub_category_code = req.query.sub_category_code
-  if (sub_category_name && sub_category_code) {
-    var query = {
-      sub_category_name: sub_category_name,
-      sub_category_code: sub_category_code
-    }
-  } else if (sub_category_name) {
-    var query = { sub_category_name: sub_category_name }
-  } else if (sub_category_code) {
-    var query = { sub_category_code: sub_category_code }
-  }
-  subCategoryModel
-    .find(query)
-    .populate('category_id')
-    .then(subCategory => {
-      res.status(200).send({ success: true, data: subCategory })
-    })
-    .catch(error => {
-      res.status(400).send({ success: false, error: error })
-    })
-}
+// exports.getsubCategoryfilter = async (req, res) => {
+//   //var category_id = req.query.categoryId;
+//   var sub_category_name = req.query.sub_category_name
+//   var sub_category_code = req.query.sub_category_code
+//   if (sub_category_name && sub_category_code) {
+//     var query = {
+//       sub_category_name: sub_category_name,
+//       sub_category_code: sub_category_code
+//     }
+//   } else if (sub_category_name) {
+//     var query = { sub_category_name: sub_category_name }
+//   } else if (sub_category_code) {
+//     var query = { sub_category_code: sub_category_code }
+//   }
+//   subCategoryModel
+//     .find(query)
+//     .populate('category_id')
+//     .then(subCategory => {
+//       res.status(200).send({ success: true, data: subCategory })
+//     })
+//     .catch(error => {
+//       res.status(400).send({ success: false, error: error })
+//     })
+// }
 
 exports.getSubCategoryMachine = (req, res) => {
   var columnIds = []
@@ -238,39 +238,39 @@ exports.getSubCategoryMachine = (req, res) => {
     res.status(201).send({ success: false, error: error })
   }
 }
-exports.getUsersubCategory = async (req, res) => {
-  var offset =
-    req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-  var searchString = req.query.searchString
-  var categoryId = req.query.category_id
-  var company_id = req.query.company_id
-  var query = searchString
-    ? {
-        active_status: 1,
-        category_id: categoryId,
-        company_id: company_id,
-        $text: { $search: searchString },
-        is_active: true
-      }
-    : { active_status: 1, category_id: categoryId }
-  // var popVal = categoryId ? null : 'category_id'
-  try {
-    subCategoryModel
-      .find(query)
-      .populate('category_id')
-      .skip(offset)
-      .limit(limit)
-      .then(categories => {
-        res.status(200).send({ success: true, data: categories })
-      })
-      .catch(error => {
-        res.status(400).send({ success: false, error: error })
-      })
-  } catch (error) {
-    res.status(201).send({ success: false, error: error })
-  }
-}
+// exports.getUsersubCategory = async (req, res) => {
+//   var offset =
+//     req.query.offset != undefined ? parseInt(req.query.offset) : false
+//   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+//   var searchString = req.query.searchString
+//   var categoryId = req.query.category_id
+//   var company_id = req.query.company_id
+//   var query = searchString
+//     ? {
+//         active_status: 1,
+//         category_id: categoryId,
+//         company_id:company_id,
+//         $text: { $search: searchString },
+//         is_active: true
+//       }
+//     : { active_status: 1, category_id: categoryId }
+//   // var popVal = categoryId ? null : 'category_id'
+//   try {
+//     subCategoryModel
+//       .find(query)
+//       .populate('category_id')
+//       .skip(offset)
+//       .limit(limit)
+//       .then(categories => {
+//         res.status(200).send({ success: true, data: categories })
+//       })
+//       .catch(error => {
+//         res.status(400).send({ success: false, error: error })
+//       })
+//   } catch (error) {
+//     res.status(201).send({ success: false, error: error })
+//   }
+// }
 
 exports.deletesubCategory = async (req, res) => {
   try {

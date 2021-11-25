@@ -294,6 +294,10 @@ exports.getCategoryfilter = (req, res) => {
   if (is_active && company_id) {
     var query = { is_active: is_active, company_id: company_id }
   }
+  if (is_active ) {
+    var query = { is_active: is_active}
+  }
+  try {
   categoryModel
     .find(query)
     .then(category => {
@@ -302,6 +306,9 @@ exports.getCategoryfilter = (req, res) => {
     .catch(error => {
       res.status(400).send({ success: false, error: error })
     })
+  }   catch (error) {
+      res.status(201).send({ success: false, error: error })
+    }
 }
 
 exports.getCategoryMachine = (req, res) => {
@@ -376,32 +383,27 @@ exports.getCategoryMachine = (req, res) => {
   }
 }
 
-exports.getUserCategory = async (req, res) => {
-  var offset =
-    req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-  var searchString = req.query.searchString
-  var company_id = req.query.company_id
-  var query = searchString
-    ? {
-        active_status: 1,
-        $text: { $search: searchString },
-        is_active: true,
-        company_id: company_id
-      }
-    : { active_status: 1, company_id: company_id }
-  try {
-    categoryModel
-      .find(query)
-      .skip(offset)
-      .limit(limit)
-      .then(categories => {
-        res.status(200).send({ success: true, data: categories })
-      })
-      .catch(error => {
-        res.status(400).send({ success: false, error: error })
-      })
-  } catch (error) {
-    res.status(201).send({ success: false, error: error })
-  }
-}
+// exports.getUserCategory = async (req, res) => {
+//   var offset =
+//     req.query.offset != undefined ? parseInt(req.query.offset) : false
+//   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+//   var searchString = req.query.searchString
+//   var company_id = req.query.company_id
+//   var query = searchString
+//     ? { active_status: 1, $text: { $search: searchString }, is_active: true, company_id:company_id }
+//     : { active_status: 1 , company_id : company_id}
+//   try {
+//     categoryModel
+//       .find(query)
+//       .skip(offset)
+//       .limit(limit)
+//       .then(categories => {
+//         res.status(200).send({ success: true, data: categories })
+//       })
+//       .catch(error => {
+//         res.status(400).send({ success: false, error: error })
+//       })
+//   } catch (error) {
+//     res.status(201).send({ success: false, error: error })
+//   }
+// }

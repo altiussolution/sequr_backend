@@ -21,16 +21,16 @@ route.post(
   upload.single('sub-category'),
   SubCategoryController.upload
 )
-route.get(
-  '/getsubCategoryfilter',
-  auth,
-  SubCategoryController.getsubCategoryfilter
-)
+// route.get(
+//   '/getsubCategoryfilter',
+//   auth,
+//   SubCategoryController.getsubCategoryfilter
+// )
 route.get(
   '/getSubCategoryMachine/:category_id',
   auth,
   SubCategoryController.getSubCategoryMachine
 )
-route.get('/getUsersubCategory', auth, SubCategoryController.getUsersubCategory)
+//route.get('/getUsersubCategory', auth, SubCategoryController.getUsersubCategory)
 route.delete('/delete/:id', auth, SubCategoryController.deletesubCategory)
 module.exports = route
