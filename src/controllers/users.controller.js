@@ -325,8 +325,8 @@ exports.forgotPassword = async (req, res) => {
         .email()
         .required()
     })
-    const { error } = schema.validate(req.body)
-    if (error) return res.status(400).send(error.details[0].message)
+    // const { error } = schema.validate(req.body)
+    // if (error) return res.status(400).send(error.details[0].message)
 
     const user = await Models.userModel.findOne({ email_id: req.body.email_id })
     if (!user)
