@@ -531,7 +531,7 @@ exports.orderReport = (req, res) => {
     directQuery['supplier_id'] = ObjectId(supplier_id)
   }
   if (status) {
-    directQuery['status'] = status
+    directQuery['is_received'] = status
   }
   // Direct Queries
 

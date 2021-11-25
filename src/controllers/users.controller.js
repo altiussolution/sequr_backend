@@ -40,6 +40,7 @@ exports.add = async (req, res) => {
       country_id,
       state_id,
       company_id,
+      created_by,
       status,
       active_status
     } = req.body

@@ -43,5 +43,8 @@ const RoleSchema = Schema({
 { timestamps: { updatedAt: 'updated_at' } }
 )
 
+RoleSchema.index({ role_name: 1, company_id: 1, role_id : 1 }, { unique: true });
+
+
 
 module.exports = mongoose.model('roles', RoleSchema);

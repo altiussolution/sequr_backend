@@ -46,5 +46,6 @@ const CategorySchema = Schema({
 { timestamps: { updatedAt: 'updated_at' } }
 )
 
+CategorySchema.index({ category_name: 1, company_id: 1, category_code : 1 }, { unique: true });
 
 module.exports = mongoose.model('category', CategorySchema);

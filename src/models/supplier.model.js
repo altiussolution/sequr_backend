@@ -5,12 +5,10 @@ const SupplierSchema = Schema({
     supplier_name: {
         type: String,
         required: true,
-        unique : true
     },
     supplier_code: {
         type: String,
         required: true,
-        unique : true
     },
     supplier_address: {
         type: String,
