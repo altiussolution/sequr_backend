@@ -43,7 +43,7 @@ const UserSchema = Schema({
     unique : true
   },
   item_max_quantity: {
-    type: String,
+    type: Number,
     required: true
   },
   branch_id: {
@@ -121,8 +121,9 @@ const UserSchema = Schema({
     default: false
 },
   token: { type: String },
-})
-
+},
+{ timestamps: { updatedAt: 'updated_at' } }
+)
 
 
 // module.exports = mongoose.model('users', UserSchema);

@@ -1,6 +1,7 @@
 const { binModel, cubeModel, machineUsageModel } = require('../models')
 
 var moment = require('moment')
+const { application } = require('express')
 
 exports.cubeIdleHours = async (req, res) => {
   var offset =
@@ -11,7 +12,7 @@ exports.cubeIdleHours = async (req, res) => {
     cubes = await cubeModel
       .find({
         active_status: 1,
-        company_id:company_id
+        company_id: company_id
       })
       .populate('branch_id')
       .exec()
@@ -40,6 +41,9 @@ exports.cubeIdleHours = async (req, res) => {
                 ]
               }
             },
+            { $sort: { created_at: -1 } },
+            { $skip: offset },
+            { $limit: limit },
             {
               $group: {
                 _id: '$_id',
@@ -63,9 +67,7 @@ exports.cubeIdleHours = async (req, res) => {
                 foreignField: '_id',
                 as: 'bin_doc'
               }
-            },
-            { $sort: { created_at: -1 } },
-            { $limit: limit }
+            }
           ])
           .exec()
         eachCubeUsage['date'] = dateForUsage
@@ -99,58 +101,64 @@ exports.filterCubeIdleHours = async (req, res) => {
   machineUsageQuery = {}
   startDay = moment(body.date).format('YYYY-MM-DD 00:00:01')
   endDay = moment(body.date).format('YYYY-MM-DD 23:59:59')
+  applicationStartDate = moment('01-10-2021').format('YYYY-MM-DD 23:59:59')
 
   try {
-    cubes = await cubeModel
-      .find({
-        active_status: 1,
-        company_id:company_id,
-        branch_id: body.branch_id
-      })
-      .populate('branch_id')
-      .exec()
-
-    oveallmachineUsage = []
-
-    for await (let cube of cubes) {
-      let eachCubeUsage = {}
-      cubeUsage = await machineUsageModel
-        .aggregate([
-          {
-            $match: {
-              $and: [
-                { cube_id: cube._id },
-                { created_at: { $gt: new Date(startDay) } },
-                {
-                  created_at: {
-                    $lt: new Date(endDay)
-                  }
-                }
-              ]
-            }
-          },
-          { $group: { _id: null, sum: { $sum: '$machine_usage' } } },
-          { $sort: { created_at: -1 } },
-          { $limit: limit }
-        ])
+    if (startDay < applicationStartDate) {
+      cubes = await cubeModel
+        .find({
+          active_status: 1,
+          company_id: company_id,
+          branch_id: body.branch_id
+        })
+        .populate('branch_id')
         .exec()
-      eachCubeUsage['date'] = startDay
-      eachCubeUsage['cube_id'] = cube.cube_id
-      eachCubeUsage['cube_name'] = cube.cube_name
-      eachCubeUsage['branch'] = cube.branch_id
 
-      if (cubeUsage[0]) {
-        eachCubeUsage['cube_usage'] = cubeUsage[0].sum
-        eachCubeUsage['cube_idle'] = 8.64e7 - cubeUsage[0].sum
-        8.64e7
-      } else {
-        eachCubeUsage['cube_usage'] = 0
-        eachCubeUsage['cube_idle'] = 8.64e7
+      oveallmachineUsage = []
+
+      for await (let cube of cubes) {
+        let eachCubeUsage = {}
+        cubeUsage = await machineUsageModel
+          .aggregate([
+            {
+              $match: {
+                $and: [
+                  { cube_id: cube._id },
+                  { created_at: { $gt: new Date(startDay) } },
+                  {
+                    created_at: {
+                      $lt: new Date(endDay)
+                    }
+                  }
+                ]
+              }
+            },
+            { $group: { _id: null, sum: { $sum: '$machine_usage' } } },
+            { $sort: { created_at: -1 } },
+            { $skip: offset },
+            { $limit: limit }
+          ])
+          .exec()
+        eachCubeUsage['date'] = startDay
+        eachCubeUsage['cube_id'] = cube.cube_id
+        eachCubeUsage['cube_name'] = cube.cube_name
+        eachCubeUsage['branch'] = cube.branch_id
+
+        if (cubeUsage[0]) {
+          eachCubeUsage['cube_usage'] = cubeUsage[0].sum
+          eachCubeUsage['cube_idle'] = 8.64e7 - cubeUsage[0].sum
+          8.64e7
+        } else {
+          eachCubeUsage['cube_usage'] = 0
+          eachCubeUsage['cube_idle'] = 8.64e7
+        }
+        await oveallmachineUsage.push(eachCubeUsage)
       }
-      await oveallmachineUsage.push(eachCubeUsage)
-    }
 
-    res.status(200).send({ success: true, data: oveallmachineUsage })
+      res.status(200).send({ success: true, data: oveallmachineUsage })
+    } else {
+      res.status(200).send({ success: false, data: [] })
+    }
   } catch (error) {
     res.status(201).send({ success: false, error: error })
   }
