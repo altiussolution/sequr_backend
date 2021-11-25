@@ -498,10 +498,10 @@ exports.orderReport = (req, res) => {
 
   var searchString = req.query.searchString // Search Query
 
-  var ceratedDateFrom = req.query.ceratedDateFrom // Direct Query
-  var ceratedDateTo = req.query.ceratedDateTo // Direct Query
-  var receivedDateFrom = req.query.ceratedDateTo // Direct Query
-  var receivedDateTo = req.query.ceratedDateTo // Direct Query
+  var createdDateFrom = req.query.createdDateFrom // Direct Query
+  var createdDateTo = req.query.createdDateTo // Direct Query
+  var receivedDateFrom = req.query.createdDateTo // Direct Query
+  var receivedDateTo = req.query.createdDateTo // Direct Query
   var status = req.query.status // Direct Query
   var supplier_id = req.query.supplier_id // Direct Query
   var directQuery = { company_id: ObjectId(req.query.company_id), active_status: 1 }
@@ -511,9 +511,9 @@ exports.orderReport = (req, res) => {
   // Aggregation Queries
 
   // Direct Queries
-  if (ceratedDateFrom) {
-    var fromDate = moment(ceratedDateFrom).format('YYYY-MM-DD 00:00:00')
-    var toDate = moment(ceratedDateTo).format('YYYY-MM-DD 23:59:59')
+  if (createdDateFrom) {
+    var fromDate = moment(createdDateFrom).format('YYYY-MM-DD 00:00:00')
+    var toDate = moment(createdDateTo).format('YYYY-MM-DD 23:59:59')
     directQuery['created_at'] = {
       $gt: new Date(fromDate),
       $lt: new Date(toDate)
@@ -531,7 +531,7 @@ exports.orderReport = (req, res) => {
     directQuery['supplier_id'] = ObjectId(supplier_id)
   }
   if (status) {
-    directQuery['is_received'] = status
+    directQuery['is_received'] = parseInt(status)
   }
   // Direct Queries
 
