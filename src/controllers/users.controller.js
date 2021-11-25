@@ -251,7 +251,7 @@ exports.delete = (req, res) => {
   }
 }
 
-exports.listEmployees = (req, res) => {
+exports.listEmployees =async (req, res) => {
   try {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
