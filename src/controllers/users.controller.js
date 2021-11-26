@@ -49,9 +49,9 @@ exports.add = async (req, res) => {
     ) {
       res.status(400).send('All input is required')
     }
-    const oldEmployee_id = await User.findOne({ employee_id, active_status: 1 })
-    const oldmobilenumber = await User.findOne({ contact_no, active_status: 1 })
-    const oldemail_id = await User.findOne({ email_id, active_status: 1 })
+    const oldEmployee_id = await User.findOne({ employee_id, active_status: 1,company_id:req.body.company_id })
+    const oldmobilenumber = await User.findOne({ contact_no, active_status: 1 ,company_id:req.body.company_id})
+    const oldemail_id = await User.findOne({ email_id, active_status: 1 ,company_id:req.body.company_id})
     if (oldEmployee_id) {
       return res
         .status(409)

@@ -21,13 +21,15 @@ exports.createCompartment = (req, res) => {
           const name = await compartmentModel
             .findOne({
               compartment_name: req.body.compartment_name,
-              active_status: 1
+              active_status: 1,
+              company_id:req.body.company_id
             })
             .exec()
           const id = await compartmentModel
             .findOne({
               compartment_id: req.body.compartment_id,
-              active_status: 1
+              active_status: 1,
+              company_id:req.body.company_id
             })
             .exec()
           if (name) {

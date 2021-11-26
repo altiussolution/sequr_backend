@@ -15,8 +15,8 @@ exports.createCube = (req, res) => {
               createLog(req.headers['authorization'], 'Cube', 2)
           }
          else {
-              const name = await cubeModel.findOne(({cube_name :req.body.cube_name, active_status : 1})).exec()
-              const id = await cubeModel.findOne(({ cube_id: req.body.cube_id ,active_status : 1 })).exec()
+              const name = await cubeModel.findOne(({cube_name :req.body.cube_name,company_id:req.body.company_id, active_status : 1})).exec()
+              const id = await cubeModel.findOne(({ cube_id: req.body.cube_id, company_id:req.body.company_id,active_status : 1 })).exec()
               if(name){
                   console.log(name)
               var errorMessage = (err.code == error_code.isDuplication ? 'Cube name already exists' : err)

@@ -25,13 +25,15 @@ exports.addsubCategory = async (req, res) => {
       const name = await subCategoryModel
         .findOne({
           sub_category_name: req.body.sub_category_name,
-          active_status: 1
+          active_status: 1,
+          company_id:req.body.company_id
         })
         .exec()
       const id = await subCategoryModel
         .findOne({
           sub_category_code: req.body.sub_category_code,
-          active_status: 1
+          active_status: 1,
+          company_id:req.body.company_id
         })
         .exec()
       if (name) {
