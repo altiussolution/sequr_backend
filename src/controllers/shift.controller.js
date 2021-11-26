@@ -10,10 +10,10 @@ exports.addShift = async (req, res) => {
       .save(async err => {
         if (err) {
           const start = await shift_timeModel
-            .findOne({ start_time: req.body.start_time, active_status: 1 })
+            .findOne({ start_time: req.body.start_time,company_id:req.body.company_id, active_status: 1 })
             .exec()
           const end = await shift_timeModel
-            .findOne({ end_time: req.body.end_time, active_status: 1 })
+            .findOne({ end_time: req.body.end_time,company_id:req.body.company_id,active_status: 1 })
             .exec()
           if (start && end) {
             res.status(409).send({

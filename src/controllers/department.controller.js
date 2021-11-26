@@ -21,13 +21,15 @@ exports.createDepartment = (req, res) => {
           const name = await departmentModel
             .findOne({
               department_name: req.body.department_name,
-              active_status: 1
+              active_status: 1,
+              company_id:req.body.company_id
             })
             .exec()
           const id = await departmentModel
             .findOne({
               department_id: req.body.department_id,
-              active_status: 1
+              active_status: 1,
+              company_id:req.body.company_id
             })
             .exec()
           if (name) {
