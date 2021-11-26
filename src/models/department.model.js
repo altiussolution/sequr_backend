@@ -4,13 +4,13 @@ var mongoose = require('mongoose'),
 const DepartmentSchema = Schema({
     department_name: {
         type: String,
-        required: true,
-        unique: true
+        required: true
+        //unique: true
     },
     department_id: {
         type: String,
-        required: true,
-        unique: true
+        required: true
+        //unique: true
     },
     created_at: {
         type: Date,
@@ -38,5 +38,5 @@ const DepartmentSchema = Schema({
 { timestamps: { updatedAt: 'updated_at' } }
 )
 
-
+DepartmentSchema.index( { "department_name": 1, "department_id": 1,"company_id" : 1 }, { unique: true } )
 module.exports = mongoose.model('department', DepartmentSchema);

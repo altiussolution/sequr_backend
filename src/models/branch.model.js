@@ -4,18 +4,18 @@ var mongoose = require('mongoose'),
 const BranchSchema = Schema({
     branch_name: {
         type: String,
-        required: true,
-        unique : true
+        required: true
+       // unique : true
     },
     branch_code: {
         type: String,
-        required: true,
-        unique : true
+        required: true
+       // unique : true
     },
     branch_address: {
         type: String,
-        required: true,
-        unique : true
+        required: true
+       //unique : true
     },
     country_id: {
         type: Schema.Types.ObjectId,
@@ -36,8 +36,8 @@ const BranchSchema = Schema({
     },
     phone_number: {
         type: String,
-        required: true,
-        unique: true
+        required: true
+       // unique: true
     },
     fax: {
         type: String,
@@ -45,8 +45,8 @@ const BranchSchema = Schema({
     },
     email_id: {
         type: String,
-        required: true,
-        unique : true
+        required: true
+       // unique : true
     },
     created_at: {
         type: Date,
@@ -73,5 +73,5 @@ const BranchSchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
-
+BranchSchema.index( { "branch_name": 1, "branch_code": 1, "branch_address" : 1, "email_id":1, "phone_number":1, "company_id" : 1 }, { unique: true } )
 module.exports = mongoose.model('branch', BranchSchema);

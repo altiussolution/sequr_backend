@@ -4,13 +4,13 @@ var mongoose = require('mongoose'),
 const BinSchema = Schema({
     bin_name: {
         type: String,
-        required: true,
-        unique : true
+        required: true
+        //unique:true
     },
     bin_id: {
         type: String,
-        required: true,
-        unique : true
+        required: true
+       // unique:true
     },
     cube_id: {
         type: Schema.Types.ObjectId,
@@ -70,6 +70,6 @@ const BinSchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
-
+BinSchema.index( { "bin_name": 1, "bin_id": 1,"company_id" : 1 }, { unique: true } )
 BinSchema.index({'$**': 'text'});
 module.exports = mongoose.model('bin', BinSchema);

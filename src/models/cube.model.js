@@ -4,13 +4,11 @@ var mongoose = require('mongoose'),
 const CubeSchema = Schema({
     cube_name: {
         type: String,
-        required: true,
-        unique:true
+        required: true
     },
     cube_id: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     cube_type: {
         type: Number,
@@ -62,6 +60,6 @@ const CubeSchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
-
+CubeSchema.index({ "cube_name": 1,"cube_id":1, "company_id": 1 }, { unique: true });
 CubeSchema.index({'$**': 'text'});
 module.exports = mongoose.model('cube', CubeSchema);
