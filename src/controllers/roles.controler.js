@@ -63,13 +63,11 @@ exports.getRoles = (req, res) => {
               status: true,
               roles: roles
             })
-          } else {
-            res.send(err.message)
           }
         }
       )
       .catch(error => {
-        res.status(400).send({ success: false, error: error })
+        console.log(error)
       })
   } catch (error) {
     res.send('An error occured')
