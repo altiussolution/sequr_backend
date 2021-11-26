@@ -200,16 +200,11 @@ exports.getItemById = async (req, res) => {
       .populate('cube')
       .populate('bin')
       .populate('compartment')
-    res
-      .status(200)
-      .send({
-        status: true,
-        items: itemDetails,
-        machine: stockDetails ? stockDetails : false
-      })
-      .catch(error => {
-        res.status(400).send({ success: false, error: error })
-      })
+    res.status(200).send({
+      status: true,
+      items: itemDetails,
+      machine: stockDetails ? stockDetails : false
+    })
   } catch (err) {
     res.status(400).send({ status: false, message: err.name })
   }

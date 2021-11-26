@@ -26,10 +26,10 @@ exports.addCategory = async (req, res) => {
       .exec()
     if (isCategoryExist) {
       const name = await categoryModel
-        .findOne({ category_name: req.body.category_name,company_id:req.body.company_id, active_status: 1 })
+        .findOne({ category_name: req.body.category_name, active_status: 1 })
         .exec()
       const code = await categoryModel
-        .findOne({ category_code: req.body.category_code,company_id:req.body.company_id, active_status: 1 })
+        .findOne({ category_code: req.body.category_code, active_status: 1 })
         .exec()
       if (name) {
         res.status(200).send({

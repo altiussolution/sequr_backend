@@ -25,15 +25,13 @@ exports.addsubCategory = async (req, res) => {
       const name = await subCategoryModel
         .findOne({
           sub_category_name: req.body.sub_category_name,
-          active_status: 1,
-          company_id:req.body.company_id
+          active_status: 1
         })
         .exec()
       const id = await subCategoryModel
         .findOne({
           sub_category_code: req.body.sub_category_code,
-          active_status: 1,
-          company_id:req.body.company_id
+          active_status: 1
         })
         .exec()
       if (name) {
@@ -48,19 +46,15 @@ exports.addsubCategory = async (req, res) => {
         })
       }
     } else if (!isSubExist) {
-      subCategory
-        .save(err => {
-          if (!err) {
-            res.status(200).send({
-              success: true,
-              message: 'Sub Category Created Successfully!'
-            })
-            createLog(req.headers['authorization'], 'SubCategory', 2)
-          }
-        })
-        .catch(error => {
-          res.status(400).send({ success: false, error: error })
-        })
+      subCategory.save(err => {
+        if (!err) {
+          res.status(200).send({
+            success: true,
+            message: 'Sub Category Created Successfully!'
+          })
+          createLog(req.headers['authorization'], 'SubCategory', 2)
+        }
+      })
     }
   } catch (err) {
     res.status(201).send({ success: false, error: err })
