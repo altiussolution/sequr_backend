@@ -478,7 +478,7 @@ exports.stockShortageReport = async (req, res) => {
         console.log(itemOnCube)
         if (itemOnCube.length > 0) {
           for await (let item of itemOnCube) {
-            var itemShortage = item.draw_doc[0].item_min_cap - item.quantity
+            var itemShortage = item.draw_doc[0].item_max_cap  -item.quantity
             itemList = await JSON.parse(JSON.stringify(item))
             itemList['stock_shortage'] = itemShortage
             await belowMinItems.push(itemList)
