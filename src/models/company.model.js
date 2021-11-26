@@ -4,7 +4,8 @@ var mongoose = require('mongoose'),
 const CompanySchema = Schema({
     company_name: {
       type: String,
-      required: true
+      required: true,
+      unique : true
     },
     contact_person_name: {
       type: String,
@@ -48,7 +49,7 @@ const CompanySchema = Schema({
     },
     company_pic: {
       type: String,
-      unique: true
+      // unique: true
     },
     status: {
       type: Boolean,

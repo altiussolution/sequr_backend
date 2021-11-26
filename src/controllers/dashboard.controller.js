@@ -359,9 +359,13 @@ exports.getMachineUsage = async (req, res) => {
   var company_id = req.query.company_id
   var branch_id = req.query.branch_id
   var query = branch_id
-    ? { active_status: 1, branch_id: ObjectId(branch_id), company_id: ObjectId(company_id) }
+    ? {
+        active_status: 1,
+        branch_id: ObjectId(branch_id),
+        company_id: ObjectId(company_id)
+      }
     : { active_status: 1, company_id: ObjectId(company_id) }
-    console.log(query)
+  console.log(query)
   try {
     cubes = await cubeModel.find(query).exec()
 
@@ -440,13 +444,16 @@ exports.getMachineUsage = async (req, res) => {
 }
 
 exports.itemAlert = async (req, res) => {
+  var company_id = req.query.company_id
   try {
     itemOnCube = await stockAllocationModel
       .aggregate([
         {
+          $match: { company_id: company_id }
+        },
+        {
           $group: {
             _id: '$item',
-            company_id: '$company_id',
             compartment: { $push: '$compartment' },
             item: { $push: '$item' },
             available: { $sum: '$quantity' },

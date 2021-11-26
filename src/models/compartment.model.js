@@ -81,7 +81,7 @@ const CompartmentSchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
-CompartmentSchema.index({ compartment_name: 1, company_id: 1 }, { unique: true });
+// CompartmentSchema.index({ compartment_name: 1, company_id: 1 }, { unique: true });
 
 
 CompartmentSchema.index({'$**': 'text'});
