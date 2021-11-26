@@ -51,23 +51,16 @@ exports.getRoles = (req, res) => {
   var company_id = req.query.company_id
   try {
     rolesModel
-      .find(
-        {
-          active_status: 1,
-          company_id: company_id,
-          role_id: { $nin: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
-        },
-        (err, roles) => {
-          if (!err) {
-            res.status(200).send({
-              status: true,
-              roles: roles
-            })
-          }
-        }
-      )
+      .find({
+        active_status: 1,
+        company_id: company_id,
+        role_id: { $nin: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
+      })
+      .then(roles => {
+        res.status(200).send({ status: true, roles: roles })
+      })
       .catch(error => {
-        console.log(error)
+        res.status(400).send({ success: false, error: error })
       })
   } catch (error) {
     res.send('An error occured')
