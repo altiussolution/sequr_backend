@@ -110,7 +110,7 @@ exports.add = async (req, res) => {
         // Get Customer Role and Super Admin Role
         isUserRole = await rolesModel.findOne({ _id: user.role_id }).exec()
 
-        if (isUserRole.isUserRole.length > 0) {
+        if (isUserRole.permission.length > 0) {
           if (
             isUserRole.permission.includes('user') ||
             !isUserRole.permission.includes('admin')
