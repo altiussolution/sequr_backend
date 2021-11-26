@@ -102,12 +102,17 @@ exports.filterCubeIdleHours = async (req, res) => {
   machineUsageQuery = {}
   startDay = moment(body.date).format('YYYY-MM-DD 00:00:01')
   endDay = moment(body.date).format('YYYY-MM-DD 23:59:59')
-  applicationStartDate = moment(new Date('01-10-2021')).format(
+  applicationStartDate = moment(new Date('2021-10-01')).format(
     'YYYY-MM-DD 23:59:59'
   )
-  var today = new Date()
-  console.log(startDay)
-  console.log(applicationStartDate)
+  var today = moment(new Date()).format('YYYY-MM-DD 23:59:59')
+
+
+
+  console.log('Filter Date _   ' + startDay)
+  console.log('Sequre App Start Date _   ' + applicationStartDate)
+  console.log('Today_  ' + today)
+
   // try {
   if (startDay > applicationStartDate && startDay < today) {
     cubes = await cubeModel
@@ -139,7 +144,7 @@ exports.filterCubeIdleHours = async (req, res) => {
             }
           },
           { $group: { _id: null, sum: { $sum: '$machine_usage' } } },
-          { $sort: { created_at: -1 } },
+          { $sort: { created_at: -1 } }
           // { $skip: offset },
           // { $limit: limit }
         ])
