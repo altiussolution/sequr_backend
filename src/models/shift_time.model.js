@@ -10,12 +10,10 @@ const ShiftTimeSchema = Schema({
     start_time: {
         type: String,
         required: true,
-        unique : true
     },
     end_time: {
         type: String,
         required: true,
-        unique : true
     },
     created_at: {
         type: Date,
