@@ -140,6 +140,7 @@ exports.add = async (req, res) => {
         createLog(req.headers['authorization'], 'Employee', 2)
       })
       .catch(error => {
+        console.log(error)
         res
           .status(201)
           .send({ success: false, error: error, message: 'An Error Occured' })
@@ -215,9 +216,10 @@ exports.login = async (req, res) => {
 //   }
 // }
 exports.upload = async (req, res) => {
+  console.log(req.file)
   try {
     if (req.file) {
-      const filename = req.file.originalname
+      const filename  = req.file.filename
       res.status(200).send({
         Message: 'Image Added Sucessfully',
         Path: `${req.file.destination.replace(
