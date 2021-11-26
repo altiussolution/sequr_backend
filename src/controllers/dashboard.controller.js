@@ -449,7 +449,7 @@ exports.itemAlert = async (req, res) => {
     itemOnCube = await stockAllocationModel
       .aggregate([
         {
-          $match: { company_id: company_id }
+          $match: { company_id: ObjectId(company_id) }
         },
         {
           $group: {
@@ -477,25 +477,15 @@ exports.itemAlert = async (req, res) => {
             as: 'item_doc'
           }
         }
-        //   {
-        //     $match: {
-        //      available: '$available',
-        //     }
-        // }
       ])
       .exec()
 
     outOfStockItems = []
     for await (let item of itemOnCube) {
-      console.log(item)
-      console.log(item.available + '   ' + item.draw_doc.item_min_cap)
       if (item.available <= item.draw_doc[0].alert_on) {
         await outOfStockItems.push(item)
       }
     }
-
-    //   itemOnCube2 = await itemModel.populate(itemOnCube, { path: 'item' }).exec()
-    //   console.log(itemOnCube2)
     res.status(200).send({ success: true, data: outOfStockItems })
   } catch (error) {
     res.status(201).send(error.name)
