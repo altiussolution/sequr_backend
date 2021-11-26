@@ -8,6 +8,7 @@ var ObjectId = require('mongodb').ObjectID
 
 exports.columnShortage = async (req, res) => {
   var branch_id = req.query.branch_id
+  var company_id = req.query.branch_id
   var query = branch_id
     ? { active_status: 1, branch: req.query.branch_id, company_id: company_id }
     : { active_status: 1, company_id: company_id }
@@ -116,5 +117,3 @@ exports.itemShortage = async (req, res) => {
   //   res.status(201).send(error.name)
   // }
 }
-
-exports.purchaseOrder = (req, res) => {}
