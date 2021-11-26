@@ -254,7 +254,7 @@ exports.deadStockReport = async (req, res) => {
       company_id: req.query.company_id
     }
   }
-  var filterQuery = {active_status : 1}
+  var filterQuery = { active_status: 1 }
   var searchQuery = [{}]
 
   // Aggregation Queries
@@ -375,8 +375,8 @@ exports.stockShortageReport = async (req, res) => {
   var cubeId = req.query.cube // Direct Query
   var columnId = req.query.columnId // Direct Query
 
-  var directQuery = { company_id: req.query.company_id }
-  var filterQuery = { company_id: req.query.company_id }
+  var directQuery = { company_id: ObjectId(req.query.company_id) }
+  var filterQuery = {}
   var searchQuery = [{}]
 
   // Aggregation Queries
@@ -475,11 +475,13 @@ exports.stockShortageReport = async (req, res) => {
       ])
       .then(async itemOnCube => {
         belowMinItems = []
+        console.log(itemOnCube)
         if (itemOnCube.length > 0) {
           for await (let item of itemOnCube) {
-            if (item.quantity <= item.draw_doc[0].item_min_cap) {
-              await belowMinItems.push(item)
-            }
+            var itemShortage = item.draw_doc[0].item_min_cap - item.quantity
+            itemList = await JSON.parse(JSON.stringify(item))
+            itemList['stock_shortage'] = itemShortage
+            await belowMinItems.push(itemList)
           }
         }
         res.status(200).send({ success: true, data: belowMinItems })
@@ -504,8 +506,11 @@ exports.orderReport = (req, res) => {
   var receivedDateTo = req.query.createdDateTo // Direct Query
   var status = req.query.status // Direct Query
   var supplier_id = req.query.supplier_id // Direct Query
-  var directQuery = { company_id: ObjectId(req.query.company_id), active_status: 1 }
-  var filterQuery = { active_status : 1  }
+  var directQuery = {
+    company_id: ObjectId(req.query.company_id),
+    active_status: 1
+  }
+  var filterQuery = { active_status: 1 }
   var searchQuery = [{}]
 
   // Aggregation Queries
@@ -563,8 +568,8 @@ exports.orderReport = (req, res) => {
     purchaseOrderModel
       .aggregate([
         {
-          '$match': {
-            '$and': [directQuery]
+          $match: {
+            $and: [directQuery]
           }
         },
         { $sort: { created_at: -1 } },
@@ -587,10 +592,10 @@ exports.orderReport = (req, res) => {
           }
         },
         {
-          '$match': filterQuery
+          $match: filterQuery
         },
         {
-          '$match': {
+          $match: {
             $or: searchQuery
           }
         }
@@ -761,4 +766,130 @@ async function calculatDate (subtractDay) {
   await d.setDate(d.getDate() - subtractDay)
   var date = await d.toISOString().slice(0, 10)
   return date
+}
+
+exports.earlyWarningReport = async (req, res) => {
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : 20
+
+  var searchString = req.query.searchString // Search Query
+  var cubeId = req.query.cube // Direct Query
+  var columnId = req.query.columnId // Direct Query
+
+  var directQuery = { company_id: req.query.company_id }
+  var filterQuery = { company_id: req.query.company_id }
+  var searchQuery = [{}]
+
+  // Aggregation Queries
+
+  if (cubeId) directQuery['cube'] = ObjectId(cubeId)
+  if (columnId) directQuery['bin'] = ObjectId(columnId)
+
+  if (searchString) {
+    searchQuery = [
+      {
+        'cube_doc.cube_name': { $regex: searchString }
+      },
+      {
+        'item_doc.item_name': { $regex: searchString }
+      },
+
+      {
+        'column_doc.bin_name': { $regex: searchString }
+      },
+      {
+        'draw_doc.compartment_name': { $regex: searchString }
+      },
+      {
+        'item_doc.quantity': parseInt(searchString)
+      }
+    ]
+  }
+  console.log(directQuery)
+  console.log(filterQuery)
+  console.log(searchQuery)
+
+  // Aggregation Queries
+
+  try {
+    stockAllocationModel
+      .aggregate([
+        //Find branch id and active_status is 1
+        {
+          $match: {
+            $and: [directQuery]
+          }
+        },
+        { $sort: { created_at: -1 } },
+        { $skip: offset },
+        { $limit: limit },
+        // *** 1 ***
+        // *** 2 ***
+        // *** 3 ***
+        {
+          $lookup: {
+            from: 'cubes',
+            localField: 'cube',
+            foreignField: '_id',
+            as: 'cube_doc'
+          }
+        },
+        // *** 4 ***
+        {
+          $lookup: {
+            from: 'bins',
+            localField: 'bin',
+            foreignField: '_id',
+            as: 'column_doc'
+          }
+        },
+        // *** 5 ***
+        {
+          $lookup: {
+            from: 'compartments',
+            localField: 'compartment',
+            foreignField: '_id',
+            as: 'draw_doc'
+          }
+        },
+        // *** 6 ***
+        {
+          $lookup: {
+            from: 'items',
+            localField: 'item',
+            foreignField: '_id',
+            as: 'item_doc'
+          }
+        },
+
+        // {
+        //   $match: { $expr: { $lte: ['$quantity', '$draw_doc.item_min_cap'] } }
+        // },
+        {
+          $match: filterQuery
+        },
+        {
+          $match: {
+            $or: searchQuery
+          }
+        }
+      ])
+      .then(async itemOnCube => {
+        belowMinItems = []
+        if (itemOnCube.length > 0) {
+          for await (let item of itemOnCube) {
+            if (item.quantity <= item.draw_doc[0].item_min_cap && item.item_doc[0].returnable == false ) {
+              await belowMinItems.push(item)
+            }
+          }
+        }
+        res.status(200).send({ success: true, data: belowMinItems })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
 }
