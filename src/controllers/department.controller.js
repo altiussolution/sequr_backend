@@ -31,7 +31,7 @@ exports.createDepartment = (req, res) => {
                 });
             }
         }
-        })
+        });
     } catch (error) {
         res.status(201).send(error)
     }

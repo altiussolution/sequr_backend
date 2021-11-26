@@ -7,35 +7,31 @@ const {
 } = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
-var { error_code } = require('../utils/enum.utils')
+var {error_code} = require('../utils/enum.utils')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 exports.addItem = async (req, res) => {
   try {
     var newItem = new itemModel(req.body)
-    newItem
-      .save(function (err) {
-        if (err) {
-          console.log(err)
-          if (err.keyValue.item_number) {
-            var errorMessage =
-              err.code == error_code.isDuplication
-                ? 'Item Number is already exist'
-                : err
-          }
-          res.status(409).send({
-            success: false,
-            message: errorMessage
-          })
-        } else {
-          res
-            .status(200)
-            .send({ success: true, message: 'Item Added Successfully!' })
+    newItem.save(function (err) {
+      if (err) {
+        console.log(err)
+        if (err.keyValue.item_number) {
+          var errorMessage =
+            err.code == error_code.isDuplication
+              ? 'Item Number is already exist'
+              : err
         }
-      })
-      .catch(error => {
-        res.status(400).send({ success: false, error: error })
-      })
+        res.status(409).send({
+          success: false,
+          message: errorMessage
+        })
+      } else {
+        res
+          .status(200)
+          .send({ success: true, message: 'Item Added Successfully!' })
+      }
+    })
   } catch (error) {
     res.send('An error occured')
     console.log(error)
