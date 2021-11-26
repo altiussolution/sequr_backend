@@ -7,10 +7,10 @@ const {
 var ObjectId = require('mongodb').ObjectID
 
 exports.columnShortage = async (req, res) => {
-  var query = req.query.branch_id
-  var company_id = req.query.company_id
-    ? { active_status: 1, branch: req.query.branch_id ,company_id:company_id}
-    : { active_status: 1 ,company_id:company_id}
+  var branch_id = req.query.branch_id
+  var query = branch_id
+    ? { active_status: 1, branch: req.query.branch_id, company_id: company_id }
+    : { active_status: 1, company_id: company_id }
   try {
     cubes = await cubeModel
       .find({
@@ -55,7 +55,6 @@ exports.itemShortage = async (req, res) => {
           'cube_doc.active_status': 1,
           'item_doc.active_status': 1,
           'draw_doc.active_status': 1
-          
         }
       }
     : {
@@ -69,9 +68,11 @@ exports.itemShortage = async (req, res) => {
   itemOnCube = await stockAllocationModel
     .aggregate([
       {
+        $match: { company_id: ObjectId(company_id) }
+      },
+      {
         $group: {
           _id: '$item',
-          company_id : '$company_id', 
           item: { $push: '$item' },
           compartment: { $push: '$compartment' },
           cube: { $push: '$cube' },

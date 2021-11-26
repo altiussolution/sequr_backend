@@ -94,74 +94,79 @@ exports.cubeIdleHours = async (req, res) => {
 
 exports.filterCubeIdleHours = async (req, res) => {
   body = req.query
-  req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var company_id = req.query.company_id
   Cubequery = {}
   machineUsageQuery = {}
   startDay = moment(body.date).format('YYYY-MM-DD 00:00:01')
   endDay = moment(body.date).format('YYYY-MM-DD 23:59:59')
-  applicationStartDate = moment('01-10-2021').format('YYYY-MM-DD 23:59:59')
+  applicationStartDate = moment(new Date('01-10-2021')).format(
+    'YYYY-MM-DD 23:59:59'
+  )
+  var today = new Date()
+  console.log(startDay)
+  console.log(applicationStartDate)
+  // try {
+  if (startDay > applicationStartDate && startDay < today) {
+    cubes = await cubeModel
+      .find({
+        active_status: 1,
+        company_id: company_id,
+        branch_id: body.branch_id
+      })
+      .populate('branch_id')
+      .exec()
 
-  try {
-    if (startDay < applicationStartDate) {
-      cubes = await cubeModel
-        .find({
-          active_status: 1,
-          company_id: company_id,
-          branch_id: body.branch_id
-        })
-        .populate('branch_id')
-        .exec()
+    oveallmachineUsage = []
 
-      oveallmachineUsage = []
-
-      for await (let cube of cubes) {
-        let eachCubeUsage = {}
-        cubeUsage = await machineUsageModel
-          .aggregate([
-            {
-              $match: {
-                $and: [
-                  { cube_id: cube._id },
-                  { created_at: { $gt: new Date(startDay) } },
-                  {
-                    created_at: {
-                      $lt: new Date(endDay)
-                    }
+    for await (let cube of cubes) {
+      let eachCubeUsage = {}
+      cubeUsage = await machineUsageModel
+        .aggregate([
+          {
+            $match: {
+              $and: [
+                { cube_id: cube._id },
+                { created_at: { $gt: new Date(startDay) } },
+                {
+                  created_at: {
+                    $lt: new Date(endDay)
                   }
-                ]
-              }
-            },
-            { $group: { _id: null, sum: { $sum: '$machine_usage' } } },
-            { $sort: { created_at: -1 } },
-            { $skip: offset },
-            { $limit: limit }
-          ])
-          .exec()
-        eachCubeUsage['date'] = startDay
-        eachCubeUsage['cube_id'] = cube.cube_id
-        eachCubeUsage['cube_name'] = cube.cube_name
-        eachCubeUsage['branch'] = cube.branch_id
+                }
+              ]
+            }
+          },
+          { $group: { _id: null, sum: { $sum: '$machine_usage' } } },
+          { $sort: { created_at: -1 } },
+          // { $skip: offset },
+          // { $limit: limit }
+        ])
+        .exec()
+      eachCubeUsage['date'] = startDay
+      eachCubeUsage['cube_id'] = cube.cube_id
+      eachCubeUsage['cube_name'] = cube.cube_name
+      eachCubeUsage['branch'] = cube.branch_id
 
-        if (cubeUsage[0]) {
-          eachCubeUsage['cube_usage'] = cubeUsage[0].sum
-          eachCubeUsage['cube_idle'] = 8.64e7 - cubeUsage[0].sum
-          8.64e7
-        } else {
-          eachCubeUsage['cube_usage'] = 0
-          eachCubeUsage['cube_idle'] = 8.64e7
-        }
-        await oveallmachineUsage.push(eachCubeUsage)
+      if (cubeUsage[0]) {
+        eachCubeUsage['cube_usage'] = cubeUsage[0].sum
+        eachCubeUsage['cube_idle'] = 8.64e7 - cubeUsage[0].sum
+        8.64e7
+      } else {
+        eachCubeUsage['cube_usage'] = 0
+        eachCubeUsage['cube_idle'] = 8.64e7
       }
-
-      res.status(200).send({ success: true, data: oveallmachineUsage })
-    } else {
-      res.status(200).send({ success: false, data: [] })
+      await oveallmachineUsage.push(eachCubeUsage)
     }
-  } catch (error) {
-    res.status(201).send({ success: false, error: error })
+
+    res.status(200).send({ success: true, data: oveallmachineUsage })
+  } else {
+    res.status(200).send({ success: false, data: [] })
   }
+  // } catch (error) {
+  //   res.status(201).send({ success: false, error: error })
+  // }
 }
 
 async function calculatDate (subtractDay) {
