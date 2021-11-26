@@ -42,11 +42,22 @@ exports.createBin = async (req, res) => {
         }
       })
     } else {
-      res.status(200).send({
-        success: false,
-        message: 'Bin already exist'
-      })
-    }
+      const name = await binModel.findOne(({bin_name: req.body.bin_name ,active_status: 1 })).exec()
+      const id = await binModel.findOne(({ bin_id:req.body.bin_id ,  active_status: 1 })).exec()
+      if(name){
+      var errorMessage = (err.code == error_code.isDuplication ? 'bin name already exists' : err)
+      res.status(409).send({
+          success: false,
+          message: errorMessage
+      });
+  }else if(id){
+      var errorMessage = (err.code == error_code.isDuplication ? 'bin id already exists' : err)
+      res.status(409).send({
+          success: false,
+          message: errorMessage
+      });
+  }
+  }
   } catch (error) {
     res.status(201).send(error.name)
   }
