@@ -11,19 +11,23 @@ exports.createKit = async (req, res) => {
     var kit = new kitModel(body)
     var isKitExist = await kitModel.find({ kit_name: body.kit_name }).exec()
     if (isKitExist.length == 0) {
-      kit.save(err => {
-        if (!err) {
-          res
-            .status(200)
-            .send({ success: true, message: 'Kit Created Successfully!' })
+      kit
+        .save(err => {
+          if (!err) {
+            res
+              .status(200)
+              .send({ success: true, message: 'Kit Created Successfully!' })
             createLog(req.headers['authorization'], 'Kitting', 2)
-        } else {
-          res.status(200).send({
-            success: false,
-            message: err
-          })
-        }
-      })
+          } else {
+            res.status(200).send({
+              success: false,
+              message: err
+            })
+          }
+        })
+        .catch(error => {
+          res.status(400).send({ success: false, error: error })
+        })
     } else {
       res.status(200).send({
         success: false,
@@ -43,8 +47,12 @@ exports.getKit = (req, res) => {
   var searchString = req.query.searchString
   var company_id = req.query.company_id
   var query = searchString
-    ? { active_status: 1,company_id: company_id, $text: { $search: searchString } }
-    : { active_status: 1 , company_id:company_id}
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
   var _ = require('lodash')
   var binDatas = []
   var allocationDetais
@@ -70,11 +78,11 @@ exports.getKit = (req, res) => {
               .populate('bin', ['bin_name', 'bin_id'])
               .populate('compartment', ['compartment_name', 'compartment_id'])
               .exec()
-              kitItemAllocation = JSON.parse(JSON.stringify(allocationDetais))
-              kitItemAllocation['kit_item_description'] = kitdata['description']
-              kitItemAllocation['kit_item_qty'] = kitdata['qty']
-              kitItemAllocation['kit_item_pack_id'] = kitdata['_id']
-              kitItemAllocation['kit_item_id'] = kitdata['item_id']
+            kitItemAllocation = JSON.parse(JSON.stringify(allocationDetais))
+            kitItemAllocation['kit_item_description'] = kitdata['description']
+            kitItemAllocation['kit_item_qty'] = kitdata['qty']
+            kitItemAllocation['kit_item_pack_id'] = kitdata['_id']
+            kitItemAllocation['kit_item_id'] = kitdata['item_id']
             //   itemDetails['itemDetails'] = allocationDetais
             await kitData.push(kitItemAllocation)
             index++
@@ -124,7 +132,7 @@ exports.updateKit = async (req, res) => {
           res
             .status(200)
             .send({ success: true, message: 'Kit Updated Successfully!' })
-            createLog(req.headers['authorization'], 'Kitting', 1)
+          createLog(req.headers['authorization'], 'Kitting', 1)
         })
         .catch(error => {
           res
@@ -162,50 +170,50 @@ exports.deleteKit = (req, res) => {
   //     .send({ success: false, error: err.name, message: 'An Error Catched' })
   // }
   try {
-kitModel.aggregate([
-  {
-    $match: {
-      $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
-    }
-  },
-  {
-    $lookup: {
-      from: 'carts', 
-      localField: '_id',
-      foreignField: 'kitting.kit_id',
-      as: 'cart_doc' 
-    }
-  }
-]).then(async doc=>{
-  message = []
-  if (doc[0].cart_doc.length > 0) {
-    await message.push(
-      'Please delete all the cart items refered to this kit'
-    )
-  }
-if (message.length > 0) {
-    res.status(200).send({ success: true, message: message })
-  } else if (message.length == 0) {
     kitModel
-      .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
-      .then(branch => {
-        res.status(200).send({
-          success: true,
-          message: 'Kit Deleted Successfully!'
-        })
-        createLog(req.headers['authorization'], 'Kitting', 0)
+      .aggregate([
+        {
+          $match: {
+            $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+          }
+        },
+        {
+          $lookup: {
+            from: 'carts',
+            localField: '_id',
+            foreignField: 'kitting.kit_id',
+            as: 'cart_doc'
+          }
+        }
+      ])
+      .then(async doc => {
+        message = []
+        if (doc[0].cart_doc.length > 0) {
+          await message.push(
+            'Please delete all the cart items refered to this kit'
+          )
+        }
+        if (message.length > 0) {
+          res.status(200).send({ success: true, message: message })
+        } else if (message.length == 0) {
+          kitModel
+            .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+            .then(branch => {
+              res.status(200).send({
+                success: true,
+                message: 'Kit Deleted Successfully!'
+              })
+              createLog(req.headers['authorization'], 'Kitting', 0)
+            })
+            .catch(err => {
+              res.status(200).send({ success: false, message: 'Kit Not Found' })
+            })
+        }
       })
-      .catch(err => {
-        res
-          .status(200)
-          .send({ success: false, message: 'Kit Not Found' })
-      })
-  }
-})
   } catch (err) {
     res
-    .status(200)
-    .send({ success: false, error: err, message: 'An Error Catched' })
+      .status(200)
+      .send({ success: false, error: err, message: 'An Error Catched' })
   }
 }
 

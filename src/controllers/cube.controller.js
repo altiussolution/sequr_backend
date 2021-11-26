@@ -32,7 +32,10 @@ exports.createCube = (req, res) => {
               });
           }
       }
-      });
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
   } catch (error) {
       res.status(201).send(error)
   }

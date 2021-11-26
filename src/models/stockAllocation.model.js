@@ -89,4 +89,5 @@ const StockAllocationSchema = Schema({
   }
 })
 
+
 module.exports = mongoose.model('stockallocation', StockAllocationSchema)

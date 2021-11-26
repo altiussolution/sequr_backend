@@ -13,11 +13,7 @@ exports.columnShortage = async (req, res) => {
     ? { active_status: 1, branch: req.query.branch_id, company_id: company_id }
     : { active_status: 1, company_id: company_id }
   try {
-    cubes = await cubeModel
-      .find({
-        query
-      })
-      .exec()
+    cubes = await cubeModel.find(query).exec()
 
     overallShortageReport = []
     for await (let cube of cubes) {

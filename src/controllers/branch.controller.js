@@ -7,62 +7,63 @@ const { ObjectID } = require('bson')
 exports.createBranch = (req, res) => {
   try {
     var newBranch = new branchModel(req.body)
-    newBranch.save(err => {
-      if (!err) {
-        res
-          .status(200)
-          .send({ success: true, message: 'Branch Created Successfully!' })
-        createLog(req.headers['authorization'], 'Branch', 2)
-      } else {
-       if (err.keyValue.branch_name){
-        var errorMessage =
-          err.code == error_code.isDuplication
-            ? 'Branch Name is already exist'
-            : err
-       } else if(err.keyValue.branch_code){
-        var errorMessage =
-        err.code == error_code.isDuplication
-          ? 'Branch Code is already exist'
-          : err
-       }
-       else if(err.keyValue.branch_address){
-        var errorMessage =
-        err.code == error_code.isDuplication
-          ? 'Address is already exist'
-          : err
-       }
-       else if(err.keyValue.phone_number){
-        var errorMessage =
-        err.code == error_code.isDuplication
-          ? 'Phonenumber  is already exist'
-          : err
-       }
-       else if(err.keyValue.email_id){
-        var errorMessage =
-        err.code == error_code.isDuplication
-          ? 'Email Id is already exist'
-          : err
-       }
-        res.status(409).send({
-          success: false,
-          message: errorMessage
-
-        })
-      }
-    })
+    newBranch
+      .save(err => {
+        if (!err) {
+          res
+            .status(200)
+            .send({ success: true, message: 'Branch Created Successfully!' })
+          createLog(req.headers['authorization'], 'Branch', 2)
+        } else {
+          if (err.keyValue.branch_name) {
+            var errorMessage =
+              err.code == error_code.isDuplication
+                ? 'Branch Name is already exist'
+                : err
+          } else if (err.keyValue.branch_code) {
+            var errorMessage =
+              err.code == error_code.isDuplication
+                ? 'Branch Code is already exist'
+                : err
+          } else if (err.keyValue.branch_address) {
+            var errorMessage =
+              err.code == error_code.isDuplication
+                ? 'Address is already exist'
+                : err
+          } else if (err.keyValue.phone_number) {
+            var errorMessage =
+              err.code == error_code.isDuplication
+                ? 'Phonenumber  is already exist'
+                : err
+          } else if (err.keyValue.email_id) {
+            var errorMessage =
+              err.code == error_code.isDuplication
+                ? 'Email Id is already exist'
+                : err
+          }
+          res.status(409).send({
+            success: false,
+            message: errorMessage
+          })
+        }
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
   } catch (error) {
     res.status(201).send(error)
   }
 }
 
 exports.getBranch = (req, res) => {
-  var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
   var company_id = req.query.company_id
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 , company_id : company_id}
+    : { active_status: 1, company_id: company_id }
   try {
     branchModel
       .find(query)
@@ -77,8 +78,7 @@ exports.getBranch = (req, res) => {
       .catch(error => {
         res.status(400).send({ success: false, error: error })
       })
-  }
-   catch (error) {
+  } catch (error) {
     res.status(201).send({ success: false, error: error })
   }
 }
@@ -140,7 +140,7 @@ exports.getBranchfilter = (req, res) => {
   } else if (state_id) {
     var query = { state_id: state_id }
   }
-  query['company_id'] =  req.query.company_id
+  query['company_id'] = req.query.company_id
   try {
     branchModel
       .find(query)
@@ -249,7 +249,7 @@ exports.deleteBranch = (req, res) => {
 
         // Get all refered documents
         // *** 1 ***
-      
+
         // *** 2 ***
         {
           $lookup: {
@@ -266,7 +266,7 @@ exports.deleteBranch = (req, res) => {
             foreignField: 'branch_id',
             as: 'user_doc' // name of the document contains all users
           }
-        },
+        }
 
         //********************************** */
       ])
@@ -278,12 +278,10 @@ exports.deleteBranch = (req, res) => {
         //********************************** */
 
         // *** 1 ***
-      
+
         // *** 2 ***
         if (doc[0].cube_doc.length > 0) {
-          await message(
-            'Please delete all the refered cubes by this branch'
-          )
+          await message('Please delete all the refered cubes by this branch')
         }
         if (doc[0].user_doc.length > 0) {
           await message.push(
@@ -312,8 +310,6 @@ exports.deleteBranch = (req, res) => {
                 .status(200)
                 .send({ success: false, message: 'Branch Not Found' })
             })
-
-        
         }
       })
       .catch(err => {

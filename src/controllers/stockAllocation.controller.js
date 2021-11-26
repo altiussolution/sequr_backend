@@ -5,16 +5,20 @@ const { ObjectID } = require('bson')
 exports.allocateStock = (req, res) => {
   try {
     var stock = new stockAllocationModel(req.body)
-    stock.save(err => {
-      if (!err) {
-        res
-          .status(200)
-          .send({ success: true, message: 'Stock Allocated Successfully' })
-        createLog(req.headers['authorization'], 'Itemoncube', 2)
-      } else {
-        res.status(201).send({ status: false, message: err.name })
-      }
-    })
+    stock
+      .save(err => {
+        if (!err) {
+          res
+            .status(200)
+            .send({ success: true, message: 'Stock Allocated Successfully' })
+          createLog(req.headers['authorization'], 'Itemoncube', 2)
+        } else {
+          res.status(201).send({ status: false, message: err.name })
+        }
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
   } catch (err) {
     res.status(201).send({ status: false, message: err.name })
   }
@@ -27,16 +31,20 @@ exports.getStockAllocations = (req, res) => {
   var searchString = req.query.searchString
   var category = req.query.category
   var sub_category = req.query.sub_category
-  var status = req.query.status;
-  var supplier = req.query.supplier;
-  var cube = req.query.cube;
-  var bin = req.query.bin;
-  var compartment = req.query.compartment;
-  var is_active = req.query.is_active;
-  var company_id = req.query.company_id;
+  var status = req.query.status
+  var supplier = req.query.supplier
+  var cube = req.query.cube
+  var bin = req.query.bin
+  var compartment = req.query.compartment
+  var is_active = req.query.is_active
+  var company_id = req.query.company_id
   var query = searchString
-    ? { active_status: 1, company_id: company_id, $text: { $search: searchString } }
-    : { active_status: 1 , company_id:company_id}
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
   if (category) query['category'] = category
   if (sub_category) query['sub_category'] = sub_category
   if (is_active) query['is_active'] = is_active
@@ -46,7 +54,7 @@ exports.getStockAllocations = (req, res) => {
   if (bin) query['bin'] = bin
   if (compartment) query['compartment'] = compartment
   if (company_id) query['company_id'] = company_id
-  
+
   try {
     stockAllocationModel
       .find(query)
@@ -120,7 +128,7 @@ exports.getItemById = (req, res) => {
   try {
     var item = req.params.item
     stockAllocationModel
-      .findOne({ item: item ,company_id : company_id})
+      .findOne({ item: item, company_id: company_id })
       .populate('item')
       .populate('cube')
       .populate('bin')

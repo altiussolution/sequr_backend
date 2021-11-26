@@ -46,15 +46,19 @@ exports.addsubCategory = async (req, res) => {
         })
       }
     } else if (!isSubExist) {
-      subCategory.save(err => {
-        if (!err) {
-          res.status(200).send({
-            success: true,
-            message: 'Sub Category Created Successfully!'
-          })
-          createLog(req.headers['authorization'], 'SubCategory', 2)
-        }
-      })
+      subCategory
+        .save(err => {
+          if (!err) {
+            res.status(200).send({
+              success: true,
+              message: 'Sub Category Created Successfully!'
+            })
+            createLog(req.headers['authorization'], 'SubCategory', 2)
+          }
+        })
+        .catch(error => {
+          res.status(400).send({ success: false, error: error })
+        })
     }
   } catch (err) {
     res.status(201).send({ success: false, error: err })

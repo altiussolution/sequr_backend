@@ -1,50 +1,55 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+  Schema = mongoose.Schema
 
-const CategorySchema = Schema({
+const CategorySchema = Schema(
+  {
     category_name: {
-        type: String,
-        required: true
-    }, 
+      type: String,
+      required: true
+    },
     category_code: {
-        type: String,
-        required: true
+      type: String,
+      required: true
     },
     is_active: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false
     },
     description: {
-        type: String
+      type: String
     },
     image_path: {
-        type: String,
+      type: String
     },
     created_at: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now
     },
     deleted_at: {
-        type: Date,
-        default: null
+      type: Date,
+      default: null
     },
     updated_at: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now
     },
     company_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'company',
-        required : true
-      },
+      type: Schema.Types.ObjectId,
+      ref: 'company',
+      required: true
+    },
     active_status: {
-        type: Number,
-        enum: [0,1],
-        default: 1
+      type: Number,
+      enum: [0, 1],
+      default: 1
     }
-},
-{ timestamps: { updatedAt: 'updated_at' } }
+  },
+  { timestamps: { updatedAt: 'updated_at' } }
 )
 
+CategorySchema.index(
+  { category_name: 1, category_code: 1, company_id: 1 },
+  { unique: true }
+)
 
-module.exports = mongoose.model('category', CategorySchema);
+module.exports = mongoose.model('category', CategorySchema)

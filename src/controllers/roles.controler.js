@@ -50,23 +50,27 @@ exports.createRole = async (req, res) => {
 exports.getRoles = (req, res) => {
   var company_id = req.query.company_id
   try {
-    rolesModel.find(
-      {
-        active_status: 1,
-        company_id: company_id,
-        role_id: { $nin: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
-      },
-      (err, roles) => {
-        if (!err) {
-          res.status(200).send({
-            status: true,
-            roles: roles
-          })
-        } else {
-          res.send(err.message)
+    rolesModel
+      .find(
+        {
+          active_status: 1,
+          company_id: company_id,
+          role_id: { $nin: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
+        },
+        (err, roles) => {
+          if (!err) {
+            res.status(200).send({
+              status: true,
+              roles: roles
+            })
+          } else {
+            res.send(err.message)
+          }
         }
-      }
-    )
+      )
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
   } catch (error) {
     res.send('An error occured')
     console.log(error)
@@ -290,29 +294,33 @@ exports.listPermission = (req, res) => {
 }
 
 exports.getRolesfilter = (req, res) => {
-    var role_name = req.query.role_name;
-    var role_id = req.query.role_id;
-    var active_status = req.query.active_status;
-  if (role_name && role_id && active_status){
-    var query = {role_name : role_name, role_id: role_id , active_status : active_status}
-}
-else if(role_name ){
-    var query = {role_name : role_name}
-}
-else if( role_id ){
-    var query = { role_id : role_id}
-}
-else if( active_status ){
-    var query = { active_status :active_status}
-}
-query['company_id'] =  req.query.company_id
-try {
-    rolesModel.find(query).then(roles =>{
-        res.status(200).send({ success: true,roles: roles });
-    }).catch(error => {
-        res.status(400).send({success: false, error : error})
-    })
-} catch (error) {
-    res.send({status : false , error : error.name});
-}
+  var role_name = req.query.role_name
+  var role_id = req.query.role_id
+  var active_status = req.query.active_status
+  if (role_name && role_id && active_status) {
+    var query = {
+      role_name: role_name,
+      role_id: role_id,
+      active_status: active_status
+    }
+  } else if (role_name) {
+    var query = { role_name: role_name }
+  } else if (role_id) {
+    var query = { role_id: role_id }
+  } else if (active_status) {
+    var query = { active_status: active_status }
+  }
+  query['company_id'] = req.query.company_id
+  try {
+    rolesModel
+      .find(query)
+      .then(roles => {
+        res.status(200).send({ success: true, roles: roles })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    res.send({ status: false, error: error.name })
+  }
 }
