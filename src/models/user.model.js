@@ -14,13 +14,11 @@ const UserSchema = Schema({
   },
   email_id: {
     type: String,
-    required: true,
-    unique : true
+    required: true
   },
   contact_no: {
     type: String,
-    required: true,
-    unique : true
+    required: true
   },
   date_of_birth: {
     type: Date,
@@ -39,8 +37,7 @@ const UserSchema = Schema({
   },
   employee_id: {
     type: String,
-    required: true,
-    unique : true
+    required: true
   },
   item_max_quantity: {
     type: Number,
@@ -126,7 +123,7 @@ const UserSchema = Schema({
 { timestamps: { updatedAt: 'updated_at' } }
 )
 
-
+UserSchema.index( { "employee_id": 1, "contact_no": 1, "email_id":1, "company_id" : 1 }, { unique: true } )
 // module.exports = mongoose.model('users', UserSchema);
 const User = mongoose.model("users", UserSchema);
 

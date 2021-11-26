@@ -4,16 +4,15 @@ var mongoose = require('mongoose'),
 const SupplierSchema = Schema({
     supplier_name: {
         type: String,
-        required: true,
+        required: true
     },
     supplier_code: {
         type: String,
-        required: true,
+        required: true
     },
     supplier_address: {
         type: String,
-        required: true,
-        unique : true
+        required: true
     },
     country_id: {
         type: Schema.Types.ObjectId,
@@ -35,8 +34,7 @@ const SupplierSchema = Schema({
     },
     phone_number: {
         type: String,
-        required: true,
-        unique : true
+        required: true
     },
     fax: {
         type: String,
@@ -44,8 +42,7 @@ const SupplierSchema = Schema({
     },
     email_id: {
         type: String,
-        required: true,
-        unique : true
+        required: true
     },
     po_email: {
         type: String,
@@ -81,5 +78,5 @@ const SupplierSchema = Schema({
 { timestamps: { updatedAt: 'updated_at' } }
 )
 
-
+SupplierSchema.index({ "supplier_name":1,"supplier_code": 1, "supplier_address" : 1, "email_id":1, "phone_number":1, "company_id": 1 }, { unique: true });
 module.exports = mongoose.model('supplier', SupplierSchema);

@@ -9,8 +9,7 @@ const ItemSchema = Schema(
     },
     item_number: {
       type: String,
-      required: true,
-      unique: true
+      required: true
     },
     sub_category_id: {
       type: Schema.Types.ObjectId,
@@ -102,6 +101,6 @@ const ItemSchema = Schema(
   },
   { timestamps: { updatedAt: 'updated_at' } }
 )
-
+ItemSchema.index({ "item_number":1, "company_id": 1 }, { unique: true });
 ItemSchema.index({ '$**': 'text' })
 module.exports = mongoose.model('item', ItemSchema)
