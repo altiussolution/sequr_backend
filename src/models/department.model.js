@@ -1,42 +1,44 @@
 var mongoose = require('mongoose'),
-    Schema = mongoose.Schema;
+  Schema = mongoose.Schema
 
-const DepartmentSchema = Schema({
+const DepartmentSchema = Schema(
+  {
     department_name: {
-        type: String,
-        required: true
-        //unique: true
+      type: String,
+      required: true
+      //unique: true
     },
     department_id: {
-        type: String,
-        required: true
-        //unique: true
+      type: String,
+      required: true
+      //unique: true
     },
     created_at: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now
     },
     deleted_at: {
-        type: Date,
-        default: null
+      type: Date,
+      default: null
     },
     updated_at: {
-        type: Date,
-        default: Date.now
+      type: Date,
+      default: Date.now
     },
     company_id: {
-        type: Schema.Types.ObjectId,
-        ref: 'company',
-        required : true
-      },
+      type: Schema.Types.ObjectId,
+      ref: 'company',
+      required: true
+    },
     active_status: {
-        type: Number,
-        enum: [0,1],
-        default: 1
+      type: Number,
+      enum: [0, 1],
+      default: 1
     }
-},
-{ timestamps: { updatedAt: 'updated_at' } }
+  },
+  { timestamps: { updatedAt: 'updated_at' } }
 )
 
-DepartmentSchema.index( { "department_name": 1, "department_id": 1,"company_id" : 1 }, { unique: true } )
-module.exports = mongoose.model('department', DepartmentSchema);
+DepartmentSchema.index({ department_name: 1, company_id: 1 }, { unique: true })
+DepartmentSchema.index({ department_id: 1, company_id: 1 }, { unique: true })
+module.exports = mongoose.model('department', DepartmentSchema)
