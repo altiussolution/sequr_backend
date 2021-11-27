@@ -69,15 +69,13 @@ exports.createBin = (req, res) => {
         createLog(req.headers['authorization'], 'Bin', 2) // Change Logs
       } else if (err) {
         if (err.code == 11000) {
-          res
-            .status(422)
-            .send({
-              success: false,
-              message: `${Object.keys(err.keyPattern)[0].replace(
-                '_',
-                ' '
-              )} already exist`.toUpperCase()
-            }) // Paste your validation fields
+          res.status(422).send({
+            success: false,
+            message: `${Object.keys(err.keyPattern)[0].replace(
+              '_',
+              ' '
+            )} already exist`.toLowerCase()
+          }) // Paste your validation fields
         }
       }
     })
@@ -147,10 +145,14 @@ exports.updateBin = async (req, res) => {
           .send({ success: true, message: 'Bin Updated Successfully!' })
         createLog(req.headers['authorization'], 'Columns', 1)
       })
-      .catch(error => {
-        res
-          .status(200)
-          .send({ success: false, error: error, message: 'An Error Occured' })
+      .catch(err => {
+        res.status(200).send({
+          success: false,
+          message: `${Object.keys(err.keyPattern)[0].replace(
+            '_',
+            ' '
+          )} already exist`.toLowerCase()
+        }) // Paste your validation fields
       })
   } catch (err) {
     res

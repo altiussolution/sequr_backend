@@ -70,10 +70,16 @@ exports.updateCompany = (req, res) => {
           .status(200)
           .send({ success: true, message: 'Company Updated Successfully!' })
       })
-      .catch(error => {
+      .catch(err => {
         res
           .status(200)
-          .send({ success: false, error: error, message: 'An Error Occured' })
+          .send({
+            success: false,
+            message: `${Object.keys(err.keyPattern)[0].replace(
+              '_',
+              ' '
+            )} already exist`.toLowerCase()
+          }) // Paste your validation fields
       })
   } catch (err) {
     res

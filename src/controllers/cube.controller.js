@@ -56,7 +56,7 @@ exports.createCube = (req, res) => {
               message: `${Object.keys(err.keyPattern)[0].replace(
                 '_',
                 ' '
-              )} already exist`.toUpperCase()
+              )} already exist`.toLowerCase()
             }) // Paste your validation fields
         }
       }
@@ -106,10 +106,16 @@ exports.updateCube = (req, res) => {
           .send({ success: true, message: 'Cube Updated Successfully!' })
         createLog(req.headers['authorization'], 'Cube', 1)
       })
-      .catch(error => {
+      .catch(err => {
         res
           .status(200)
-          .send({ success: false, error: error, message: 'An Error Occured' })
+          .send({
+            success: false,
+            message: `${Object.keys(err.keyPattern)[0].replace(
+              '_',
+              ' '
+            )} already exist`.toLowerCase()
+          }) // Paste your validation fields
       })
   } catch (err) {
     res

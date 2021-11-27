@@ -123,15 +123,15 @@ exports.createBranch = async (req, res) => {
   }
 }
 
-
 exports.getBranch = (req, res) => {
-  var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false;
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var searchString = req.query.searchString
   var company_id = req.query.company_id
   var query = searchString
     ? { active_status: 1, $text: { $search: searchString } }
-    : { active_status: 1 , company_id : company_id}
+    : { active_status: 1, company_id: company_id }
   try {
     branchModel
       .find(query)
@@ -146,8 +146,7 @@ exports.getBranch = (req, res) => {
       .catch(error => {
         res.status(400).send({ success: false, error: error })
       })
-  }
-   catch (error) {
+  } catch (error) {
     res.status(201).send({ success: false, error: error })
   }
 }
@@ -162,10 +161,14 @@ exports.updateBranch = (req, res) => {
           .send({ success: true, message: 'Branch Updated Successfully!' })
         createLog(req.headers['authorization'], 'Branch', 1)
       })
-      .catch(error => {
-        res
-          .status(200)
-          .send({ success: false, error: error, message: 'An Error Occured' })
+      .catch(err => {
+        res.status(200).send({
+          success: false,
+          message: `${Object.keys(err.keyPattern)[0].replace(
+            '_',
+            ' '
+          )} already exist`.toLowerCase()
+        }) // Paste your validation fields
       })
   } catch (err) {
     res
@@ -209,7 +212,7 @@ exports.getBranchfilter = (req, res) => {
   } else if (state_id) {
     var query = { state_id: state_id }
   }
-  query['company_id'] =  req.query.company_id
+  query['company_id'] = req.query.company_id
   try {
     branchModel
       .find(query)
@@ -318,7 +321,7 @@ exports.deleteBranch = (req, res) => {
 
         // Get all refered documents
         // *** 1 ***
-      
+
         // *** 2 ***
         {
           $lookup: {
@@ -335,7 +338,7 @@ exports.deleteBranch = (req, res) => {
             foreignField: 'branch_id',
             as: 'user_doc' // name of the document contains all users
           }
-        },
+        }
 
         //********************************** */
       ])
@@ -347,12 +350,10 @@ exports.deleteBranch = (req, res) => {
         //********************************** */
 
         // *** 1 ***
-      
+
         // *** 2 ***
         if (doc[0].cube_doc.length > 0) {
-          await message(
-            'Please delete all the refered cubes by this branch'
-          )
+          await message('Please delete all the refered cubes by this branch')
         }
         if (doc[0].user_doc.length > 0) {
           await message.push(
@@ -381,8 +382,6 @@ exports.deleteBranch = (req, res) => {
                 .status(200)
                 .send({ success: false, message: 'Branch Not Found' })
             })
-
-        
         }
       })
       .catch(err => {

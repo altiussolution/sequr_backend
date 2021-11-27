@@ -80,7 +80,7 @@ exports.createCompartment = (req, res) => {
               message: `${Object.keys(err.keyPattern)[0].replace(
                 '_',
                 ' '
-              )} already exist`.toUpperCase()
+              )} already exist`.toLowerCase()
             }) // Paste your validation fields
         }
       }
@@ -156,10 +156,16 @@ exports.updateCompartment = (req, res) => {
           .send({ success: true, message: 'Compartment Updated Successfully!' })
         createLog(req.headers['authorization'], 'Compartment', 1)
       })
-      .catch(error => {
+      .catch(err => {
         res
           .status(200)
-          .send({ success: false, error: error, message: 'An Error Occured' })
+          .send({
+            success: false,
+            message: `${Object.keys(err.keyPattern)[0].replace(
+              '_',
+              ' '
+            )} already exist`.toLowerCase()
+          }) // Paste your validation fields
       })
   } catch (err) {
     res

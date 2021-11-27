@@ -52,7 +52,7 @@ exports.addItem = (req, res) => {
         if (err.code == 11000) {
           res
             .status(422)
-            .send({ success: false, message: 'Name or Number already exists' }) // Paste your validation fields
+            .send({ success: false, message: (`${((Object.keys(err.keyPattern)[0]).replace('_', ' '))} already exist`).toLowerCase() }) // Paste your validation fields
         }
       }
     })

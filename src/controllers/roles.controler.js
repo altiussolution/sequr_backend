@@ -66,7 +66,7 @@ exports.createRole = (req, res) => {
               message: `${Object.keys(err.keyPattern)[0].replace(
                 '_',
                 ' '
-              )} already exist`.toUpperCase()
+              )} already exist`.toLowerCase()
             }) // Paste your validation fields
         }
       }
@@ -135,10 +135,16 @@ exports.updateRole = (req, res) => {
         })
         createLog(req.headers['authorization'], 'Roles', 1)
       })
-      .catch(error => {
+      .catch(err => {
         res
-          .status(400)
-          .send({ status: false, error: error, message: 'Error Occured' })
+          .status(200)
+          .send({
+            success: false,
+            message: `${Object.keys(err.keyPattern)[0].replace(
+              '_',
+              ' '
+            )} already exist`.toLowerCase()
+          }) // Paste your validation fields
       })
   } catch (error) {
     res.send({ status: false, error: error.name })

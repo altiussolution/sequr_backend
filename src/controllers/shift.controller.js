@@ -58,7 +58,7 @@ exports.addShift = (req, res) => {
               message: `${Object.keys(err.keyPattern)[0].replace(
                 '_',
                 ' '
-              )} already exist`.toUpperCase()
+              )} already exist`.toLowerCase()
             }) // Paste your validation fields
         }
       }

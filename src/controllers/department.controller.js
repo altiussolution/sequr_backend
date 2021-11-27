@@ -81,9 +81,11 @@ const { ObjectID } = require('bson')
 //         res.status(201).send(error)
 //     }
 // }
-exports.createDepartment = (req, res) => { // Change your function name
-  var newDepartment = new departmentModel(req.body) // Change model name 
-  newDepartment.save((err, doc) => { // past model body
+exports.createDepartment = (req, res) => {
+  // Change your function name
+  var newDepartment = new departmentModel(req.body) // Change model name
+  newDepartment.save((err, doc) => {
+    // past model body
     if (!err) {
       res
         .status(200)
@@ -93,7 +95,13 @@ exports.createDepartment = (req, res) => { // Change your function name
       if (err.code == 11000) {
         res
           .status(422)
-          .send({ success: false, message: (`${((Object.keys(err.keyPattern)[0]).replace('_', ' '))} already exist`).toUpperCase() }) // Paste your validation fields 
+          .send({
+            success: false,
+            message: `${Object.keys(err.keyPattern)[0].replace(
+              '_',
+              ' '
+            )} already exist`.toLowerCase()
+          }) // Paste your validation fields
       }
     }
   })
@@ -139,10 +147,16 @@ exports.updateDepartment = (req, res) => {
           .send({ success: true, message: 'Department Updated Successfully!' })
         createLog(req.headers['authorization'], 'Department', 1)
       })
-      .catch(error => {
+      .catch(err => {
         res
           .status(200)
-          .send({ success: false, error: error, message: 'An Error Occured' })
+          .send({
+            success: false,
+            message: `${Object.keys(err.keyPattern)[0].replace(
+              '_',
+              ' '
+            )} already exist`.toLowerCase()
+          }) // Paste your validation fields
       })
   } catch (err) {
     res
