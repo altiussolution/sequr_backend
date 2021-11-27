@@ -5,39 +5,55 @@ var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 
 
-exports.createCube = (req, res) => {
-  try {
-      var newCube = new cubeModel(req.body);
-      newCube.save(async(err) => {
-          if (!err) {
-            console.log(err)
-              res.status(200).send({ success: true, message: 'Cube Created Successfully!' });
-              createLog(req.headers['authorization'], 'Cube', 2)
-          }
-         else {
-              const name = await cubeModel.findOne(({cube_name :req.body.cube_name, active_status : 1})).exec()
-              const id = await cubeModel.findOne(({ cube_id: req.body.cube_id ,active_status : 1 })).exec()
-              if(name){
-                  console.log(name)
-              var errorMessage = (err.code == error_code.isDuplication ? 'Cube name already exists' : err)
-              res.status(409).send({
-                  success: false,
-                  message: errorMessage
-              });
-          } else if (id){
-              var errorMessage = (err.code == error_code.isDuplication ? 'Cube id already exists' : err)
-              res.status(409).send({
-                  success: false,
-                  message: errorMessage
-              });
-          }
+// exports.createCube = (req, res) => {
+//   try {
+//       var newCube = new cubeModel(req.body);
+//       newCube.save(async(err) => {
+//           if (!err) {
+//             console.log(err)
+//               res.status(200).send({ success: true, message: 'Cube Created Successfully!' });
+//               createLog(req.headers['authorization'], 'Cube', 2)
+//           }
+//          else {
+//               const name = await cubeModel.findOne(({cube_name :req.body.cube_name, active_status : 1})).exec()
+//               const id = await cubeModel.findOne(({ cube_id: req.body.cube_id ,active_status : 1 })).exec()
+//               if(name){
+//                   console.log(name)
+//               var errorMessage = (err.code == error_code.isDuplication ? 'Cube name already exists' : err)
+//               res.status(409).send({
+//                   success: false,
+//                   message: errorMessage
+//               });
+//           } else if (id){
+//               var errorMessage = (err.code == error_code.isDuplication ? 'Cube id already exists' : err)
+//               res.status(409).send({
+//                   success: false,
+//                   message: errorMessage
+//               });
+//           }
+//       }
+//       })
+//   } catch (error) {
+//       res.status(201).send(error)
+//   }
+// }
+exports.createCube = (req, res) => { // Change your function name
+  var newCube= new cubeModel(req.body) // Change model name 
+  newCube.save((err, doc) => { // past model body
+    if (!err) {
+      res
+        .status(200)
+        .send({ success: true, message: 'Cube Created Successfully!' }) //Change your meassage
+      createLog(req.headers['authorization'], 'Cube', 2) // Change Logs
+    } else if (err) {
+      if (err.code == 11000) {
+        res
+          .status(422)
+          .send({ success: false, message: (`${((Object.keys(err.keyPattern)[0]).replace('_', ' '))} already exist`).toUpperCase() }) // Paste your validation fields 
       }
-      })
-  } catch (error) {
-      res.status(201).send(error)
-  }
+    }
+  })
 }
-
 
 exports.getCube = (req, res) => {
     var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;

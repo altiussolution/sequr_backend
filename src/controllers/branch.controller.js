@@ -4,56 +4,125 @@ const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 
-exports.createBranch = (req, res) => {
+// exports.createBranch = (req, res) => {
+//   try {
+//     var newBranch = new branchModel(req.body)
+//     newBranch.save(err => {
+//       if (!err) {
+//         res
+//           .status(200)
+//           .send({ success: true, message: 'Branch Created Successfully!' })
+//         createLog(req.headers['authorization'], 'Branch', 2)
+//       } else {
+//        if (err.keyValue.branch_name){
+//         var errorMessage =
+//           err.code == error_code.isDuplication
+//             ? 'Branch Name is already exist'
+//             : err
+//        } else if(err.keyValue.branch_code){
+//         var errorMessage =
+//         err.code == error_code.isDuplication
+//           ? 'Branch Code is already exist'
+//           : err
+//        }
+//        else if(err.keyValue.branch_address){
+//         var errorMessage =
+//         err.code == error_code.isDuplication
+//           ? 'Address is already exist'
+//           : err
+//        }
+//        else if(err.keyValue.phone_number){
+//         var errorMessage =
+//         err.code == error_code.isDuplication
+//           ? 'Phonenumber  is already exist'
+//           : err
+//        }
+//        else if(err.keyValue.email_id){
+//         var errorMessage =
+//         err.code == error_code.isDuplication
+//           ? 'Email Id is already exist'
+//           : err
+//        }
+//         res.status(409).send({
+//           success: false,
+//           message: errorMessage
+
+//         })
+//       }
+//     })
+//   } catch (error) {
+//     res.status(201).send(error)
+//   }
+// }
+exports.createBranch = async (req, res) => {
   try {
-    var newBranch = new branchModel(req.body)
-    newBranch.save(err => {
+    var body = req.body
+    var branch = new branchModel(req.body)
+    const {
+      branch_name,
+      branch_code,
+      branch_address,
+      phone_number,
+      email_id
+    } = req.body
+    const oldUser = await branchModel.findOne({
+      branch_name,
+      company_id: req.body.company_id
+    })
+    const code = await branchModel.findOne({
+      branch_code,
+      company_id: req.body.company_id
+    })
+    const address = await branchModel.findOne({
+      branch_address,
+      company_id: req.body.company_id
+    })
+    const email = await branchModel.findOne({
+      email_id,
+      company_id: req.body.company_id
+    })
+    const phone = await branchModel.findOne({
+      phone_number,
+      company_id: req.body.company_id
+    })
+
+    if (oldUser) {
+      return res
+        .status(409)
+        .send({ status: false, message: 'Branch name already exists' })
+    }
+    if (code) {
+      return res
+        .status(409)
+        .send({ status: false, message: 'Branch code already exists' })
+    }
+    if (address) {
+      return res
+        .status(409)
+        .send({ status: false, message: 'Branch address  already exists' })
+    }
+    if (email) {
+      return res
+        .status(409)
+        .send({ status: false, message: 'Email  already exists' })
+    }
+    if (phone) {
+      return res
+        .status(409)
+        .send({ status: false, message: 'Phone Number  already exists' })
+    }
+    supplier.save(err => {
       if (!err) {
         res
           .status(200)
           .send({ success: true, message: 'Branch Created Successfully!' })
-        createLog(req.headers['authorization'], 'Branch', 2)
-      } else {
-       if (err.keyValue.branch_name){
-        var errorMessage =
-          err.code == error_code.isDuplication
-            ? 'Branch Name is already exist'
-            : err
-       } else if(err.keyValue.branch_code){
-        var errorMessage =
-        err.code == error_code.isDuplication
-          ? 'Branch Code is already exist'
-          : err
-       }
-       else if(err.keyValue.branch_address){
-        var errorMessage =
-        err.code == error_code.isDuplication
-          ? 'Address is already exist'
-          : err
-       }
-       else if(err.keyValue.phone_number){
-        var errorMessage =
-        err.code == error_code.isDuplication
-          ? 'Phonenumber  is already exist'
-          : err
-       }
-       else if(err.keyValue.email_id){
-        var errorMessage =
-        err.code == error_code.isDuplication
-          ? 'Email Id is already exist'
-          : err
-       }
-        res.status(409).send({
-          success: false,
-          message: errorMessage
-
-        })
       }
     })
-  } catch (error) {
-    res.status(201).send(error)
+  } catch (err) {
+    console.log(err)
   }
 }
+
 
 exports.getBranch = (req, res) => {
   var offset = req.query.offset != undefined ? parseInt(req.query.offset) : false;

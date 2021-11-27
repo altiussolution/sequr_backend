@@ -70,6 +70,9 @@ const BinSchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
-BinSchema.index( { "bin_name": 1, "bin_id": 1,"company_id" : 1 }, { unique: true } )
+
+BinSchema.index({ bin_name: 1, company_id: 1 }, { unique: true })
+BinSchema.index({ bin_id: 1, company_id: 1 }, { unique: true })
+
 BinSchema.index({'$**': 'text'});
 module.exports = mongoose.model('bin', BinSchema);

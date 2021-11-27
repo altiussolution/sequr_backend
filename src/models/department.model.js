@@ -38,5 +38,9 @@ const DepartmentSchema = Schema({
 { timestamps: { updatedAt: 'updated_at' } }
 )
 
-DepartmentSchema.index( { "department_name": 1, "department_id": 1,"company_id" : 1 }, { unique: true } )
+// DepartmentSchema.index( { "department_name": 1, "department_id": 1,"company_id" : 1 }, { unique: true } )
+
+DepartmentSchema.index({ department_name: 1, company_id: 1 }, { unique: true })
+DepartmentSchema.index({ department_id: 1, company_id: 1 }, { unique: true })
+
 module.exports = mongoose.model('department', DepartmentSchema);

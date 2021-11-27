@@ -42,9 +42,7 @@ const ShiftTimeSchema = Schema(
   { timestamps: { updatedAt: 'updated_at' } }
 )
 
-ShiftTimeSchema.index(
-  { start_time: 1, end_time: 1, company_id: 1 },
-  { unique: true }
-)
+ShiftTimeSchema.index({ start_time: 1, company_id: 1 }, { unique: true })
+ShiftTimeSchema.index({ end_time: 1, company_id: 1 }, { unique: true })
 
 module.exports = mongoose.model('shift_time', ShiftTimeSchema)

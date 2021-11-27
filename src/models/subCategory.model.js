@@ -50,6 +50,8 @@ const SubCategorySchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
-SubCategorySchema.index({ "sub_category_name":1,"sub_category_code":1, "company_id": 1 }, { unique: true });
+// SubCategorySchema.index({ "sub_category_name":1,"sub_category_code":1, "company_id": 1 }, { unique: true });
+SubCategorySchema.index({ sub_category_name: 1, company_id: 1 }, { unique: true })
+SubCategorySchema.index({ sub_category_code: 1, company_id: 1 }, { unique: true })
 SubCategorySchema.index({'$**': 'text'});
 module.exports = mongoose.model('subCategory', SubCategorySchema)

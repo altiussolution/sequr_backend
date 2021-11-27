@@ -5,36 +5,53 @@ var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 
 
-exports.createDepartment = (req, res) => {
-    try {
-        var newDepartment = new departmentModel(req.body);
-        newDepartment.save(async(err) => {
-            if (!err) {
-                res.status(200).send({ success: true, message: 'Department Created Successfully!' });
-                createLog(req.headers['authorization'], 'Department', 2)
-            }
-            else {
-                const name = await departmentModel.findOne(({department_name :req.body.department_name, active_status : 1})).exec()
-                const id = await departmentModel.findOne(({ department_id: req.body.department_id ,active_status : 1 })).exec()
-                if(name){
-                    console.log(name)
-                var errorMessage = (err.code == error_code.isDuplication ? 'Department name already exists' : err)
-                res.status(409).send({
-                    success: false,
-                    message: errorMessage
-                });
-            } else if (id){
-                var errorMessage = (err.code == error_code.isDuplication ? 'Department id already exists' : err)
-                res.status(409).send({
-                    success: false,
-                    message: errorMessage
-                });
-            }
-        }
-        });
-    } catch (error) {
-        res.status(201).send(error)
+// exports.createDepartment = (req, res) => {
+//     try {
+//         var newDepartment = new departmentModel(req.body);
+//         newDepartment.save(async(err) => {
+//             if (!err) {
+//                 res.status(200).send({ success: true, message: 'Department Created Successfully!' });
+//                 createLog(req.headers['authorization'], 'Department', 2)
+//             }
+//             else {
+//                 const name = await departmentModel.findOne(({department_name :req.body.department_name, active_status : 1})).exec()
+//                 const id = await departmentModel.findOne(({ department_id: req.body.department_id ,active_status : 1 })).exec()
+//                 if(name){
+//                     console.log(name)
+//                 var errorMessage = (err.code == error_code.isDuplication ? 'Department name already exists' : err)
+//                 res.status(409).send({
+//                     success: false,
+//                     message: errorMessage
+//                 });
+//             } else if (id){
+//                 var errorMessage = (err.code == error_code.isDuplication ? 'Department id already exists' : err)
+//                 res.status(409).send({
+//                     success: false,
+//                     message: errorMessage
+//                 });
+//             }
+//         }
+//         });
+//     } catch (error) {
+//         res.status(201).send(error)
+//     }
+// }
+exports.createDepartment = (req, res) => { // Change your function name
+  var newDepartment = new departmentModel(req.body) // Change model name 
+  newDepartment.save((err, doc) => { // past model body
+    if (!err) {
+      res
+        .status(200)
+        .send({ success: true, message: 'Department Created Successfully!' }) //Change your meassage
+      createLog(req.headers['authorization'], 'Department', 2) // Change Logs
+    } else if (err) {
+      if (err.code == 11000) {
+        res
+          .status(422)
+          .send({ success: false, message: (`${((Object.keys(err.keyPattern)[0]).replace('_', ' '))} already exist`).toUpperCase() }) // Paste your validation fields 
+      }
     }
+  })
 }
 
 

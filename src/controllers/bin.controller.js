@@ -3,58 +3,75 @@ var { error_code } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
-exports.createBin = async (req, res) => {
-  try {
-    var body = req.body
-    var bin = new binModel(body)
-    var isBinExist = await binModel
-      .find({ $or: [{ bin_name: body.bin_name }, { bin_id: body.bin_id }] })
-      .exec()
-    var checkBinCount = await cubeModel
-      .findById(body.cube_id, ['bin_max', 'bin_min'])
-      .exec()
-    if (checkBinCount.bin_max < body.item_max_cap) {
+// exports.createBin = async (req, res) => {
+//   try {
+//     var body = req.body
+//     var bin = new binModel(body)
+//     var isBinExist = await binModel
+//       .find({ $or: [{ bin_name: body.bin_name }, { bin_id: body.bin_id }] })
+//       .exec()
+//     var checkBinCount = await cubeModel
+//       .findById(body.cube_id, ['bin_max', 'bin_min'])
+//       .exec()
+//     if (checkBinCount.bin_max < body.item_max_cap) {
+//       res
+//         .status(200)
+//         .send({
+//           success: false,
+//           message: `Maximum bin count is ${checkBinCount.bin_max}`
+//         })
+//     } else if (checkBinCount.bin_min < body.item_min_cap) {
+//       res
+//         .status(200)
+//         .send({
+//           success: false,
+//           message: `Minimum bin count is ${checkBinCount.bin_min}`
+//         })
+//     } else if (isBinExist.length == 0) {
+//       bin.save(err => {
+//         if (!err) {
+//           res
+//             .status(200)
+//             .send({ success: true, message: 'Bin Created Successfully!' })
+//           createLog(req.headers['authorization'], 'Columns', 2)
+//         } else if(err){
+//           if (err.keyValue.bin_name){
+//             var errorMessage =
+//               err.code == error_code.isDuplication
+//                 ? 'Bin Name is already exist'
+//                 : err
+//            } else if(err.keyValue.bin_id){
+//             var errorMessage =
+//             err.code == error_code.isDuplication
+//               ? 'Bin Id is already exist'
+//               : err
+//            }
+//            res
+//             .status(409)
+//             .send({ success: false, message: errorMessage })
+//         }
+//       })
+//     } 
+//    }catch (error) {
+//     res.status(201).send(error.name)
+//   }
+// }
+exports.createBin = (req, res) => { // Change your function name
+  var newBin = new binModel(req.body) // Change model name 
+  newBin.save((err, doc) => { // past model body
+    if (!err) {
       res
         .status(200)
-        .send({
-          success: false,
-          message: `Maximum bin count is ${checkBinCount.bin_max}`
-        })
-    } else if (checkBinCount.bin_min < body.item_min_cap) {
-      res
-        .status(200)
-        .send({
-          success: false,
-          message: `Minimum bin count is ${checkBinCount.bin_min}`
-        })
-    } else if (isBinExist.length == 0) {
-      bin.save(err => {
-        if (!err) {
-          res
-            .status(200)
-            .send({ success: true, message: 'Bin Created Successfully!' })
-          createLog(req.headers['authorization'], 'Columns', 2)
-        } else if(err){
-          if (err.keyValue.bin_name){
-            var errorMessage =
-              err.code == error_code.isDuplication
-                ? 'Bin Name is already exist'
-                : err
-           } else if(err.keyValue.bin_id){
-            var errorMessage =
-            err.code == error_code.isDuplication
-              ? 'Bin Id is already exist'
-              : err
-           }
-           res
-            .status(409)
-            .send({ success: false, message: errorMessage })
-        }
-      })
-    } 
-   }catch (error) {
-    res.status(201).send(error.name)
-  }
+        .send({ success: true, message: 'Bin Created Successfully!' }) //Change your meassage
+      createLog(req.headers['authorization'], 'Bin', 2) // Change Logs
+    } else if (err) {
+      if (err.code == 11000) {
+        res
+          .status(422)
+          .send({ success: false, message: (`${((Object.keys(err.keyPattern)[0]).replace('_', ' '))} already exist`).toUpperCase() }) // Paste your validation fields 
+      }
+    }
+  })
 }
 
 exports.getBin = (req, res) => {
