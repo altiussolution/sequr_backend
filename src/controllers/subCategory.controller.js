@@ -205,6 +205,8 @@ exports.getSubCategoryMachine = (req, res) => {
   if (req.query.column_ids) {
     var columnIds = JSON.parse(req.query.column_ids)
   }
+  console.log(req.query)
+
   try {
     cubeModel
       .distinct('_id', {

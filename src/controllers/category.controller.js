@@ -297,6 +297,7 @@ exports.getCategorylist = async (req, res) => {
   var company_id = req.query.company_id
   var query = { active_status: 1, company_id: company_id }
   var categories = []
+  console.log(req.query)
   try {
     await categoryModel
       .find(query)
