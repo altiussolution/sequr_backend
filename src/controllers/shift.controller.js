@@ -55,10 +55,10 @@ exports.addShift = (req, res) => {
             .status(422)
             .send({
               success: false,
-              message: `${Object.keys(err.keyPattern)[0].replace(
+              message: tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
                 '_',
                 ' '
-              )} already exist`.toLowerCase()
+              )} already exist`)
             }) // Paste your validation fields
         }
       }
@@ -66,6 +66,16 @@ exports.addShift = (req, res) => {
   } catch (error) {
     res.status(201).send(error)
   }
+}
+
+function tiltelCase (str) {
+  const arr = str.split(' ')
+  for (var i = 0; i < arr.length; i++) {
+    arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1)
+  }
+  const str2 = arr.join(' ')
+  return str2
+
 }
 exports.getShift = async (req, res) => {
   var company_id = req.query.company_id

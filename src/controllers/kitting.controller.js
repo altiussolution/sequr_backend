@@ -9,7 +9,7 @@ exports.createKit = async (req, res) => {
   var body = req.body
   try {
     var kit = new kitModel(body)
-    var isKitExist = await kitModel.find({ kit_name: body.kit_name }).exec()
+    var isKitExist = await kitModel.find({ kit_name: body.kit_name, company_id : req.body.company_id }).exec()
     if (isKitExist.length == 0) {
       kit.save(err => {
         if (!err) {
