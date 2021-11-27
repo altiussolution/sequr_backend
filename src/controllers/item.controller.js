@@ -415,8 +415,8 @@ exports.getItemMachine = (req, res) => {
                     var query = {
                       active_status: 1,
                       is_active: true,
-                      category_id: req.params.category_id,
-                      sub_category_id: req.params.sub_category_id,
+                      category_id: req.query.category_id,
+                      sub_category_id: req.query.sub_category_id,
                       _id: { $in: itemsList }
                     }
                     console.log(itemsList)

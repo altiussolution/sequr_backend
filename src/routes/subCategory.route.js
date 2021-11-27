@@ -27,7 +27,7 @@ route.post(
 //   SubCategoryController.getsubCategoryfilter
 // )
 route.get(
-  '/getSubCategoryMachine/:category_id',
+  '/getSubCategoryMachine',
   auth,
   SubCategoryController.getSubCategoryMachine
 )
