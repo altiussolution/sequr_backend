@@ -49,9 +49,21 @@ exports.add = async (req, res) => {
     ) {
       res.status(400).send('All input is required')
     }
-    const oldEmployee_id = await User.findOne({ employee_id, active_status: 1,company_id:req.body.company_id })
-    const oldmobilenumber = await User.findOne({ contact_no, active_status: 1 ,company_id:req.body.company_id})
-    const oldemail_id = await User.findOne({ email_id, active_status: 1 ,company_id:req.body.company_id})
+    const oldEmployee_id = await User.findOne({
+      employee_id,
+      active_status: 1,
+      // company_id: req.body.company_id
+    })
+    const oldmobilenumber = await User.findOne({
+      contact_no,
+      active_status: 1,
+      // company_id: req.body.company_id
+    })
+    const oldemail_id = await User.findOne({
+      email_id,
+      active_status: 1,
+      // company_id: req.body.company_id
+    })
     if (oldEmployee_id) {
       return res
         .status(409)
@@ -144,9 +156,14 @@ exports.add = async (req, res) => {
       })
       .catch(error => {
         console.log(error)
-        res
-          .status(201)
-          .send({ success: false, error: error, message: 'An Error Occured' })
+
+        res.status(422).send({
+          success: false,
+          message: `${Object.keys(err.keyPattern)[0].replace(
+            '_',
+            ' '
+          )} already exist`.toLowerCase()
+        }) // Paste your validation fields
       })
   } catch (err) {
     console.log(err)
@@ -479,64 +496,64 @@ exports.EmployeeForgotPassword = async (req, res) => {
 
 exports.changePassword = async (req, res) => {
   // try {
-    var passwordDetails = req.body
-    console.log(req.body)
-    var userId = req.params._id
-    console.log(userId)
-    if (userId) {
-      if (passwordDetails.newpassword) {
-        await User.findOne({ _id: userId }, async function (err, user) {
-          console.log(user)
-          if (!err && user) {
-            //console.log(user.authenticate(passwordDetails.oldpassword));
-            var compare = await bcrypt.compare(
-              passwordDetails.oldpassword,
-              user.password
-            )
-            console.log(compare)
-            if (user && compare) {
-              user.password = await bcrypt.hash(passwordDetails.newpassword, 10)
-              //const user = await User.findOne({ employee_id });
+  var passwordDetails = req.body
+  console.log(req.body)
+  var userId = req.params._id
+  console.log(userId)
+  if (userId) {
+    if (passwordDetails.newpassword) {
+      await User.findOne({ _id: userId }, async function (err, user) {
+        console.log(user)
+        if (!err && user) {
+          //console.log(user.authenticate(passwordDetails.oldpassword));
+          var compare = await bcrypt.compare(
+            passwordDetails.oldpassword,
+            user.password
+          )
+          console.log(compare)
+          if (user && compare) {
+            user.password = await bcrypt.hash(passwordDetails.newpassword, 10)
+            //const user = await User.findOne({ employee_id });
 
-              user.save(function (err) {
-                if (err) {
-                  return res.status(422).send({
-                    message: errorHandler.getErrorMessage(err)
-                  })
-                } else {
-                  //req.login(user, function (err) {
-                  // console.log(user)
-                  //if (err) {
-                  //res.status(400).send(err);
-                  //  } else {
-                  res.send({
-                    message: 'Password changed successfully'
-                  })
-                  //  }
-                  // });
-                }
-              })
-            } else {
-              res.status(422).send({
-                message: 'Current password is incorrect'
-              })
-            }
+            user.save(function (err) {
+              if (err) {
+                return res.status(422).send({
+                  message: errorHandler.getErrorMessage(err)
+                })
+              } else {
+                //req.login(user, function (err) {
+                // console.log(user)
+                //if (err) {
+                //res.status(400).send(err);
+                //  } else {
+                res.send({
+                  message: 'Password changed successfully'
+                })
+                //  }
+                // });
+              }
+            })
           } else {
-            res.status(400).send({
-              message: 'User is not found'
+            res.status(422).send({
+              message: 'Current password is incorrect'
             })
           }
-        })
-      } else {
-        res.status(422).send({
-          message: 'Please provide a new password'
-        })
-      }
+        } else {
+          res.status(400).send({
+            message: 'User is not found'
+          })
+        }
+      })
     } else {
-      res.status(401).send({
-        message: 'User is not signed in'
+      res.status(422).send({
+        message: 'Please provide a new password'
       })
     }
+  } else {
+    res.status(401).send({
+      message: 'User is not signed in'
+    })
+  }
   // } catch (err) {
   //   res.status(400).send(err)
   // }
