@@ -13,48 +13,77 @@ const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 
-exports.addCategory = async (req, res) => {
+// exports.addCategory = async (req, res) => {
+//   try {
+//     var category = new categoryModel(req.body)
+//     var isCategoryExist = await categoryModel
+//       .findOne({
+//         $or: [
+//           { category_name: req.body.category_name },
+//           { category_code: req.body.category_code }
+//         ]
+//       })
+//       .exec()
+//     if (isCategoryExist) {
+//       const name = await categoryModel
+//         .findOne({ category_name: req.body.category_name, active_status: 1 })
+//         .exec()
+//       const code = await categoryModel
+//         .findOne({ category_code: req.body.category_code, active_status: 1 })
+//         .exec()
+//       if (name) {
+//         res.status(200).send({
+//           success: false,
+//           message: 'Category Name Already Exist'
+//         })
+//       }
+//       if (code) {
+//         res.status(200).send({
+//           success: false,
+//           message: 'Category code Already Exist'
+//         })
+//       }
+//     } else if (!isCategoryExist) {
+//       category.save(err => {
+//         if (!err) {
+//           res
+//             .status(200)
+//             .send({ success: true, message: 'Category Created Successfully!' })
+//           createLog(req.headers['authorization'], 'Category', 2)
+//         }
+//       })
+//     }
+//   } catch (err) {
+//     res.status(201).send({ success: false, error: err.name })
+//   }
+// }
+exports.addCategory = (req, res) => {
+  // Change your function name
   try {
-    var category = new categoryModel(req.body)
-    var isCategoryExist = await categoryModel
-      .findOne({
-        $or: [
-          { category_name: req.body.category_name },
-          { category_code: req.body.category_code }
-        ]
-      })
-      .exec()
-    if (isCategoryExist) {
-      const name = await categoryModel
-        .findOne({ category_name: req.body.category_name, active_status: 1 })
-        .exec()
-      const code = await categoryModel
-        .findOne({ category_code: req.body.category_code, active_status: 1 })
-        .exec()
-      if (name) {
-        res.status(200).send({
-          success: false,
-          message: 'Category Name Already Exist'
-        })
-      }
-      if (code) {
-        res.status(200).send({
-          success: false,
-          message: 'Category code Already Exist'
-        })
-      }
-    } else if (!isCategoryExist) {
-      category.save(err => {
-        if (!err) {
+    var newCategory = new categoryModel(req.body) // Change model name
+    newCategory.save((err, doc) => {
+      // past model body
+      if (!err) {
+        res
+          .status(200)
+          .send({ success: true, message: 'Category Created Successfully!' }) //Change your meassage
+        createLog(req.headers['authorization'], 'Category', 2) // Change Logs
+      } else if (err) {
+        if (err.code == 11000) {
           res
-            .status(200)
-            .send({ success: true, message: 'Category Created Successfully!' })
-          createLog(req.headers['authorization'], 'Category', 2)
+            .status(422)
+            .send({
+              success: false,
+              message: `${Object.keys(err.keyPattern)[0].replace(
+                '_',
+                ' '
+              )} already exist`.toUpperCase()
+            }) // Paste your validation fields
         }
-      })
-    }
-  } catch (err) {
-    res.status(201).send({ success: false, error: err.name })
+      }
+    })
+  } catch (error) {
+    res.status(201).send(error)
   }
 }
 
@@ -294,21 +323,21 @@ exports.getCategoryfilter = (req, res) => {
   if (is_active && company_id) {
     var query = { is_active: is_active, company_id: company_id }
   }
-  if (is_active ) {
-    var query = { is_active: is_active}
+  if (is_active) {
+    var query = { is_active: is_active }
   }
   try {
-  categoryModel
-    .find(query)
-    .then(category => {
-      res.status(200).send({ success: true, data: category })
-    })
-    .catch(error => {
-      res.status(400).send({ success: false, error: error })
-    })
-  }   catch (error) {
-      res.status(201).send({ success: false, error: error })
-    }
+    categoryModel
+      .find(query)
+      .then(category => {
+        res.status(200).send({ success: true, data: category })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
 }
 
 exports.getCategoryMachine = (req, res) => {

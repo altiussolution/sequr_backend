@@ -4,58 +4,87 @@ const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 
+// exports.createCompartment = (req, res) => {
+//   try {
+//     var newCompartment = new compartmentModel(req.body)
+//     newCompartment
+//       .save(async err => {
+//         if (!err) {
+//           res
+//             .status(200)
+//             .send({
+//               success: true,
+//               message: 'Compartment Created Successfully!'
+//             })
+//           createLog(req.headers['authorization'], 'Compartment', 2)
+//         } else {
+//           const name = await compartmentModel
+//             .findOne({
+//               compartment_name: req.body.compartment_name,
+//               active_status: 1,
+//               company_id:req.body.company_id
+//             })
+//             .exec()
+//           const id = await compartmentModel
+//             .findOne({
+//               compartment_id: req.body.compartment_id,
+//               active_status: 1,
+//               company_id:req.body.company_id
+//             })
+//             .exec()
+//           if (name) {
+//             var errorMessage =
+//               err.code == error_code.isDuplication
+//                 ? 'Compartment name already exists'
+//                 : err
+//             res.status(409).send({
+//               success: false,
+//               message: errorMessage
+//             })
+//           } else if (id) {
+//             var errorMessage =
+//               err.code == error_code.isDuplication
+//                 ? 'Compartment id already exists'
+//                 : err
+//             res.status(409).send({
+//               success: false,
+//               message: errorMessage
+//             })
+//           }
+//         }
+//       })
+//       .catch(error => {
+//         res.status(400).send({ success: false, error: error })
+//       })
+//   } catch (error) {
+//     res.status(201).send(error)
+//   }
+// }
 exports.createCompartment = (req, res) => {
+  // Change your function name
   try {
-    var newCompartment = new compartmentModel(req.body)
-    newCompartment
-      .save(async err => {
-        if (!err) {
+    var newCompartment = new compartmentModel(req.body) // Change model name
+    newCompartment.save((err, doc) => {
+      // past model body
+      if (!err) {
+        res
+          .status(200)
+          .send({ success: true, message: 'Compartment Created Successfully!' }) //Change your meassage
+        createLog(req.headers['authorization'], 'Compartment', 2) // Change Logs
+      } else if (err) {
+        if (err.code == 11000) {
           res
-            .status(200)
+            .status(422)
             .send({
-              success: true,
-              message: 'Compartment Created Successfully!'
-            })
-          createLog(req.headers['authorization'], 'Compartment', 2)
-        } else {
-          const name = await compartmentModel
-            .findOne({
-              compartment_name: req.body.compartment_name,
-              active_status: 1,
-              company_id:req.body.company_id
-            })
-            .exec()
-          const id = await compartmentModel
-            .findOne({
-              compartment_id: req.body.compartment_id,
-              active_status: 1,
-              company_id:req.body.company_id
-            })
-            .exec()
-          if (name) {
-            var errorMessage =
-              err.code == error_code.isDuplication
-                ? 'Compartment name already exists'
-                : err
-            res.status(409).send({
               success: false,
-              message: errorMessage
-            })
-          } else if (id) {
-            var errorMessage =
-              err.code == error_code.isDuplication
-                ? 'Compartment id already exists'
-                : err
-            res.status(409).send({
-              success: false,
-              message: errorMessage
-            })
-          }
+              message: `${Object.keys(err.keyPattern)[0].replace(
+                '_',
+                ' '
+              )} already exist`.toUpperCase()
+            }) // Paste your validation fields
         }
-      })
-      .catch(error => {
-        res.status(400).send({ success: false, error: error })
-      })
+      }
+    })
   } catch (error) {
     res.status(201).send(error)
   }

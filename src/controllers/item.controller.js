@@ -7,36 +7,60 @@ const {
 } = require('../models')
 const { appRouteModels } = require('../utils/enum.utils')
 const { createLog } = require('../middleware/crud.middleware')
-var {error_code} = require('../utils/enum.utils')
+var { error_code } = require('../utils/enum.utils')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
-exports.addItem = async (req, res) => {
+// exports.addItem = async (req, res) => {
+//   try {
+//     var newItem = new itemModel(req.body)
+//     newItem.save(function (err) {
+//       if (err) {
+//         console.log(err)
+//         if (err.keyValue.item_number) {
+//           var errorMessage =
+//             err.code == error_code.isDuplication
+//               ? 'Item Number is already exist'
+//               : err
+//         }
+//         res.status(409).send({
+//           success: false,
+//           message: errorMessage
+//         })
+//       } else {
+//         res
+//           .status(200)
+//           .send({ success: true, message: 'Item Added Successfully!' })
+//       }
+//     })
+//   } catch (error) {
+//     res.send('An error occured')
+//     console.log(error)
+//   }
+// }
+exports.addItem = (req, res) => {
+  // Change your function name
   try {
-    var newItem = new itemModel(req.body)
-    newItem.save(function (err) {
-      if (err) {
-        console.log(err)
-        if (err.keyValue.item_number) {
-          var errorMessage =
-            err.code == error_code.isDuplication
-              ? 'Item Number is already exist'
-              : err
-        }
-        res.status(409).send({
-          success: false,
-          message: errorMessage
-        })
-      } else {
+    var newItem = new itemModel(req.body) // Change model name
+    newItem.save((err, doc) => {
+      // past model body
+      if (!err) {
         res
           .status(200)
-          .send({ success: true, message: 'Item Added Successfully!' })
+          .send({ success: true, message: 'Item Created Successfully!' }) //Change your meassage
+        createLog(req.headers['authorization'], 'Item', 2) // Change Logs
+      } else if (err) {
+        if (err.code == 11000) {
+          res
+            .status(422)
+            .send({ success: false, message: 'Name or Number already exists' }) // Paste your validation fields
+        }
       }
     })
   } catch (error) {
-    res.send('An error occured')
-    console.log(error)
+    res.status(201).send(error)
   }
 }
+
 exports.getItem = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false

@@ -5,48 +5,76 @@ var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 
 // Roles
-exports.createRole = async (req, res) => {
+// exports.createRole = async (req, res) => {
+//   try {
+//     const newRole = new rolesModel(req.body)
+//     var isRoleExist = await rolesModel
+//       .findOne({
+//         $or: [{ role_name: req.body.role_name }, { role_id: req.body.role_id }]
+//       })
+//       .exec()
+//     if (isRoleExist) {
+//       const name = await rolesModel
+//         .findOne({ role_name: req.body.role_name, active_status: 1 })
+//         .exec()
+//       const id = await rolesModel
+//         .findOne({ role_id: req.body.role_id, active_status: 1 })
+//         .exec()
+//       if (name) {
+//         res.status(200).send({
+//           success: false,
+//           message: 'Role name Already Exist'
+//         })
+//       } else if (id) {
+//         res.status(200).send({
+//           success: false,
+//           message: 'Role ID Already Exist'
+//         })
+//       }
+//     } else if (!isRoleExist) {
+//       newRole.save(err => {
+//         if (!err) {
+//           res.status(200).send({
+//             success: true,
+//             message: 'Role Created Successfully!'
+//           })
+//           createLog(req.headers['authorization'], 'Roles', 2)
+//         }
+//       })
+//     }
+//   } catch (error) {
+//     res.send({ status: false, message: error.name })
+//   }
+// }
+exports.createRole = (req, res) => {
+  // Change your function name
   try {
-    const newRole = new rolesModel(req.body)
-    var isRoleExist = await rolesModel
-      .findOne({
-        $or: [{ role_name: req.body.role_name }, { role_id: req.body.role_id }]
-      })
-      .exec()
-    if (isRoleExist) {
-      const name = await rolesModel
-        .findOne({ role_name: req.body.role_name, active_status: 1 })
-        .exec()
-      const id = await rolesModel
-        .findOne({ role_id: req.body.role_id, active_status: 1 })
-        .exec()
-      if (name) {
-        res.status(200).send({
-          success: false,
-          message: 'Role name Already Exist'
-        })
-      } else if (id) {
-        res.status(200).send({
-          success: false,
-          message: 'Role ID Already Exist'
-        })
-      }
-    } else if (!isRoleExist) {
-      newRole.save(err => {
-        if (!err) {
-          res.status(200).send({
-            success: true,
-            message: 'Role Created Successfully!'
-          })
-          createLog(req.headers['authorization'], 'Roles', 2)
+    var newRole = new rolesModel(req.body) // Change model name
+    newRole.save((err, doc) => {
+      // past model body
+      if (!err) {
+        res
+          .status(200)
+          .send({ success: true, message: 'Role Created Successfully!' }) //Change your meassage
+        createLog(req.headers['authorization'], 'Role', 2) // Change Logs
+      } else if (err) {
+        if (err.code == 11000) {
+          res
+            .status(422)
+            .send({
+              success: false,
+              message: `${Object.keys(err.keyPattern)[0].replace(
+                '_',
+                ' '
+              )} already exist`.toUpperCase()
+            }) // Paste your validation fields
         }
-      })
-    }
+      }
+    })
   } catch (error) {
-    res.send({ status: false, message: error.name })
+    res.status(201).send(error)
   }
 }
-
 exports.getRoles = (req, res) => {
   var company_id = req.query.company_id
   try {

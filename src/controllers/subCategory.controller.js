@@ -10,54 +10,86 @@ const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 
-exports.addsubCategory = async (req, res) => {
+// exports.addsubCategory = async (req, res) => {
+//   try {
+//     const subCategory = new subCategoryModel(req.body)
+//     var isSubExist = await subCategoryModel
+//       .findOne({
+//         $or: [
+//           { sub_category_name: req.body.sub_category_name },
+//           { sub_category_code: req.body.sub_category_code }
+//         ]
+//       })
+//       .exec()
+//     if (isSubExist) {
+//       const name = await subCategoryModel
+//         .findOne({
+//           sub_category_name: req.body.sub_category_name,
+//           active_status: 1
+//         })
+//         .exec()
+//       const id = await subCategoryModel
+//         .findOne({
+//           sub_category_code: req.body.sub_category_code,
+//           active_status: 1
+//         })
+//         .exec()
+//       if (name) {
+//         res.status(200).send({
+//           success: false,
+//           message: 'SubCategory name Already Exist'
+//         })
+//       } else if (id) {
+//         res.status(200).send({
+//           success: false,
+//           message: 'SubCategory code Already Exist'
+//         })
+//       }
+//     } else if (!isSubExist) {
+//       subCategory.save(err => {
+//         if (!err) {
+//           res.status(200).send({
+//             success: true,
+//             message: 'Sub Category Created Successfully!'
+//           })
+//           createLog(req.headers['authorization'], 'SubCategory', 2)
+//         }
+//       })
+//     }
+//   } catch (err) {
+//     res.status(201).send({ success: false, error: err })
+//   }
+// }
+exports.addsubCategory = (req, res) => {
+  // Change your function name
   try {
-    const subCategory = new subCategoryModel(req.body)
-    var isSubExist = await subCategoryModel
-      .findOne({
-        $or: [
-          { sub_category_name: req.body.sub_category_name },
-          { sub_category_code: req.body.sub_category_code }
-        ]
-      })
-      .exec()
-    if (isSubExist) {
-      const name = await subCategoryModel
-        .findOne({
-          sub_category_name: req.body.sub_category_name,
-          active_status: 1
-        })
-        .exec()
-      const id = await subCategoryModel
-        .findOne({
-          sub_category_code: req.body.sub_category_code,
-          active_status: 1
-        })
-        .exec()
-      if (name) {
-        res.status(200).send({
-          success: false,
-          message: 'SubCategory name Already Exist'
-        })
-      } else if (id) {
-        res.status(200).send({
-          success: false,
-          message: 'SubCategory code Already Exist'
-        })
-      }
-    } else if (!isSubExist) {
-      subCategory.save(err => {
-        if (!err) {
-          res.status(200).send({
+    var newsubCategory = new subCategoryModel(req.body) // Change model name
+    newsubCategory.save((err, doc) => {
+      // past model body
+      if (!err) {
+        res
+          .status(200)
+          .send({
             success: true,
             message: 'Sub Category Created Successfully!'
-          })
-          createLog(req.headers['authorization'], 'SubCategory', 2)
+          }) //Change your meassage
+        createLog(req.headers['authorization'], 'SubCategory', 2) // Change Logs
+      } else if (err) {
+        if (err.code == 11000) {
+          res
+            .status(422)
+            .send({
+              success: false,
+              message: `${Object.keys(err.keyPattern)[0].replace(
+                '_',
+                ' '
+              )} already exist`.toUpperCase()
+            }) // Paste your validation fields
         }
-      })
-    }
-  } catch (err) {
-    res.status(201).send({ success: false, error: err })
+      }
+    })
+  } catch (error) {
+    res.status(201).send(error)
   }
 }
 

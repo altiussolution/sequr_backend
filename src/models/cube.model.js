@@ -60,6 +60,7 @@ const CubeSchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
-CubeSchema.index({ "cube_name": 1,"cube_id":1, "company_id": 1 }, { unique: true });
+CubeSchema.index({ cube_name: 1, company_id: 1 }, { unique: true })
+CubeSchema.index({ cube_id: 1, company_id: 1 }, { unique: true })
 CubeSchema.index({'$**': 'text'});
 module.exports = mongoose.model('cube', CubeSchema);
