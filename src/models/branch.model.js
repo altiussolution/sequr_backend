@@ -45,8 +45,8 @@ const BranchSchema = Schema({
     },
     email_id: {
         type: String,
-        required: true
-       // unique : true
+        required: true,
+       unique : true
     },
     created_at: {
         type: Date,
@@ -73,5 +73,5 @@ const BranchSchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
-BranchSchema.index( { "branch_name": 1, "branch_code": 1, "branch_address" : 1, "email_id":1, "phone_number":1, "company_id" : 1 }, { unique: true } )
+BranchSchema.index( { "branch_name": 1, "branch_code": 1, "branch_address" : 1, "phone_number":1, "company_id" : 1 }, { unique: true } )
 module.exports = mongoose.model('branch', BranchSchema);
