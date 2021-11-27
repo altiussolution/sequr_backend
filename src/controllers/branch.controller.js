@@ -54,75 +54,103 @@ const { ObjectID } = require('bson')
 //     res.status(201).send(error)
 //   }
 // }
-exports.createBranch = async (req, res) => {
-  try {
-    var body = req.body
-    var branch = new branchModel(req.body)
-    const {
-      branch_name,
-      branch_code,
-      branch_address,
-      phone_number,
-      email_id
-    } = req.body
-    const oldUser = await branchModel.findOne({
-      branch_name,
-      company_id: req.body.company_id
-    })
-    const code = await branchModel.findOne({
-      branch_code,
-      company_id: req.body.company_id
-    })
-    const address = await branchModel.findOne({
-      branch_address,
-      company_id: req.body.company_id
-    })
-    const email = await branchModel.findOne({
-      email_id,
-      company_id: req.body.company_id
-    })
-    const phone = await branchModel.findOne({
-      phone_number,
-      company_id: req.body.company_id
-    })
+// exports.createBranch = async (req, res) => {
+//   try {
+//     var body = req.body
+//     var branch = new branchModel(req.body)
+//     const {
+//       branch_name,
+//       branch_code,
+//       branch_address,
+//       phone_number,
+//       email_id
+//     } = req.body
+//     const oldUser = await branchModel.findOne({
+//       branch_name,
+//       company_id: req.body.company_id
+//     })
+//     const code = await branchModel.findOne({
+//       branch_code,
+//       company_id: req.body.company_id
+//     })
+//     const address = await branchModel.findOne({
+//       branch_address,
+//       company_id: req.body.company_id
+//     })
+//     const email = await branchModel.findOne({
+//       email_id,
+//       company_id: req.body.company_id
+//     })
+//     const phone = await branchModel.findOne({
+//       phone_number,
+//       company_id: req.body.company_id
+//     })
 
-    if (oldUser) {
-      return res
-        .status(409)
-        .send({ status: false, message: 'Branch name already exists' })
-    }
-    if (code) {
-      return res
-        .status(409)
-        .send({ status: false, message: 'Branch code already exists' })
-    }
-    if (address) {
-      return res
-        .status(409)
-        .send({ status: false, message: 'Branch address  already exists' })
-    }
-    if (email) {
-      return res
-        .status(409)
-        .send({ status: false, message: 'Email  already exists' })
-    }
-    if (phone) {
-      return res
-        .status(409)
-        .send({ status: false, message: 'Phone Number  already exists' })
-    }
-    supplier.save(err => {
+//     if (oldUser) {
+//       return res
+//         .status(409)
+//         .send({ status: false, message: 'Branch name already exists' })
+//     }
+//     if (code) {
+//       return res
+//         .status(409)
+//         .send({ status: false, message: 'Branch code already exists' })
+//     }
+//     if (address) {
+//       return res
+//         .status(409)
+//         .send({ status: false, message: 'Branch address  already exists' })
+//     }
+//     if (email) {
+//       return res
+//         .status(409)
+//         .send({ status: false, message: 'Email  already exists' })
+//     }
+//     if (phone) {
+//       return res
+//         .status(409)
+//         .send({ status: false, message: 'Phone Number  already exists' })
+//     }
+//     supplier.save(err => {
+//       if (!err) {
+//         res
+//           .status(200)
+//           .send({ success: true, message: 'Branch Created Successfully!' })
+//       }
+//     })
+//   } catch (err) {
+//     console.log(err)
+//   }
+// }
+exports.createBranch = (req, res) => {
+  // Change your function name
+  try {
+    var newBranch = new branchModel(req.body) // Change model name
+    newBranch.save((err, doc) => {
+      // past model body
       if (!err) {
         res
           .status(200)
-          .send({ success: true, message: 'Branch Created Successfully!' })
+          .send({ success: true, message: 'Branch Created Successfully!' }) //Change your meassage
+        createLog(req.headers['authorization'], 'Branch', 2) // Change Logs
+      } else if (err) {
+        if (err.code == 11000) {
+          res
+            .status(422)
+            .send({
+              success: false,
+              message: `${Object.keys(err.keyPattern)[0].replace(
+                '_',
+                ' '
+              )} already exist`.toLowerCase()
+            }) // Paste your validation fields
+        }
       }
     })
-  } catch (err) {
-    console.log(err)
+  } catch (error) {
+    res.status(201).send(error)
   }
 }
-
 exports.getBranch = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false

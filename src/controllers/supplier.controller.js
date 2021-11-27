@@ -55,72 +55,34 @@ const { ObjectID } = require('bson')
 //        }
 //      }
 
-exports.createSupplier = async (req, res) => {
+// 
+exports.createSupplier = (req, res) => {
+  // Change your function name
   try {
-    var body = req.body
-    var supplier = new supplierModel(req.body)
-    const {
-      supplier_name,
-      supplier_code,
-      supplier_address,
-      phone_number,
-      email_id
-    } = req.body
-    const oldUser = await supplierModel.findOne({
-      supplier_name,
-      company_id: req.body.company_id
-    })
-    const code = await supplierModel.findOne({
-      supplier_code,
-      company_id: req.body.company_id
-    })
-    const address = await supplierModel.findOne({
-      supplier_address,
-      company_id: req.body.company_id
-    })
-    const email = await supplierModel.findOne({
-      email_id,
-      company_id: req.body.company_id
-    })
-    const phone = await supplierModel.findOne({
-      phone_number,
-      company_id: req.body.company_id
-    })
-
-    if (oldUser) {
-      return res
-        .status(409)
-        .send({ status: false, message: 'Supplier name already exists' })
-    }
-    if (code) {
-      return res
-        .status(409)
-        .send({ status: false, message: 'Supplier code already exists' })
-    }
-    if (address) {
-      return res
-        .status(409)
-        .send({ status: false, message: 'Supplier address  already exists' })
-    }
-    if (email) {
-      return res
-        .status(409)
-        .send({ status: false, message: 'Email  already exists' })
-    }
-    if (phone) {
-      return res
-        .status(409)
-        .send({ status: false, message: 'Phone Number  already exists' })
-    }
-    supplier.save(err => {
+    var newSupplier = new supplierModel(req.body) // Change model name
+    newSupplier.save((err, doc) => {
+      // past model body
       if (!err) {
         res
           .status(200)
-          .send({ success: true, message: 'Supplier Created Successfully!' })
+          .send({ success: true, message: 'Supplier Created Successfully!' }) //Change your meassage
+        createLog(req.headers['authorization'], 'Supplier', 2) // Change Logs
+      } else if (err) {
+        if (err.code == 11000) {
+          res
+            .status(422)
+            .send({
+              success: false,
+              message: `${Object.keys(err.keyPattern)[0].replace(
+                '_',
+                ' '
+              )} already exist`.toLowerCase()
+            }) // Paste your validation fields
+        }
       }
     })
-  } catch (err) {
-    console.log(err)
+  } catch (error) {
+    res.status(201).send(error)
   }
 }
 
