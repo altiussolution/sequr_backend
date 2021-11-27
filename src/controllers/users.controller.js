@@ -122,18 +122,20 @@ exports.add = async (req, res) => {
         // Get Customer Role and Super Admin Role
         isUserRole = await rolesModel.findOne({ _id: user.role_id }).exec()
 
-        if (isUserRole.permission.length > 0) {
-          if (
-            isUserRole.permission.includes('user') ||
-            !isUserRole.permission.includes('admin')
-          ) {
-            var loginPage = process.env.STAGING_USER
-          } else {
-            var loginPage = process.env.STAGING
-          }
-        } else {
-          var loginPage = process.env.STAGING
-        }
+        // if (isUserRole.permission.length > 0) {
+        //   if (
+        //     isUserRole.permission.includes('user') ||
+        //     !isUserRole.permission.includes('admin')
+        //   ) {
+        //     var loginPage = process.env.STAGING_USER
+        //   } else {
+        //     var loginPage = process.env.STAGING
+        //   }
+        // } else {
+        //   var loginPage = process.env.STAGING
+        // }
+        var loginPage = process.env.STAGING_USER
+
         const hostname =
           process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost'
         const locals = {
