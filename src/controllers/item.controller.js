@@ -50,9 +50,13 @@ exports.addItem = (req, res) => {
         createLog(req.headers['authorization'], 'Item', 2) // Change Logs
       } else if (err) {
         if (err.code == 11000) {
-          res
-            .status(422)
-            .send({ success: false, message: (`${((Object.keys(err.keyPattern)[0]).replace('_', ' '))} already exist`).toLowerCase() }) // Paste your validation fields
+          res.status(422).send({
+            success: false,
+            message: `${Object.keys(err.keyPattern)[0].replace(
+              '_',
+              ' '
+            )} already exist`.toLowerCase()
+          }) // Paste your validation fields
         }
       }
     })
@@ -391,6 +395,7 @@ exports.getItemMachine = (req, res) => {
         employee_status: true
       })
       .then(cubeList => {
+        console.log('cube list, ' + cubeList)
         //Find all Columns Ids
         binModel
           .distinct('_id', {
@@ -401,6 +406,7 @@ exports.getItemMachine = (req, res) => {
             is_removed: false
           })
           .then(binList => {
+            console.log('bin list, ' + binList)
             console.log(binList)
             compartmentModel
               .distinct('_id', {
@@ -409,7 +415,7 @@ exports.getItemMachine = (req, res) => {
                 is_removed: false
               })
               .then(drawList => {
-                console.log(drawList)
+                console.log('draw list, ' + drawList)
                 //Find all Item Ids in stock allocation
                 stockAllocationModel
                   .distinct('item', {
@@ -417,7 +423,7 @@ exports.getItemMachine = (req, res) => {
                     compartment: { $in: drawList }
                   })
                   .then(itemsList => {
-                    console.log(itemsList)
+                    console.log('items list, ' + itemsList)
                     var query = {
                       active_status: 1,
                       is_active: true,
@@ -425,7 +431,6 @@ exports.getItemMachine = (req, res) => {
                       sub_category_id: req.query.sub_category_id,
                       _id: { $in: itemsList }
                     }
-                    console.log(itemsList)
 
                     // Find All items in machine
                     itemModel
@@ -434,6 +439,8 @@ exports.getItemMachine = (req, res) => {
                       .populate('sub_category_id')
                       .populate('supplier.suppliedBy')
                       .then(item => {
+                        console.log('item, ' + item)
+
                         res.status(200).send({ success: true, data: item })
                       })
                       .catch(error => {
