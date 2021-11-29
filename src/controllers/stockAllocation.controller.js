@@ -1,15 +1,17 @@
-const { stockAllocationModel, itemModel } = require('../models')
+const { stockAllocationModel, itemModel, logModel } = require('../models')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
+const { func } = require('joi')
 exports.allocateStock = (req, res) => {
   try {
     var stock = new stockAllocationModel(req.body)
-    stock.save(err => {
+    stock.save((err, doc) => {
       if (!err) {
         res
           .status(200)
           .send({ success: true, message: 'Stock Allocated Successfully' })
+        createItemAddLog(doc._id, req.body.total_quantity, req.body.company_id)
         createLog(req.headers['authorization'], 'Itemoncube', 2)
       } else {
         res.status(201).send({ status: false, message: err.name })
@@ -27,16 +29,20 @@ exports.getStockAllocations = (req, res) => {
   var searchString = req.query.searchString
   var category = req.query.category
   var sub_category = req.query.sub_category
-  var status = req.query.status;
-  var supplier = req.query.supplier;
-  var cube = req.query.cube;
-  var bin = req.query.bin;
-  var compartment = req.query.compartment;
-  var is_active = req.query.is_active;
-  var company_id = req.query.company_id;
+  var status = req.query.status
+  var supplier = req.query.supplier
+  var cube = req.query.cube
+  var bin = req.query.bin
+  var compartment = req.query.compartment
+  var is_active = req.query.is_active
+  var company_id = req.query.company_id
   var query = searchString
-    ? { active_status: 1, company_id: company_id, $text: { $search: searchString } }
-    : { active_status: 1 , company_id:company_id}
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
   if (category) query['category'] = category
   if (sub_category) query['sub_category'] = sub_category
   if (is_active) query['is_active'] = is_active
@@ -46,7 +52,7 @@ exports.getStockAllocations = (req, res) => {
   if (bin) query['bin'] = bin
   if (compartment) query['compartment'] = compartment
   if (company_id) query['company_id'] = company_id
-  
+
   try {
     stockAllocationModel
       .find(query)
@@ -85,10 +91,15 @@ exports.updateStockAllocation = (req, res) => {
               .status(200)
               .send({ success: true, message: 'Stock Updated Successfully!' })
             createLog(req.headers['authorization'], 'Itemoncube', 1)
+            createItemAddLog(
+              req.body.item,
+              req.body.total_quantity,
+              req.body.company_id
+            )
             console.log(req.body.item)
             console.log(req.body.total_quantity)
             await itemModel
-              .findByIdAndUpdate(req.body.item, {
+              .findByIdAndUpdate(req.body._id, {
                 $inc: { in_stock: -req.body.total_quantity }
               })
               .exec()
@@ -120,7 +131,7 @@ exports.getItemById = (req, res) => {
   try {
     var item = req.params.item
     stockAllocationModel
-      .findOne({ item: item ,company_id : company_id})
+      .findOne({ item: item, company_id: company_id })
       .populate('item')
       .populate('cube')
       .populate('bin')
@@ -358,4 +369,14 @@ exports.deleteStockAllocation = (req, res) => {
       .status(200)
       .send({ success: false, error: err, message: 'An Error Catched' })
   }
+}
+
+function createItemAddLog (stock_id, qty, company_id) {
+  data = {}
+  data['module_name'] = 'Item added on cube'
+  data['action'] = 'Item added on cube'
+  data['stock_allocation_id'] = stock_id
+  data['trasaction_qty'] = qty
+  data['company_id'] = company_id
+  logModel.insertOne(data)
 }

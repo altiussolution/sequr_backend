@@ -295,70 +295,70 @@ exports.deadStockReport = async (req, res) => {
   // Aggregation Queries
 
   try {
-  stockAllocationModel
-    .aggregate([
-      //Find branch id and active_status is 1
-      {
-        $match: {
-          $and: [directQuery]
+    stockAllocationModel
+      .aggregate([
+        //Find branch id and active_status is 1
+        {
+          $match: {
+            $and: [directQuery]
+          }
+        },
+        { $sort: { created_at: -1 } },
+        { $skip: offset },
+        { $limit: limit },
+        // *** 1 ***
+        // *** 2 ***
+        // *** 3 ***
+        {
+          $lookup: {
+            from: 'cubes',
+            localField: 'cube',
+            foreignField: '_id',
+            as: 'cube_doc'
+          }
+        },
+        // *** 4 ***
+        {
+          $lookup: {
+            from: 'bins',
+            localField: 'bin',
+            foreignField: '_id',
+            as: 'column_doc'
+          }
+        },
+        // *** 5 ***
+        {
+          $lookup: {
+            from: 'compartments',
+            localField: 'compartment',
+            foreignField: '_id',
+            as: 'draw_doc'
+          }
+        },
+        // *** 6 ***
+        {
+          $lookup: {
+            from: 'items',
+            localField: 'item',
+            foreignField: '_id',
+            as: 'item_doc'
+          }
+        },
+        {
+          $match: filterQuery
+        },
+        {
+          $match: {
+            $or: searchQuery
+          }
         }
-      },
-      { $sort: { created_at: -1 } },
-      { $skip: offset },
-      { $limit: limit },
-      // *** 1 ***
-      // *** 2 ***
-      // *** 3 ***
-      {
-        $lookup: {
-          from: 'cubes',
-          localField: 'cube',
-          foreignField: '_id',
-          as: 'cube_doc'
-        }
-      },
-      // *** 4 ***
-      {
-        $lookup: {
-          from: 'bins',
-          localField: 'bin',
-          foreignField: '_id',
-          as: 'column_doc'
-        }
-      },
-      // *** 5 ***
-      {
-        $lookup: {
-          from: 'compartments',
-          localField: 'compartment',
-          foreignField: '_id',
-          as: 'draw_doc'
-        }
-      },
-      // *** 6 ***
-      {
-        $lookup: {
-          from: 'items',
-          localField: 'item',
-          foreignField: '_id',
-          as: 'item_doc'
-        }
-      },
-      {
-        $match: filterQuery
-      },
-      {
-        $match: {
-          $or: searchQuery
-        }
-      }
-    ])
-    //   .sort({ created_at: -1 })
-    //   .skip(offset)
-    //   .limit(limit)
-    .then(logs => {
-      res.status(200).send({ success: true, data: logs })
-    })
+      ])
+      //   .sort({ created_at: -1 })
+      //   .skip(offset)
+      //   .limit(limit)
+      .then(logs => {
+        res.status(200).send({ success: true, data: logs })
+      })
       .catch(error => {
         res.status(400).send({ success: false, error: error })
       })
@@ -707,7 +707,7 @@ exports.usageReport = async (req, res) => {
           $match: {
             $and: [
               {
-                action: 'Take',
+                action: 'Taken',
                 stock_allocation_id: { $in: stockAlloted_item },
                 updated_at: query.updated_at
               }
@@ -888,6 +888,94 @@ exports.earlyWarningReport = async (req, res) => {
           }
         }
         res.status(200).send({ success: true, data: belowMinItems })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
+}
+
+exports.userSearch = async (req, res) => {
+  searchString = req.query.searchString
+  try {
+    stockAllocationModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'cubes',
+            localField: 'cube',
+            foreignField: '_id',
+            as: 'cube_doc'
+          }
+        },
+        // *** 4 ***
+        {
+          $lookup: {
+            from: 'bins',
+            localField: 'bin',
+            foreignField: '_id',
+            as: 'column_doc'
+          }
+        },
+        // *** 5 ***
+        {
+          $lookup: {
+            from: 'compartments',
+            localField: 'compartment',
+            foreignField: '_id',
+            as: 'draw_doc'
+          }
+        },
+        // *** 6 ***
+        {
+          $match: {
+            $and: [
+              { 'cube_doc.employee_status': true },
+              { 'draw_doc.is_removed': false },
+              { 'column_doc.is_removed': false }
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'items',
+            localField: 'item',
+            foreignField: '_id',
+            as: 'item_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'categories',
+            localField: 'item_doc.category_id',
+            foreignField: '_id',
+            as: 'category_doc'
+          }
+        },
+        {
+          $lookup: {
+            from: 'subcategories',
+            localField: 'item_doc.sub_category_id',
+            foreignField: '_id',
+            as: 'sub_category_doc'
+          }
+        },
+        {
+          $match: {
+            $or: [
+              { 'category_doc.category_name': { $regex: searchString } },
+              {
+                'sub_category_doc.sub_category_name': { $regex: searchString }
+              },
+              { 'item_doc.item_name': { $regex: searchString } }
+            ]
+          }
+        }
+      ])
+      .then(async result => {
+        res.status(200).send({ success: true, data: result })
       })
       .catch(error => {
         res.status(400).send({ success: false, error: error })
