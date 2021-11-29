@@ -8,7 +8,7 @@ var ObjectId = require('mongodb').ObjectID
 
 exports.columnShortage = async (req, res) => {
   var branch_id = req.query.branch_id
-  var company_id = req.query.branch_id
+  var company_id = req.query.company_id
   var query = branch_id
     ? { active_status: 1, branch_id: branch_id, company_id: company_id }
     : { active_status: 1, company_id: company_id }
