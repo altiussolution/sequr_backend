@@ -114,7 +114,7 @@ exports.add = async (req, res) => {
           },
           process.env.TOKEN_KEY,
           {
-            expiresIn: '2h'
+            expiresIn: '24h'
           }
         )
         // role = await rolesModel
@@ -201,7 +201,7 @@ exports.login = async (req, res) => {
         },
         process.env.TOKEN_KEY,
         {
-          expiresIn: '2h'
+          expiresIn: '24h'
         }
       )
 
@@ -423,7 +423,7 @@ exports.resetPassword = async (req, res) => {
     user.password = await bcrypt.hash(req.body.password, 10)
     await user.save()
     await token.delete()
-    
+
     res.status(200).send({
       success: true,
       message: 'Password Reset Sucessfully'

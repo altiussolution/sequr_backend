@@ -491,7 +491,8 @@ exports.myCart = async (req, res) => {
 
 exports.itemHistory = async (req, res) => {
   try {
-    var userId = req.user.user_id    
+    console.log(req.query)
+    var userId = req.query.user_id
     // var userId = ObjectId('615d38fcb3b43020c778f381')
     var CartHistory = await CartModel.find({ user: userId}, [
       'cart',
@@ -502,7 +503,7 @@ exports.itemHistory = async (req, res) => {
 
     CartHistory = JSON.parse(JSON.stringify(CartHistory))
     var i = 0
-    for await (let item of cartItems[0]['cart']) {
+    for await (let item of CartHistory[0]['cart']) {
       let data = item
       stockData = await stockAllocationModel
         .findOne({ item: data.item._id })
@@ -553,7 +554,7 @@ exports.itemHistory = async (req, res) => {
 
     res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
   } catch (err) {
-    res.status(201).send({ status: false, message: err.name })
+    res.status(201).send({ status: false, message: err })
   }
 }
 
