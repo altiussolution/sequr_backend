@@ -491,7 +491,8 @@ exports.myCart = async (req, res) => {
 
 exports.itemHistory = async (req, res) => {
   try {
-    var userId = req.query.user_id    
+    console.log(req.query)
+    var userId = req.query.user_id
     // var userId = ObjectId('615d38fcb3b43020c778f381')
     var CartHistory = await CartModel.find({ user: userId}, [
       'cart',
