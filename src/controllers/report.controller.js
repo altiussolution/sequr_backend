@@ -266,8 +266,8 @@ exports.deadStockReport = async (req, res) => {
       $lt: new Date(toDate)
     }
   }
-  if (cubeId) directQuery['cube'] = ObjectId(cubeId)
-  if (columnId) directQuery['bin'] = ObjectId(columnId)
+  if (cubeId) filterQuery['cube'] = ObjectId(cubeId)
+  if (columnId) filterQuery['bin'] = ObjectId(columnId)
 
   if (searchString) {
     searchQuery = [
