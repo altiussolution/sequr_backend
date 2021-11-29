@@ -294,7 +294,7 @@ exports.deadStockReport = async (req, res) => {
 
   // Aggregation Queries
 
-  try {
+  // try {
     stockAllocationModel
       .aggregate([
         //Find branch id and active_status is 1
@@ -359,12 +359,12 @@ exports.deadStockReport = async (req, res) => {
       .then(logs => {
         res.status(200).send({ success: true, data: logs })
       })
-      .catch(error => {
-        res.status(400).send({ success: false, error: error })
-      })
-  } catch (error) {
-    res.status(201).send({ success: false, error: error })
-  }
+  //     .catch(error => {
+  //       res.status(400).send({ success: false, error: error })
+  //     })
+  // } catch (error) {
+  //   res.status(201).send({ success: false, error: error })
+  // }
 }
 exports.stockShortageReport = async (req, res) => {
   var offset =
