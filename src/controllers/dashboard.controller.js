@@ -125,7 +125,11 @@ exports.getsubCategorycount = async (req, res) => {
 
 exports.getRolescount = async (req, res) => {
   var company_id = req.query.company_id
-  var query = { active_status: 1, company_id: company_id }
+  var query = {
+    active_status: 1,
+    company_id: company_id,
+    role_id: { $nin: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
+  }
   try {
     await rolesModel
       .count(query)

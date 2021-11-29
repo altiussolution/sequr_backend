@@ -1,30 +1,67 @@
 const { companyModel, rolesModel } = require('../models')
 var { error_code } = require('../utils/enum.utils')
 
+// exports.createCompany = (req, res) => {
+//   try {
+//     var newCompany = new companyModel(req.body)
+//     newCompany.save(err => {
+//       if (!err) {
+//         res
+//           .status(200)
+//           .send({ success: true, message: 'Company Created Successfully!' })
+//       } else {
+//         var errorMessage =
+//           err.code == error_code.isDuplication
+//             ? 'Duplication occured in Company name'
+//             : err
+//         res.status(200).send({
+//           success: false,
+//           message: errorMessage
+//         })
+//       }
+//     })
+//   } catch (error) {
+//     res.status(201).send(error)
+//   }
+// }
 exports.createCompany = (req, res) => {
+  // Change your function name
   try {
-    var newCompany = new companyModel(req.body)
-    newCompany.save(err => {
+    var newCompany = new companyModel(req.body) // Change model name
+    newCompany.save((err, doc) => {
+      // past model body
       if (!err) {
         res
           .status(200)
-          .send({ success: true, message: 'Company Created Successfully!' })
-      } else {
-        var errorMessage =
-          err.code == error_code.isDuplication
-            ? 'Duplication occured in Company name'
-            : err
-        res.status(200).send({
-          success: false,
-          message: errorMessage
-        })
+          .send({ success: true, message: 'Company Created Successfully!' }) //Change your meassage
+        createLog(req.headers['authorization'], 'Company', 2) // Change Logs
+      } else if (err) {
+        if (err.code == 11000) {
+          res
+            .status(422)
+            .send({
+              success: false,
+              message: tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
+                '_',
+                ' '
+              )} already exist`)
+            }) // Paste your validation fields
+        }
       }
     })
   } catch (error) {
     res.status(201).send(error)
   }
 }
+function tiltelCase (str) {
+  const arr = str.split(' ')
+  for (var i = 0; i < arr.length; i++) {
+    arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1)
+  }
+  const str2 = arr.join(' ')
+  return str2
 
+}
 exports.getCompany = (req, res) => {
   var offset = parseInt(req.query.offset)
   var limit = parseInt(req.query.limit)
