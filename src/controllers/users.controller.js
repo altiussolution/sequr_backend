@@ -51,17 +51,17 @@ exports.add = async (req, res) => {
     }
     const oldEmployee_id = await User.findOne({
       employee_id,
-      active_status: 1,
+      active_status: 1
       // company_id: req.body.company_id
     })
     const oldmobilenumber = await User.findOne({
       contact_no,
-      active_status: 1,
+      active_status: 1
       // company_id: req.body.company_id
     })
     const oldemail_id = await User.findOne({
       email_id,
-      active_status: 1,
+      active_status: 1
       // company_id: req.body.company_id
     })
     if (oldEmployee_id) {
@@ -395,7 +395,10 @@ exports.forgotPassword = async (req, res) => {
       await sendEmail(user.email_id, 'Password reset', adminForgotPassword[0])
     })
 
-    res.send('password reset link sent to your email account')
+    res.status(200).send({
+      success: true,
+      message: 'Password Reset Link Sent To Your Email Account'
+    })
   } catch (error) {
     res.send('An error occured')
     console.log(error)
@@ -420,8 +423,11 @@ exports.resetPassword = async (req, res) => {
     user.password = await bcrypt.hash(req.body.password, 10)
     await user.save()
     await token.delete()
-
-    res.send('password reset sucessfully.')
+    
+    res.status(200).send({
+      success: true,
+      message: 'Password Reset Sucessfully'
+    })
   } catch (error) {
     res.send('An error occured')
     console.log(error)
