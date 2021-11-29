@@ -490,7 +490,7 @@ exports.myCart = async (req, res) => {
 }
 
 exports.itemHistory = async (req, res) => {
-  try {
+  // try {
     console.log(req.query)
     var userId = req.query.user_id
     // var userId = ObjectId('615d38fcb3b43020c778f381')
@@ -553,9 +553,9 @@ exports.itemHistory = async (req, res) => {
     }
 
     res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
-  } catch (err) {
-    res.status(201).send({ status: false, message: err.name })
-  }
+  // } catch (err) {
+  //   res.status(201).send({ status: false, message: err.name })
+  // }
 }
 
 async function dedup_and_sum (arr, prop, prop1) {
