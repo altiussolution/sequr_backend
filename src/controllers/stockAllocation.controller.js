@@ -372,11 +372,22 @@ exports.deleteStockAllocation = (req, res) => {
 }
 
 function createItemAddLog (stock_id, qty, company_id) {
-  data = {}
-  data['module_name'] = 'Item added on cube'
-  data['action'] = 'Item added on cube'
-  data['stock_allocation_id'] = stock_id
-  data['trasaction_qty'] = qty
-  data['company_id'] = company_id
-  logModel.insert(data)
+  try {
+    data = {}
+    data['module_name'] = 'Item added on cube'
+    data['action'] = 'Item added on cube'
+    data['stock_allocation_id'] = stock_id
+    data['trasaction_qty'] = qty
+    data['company_id'] = company_id
+    var log = new logModel(data)
+    log.save(err => {
+      if (!err) {
+        console.log('Item  Added on Log Successfully!')
+      } else {
+        console.log('Log Not Created')
+      }
+    })
+  } catch (error) {
+    console.log('Something Went Wrong in Create Log')
+  }
 }
