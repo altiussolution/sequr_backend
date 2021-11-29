@@ -92,7 +92,7 @@ exports.updateStockAllocation = (req, res) => {
               .send({ success: true, message: 'Stock Updated Successfully!' })
             createLog(req.headers['authorization'], 'Itemoncube', 1)
             createItemAddLog(
-              req.body.item,
+              req.body._id,
               req.body.total_quantity,
               req.body.company_id
             )
