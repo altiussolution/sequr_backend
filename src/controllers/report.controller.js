@@ -502,8 +502,8 @@ exports.orderReport = (req, res) => {
 
   var createdDateFrom = req.query.createdDateFrom // Direct Query
   var createdDateTo = req.query.createdDateTo // Direct Query
-  var receivedDateFrom = req.query.createdDateTo // Direct Query
-  var receivedDateTo = req.query.createdDateTo // Direct Query
+  var receivedDateFrom = req.query.receivedDateFrom // Direct Query
+  var receivedDateTo = req.query.receivedDateTo // Direct Query
   var status = req.query.status // Direct Query
   var supplier_id = req.query.supplier_id // Direct Query
   var directQuery = {
