@@ -290,7 +290,7 @@ exports.getPermissioncount = async (req, res) => {
   var query = {
     active_status: 1,
     company_id: company_id,
-    $exprwhere: 'this.permission.length > 0',
+    $expr: 'this.permission.length > 0',
     role_id: { $nin: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] }
   }
   try {
