@@ -250,9 +250,9 @@ exports.deadStockReport = async (req, res) => {
 
   var directQuery = {
     updated_at: {
-      $lt: new Date(beforeOneMonth),
-      company_id: req.query.company_id
-    }
+      $lt: new Date(beforeOneMonth)
+    },
+    company_id: req.query.company_id
   }
   var filterQuery = { active_status: 1 }
   var searchQuery = [{}]
@@ -294,77 +294,77 @@ exports.deadStockReport = async (req, res) => {
 
   // Aggregation Queries
 
-  // try {
-    stockAllocationModel
-      .aggregate([
-        //Find branch id and active_status is 1
-        {
-          $match: {
-            $and: [directQuery]
-          }
-        },
-        { $sort: { created_at: -1 } },
-        { $skip: offset },
-        { $limit: limit },
-        // *** 1 ***
-        // *** 2 ***
-        // *** 3 ***
-        {
-          $lookup: {
-            from: 'cubes',
-            localField: 'cube',
-            foreignField: '_id',
-            as: 'cube_doc'
-          }
-        },
-        // *** 4 ***
-        {
-          $lookup: {
-            from: 'bins',
-            localField: 'bin',
-            foreignField: '_id',
-            as: 'column_doc'
-          }
-        },
-        // *** 5 ***
-        {
-          $lookup: {
-            from: 'compartments',
-            localField: 'compartment',
-            foreignField: '_id',
-            as: 'draw_doc'
-          }
-        },
-        // *** 6 ***
-        {
-          $lookup: {
-            from: 'items',
-            localField: 'item',
-            foreignField: '_id',
-            as: 'item_doc'
-          }
-        },
-        {
-          $match: filterQuery
-        },
-        {
-          $match: {
-            $or: searchQuery
-          }
+  try {
+  stockAllocationModel
+    .aggregate([
+      //Find branch id and active_status is 1
+      {
+        $match: {
+          $and: [directQuery]
         }
-      ])
-      //   .sort({ created_at: -1 })
-      //   .skip(offset)
-      //   .limit(limit)
-      .then(logs => {
-        res.status(200).send({ success: true, data: logs })
+      },
+      { $sort: { created_at: -1 } },
+      { $skip: offset },
+      { $limit: limit },
+      // *** 1 ***
+      // *** 2 ***
+      // *** 3 ***
+      {
+        $lookup: {
+          from: 'cubes',
+          localField: 'cube',
+          foreignField: '_id',
+          as: 'cube_doc'
+        }
+      },
+      // *** 4 ***
+      {
+        $lookup: {
+          from: 'bins',
+          localField: 'bin',
+          foreignField: '_id',
+          as: 'column_doc'
+        }
+      },
+      // *** 5 ***
+      {
+        $lookup: {
+          from: 'compartments',
+          localField: 'compartment',
+          foreignField: '_id',
+          as: 'draw_doc'
+        }
+      },
+      // *** 6 ***
+      {
+        $lookup: {
+          from: 'items',
+          localField: 'item',
+          foreignField: '_id',
+          as: 'item_doc'
+        }
+      },
+      {
+        $match: filterQuery
+      },
+      {
+        $match: {
+          $or: searchQuery
+        }
+      }
+    ])
+    //   .sort({ created_at: -1 })
+    //   .skip(offset)
+    //   .limit(limit)
+    .then(logs => {
+      res.status(200).send({ success: true, data: logs })
+    })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
       })
-  //     .catch(error => {
-  //       res.status(400).send({ success: false, error: error })
-  //     })
-  // } catch (error) {
-  //   res.status(201).send({ success: false, error: error })
-  // }
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
 }
 exports.stockShortageReport = async (req, res) => {
   var offset =
@@ -478,7 +478,7 @@ exports.stockShortageReport = async (req, res) => {
         console.log(itemOnCube)
         if (itemOnCube.length > 0) {
           for await (let item of itemOnCube) {
-            var itemShortage = item.draw_doc[0].item_max_cap  -item.quantity
+            var itemShortage = item.draw_doc[0].item_max_cap - item.quantity
             itemList = await JSON.parse(JSON.stringify(item))
             itemList['stock_shortage'] = itemShortage
             await belowMinItems.push(itemList)
@@ -879,7 +879,10 @@ exports.earlyWarningReport = async (req, res) => {
         belowMinItems = []
         if (itemOnCube.length > 0) {
           for await (let item of itemOnCube) {
-            if (item.quantity <= item.draw_doc[0].item_min_cap && item.item_doc[0].returnable == false ) {
+            if (
+              item.quantity <= item.draw_doc[0].item_min_cap &&
+              item.item_doc[0].returnable == false
+            ) {
               await belowMinItems.push(item)
             }
           }
