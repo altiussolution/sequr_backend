@@ -378,5 +378,5 @@ function createItemAddLog (stock_id, qty, company_id) {
   data['stock_allocation_id'] = stock_id
   data['trasaction_qty'] = qty
   data['company_id'] = company_id
-  logModel.insertOne(data)
+  logModel.insert(data)
 }
