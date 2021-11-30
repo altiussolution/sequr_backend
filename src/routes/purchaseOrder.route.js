@@ -15,7 +15,7 @@ var upload = multer({ storage: storage })
 route.post('/add',auth, PurchaseOrderController.addPurchaseOrder)
 route.get('/get',auth,PurchaseOrderController.getPurchaseOrder)
 route.put('/update/:id',auth,PurchaseOrderController.updatePurchaseOrder);
-route.put('/delete/:id',auth,PurchaseOrderController.deletePurchaseOrder);
+route.delete('/delete/:id',auth,PurchaseOrderController.deletePurchaseOrder);
 route.post('/upload',auth, upload.single('purchaseOrder'),PurchaseOrderController.upload)
 
 
