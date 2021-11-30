@@ -374,6 +374,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
       await stockAllocationModel
         .findByIdAndUpdate(item.stock_allocation_id, stockAllocationItems)
         .exec()
+      decrementStockDraw(item.stock_allocation_id)
     }
 
     res
@@ -446,6 +447,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
       await stockAllocationModel
         .findByIdAndUpdate(item.stock_allocation_id, stockAllocationItems)
         .exec()
+      decrementStockDraw(item.stock_allocation_id)
     }
 
     res
@@ -459,7 +461,7 @@ exports.myCart = async (req, res) => {
     // var userId = ObjectId('615d38fcb3b43020c778f381')
     var userId = req.query.user_id
     var company_id = req.query.company_id
-    cartItems = await CartModel.find({ user: userId, status: Cart.In_Cart}, [
+    cartItems = await CartModel.find({ user: userId, status: Cart.In_Cart }, [
       'cart',
       'total_quantity',
       'cart_status'
@@ -494,7 +496,7 @@ exports.itemHistory = async (req, res) => {
     console.log(req.query)
     var userId = req.query.user_id
     // var userId = ObjectId('615d38fcb3b43020c778f381')
-    var CartHistory = await CartModel.find({ user: userId}, [
+    var CartHistory = await CartModel.find({ user: userId }, [
       'cart',
       'updated_at'
     ])
@@ -586,3 +588,14 @@ async function dedup_and_sum (arr, prop, prop1) {
 }
 
 /// ************************** Arunkumar ********************** ////////////
+
+function decrementStockDraw (_id) {
+  try {
+    stockAllocationModel.updateOne(
+      { _id: _id, quantity: { $lt: 0 } },
+      { $set: { quantity: 0 } }
+    )
+  } catch (err) {
+    console.log(err)
+  }
+}
