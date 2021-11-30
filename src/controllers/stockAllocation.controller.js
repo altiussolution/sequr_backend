@@ -103,6 +103,7 @@ exports.updateStockAllocation = (req, res) => {
                 $inc: { in_stock: -req.body.total_quantity }
               })
               .exec()
+            decrementStock(req.body._id)
           } else {
             res
               .status(200)
@@ -389,5 +390,16 @@ function createItemAddLog (stock_id, qty, company_id) {
     })
   } catch (error) {
     console.log('Something Went Wrong in Create Log')
+  }
+}
+
+function decrementStock (_id) {
+  try {
+    itemModel.updateOne(
+      { _id: _id, in_stock: { $lt: 0 } },
+      { $set: { in_stock: 0 } }
+    )
+  } catch (err) {
+    console.log(err)
   }
 }
