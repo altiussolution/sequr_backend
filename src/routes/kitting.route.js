@@ -15,7 +15,7 @@ var upload = multer({ storage: storage })
 route.post('/add', auth , KitController.createKit);
 route.get('/get', auth , KitController.getKit);
 route.put('/update/:id', auth, KitController.updateKit);
-route.put('/delete/:id', auth, KitController.deleteKit);
+route.delete('/delete/:id', auth, KitController.deleteKit);
 route.post('/upload', auth , upload.single('kit'), KitController.upload);
 route.post('/addKitToCart/:id', auth, KitController.addKitToCart);
 route.post('/deleteKitFromCart/:cart_id/:kit_id', auth, KitController.deleteKitFromCart);
