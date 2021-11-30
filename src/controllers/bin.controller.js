@@ -92,7 +92,6 @@ function tiltelCase (str) {
   return str2
 
 }
-
 exports.getBin = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
