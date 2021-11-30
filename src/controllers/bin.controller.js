@@ -71,10 +71,10 @@ exports.createBin = (req, res) => {
         if (err.code == 11000) {
           res.status(422).send({
             success: false,
-            message: tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
+            message: (tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
               '_',
               ' '
-            )} already exist`)
+            )} already exist`)).replace('Bin', 'Column')
           }) // Paste your validation fields
         }
       }
@@ -92,7 +92,6 @@ function tiltelCase (str) {
   return str2
 
 }
-
 exports.getBin = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
