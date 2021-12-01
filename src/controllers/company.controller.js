@@ -82,7 +82,7 @@ exports.getCompany = (req, res) => {
         company_name: { $ne: 'Smart Tools' },
         created_by: { $exists: true }
       }
-  // try {
+  try {
     companyModel
       .find(query)
       .populate('country_id')
@@ -93,12 +93,12 @@ exports.getCompany = (req, res) => {
       .then(company => {
         res.status(200).send({ success: true, data: company })
       })
-      // .catch(error => {
-      //   res.status(400).send({ success: false, error: error })
-      // })
-  // } catch (error) {
-  //   res.status(201).send({ success: false, error: error })
-  // }
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
 }
 
 exports.updateCompany = (req, res) => {
