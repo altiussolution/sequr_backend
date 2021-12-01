@@ -59,15 +59,15 @@ exports.createRole = (req, res) => {
         createLog(req.headers['authorization'], 'Role', 2) // Change Logs
       } else if (err) {
         if (err.code == 11000) {
-          res
-            .status(422)
-            .send({
-              success: false,
-              message: tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
+          res.status(422).send({
+            success: false,
+            message: tiltelCase(
+              `${Object.keys(err.keyPattern)[0].replace(
                 '_',
                 ' '
-              )} already exist`)
-            }) // Paste your validation fields
+              )} already exist`
+            )
+          }) // Paste your validation fields
         }
       }
     })
@@ -83,7 +83,6 @@ function tiltelCase (str) {
   }
   const str2 = arr.join(' ')
   return str2
-
 }
 exports.getRoles = (req, res) => {
   var company_id = req.query.company_id
@@ -146,15 +145,13 @@ exports.updateRole = (req, res) => {
         createLog(req.headers['authorization'], 'Roles', 1)
       })
       .catch(err => {
-        res
-          .status(200)
-          .send({
-            success: false,
-            message: `${Object.keys(err.keyPattern)[0].replace(
-              '_',
-              ' '
-            )} already exist`.toLowerCase()
-          }) // Paste your validation fields
+        res.status(200).send({
+          success: false,
+          message: `${Object.keys(err.keyPattern)[0].replace(
+            '_',
+            ' '
+          )} already exist`.toLowerCase()
+        }) // Paste your validation fields
       })
   } catch (error) {
     res.send({ status: false, error: error.name })
@@ -282,8 +279,7 @@ exports.getPermission = (req, res) => {
         active_status: 1,
         company_id: company_id,
         role_id: { $nin: ['$ SEQUR SUPERADMIN $', '$ SEQUR CUSTOMER $'] },
-        permission: { $exists: true },
-        $where: 'this.permission.length>0'
+        'permission.0': { $exists: true }
       },
       (err, roles) => {
         if (!err) {

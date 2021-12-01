@@ -77,5 +77,6 @@ const CompanySchema = Schema({
       required: true
     }
   })
+  CompanySchema.index({'$**': 'text'});
 
   module.exports = mongoose.model('company', CompanySchema);

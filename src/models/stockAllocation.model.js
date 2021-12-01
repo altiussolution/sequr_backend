@@ -88,6 +88,7 @@ const StockAllocationSchema = Schema({
     required: true
   }
 })
+StockAllocationSchema.index({'$**': 'text'});
 
 
 module.exports = mongoose.model('stockallocation', StockAllocationSchema)

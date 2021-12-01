@@ -46,6 +46,8 @@ const CategorySchema = Schema(
   },
   { timestamps: { updatedAt: 'updated_at' } }
 )
+CategorySchema.index({'$**': 'text'});
+
 
 CategorySchema.index({ category_name: 1, company_id: 1 }, { unique: true })
 CategorySchema.index({ category_code: 1, company_id: 1 }, { unique: true })

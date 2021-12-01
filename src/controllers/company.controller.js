@@ -1,5 +1,8 @@
 const { companyModel, rolesModel } = require('../models')
 var { error_code } = require('../utils/enum.utils')
+const { createLog } = require('../middleware/crud.middleware')
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 
 // exports.createCompany = (req, res) => {
 //   try {
@@ -41,10 +44,10 @@ exports.createCompany = (req, res) => {
             .status(422)
             .send({
               success: false,
-              message: tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
+              message: (tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
                 '_',
                 ' '
-              )} already exist`)
+              )} already exist`)).replace('Compartment', 'Draw')
             }) // Paste your validation fields
         }
       }
