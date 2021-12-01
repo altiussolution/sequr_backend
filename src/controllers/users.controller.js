@@ -270,7 +270,15 @@ exports.update = async (req, res) => {
           res.status(201).send({ message: 'Employee Not Found' })
         }
       }
-    )
+    ).catch(err => {
+      res.status(200).send({
+        success: false,
+        message: `${Object.keys(err.keyPattern)[0].replace(
+          '_',
+          ' '
+        )} already exist`.toLowerCase()
+      }) // Paste your validation fields
+    })
   } catch (err) {
     res.status(400).send(err)
   }
@@ -412,19 +420,21 @@ exports.resetPassword = async (req, res) => {
     if (error) return res.status(400).send(error.details[0].message)
 
     const user = await Models.userModel.findById(req.params.user_id)
-    if (!user) return res.status(400).send({
-      success: false,
-      message: 'Invalid link or expired'
-    })
+    if (!user)
+      return res.status(400).send({
+        success: false,
+        message: 'Invalid link or expired'
+      })
 
     const token = await Models.resetPasswordTokenModel.findOne({
       user_id: user._id,
       token: req.params.token
     })
-    if (!token) return  res.status(400).send({
-      success: false,
-      message: 'Invalid link or expired'
-    })
+    if (!token)
+      return res.status(400).send({
+        success: false,
+        message: 'Invalid link or expired'
+      })
 
     user.password = await bcrypt.hash(req.body.password, 10)
     await user.save()
