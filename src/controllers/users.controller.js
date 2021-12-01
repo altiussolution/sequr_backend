@@ -161,7 +161,7 @@ exports.add = async (req, res) => {
 
         res.status(422).send({
           success: false,
-          message: `${Object.keys(err.keyPattern)[0].replace(
+          message: `${Object.keys(error.keyPattern)[0].replace(
             '_',
             ' '
           )} already exist`.toLowerCase()

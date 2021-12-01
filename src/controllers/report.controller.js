@@ -167,6 +167,9 @@ exports.transactionReport = (req, res) => {
           }
         },
         {
+          $match: { 'role_doc.role_id': { $nin: ['$ SEQUR CUSTOMER $'] } }
+        },
+        {
           $match: filterQuery
         },
         {
@@ -745,7 +748,7 @@ async function addRemainingItemQty () {
       data['action'] = 'Item added on cube'
       data['stock_allocation_id'] = item._id
       data['trasaction_qty'] = item.quantity
-      data['company_id'] = data.company_id
+      data['company_id'] = item.company_id
       logData.push(data)
     }
     await logModel.insertMany(logData)
