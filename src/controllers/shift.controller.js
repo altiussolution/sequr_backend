@@ -78,8 +78,19 @@ function tiltelCase (str) {
 
 }
 exports.getShift = async (req, res) => {
+  var shift_type = req.query.shift_type
   var company_id = req.query.company_id
-  console.log(req.query)
+  var searchString = req.query.searchString
+  var query = searchString
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
+    if (shift_type) query['shift_type'] = shift_type
+    if (company_id) query['company_id'] = company_id
+  
   try {
     shift_timeModel.find(
       { active_status: 1, company_id: company_id },

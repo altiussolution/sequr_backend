@@ -6,6 +6,8 @@ var crontab = require('node-crontab')
 var generator = require('generate-password')
 const { createLog } = require('../middleware/crud.middleware')
 const { purchaseOrder } = require('./analytics.controller')
+var ObjectId = require('mongodb').ObjectID
+const { ObjectID } = require('bson')
 
 exports.addPurchaseOrder = async (req, res) => {
   try {
@@ -153,12 +155,14 @@ exports.deletePurchaseOrder = (req, res) => {
           }
         ])
         .then(async doc => {
+          console.log(doc)
           message = []
           if (doc[0].stock_doc.length > 0) {
             await message.push(
               'Please delete all the stock items refered to this purchaseOrder'
             )
           }
+          
   
           if (message.length > 0) {
             res.status(200).send({ success: true, message: message })

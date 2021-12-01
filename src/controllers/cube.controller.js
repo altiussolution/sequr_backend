@@ -136,6 +136,7 @@ exports.updateCube = (req, res) => {
 exports.getCubefilter = (req, res) => {
   var branch_name = req.query.branch_name
   var cube_type = req.query.cube_type
+  var searchString = req.query.searchString
   var employee_status = req.query.employee_status
   var company_id = req.query.company_id
   var query = searchString

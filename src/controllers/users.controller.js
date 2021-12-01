@@ -276,16 +276,15 @@ exports.update = async (req, res) => {
   }
 }
 
-exports.delete = (req, res) => {
+exports.deleteUser = (req, res) => {
   try {
-    User.findByIdAndUpdate(
-      req.query.id,
-      { active_status: 0, status: 0 },
+    User.deleteOne(
+      { _id:req.params._id},
       function (err, branch) {
         if (!err) {
           res.status(200).send({
             success: true,
-            message: 'Employee Deactivated Successfully!'
+            message: 'Employee Deleted Successfully!'
           })
           createLog(req.headers['authorization'], 'Employee', 0)
         } else {
@@ -647,5 +646,29 @@ exports.updateForgotpassword = async (req, res) => {
     res
       .status(200)
       .send({ success: false, error: err, message: 'An Error Catched' })
+  }
+}
+
+exports.delete = (req, res) => {
+  try {
+    User.findByIdAndUpdate(
+      req.query.id,
+      { active_status: 0, status: 0 },
+      function (err, branch) {
+        if (!err) {
+          res.status(200).send({
+            success: true,
+            message: 'Employee Deactivated Successfully!'
+          })
+          createLog(req.headers['authorization'], 'Employee', 0)
+        } else {
+          res
+            .status(200)
+            .send({ success: false, message: 'error in deactivating employee' })
+        }
+      }
+    )
+  } catch (err) {
+    res.status(400).send(err)
   }
 }
