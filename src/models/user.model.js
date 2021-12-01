@@ -126,6 +126,7 @@ const UserSchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
+UserSchema.index({'$**': 'text'});
 
 //UserSchema.index( { "employee_id": 1, "contact_no": 1, "email_id":1, "company_id" : 1 }, { unique: true } )
 // module.exports = mongoose.model('users', UserSchema);

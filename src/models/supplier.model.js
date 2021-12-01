@@ -77,6 +77,7 @@ const SupplierSchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
+SupplierSchema.index({'$**': 'text'});
 
 SupplierSchema.index({ "supplier_name":1,"supplier_code": 1, "supplier_address" : 1, "email_id":1, "phone_number":1, "company_id": 1 }, { unique: true });
 module.exports = mongoose.model('supplier', SupplierSchema);

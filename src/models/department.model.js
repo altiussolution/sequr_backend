@@ -40,6 +40,7 @@ const DepartmentSchema = Schema(
 )
 
 // DepartmentSchema.index( { "department_name": 1, "department_id": 1,"company_id" : 1 }, { unique: true } )
+DepartmentSchema.index({'$**': 'text'});
 
 DepartmentSchema.index({ department_name: 1, company_id: 1 }, { unique: true })
 DepartmentSchema.index({ department_id: 1, company_id: 1 }, { unique: true })

@@ -42,6 +42,8 @@ const RoleSchema = Schema({
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )
+RoleSchema.index({'$**': 'text'});
+
 RoleSchema.index({ role_name: 1, company_id: 1 }, { unique: true })
 RoleSchema.index({ role_id: 1, company_id: 1 }, { unique: true })
 

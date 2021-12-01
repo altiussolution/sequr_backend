@@ -41,6 +41,7 @@ const ShiftTimeSchema = Schema(
   },
   { timestamps: { updatedAt: 'updated_at' } }
 )
+ShiftTimeSchema.index({'$**': 'text'});
 
 ShiftTimeSchema.index({ start_time: 1, company_id: 1 }, { unique: true })
 ShiftTimeSchema.index({ end_time: 1, company_id: 1 }, { unique: true })

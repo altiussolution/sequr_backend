@@ -84,4 +84,6 @@ const PurchaseOrderSchema = Schema({
 { timestamps: { updatedAt: 'updated_at' } }
 )
 
+PurchaseOrderSchema.index({'$**': 'text'});
+
 module.exports = mongoose.model('purchaseorder', PurchaseOrderSchema)
