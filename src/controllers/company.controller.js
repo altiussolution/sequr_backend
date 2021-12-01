@@ -93,9 +93,9 @@ exports.getCompany = (req, res) => {
       .then(company => {
         res.status(200).send({ success: true, data: company })
       })
-      .catch(error => {
-        res.status(400).send({ success: false, error: error })
-      })
+      // .catch(error => {
+      //   res.status(400).send({ success: false, error: error })
+      // })
   // } catch (error) {
   //   res.status(201).send({ success: false, error: error })
   // }

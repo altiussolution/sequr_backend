@@ -758,7 +758,7 @@ async function addRemainingItemQty () {
 }
 
 // Auto Add Remaing Item in Log
-var jobId = crontab.scheduleJob('* * 1 * *', async function () {
+var jobId = crontab.scheduleJob('1 1 1 * *', async function () {
   console.log('*********** Cron Schedule Started ***********')
   await addRemainingItemQty()
   console.log('*********** Auto Item Added On Log ***********')
