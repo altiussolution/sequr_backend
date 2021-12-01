@@ -44,10 +44,10 @@ exports.createCompany = (req, res) => {
             .status(422)
             .send({
               success: false,
-              message: tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
+              message: (tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
                 '_',
                 ' '
-              )} already exist`)
+              )} already exist`)).replace('Compartment', 'Draw')
             }) // Paste your validation fields
         }
       }
