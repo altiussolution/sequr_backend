@@ -167,7 +167,7 @@ exports.transactionReport = (req, res) => {
           }
         },
         {
-          $match: { 'role_doc.role_id': { $nin: ['$ SEQUR CUSTOMER $'] } }
+          $match: { 'role_doc.role_id': { $nin: ['$ SEQUR CUSTOMER $', '$ SEQUR SUPERADMIN $'] } }
         },
         {
           $match: filterQuery

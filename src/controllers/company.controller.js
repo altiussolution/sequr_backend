@@ -29,7 +29,7 @@ const { ObjectID } = require('bson')
 // }
 exports.createCompany = (req, res) => {
   // Change your function name
-  try {
+  // try {
     var newCompany = new companyModel(req.body) // Change model name
     newCompany.save((err, doc) => {
       // past model body
@@ -40,21 +40,21 @@ exports.createCompany = (req, res) => {
         createLog(req.headers['authorization'], 'Company', 2) // Change Logs
       } else if (err) {
         if (err.code == 11000) {
-          res
-            .status(422)
-            .send({
-              success: false,
-              message: tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
+          res.status(422).send({
+            success: false,
+            message: tiltelCase(
+              `${Object.keys(err.keyPattern)[0].replace(
                 '_',
                 ' '
-              )} already exist`)
-            }) // Paste your validation fields
+              )} already exist`
+            )
+          }) // Paste your validation fields
         }
       }
     })
-  } catch (error) {
-    res.status(201).send(error)
-  }
+  // } catch (error) {
+  //   res.status(201).send(error)
+  // }
 }
 function tiltelCase (str) {
   const arr = str.split(' ')
@@ -63,7 +63,6 @@ function tiltelCase (str) {
   }
   const str2 = arr.join(' ')
   return str2
-
 }
 exports.getCompany = (req, res) => {
   var offset = parseInt(req.query.offset)
@@ -111,15 +110,13 @@ exports.updateCompany = (req, res) => {
           .send({ success: true, message: 'Company Updated Successfully!' })
       })
       .catch(err => {
-        res
-          .status(200)
-          .send({
-            success: false,
-            message: `${Object.keys(err.keyPattern)[0].replace(
-              '_',
-              ' '
-            )} already exist`.toLowerCase()
-          }) // Paste your validation fields
+        res.status(200).send({
+          success: false,
+          message: `${Object.keys(err.keyPattern)[0].replace(
+            '_',
+            ' '
+          )} already exist`.toLowerCase()
+        }) // Paste your validation fields
       })
   } catch (err) {
     res
