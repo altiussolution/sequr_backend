@@ -29,7 +29,7 @@ const { ObjectID } = require('bson')
 // }
 exports.createCompany = (req, res) => {
   // Change your function name
-  // try {
+  try {
     var newCompany = new companyModel(req.body) // Change model name
     newCompany.save((err, doc) => {
       // past model body
@@ -52,9 +52,9 @@ exports.createCompany = (req, res) => {
         }
       }
     })
-  // } catch (error) {
-  //   res.status(201).send(error)
-  // }
+  } catch (error) {
+    res.status(201).send(error)
+  }
 }
 function tiltelCase (str) {
   const arr = str.split(' ')
