@@ -65,7 +65,7 @@ exports.createBin = (req, res) => {
       if (!err) {
         res
           .status(200)
-          .send({ success: true, message: 'Bin Created Successfully!' }) //Change your meassage
+          .send({ success: true, message: 'Column Created Successfully!' }) //Change your meassage
         createLog(req.headers['authorization'], 'Bin', 2) // Change Logs
       } else if (err) {
         if (err.code == 11000) {

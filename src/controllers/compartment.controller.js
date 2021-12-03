@@ -69,8 +69,8 @@ exports.createCompartment = (req, res) => {
       if (!err) {
         res
           .status(200)
-          .send({ success: true, message: 'Compartment Created Successfully!' }) //Change your meassage
-        createLog(req.headers['authorization'], 'Compartment', 2) // Change Logs
+          .send({ success: true, message: 'Draw Created Successfully!' }) //Change your meassage
+        createLog(req.headers['authorization'], 'Draw', 2) // Change Logs
       } else if (err) {
         if (err.code == 11000) {
           res

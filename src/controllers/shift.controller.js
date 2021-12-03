@@ -93,7 +93,7 @@ exports.getShift = async (req, res) => {
   
   try {
     shift_timeModel.find(
-      { active_status: 1, company_id: company_id },
+      query,
       (err, shift) => {
         if (!err) {
           res.send({
