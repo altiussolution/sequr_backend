@@ -810,8 +810,8 @@ exports.earlyWarningReport = async (req, res) => {
   var cubeId = req.query.cube // Direct Query
   var columnId = req.query.columnId // Direct Query
 
-  var directQuery = { company_id: req.query.company_id }
-  var filterQuery = { company_id: req.query.company_id }
+  var directQuery = { company_id: ObjectId(req.query.company_id) }
+  var filterQuery = {}
   var searchQuery = [{}]
 
   // Aggregation Queries
