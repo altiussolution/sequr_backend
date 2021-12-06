@@ -576,7 +576,7 @@ exports.poAlert = (req, res) => {
   var company_id = req.query.company_id
   var query = {
     active_status: 1,
-    is_received: 0,
+    is_received: {$in : [0, 1]},
     is_auto_po: true,
     company_id: company_id
   }

@@ -159,13 +159,17 @@ exports.add = async (req, res) => {
       .catch(error => {
         console.log(error)
 
-        res.status(422).send({
-          success: false,
-          message: `${Object.keys(error.keyPattern)[0].replace(
-            '_',
-            ' '
-          )} already exist`.toLowerCase()
-        }) // Paste your validation fields
+        if (error.code == 11000) {
+          res.status(422).send({
+            success: false,
+            message: tiltelCase(
+              `${Object.keys(err.keyPattern)[0].replace(
+                '_',
+                ' '
+              )} already exist`
+            )
+          })
+        }
       })
   } catch (err) {
     console.log(err)
@@ -688,5 +692,4 @@ function tiltelCase (str) {
   }
   const str2 = arr.join(' ')
   return str2
-
 }
