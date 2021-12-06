@@ -726,6 +726,8 @@ exports.usageReport = async (req, res) => {
         },
         { $group: { _id: null, trasaction_qty: { $sum: '$trasaction_qty' } } }
       ])
+      console.log('Item added on cube')
+      console.log(itemAdded)
       // Get Item Added on cube for month
       itemTaken = await logModel.aggregate([
         {
@@ -744,11 +746,15 @@ exports.usageReport = async (req, res) => {
         },
         { $group: { _id: null, trasaction_qty: { $sum: '$trasaction_qty' } } }
       ])
+      console.log('itemTaken')
+      console.log(itemTaken)
       itemDetail = await stockAllocationModel
         .findOne({ item: item })
         .populate('item')
         .exec()
 
+      console.log('itemDetail')
+      console.log(itemDetail)
       if (itemTaken.length > 0 && itemAdded > 0) {
         item_usage = JSON.parse(JSON.stringify(itemDetail))
         item_usage['item_alloted'] = itemAdded[0].trasaction_qty
@@ -756,6 +762,9 @@ exports.usageReport = async (req, res) => {
         item_usage['item_usage'] =
           (itemTaken[0].trasaction_qty / itemAdded[0].trasaction_qty) * 100
         await totalUsageReport.push(item_usage)
+        console.log('item_usage')
+        console.log(item_usage)
+
       }
     }
   }
