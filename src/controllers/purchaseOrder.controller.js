@@ -291,7 +291,7 @@ async function sendMailToSupplier (mail, supplier, item, poQty, poNumber) {
 }
 
 // autoPurchaseOrder()
-var jobId = crontab.scheduleJob('00 41 01 * * * ', async function () {
+var jobId = crontab.scheduleJob('00 45 13 * * * ', async function () {
   console.log('*********** Cron Schedule Started ***********')
   await autoPurchaseOrder()
   console.log('*********** Mail has been sent ***********')
