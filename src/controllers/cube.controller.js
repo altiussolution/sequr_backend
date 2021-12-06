@@ -134,7 +134,7 @@ exports.updateCube = (req, res) => {
 }
 
 exports.getCubefilter = (req, res) => {
-  var branch_name = req.query.branch_name
+  var branch_id = req.query.branch_id
   var cube_type = req.query.cube_type
   var searchString = req.query.searchString
   var employee_status = req.query.employee_status
@@ -146,7 +146,7 @@ exports.getCubefilter = (req, res) => {
         $text: { $search: searchString }
       }
     : { active_status: 1, company_id: company_id }
-  if (branch_name) query['branch_name'] = branch_name
+  if (branch_id) query['branch_id'] = branch_id
   if (cube_type) query['cube_type'] = cube_type
   if (employee_status) query['employee_status'] = employee_status
   if (company_id) query['company_id'] = company_id
