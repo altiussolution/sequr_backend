@@ -13,11 +13,11 @@ exports.allocateStock = (req, res) => {
           .send({ success: true, message: 'Stock Allocated Successfully' })
         createItemAddLog(doc._id, req.body.total_quantity, req.body.company_id)
         itemModel
-          .findByIdAndUpdate(req.body.item, {
+          .findByIdAndUpdate(ObjectId(req.body.item), {
             $inc: { in_stock: -req.body.total_quantity }
           })
           .exec()
-        decrementStock(req.body._id)
+        decrementStock(req.body.item)
         createLog(req.headers['authorization'], 'Itemoncube', 2)
       } else {
         res.status(201).send({ status: false, message: err.name })
@@ -105,11 +105,11 @@ exports.updateStockAllocation = (req, res) => {
             console.log(req.body.item)
             console.log(req.body.total_quantity)
             await itemModel
-              .findByIdAndUpdate(req.body.item, {
+              .findByIdAndUpdate(ObjectId(req.body.item), {
                 $inc: { in_stock: -req.body.total_quantity }
               })
               .exec()
-            decrementStock(req.body._id)
+            decrementStock(req.body.item)
           } else {
             res
               .status(200)
@@ -402,7 +402,7 @@ function createItemAddLog (stock_id, qty, company_id) {
 function decrementStock (_id) {
   try {
     itemModel.updateOne(
-      { _id: _id, in_stock: { $lt: 0 } },
+      { _id: ObjectId(_id), in_stock: { $lt: 0 } },
       { $set: { in_stock: 0 } }
     )
   } catch (err) {

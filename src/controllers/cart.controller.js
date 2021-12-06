@@ -592,7 +592,7 @@ async function dedup_and_sum (arr, prop, prop1) {
 function decrementStockDraw (_id) {
   try {
     stockAllocationModel.updateOne(
-      { _id: _id, quantity: { $lt: 0 } },
+      { _id: ObjectId(_id), quantity: { $lt: 0 } },
       { $set: { quantity: 0 } }
     )
   } catch (err) {
