@@ -811,7 +811,7 @@ exports.earlyWarningReport = async (req, res) => {
   var columnId = req.query.columnId // Direct Query
 
   var directQuery = { company_id: req.query.company_id }
-  var filterQuery = { company_id: req.query.company_id }
+  var filterQuery = {}
   var searchQuery = [{}]
 
   // Aggregation Queries
@@ -909,6 +909,7 @@ exports.earlyWarningReport = async (req, res) => {
         }
       ])
       .then(async itemOnCube => {
+        console.log(itemOnCube)
         belowMinItems = []
         if (itemOnCube.length > 0) {
           for await (let item of itemOnCube) {
