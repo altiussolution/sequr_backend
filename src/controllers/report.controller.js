@@ -669,18 +669,18 @@ exports.usageReport = async (req, res) => {
         active_status: 1,
         company_id: company_id,
         $text: { $search: searchString },
-        updated_at: {
-          $gt: new Date(fromDate),
-          $lt: new Date(toDate)
-        }
+        // updated_at: {
+        //   $gt: new Date(fromDate),
+        //   $lt: new Date(toDate)
+        // }
       }
     : {
         active_status: 1,
         company_id: company_id,
-        updated_at: {
-          $gt: new Date(fromDate),
-          $lt: new Date(toDate)
-        }
+        // updated_at: {
+        //   $gt: new Date(fromDate),
+        //   $lt: new Date(toDate)
+        // }
       }
   // // if (dateFrom) {
 
@@ -702,10 +702,10 @@ exports.usageReport = async (req, res) => {
       stockAlloted_item = await stockAllocationModel
         .distinct('_id', {
           item: item,
-          updated_at: {
-            $gt: new Date(fromDate),
-            $lt: new Date(toDate)
-          }
+          // updated_at: {
+          //   $gt: new Date(fromDate),
+          //   $lt: new Date(toDate)
+          // }
         })
         .exec()
       console.log(stockAlloted_item)
@@ -755,7 +755,7 @@ exports.usageReport = async (req, res) => {
         item_usage['item_taken'] = itemTaken[0].trasaction_qty
         item_usage['item_usage'] =
           (itemTaken[0].trasaction_qty / itemAdded[0].trasaction_qty) * 100
-        totalUsageReport.push(item_usage)
+        await totalUsageReport.push(item_usage)
       }
     }
   }
