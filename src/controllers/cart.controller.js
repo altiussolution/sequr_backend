@@ -428,7 +428,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         createLog(
           req.headers['authorization'],
           'Machine Item',
-          'Take',
+          'Taken',
           stockAllocationItems._id,
           item.qty
         )
