@@ -595,6 +595,7 @@ function decrementStockDraw (_id) {
       { _id: ObjectId(_id), quantity: { $lt: 0 } },
       { $set: { quantity: 0 } }
     )
+    console.log(' *** item decremented to zero *** ')
   } catch (err) {
     console.log(err)
   }

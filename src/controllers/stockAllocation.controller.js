@@ -405,6 +405,7 @@ function decrementStock (_id) {
       { _id: ObjectId(_id), in_stock: { $lt: 0 } },
       { $set: { in_stock: 0 } }
     )
+    console.log(' *** item decremented to zero *** ')
   } catch (err) {
     console.log(err)
   }
