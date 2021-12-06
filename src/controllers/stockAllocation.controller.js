@@ -401,10 +401,10 @@ function createItemAddLog (stock_id, qty, company_id) {
 
 function decrementStock (_id) {
   try {
-    itemModel.updateOne(
-      { _id: ObjectId(_id), in_stock: { $lt: 0 } },
+    itemModel.updateMany(
+      {in_stock: { $lt: 0 } },
       { $set: { in_stock: 0 } }
-    )
+    ).exec()
     console.log(' *** item decremented to zero *** ')
   } catch (err) {
     console.log(err)
