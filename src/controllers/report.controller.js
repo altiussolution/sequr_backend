@@ -167,7 +167,11 @@ exports.transactionReport = (req, res) => {
           }
         },
         {
-          $match: { 'role_doc.role_id': { $nin: ['$ SEQUR CUSTOMER $', '$ SEQUR SUPERADMIN $'] } }
+          $match: {
+            'role_doc.role_id': {
+              $nin: ['$ SEQUR CUSTOMER $', '$ SEQUR SUPERADMIN $']
+            }
+          }
         },
         {
           $match: filterQuery
@@ -658,22 +662,34 @@ exports.usageReport = async (req, res) => {
   var dateTo = req.query.dateTo // Direct Query
   var searchString = req.query.searchString
   var company_id = req.query.company_id
-
+  var fromDate = moment(dateFrom).format('YYYY-MM-DD 00:00:00')
+  var toDate = moment(dateTo).format('YYYY-MM-DD 23:59:59')
   var query = searchString
     ? {
         active_status: 1,
         company_id: company_id,
-        $text: { $search: searchString }
+        $text: { $search: searchString },
+        updated_at: {
+          $gt: new Date(fromDate),
+          $lt: new Date(toDate)
+        }
       }
-    : { active_status: 1, company_id: company_id }
-  if (dateFrom) {
-    var fromDate = moment(dateFrom).format('YYYY-MM-DD 00:00:00')
-    var toDate = moment(dateTo).format('YYYY-MM-DD 23:59:59')
-    query['updated_at'] = {
-      $gt: new Date(fromDate),
-      $lt: new Date(toDate)
-    }
-  }
+    : {
+        active_status: 1,
+        company_id: company_id,
+        updated_at: {
+          $gt: new Date(fromDate),
+          $lt: new Date(toDate)
+        }
+      }
+  // // if (dateFrom) {
+
+  // query.updated_at = {
+  //   $gt: new Date(fromDate),
+  //   $lt: new Date(toDate)
+  // }
+  // }
+  console.log(query)
   stockItems = await stockAllocationModel.distinct('item', query).exec()
   totalUsageReport = []
   for await (let item of stockItems) {
@@ -686,7 +702,10 @@ exports.usageReport = async (req, res) => {
       stockAlloted_item = await stockAllocationModel
         .distinct('_id', {
           item: item,
-          updated_at: query.updated_at
+          updated_at: {
+            $gt: new Date(fromDate),
+            $lt: new Date(toDate)
+          }
         })
         .exec()
       console.log(stockAlloted_item)
@@ -697,7 +716,10 @@ exports.usageReport = async (req, res) => {
               {
                 action: 'Item added on cube',
                 stock_allocation_id: { $in: stockAlloted_item },
-                updated_at: query.updated_at
+                updated_at: {
+                  $gt: new Date(fromDate),
+                  $lt: new Date(toDate)
+                }
               }
             ]
           }
@@ -712,7 +734,10 @@ exports.usageReport = async (req, res) => {
               {
                 action: 'Taken',
                 stock_allocation_id: { $in: stockAlloted_item },
-                updated_at: query.updated_at
+                updated_at: {
+                  $gt: new Date(fromDate),
+                  $lt: new Date(toDate)
+                }
               }
             ]
           }
