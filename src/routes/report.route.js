@@ -9,6 +9,6 @@ route.get('/stockShortageReport', auth, ReportController.stockShortageReport)
 route.get('/orderReport', auth, ReportController.orderReport)
 route.get('/kittingReport', auth, ReportController.kittingReport)
 route.get('/usageReport', ReportController.usageReport)
-route.get('/earlyWarningReport', auth, ReportController.usageReport)
+route.get('/earlyWarningReport', ReportController.earlyWarningReport)
 route.get('/userSearch', ReportController.userSearch)
 module.exports = route
