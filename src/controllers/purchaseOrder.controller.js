@@ -43,7 +43,7 @@ exports.addPurchaseOrder = async (req, res) => {
               })
           } else if (req.body.is_received == 2) {
             await itemModel
-              .findByIdAndUpdate(req.body.item_id, {
+              .findByIdAndUpdate(ObjectId(req.body.item_id), {
                 $inc: { in_stock: req.body.quantity },
               })
               .exec()
@@ -108,7 +108,7 @@ exports.updatePurchaseOrder = async (req, res) => {
         console.log(purchaseOrder)
         if (req.body.is_received == 2) {
           await itemModel
-            .findByIdAndUpdate(req.body.item_id, {
+            .findByIdAndUpdate(ObjectId(req.body.item_id), {
               $inc: { in_stock: req.body.quantity },
               is_auto_po_generated: false
             })
