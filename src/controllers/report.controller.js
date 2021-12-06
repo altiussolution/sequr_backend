@@ -748,6 +748,7 @@ exports.usageReport = async (req, res) => {
       itemDetail = await stockAllocationModel
         .findOne({ item: item })
         .populate('item')
+        .populate('cube')
         .exec()
 
       console.log('itemDetail')
