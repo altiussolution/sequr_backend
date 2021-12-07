@@ -319,6 +319,8 @@ exports.updateCartAfterReturnTake = async (req, res) => {
     var current_status = 'Return'
   }
   if (cart_status) {
+    console.log('********** it is cart status ***********')
+
     // update cart document
     CartModel.findById(body.cart_id, ['cart', 'total_quantity']).then(
       async values => {
@@ -381,7 +383,9 @@ exports.updateCartAfterReturnTake = async (req, res) => {
       .status(201)
       .send({ status: true, message: `${current_status} Sucessfully` })
   }
-  if (kit_status) {
+  else if (kit_status) {
+
+    console.log('********** it is kit status***********')
     // update cart document
     CartModel.findById(body.cart_id, ['kitting', 'total_quantity']).then(
       async values => {
