@@ -391,11 +391,11 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         values.kitting[index]['kit_status'] = kit_status
         if (
           kit_status == 3 &&
-          take_item[0].kit_qty < values.kitting[index]['qty']
+          take_item[0].qty < values.kitting[index]['qty']
         ) {
           values.kitting[index]['kit_status'] = 2
           values.kitting[index]['qty'] =
-            take_item[0].kit_qty - values.kitting[index]['qty']
+            take_item[0].qty - values.kitting[index]['qty']
         }
         values.total_quantity =
           values.total_quantity - values.kitting[index]['qty']
