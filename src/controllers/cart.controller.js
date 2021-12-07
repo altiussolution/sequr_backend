@@ -390,7 +390,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
 
         values.kitting[index]['kit_status'] = kit_status
         if (
-          cart_status == 3 &&
+          kit_status == 3 &&
           take_item[0].kit_qty < values.kitting[index]['qty']
         ) {
           values.kitting[index]['kit_status'] = 2
@@ -402,7 +402,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         values.kitting = await dedup_and_sum(
           values.kitting,
           'kit_id',
-          'cart_status'
+          'kit_status'
         )
         CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
           if (err) {
