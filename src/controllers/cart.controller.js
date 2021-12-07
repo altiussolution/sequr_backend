@@ -404,6 +404,8 @@ exports.updateCartAfterReturnTake = async (req, res) => {
           'kit_id',
           'kit_status'
         )
+        console.log('********    Cart Value           *********')
+        console.log(values)
         CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
           if (err) {
             console.log(err.name)
