@@ -511,7 +511,7 @@ exports.EmployeeForgotPassword = async (req, res) => {
 
     const encryptedPassword = await bcrypt.hash(newPassword, 10)
     await User.findByIdAndUpdate(req.body.id, {
-      password: encryptedPassword
+      password: encryptedPassword, new_pass_req: false
     }).exec()
     res.send('new password sent to employee email account')
   } catch (error) {
