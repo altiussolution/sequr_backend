@@ -389,14 +389,14 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         var index = values.kitting.findIndex(p => p._id == take_item[0].cart_id)
 
         values.kitting[index]['kit_status'] = kit_status
-        if (
-          kit_status == 3 &&
-          take_item[0].qty < values.kitting[index]['qty']
-        ) {
-          values.kitting[index]['kit_status'] = 2
-          values.kitting[index]['qty'] =
-            take_item[0].qty - values.kitting[index]['qty']
-        }
+        // if (
+        //   kit_status == 3 &&
+        //   take_item[0].qty < values.kitting[index]['qty']
+        // ) {
+        //   values.kitting[index]['kit_status'] = 2
+        //   values.kitting[index]['qty'] =
+        //     take_item[0].qty - values.kitting[index]['qty']
+        // }
         values.total_quantity =
           values.total_quantity - values.kitting[index]['qty']
         values.kitting = await dedup_and_sum(
