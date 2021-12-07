@@ -327,10 +327,10 @@ exports.updateCartAfterReturnTake = async (req, res) => {
           values.cart[index]['cart_status'] = cart_status
           if (cart_status == 3 && id.qty < values.cart[index]['qty']) {
             values.cart[index]['cart_status'] = 2
-            values.cart[index]['qty'] = id.qty - values.cart[index]['qty']
+            values.cart[index]['qty'] = parseInt(values.cart[index]['qty']) - parseInt(id.qty) 
           }
           values.total_quantity =
-            values.total_quantity - values.cart[index]['qty']
+          parseInt(values.total_quantity) - parseInt(values.cart[index]['qty'])
         }
         values.cart = await dedup_and_sum(values.cart, 'item', 'cart_status')
         CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
@@ -349,7 +349,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
       if (cart_status == 2) {
         if (stockAllocationItems.quantity >= item.qty) {
           stockAllocationItems.quantity =
-            stockAllocationItems.quantity - item.qty
+          parseInt(stockAllocationItems.quantity) - parseInt(item.qty)
         } else if (stockAllocationItems.quantity < item.qty) {
           stockAllocationItems.quantity = 0
         }
@@ -361,7 +361,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
           item.qty
         )
       } else if (cart_status == 3) {
-        stockAllocationItems.quantity = stockAllocationItems.quantity + item.qty
+        stockAllocationItems.quantity = parseInt(stockAllocationItems.quantity) + parseInt(item.qty)
         createLog(
           req.headers['authorization'],
           'Machine Items',
@@ -395,10 +395,10 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         ) {
           values.kitting[index]['kit_status'] = 2
           values.kitting[index]['qty'] =
-            take_item[0].kit_qty - values.kitting[index]['qty']
+          parseInt(values.kitting[index]['qty']) - parseInt(take_item[0].kit_qty)
         }
         values.total_quantity =
-          values.total_quantity - values.kitting[index]['qty']
+        parseInt(values.total_quantity) - parseInt(values.kitting[index]['qty'])
         values.kitting = await dedup_and_sum(
           values.kitting,
           'kit_id',
@@ -421,7 +421,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
       if (kit_status == 2) {
         if (stockAllocationItems.quantity >= item.qty) {
           stockAllocationItems.quantity =
-            stockAllocationItems.quantity - item.qty * take_item[0].kit_qty
+          parseInt(stockAllocationItems.quantity) - parseInt(item.qty) * parseInt(take_item[0].kit_qty)
         } else if (stockAllocationItems.quantity < item.qty) {
           stockAllocationItems.quantity = 0
         }
@@ -434,7 +434,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         )
       } else if (kit_status == 3) {
         stockAllocationItems.quantity =
-          stockAllocationItems.quantity + item.qty * take_item[0].kit_qty
+        parseInt(stockAllocationItems.quantity) + parseInt(item.qty) * parseInt(take_item[0].kit_qty)
         createLog(
           req.headers['authorization'],
           'Machine Item',
@@ -568,7 +568,7 @@ async function dedup_and_sum (arr, prop, prop1) {
     var item = `${o[prop]} - ${o[prop1]}`
     if (item in seen) {
       // keep running sum of qty
-      var qty = seen[item].qty + o.qty
+      var qty = parseInt(seen[item].qty) + parseInt(o.qty)
       // keep this newest record's values
       seen[item] = o
       // upitem[118805291], qty=432, instock=truedate qty to our running total

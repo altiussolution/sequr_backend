@@ -42,9 +42,10 @@ exports.addPurchaseOrder = async (req, res) => {
                 )
               })
           } else if (req.body.is_received == 2) {
+            let Updatequantity = parseInt(req.body.quantity)
             await itemModel
               .findByIdAndUpdate(ObjectId(req.body.item_id), {
-                $inc: { in_stock: req.body.quantity },
+                $inc: { in_stock: Updatequantity },
               })
               .exec()
           }
@@ -107,9 +108,10 @@ exports.updatePurchaseOrder = async (req, res) => {
         createLog(req.headers['authorization'], 'PurchaseOrder', 1)
         console.log(purchaseOrder)
         if (req.body.is_received == 2) {
+          let Updatequantity = parseInt(req.body.quantity)
           await itemModel
             .findByIdAndUpdate(ObjectId(req.body.item_id), {
-              $inc: { in_stock: req.body.quantity },
+              $inc: { in_stock: Updatequantity },
               is_auto_po_generated: false
             })
             .exec()

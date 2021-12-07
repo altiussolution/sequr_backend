@@ -12,9 +12,10 @@ exports.allocateStock = (req, res) => {
           .status(200)
           .send({ success: true, message: 'Stock Allocated Successfully' })
         createItemAddLog(doc._id, req.body.total_quantity, req.body.company_id)
+        let Updatequantity = parseInt(req.body.total_quantity)
         itemModel
           .findByIdAndUpdate(ObjectId(req.body.item), {
-            $inc: { in_stock: -req.body.total_quantity }
+            $inc: { in_stock: -Updatequantity }
           })
           .exec()
         decrementStock(req.body.item)
@@ -104,9 +105,10 @@ exports.updateStockAllocation = (req, res) => {
             )
             console.log(req.body.item)
             console.log(req.body.total_quantity)
+            let Updatequantity = parseInt(req.body.total_quantity)
             await itemModel
               .findByIdAndUpdate(ObjectId(req.body.item), {
-                $inc: { in_stock: -req.body.total_quantity }
+                $inc: { in_stock: -Updatequantity }
               })
               .exec()
             decrementStock(req.body.item)
