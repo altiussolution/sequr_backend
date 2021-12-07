@@ -319,8 +319,6 @@ exports.updateCartAfterReturnTake = async (req, res) => {
     var current_status = 'Return'
   }
   if (cart_status) {
-    console.log('********** it is cart status ***********')
-
     // update cart document
     CartModel.findById(body.cart_id, ['cart', 'total_quantity']).then(
       async values => {
@@ -383,24 +381,22 @@ exports.updateCartAfterReturnTake = async (req, res) => {
       .status(201)
       .send({ status: true, message: `${current_status} Sucessfully` })
   }
-  else if (kit_status) {
-
-    console.log('********** it is kit status***********')
+  if (kit_status) {
     // update cart document
     CartModel.findById(body.cart_id, ['kitting', 'total_quantity']).then(
       async values => {
-        console.log(values)
-        var index = values.kitting.findIndex(p => p._id == take_item[0].cart_id)
+        var index = values.kitting.findIndex(p => p._id == take_item[0].kit_cart_id)
+        console.log('index       '  + index)
 
         values.kitting[index]['kit_status'] = kit_status
-        // if (
-        //   kit_status == 3 &&
-        //   take_item[0].qty < values.kitting[index]['qty']
-        // ) {
-        //   values.kitting[index]['kit_status'] = 2
-        //   values.kitting[index]['qty'] =
-        //     take_item[0].qty - values.kitting[index]['qty']
-        // }
+        if (
+          kit_status == 3 &&
+          take_item[0].kit_qty < values.kitting[index]['qty']
+        ) {
+          values.kitting[index]['kit_status'] = 2
+          values.kitting[index]['qty'] =
+            take_item[0].kit_qty - values.kitting[index]['qty']
+        }
         values.total_quantity =
           values.total_quantity - values.kitting[index]['qty']
         values.kitting = await dedup_and_sum(
@@ -408,8 +404,6 @@ exports.updateCartAfterReturnTake = async (req, res) => {
           'kit_id',
           'kit_status'
         )
-        console.log('********    Cart Value           *********')
-        console.log(values)
         CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
           if (err) {
             console.log(err.name)
@@ -419,42 +413,42 @@ exports.updateCartAfterReturnTake = async (req, res) => {
     )
     //update stockAllocation Model
 
-    for await (let item of take_item) {
-      let stockAllocationItems = await stockAllocationModel
-        .findById(ObjectId(item.stock_allocation_id))
-        .exec()
-      console.log(stockAllocationItems)
-      if (kit_status == 2) {
-        if (stockAllocationItems.quantity >= item.qty) {
-          stockAllocationItems.quantity =
-            stockAllocationItems.quantity - item.qty * take_item[0].kit_qty
-        } else if (stockAllocationItems.quantity < item.qty) {
-          stockAllocationItems.quantity = 0
-        }
-        createLog(
-          req.headers['authorization'],
-          'Machine Item',
-          'Taken',
-          stockAllocationItems._id,
-          item.qty
-        )
-      } else if (kit_status == 3) {
-        stockAllocationItems.quantity =
-          stockAllocationItems.quantity + item.qty * take_item[0].kit_qty
-        createLog(
-          req.headers['authorization'],
-          'Machine Item',
-          'Return',
-          stockAllocationItems._id,
-          item.qty
-        )
-      }
-      stockAllocationItems.updated_at = new Date()
-      await stockAllocationModel
-        .findByIdAndUpdate(item.stock_allocation_id, stockAllocationItems)
-        .exec()
-      decrementStockDraw(item.stock_allocation_id)
-    }
+    // for await (let item of take_item) {
+    //   let stockAllocationItems = await stockAllocationModel
+    //     .findById(ObjectId(item.stock_allocation_id))
+    //     .exec()
+    //   console.log(stockAllocationItems)
+    //   if (kit_status == 2) {
+    //     if (stockAllocationItems.quantity >= item.qty) {
+    //       stockAllocationItems.quantity =
+    //         stockAllocationItems.quantity - item.qty * take_item[0].kit_qty
+    //     } else if (stockAllocationItems.quantity < item.qty) {
+    //       stockAllocationItems.quantity = 0
+    //     }
+    //     createLog(
+    //       req.headers['authorization'],
+    //       'Machine Item',
+    //       'Taken',
+    //       stockAllocationItems._id,
+    //       item.qty
+    //     )
+    //   } else if (kit_status == 3) {
+    //     stockAllocationItems.quantity =
+    //       stockAllocationItems.quantity + item.qty * take_item[0].kit_qty
+    //     createLog(
+    //       req.headers['authorization'],
+    //       'Machine Item',
+    //       'Return',
+    //       stockAllocationItems._id,
+    //       item.qty
+    //     )
+    //   }
+    //   stockAllocationItems.updated_at = new Date()
+    //   await stockAllocationModel
+    //     .findByIdAndUpdate(item.stock_allocation_id, stockAllocationItems)
+    //     .exec()
+    //   decrementStockDraw(item.stock_allocation_id)
+    // }
 
     res
       .status(201)
