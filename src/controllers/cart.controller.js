@@ -413,42 +413,42 @@ exports.updateCartAfterReturnTake = async (req, res) => {
     )
     //update stockAllocation Model
 
-    // for await (let item of take_item) {
-    //   let stockAllocationItems = await stockAllocationModel
-    //     .findById(ObjectId(item.stock_allocation_id))
-    //     .exec()
-    //   console.log(stockAllocationItems)
-    //   if (kit_status == 2) {
-    //     if (stockAllocationItems.quantity >= item.qty) {
-    //       stockAllocationItems.quantity =
-    //         stockAllocationItems.quantity - item.qty * take_item[0].kit_qty
-    //     } else if (stockAllocationItems.quantity < item.qty) {
-    //       stockAllocationItems.quantity = 0
-    //     }
-    //     createLog(
-    //       req.headers['authorization'],
-    //       'Machine Item',
-    //       'Taken',
-    //       stockAllocationItems._id,
-    //       item.qty
-    //     )
-    //   } else if (kit_status == 3) {
-    //     stockAllocationItems.quantity =
-    //       stockAllocationItems.quantity + item.qty * take_item[0].kit_qty
-    //     createLog(
-    //       req.headers['authorization'],
-    //       'Machine Item',
-    //       'Return',
-    //       stockAllocationItems._id,
-    //       item.qty
-    //     )
-    //   }
-    //   stockAllocationItems.updated_at = new Date()
-    //   await stockAllocationModel
-    //     .findByIdAndUpdate(item.stock_allocation_id, stockAllocationItems)
-    //     .exec()
-    //   decrementStockDraw(item.stock_allocation_id)
-    // }
+    for await (let item of take_item) {
+      let stockAllocationItems = await stockAllocationModel
+        .findById(ObjectId(item.stock_allocation_id))
+        .exec()
+      console.log(stockAllocationItems)
+      if (kit_status == 2) {
+        if (stockAllocationItems.quantity >= item.qty) {
+          stockAllocationItems.quantity =
+            stockAllocationItems.quantity - item.qty * take_item[0].kit_qty
+        } else if (stockAllocationItems.quantity < item.qty) {
+          stockAllocationItems.quantity = 0
+        }
+        createLog(
+          req.headers['authorization'],
+          'Machine Item',
+          'Taken',
+          stockAllocationItems._id,
+          item.qty
+        )
+      } else if (kit_status == 3) {
+        stockAllocationItems.quantity =
+          stockAllocationItems.quantity + item.qty * take_item[0].kit_qty
+        createLog(
+          req.headers['authorization'],
+          'Machine Item',
+          'Return',
+          stockAllocationItems._id,
+          item.qty
+        )
+      }
+      stockAllocationItems.updated_at = new Date()
+      await stockAllocationModel
+        .findByIdAndUpdate(item.stock_allocation_id, stockAllocationItems)
+        .exec()
+      decrementStockDraw(item.stock_allocation_id)
+    }
 
     res
       .status(201)
