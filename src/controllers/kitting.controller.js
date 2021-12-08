@@ -9,9 +9,7 @@ exports.createKit = async (req, res) => {
   var body = req.body
   try {
     var kit = new kitModel(body)
-    var isKitExist = await kitModel
-      .find({ kit_name: body.kit_name, company_id: req.body.company_id })
-      .exec()
+    var isKitExist = await kitModel.find({ kit_name: body.kit_name, company_id : req.body.company_id }).exec()
     if (isKitExist.length == 0) {
       kit.save(err => {
         if (!err) {
@@ -124,40 +122,33 @@ exports.updateKit = async (req, res) => {
   try {
     var isKitExist = await kitModel.findOne({ kit_name: body.kit_name }).exec()
     if (!isKitExist || isKitExist._id == req.params.id) {
-      kitModel.findByIdAndUpdate(req.params.id, body).then(err => {
-        console.log('***** Update Kit ****')
-        console.log(err)
-        if (!err) {
+      kitModel
+        .findByIdAndUpdate(req.params.id, body)
+        .then(kitUpdate => {
           res
             .status(200)
             .send({ success: true, message: 'Kit Updated Successfully!' })
           createLog(req.headers['authorization'], 'Kitting', 1)
-        } else if (err) {
+        })  
+        .catch(err => {
           res.status(422).send({
             success: false,
-            message: tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
+            message: `${Object.keys(err.keyPattern)[0].replace(
               '_',
               ' '
-            )} already exist`.toLowerCase())
-          })
-        }
-      })
+            )} already exist`.toLowerCase()
+          }) // Paste your validation fields
+        })
+    } else {
+      res
+        .status(200)
+        .send({ success: false, message: 'Kit Name Alreadey exist' })
     }
   } catch (err) {
     res
       .status(200)
       .send({ success: false, error: err.name, message: 'An Error Catched' })
   }
-}
-
-function tiltelCase (str) {
-  const arr = str.split(' ')
-  for (var i = 0; i < arr.length; i++) {
-    arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1)
-  }
-  const str2 = arr.join(' ')
-  return str2
-
 }
 
 exports.deleteKit = (req, res) => {
