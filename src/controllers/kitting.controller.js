@@ -124,8 +124,10 @@ exports.updateKit = async (req, res) => {
   try {
     var isKitExist = await kitModel.findOne({ kit_name: body.kit_name }).exec()
     if (!isKitExist || isKitExist._id == req.params.id) {
-      kitModel.findByIdAndUpdate(req.params.id, body).then((err, kitUpdate) => {
-        if (kitUpdate) {
+      kitModel.findByIdAndUpdate(req.params.id, body).then(err => {
+        console.log('***** Update Kit ****')
+        console.log(err)
+        if (!err) {
           res
             .status(200)
             .send({ success: true, message: 'Kit Updated Successfully!' })
@@ -133,10 +135,10 @@ exports.updateKit = async (req, res) => {
         } else if (err) {
           res.status(422).send({
             success: false,
-            message: `${Object.keys(err.keyPattern)[0].replace(
+            message: tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
               '_',
               ' '
-            )} already exist`.toLowerCase()
+            )} already exist`.toLowerCase())
           })
         }
       })
@@ -146,6 +148,16 @@ exports.updateKit = async (req, res) => {
       .status(200)
       .send({ success: false, error: err.name, message: 'An Error Catched' })
   }
+}
+
+function tiltelCase (str) {
+  const arr = str.split(' ')
+  for (var i = 0; i < arr.length; i++) {
+    arr[i] = arr[i].charAt(0).toUpperCase() + arr[i].slice(1)
+  }
+  const str2 = arr.join(' ')
+  return str2
+
 }
 
 exports.deleteKit = (req, res) => {
