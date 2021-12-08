@@ -142,7 +142,7 @@ exports.updateKit = async (req, res) => {
     } else {
       res
         .status(422)
-        .send({ success: false, message: 'Kit Name Alreadey exist' })
+        .send({ success: false, message: 'Kit Name Already Exist' })
     }
   } catch (err) {
     res
