@@ -120,8 +120,8 @@ exports.getKit = (req, res) => {
 exports.updateKit = async (req, res) => {
   let body = req.body
   try {
-    var isKitExist = await kitModel.findOne({ kit_name: body.kit_name }).exec()
-    if (!isKitExist || isKitExist._id == req.params.id) {
+    var isKitExist = await kitModel.findOne({ kit_name: body.kit_name, company_id : body.company_id }).exec()
+    if (!isKitExist) {
       kitModel
         .findByIdAndUpdate(req.params.id, body)
         .then(kitUpdate => {
@@ -141,7 +141,7 @@ exports.updateKit = async (req, res) => {
         })
     } else {
       res
-        .status(200)
+        .status(422)
         .send({ success: false, message: 'Kit Name Alreadey exist' })
     }
   } catch (err) {
