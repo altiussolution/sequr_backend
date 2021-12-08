@@ -9,7 +9,9 @@ exports.createKit = async (req, res) => {
   var body = req.body
   try {
     var kit = new kitModel(body)
-    var isKitExist = await kitModel.find({ kit_name: body.kit_name, company_id : req.body.company_id }).exec()
+    var isKitExist = await kitModel
+      .find({ kit_name: body.kit_name, company_id: req.body.company_id })
+      .exec()
     if (isKitExist.length == 0) {
       kit.save(err => {
         if (!err) {
@@ -125,13 +127,15 @@ exports.updateKit = async (req, res) => {
       kitModel
         .findByIdAndUpdate(req.params.id, body)
         .then(kitUpdate => {
-          res
-            .status(200)
-            .send({ success: true, message: 'Kit Updated Successfully!' })
-          createLog(req.headers['authorization'], 'Kitting', 1)
+          if (kitUpdate) {
+            res
+              .status(200)
+              .send({ success: true, message: 'Kit Updated Successfully!' })
+            createLog(req.headers['authorization'], 'Kitting', 1)
+          }
         })
         .catch(err => {
-          res.status(200).send({
+          res.status(422).send({
             success: false,
             message: `${Object.keys(err.keyPattern)[0].replace(
               '_',
@@ -139,10 +143,6 @@ exports.updateKit = async (req, res) => {
             )} already exist`.toLowerCase()
           }) // Paste your validation fields
         })
-    } else {
-      res
-        .status(200)
-        .send({ success: false, message: 'Kit Name Alreadey exist' })
     }
   } catch (err) {
     res

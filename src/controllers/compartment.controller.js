@@ -167,7 +167,7 @@ exports.updateCompartment = (req, res) => {
       })
       .catch(err => {
         res
-          .status(200)
+          .status(422)
           .send({
             success: false,
             message: `${Object.keys(err.keyPattern)[0].replace(
