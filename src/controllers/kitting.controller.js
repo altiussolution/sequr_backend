@@ -121,7 +121,7 @@ exports.updateKit = async (req, res) => {
   let body = req.body
   try {
     var isKitExist = await kitModel.findOne({ kit_name: body.kit_name, company_id : body.company_id }).exec()
-    if (!isKitExist || isKitExist._id === req.params.id) {
+    if (!isKitExist || isKitExist._id == req.params.id) {
       kitModel
         .findByIdAndUpdate(req.params.id, body)
         .then(kitUpdate => {
