@@ -121,7 +121,7 @@ exports.updateKit = async (req, res) => {
   let body = req.body
   try {
     var isKitExist = await kitModel.findOne({ kit_name: body.kit_name, company_id : body.company_id }).exec()
-    if (!isKitExist) {
+    if (!isKitExist || isKitExist._id === req.params.id) {
       kitModel
         .findByIdAndUpdate(req.params.id, body)
         .then(kitUpdate => {
@@ -129,8 +129,11 @@ exports.updateKit = async (req, res) => {
             .status(200)
             .send({ success: true, message: 'Kit Updated Successfully!' })
           createLog(req.headers['authorization'], 'Kitting', 1)
+          console.log('*****update****')
         })  
         .catch(err => {
+          console.log('*****err****')
+          console.log(err)
           res.status(422).send({
             success: false,
             message: `${Object.keys(err.keyPattern)[0].replace(
