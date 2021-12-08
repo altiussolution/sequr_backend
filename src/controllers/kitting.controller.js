@@ -124,25 +124,22 @@ exports.updateKit = async (req, res) => {
   try {
     var isKitExist = await kitModel.findOne({ kit_name: body.kit_name }).exec()
     if (!isKitExist || isKitExist._id == req.params.id) {
-      kitModel
-        .findByIdAndUpdate(req.params.id, body)
-        .then(kitUpdate => {
-          if (kitUpdate) {
-            res
-              .status(200)
-              .send({ success: true, message: 'Kit Updated Successfully!' })
-            createLog(req.headers['authorization'], 'Kitting', 1)
-          }
-        })
-        .catch(err => {
+      kitModel.findByIdAndUpdate(req.params.id, body).then((err, kitUpdate) => {
+        if (kitUpdate) {
+          res
+            .status(200)
+            .send({ success: true, message: 'Kit Updated Successfully!' })
+          createLog(req.headers['authorization'], 'Kitting', 1)
+        } else if (err) {
           res.status(422).send({
             success: false,
             message: `${Object.keys(err.keyPattern)[0].replace(
               '_',
               ' '
             )} already exist`.toLowerCase()
-          }) // Paste your validation fields
-        })
+          })
+        }
+      })
     }
   } catch (err) {
     res
