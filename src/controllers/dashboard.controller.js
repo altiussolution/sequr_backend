@@ -337,7 +337,7 @@ exports.addMachineUsage = async (req, res) => {
     machineUsage = []
     for await (let cube of data) {
       let eachMachineUsage = {}
-      bin = await binModel.findOne({ bin_id: cube.column_id }).exec()
+      bin = await binModel.findOne({ bin_id: cube.column_id, company_id:cube.company_id }).exec()
       eachMachineUsage['cube_id'] = bin.cube_id
       eachMachineUsage['bin_id'] = bin._id
       eachMachineUsage['machine_usage'] = cube.column_usage
@@ -388,7 +388,7 @@ exports.getMachineUsage = async (req, res) => {
           {
             $match: {
               $and: [
-                { cube_id: cube._id },
+                { cube_id: ObjectId(cube._id) },
                 { created_at: { $gt: new Date(sevenDayBefore) } },
                 { created_at: { $lt: new Date(today) } }
               ]
@@ -399,7 +399,6 @@ exports.getMachineUsage = async (req, res) => {
         .sort({ created_at: 1 })
         .exec()
       // .sort({ created_at: 1 })
-
       eachCubeUsage[cube.cube_name] = {}
       eachCubeUsage[cube.cube_name]['cube_id'] = cube.cube_id
       if (cubeUsage.length > 0) {
@@ -409,7 +408,8 @@ exports.getMachineUsage = async (req, res) => {
       }
       bins = await binModel
         .find({
-          active_status: 1
+          active_status: 1,
+          cube_id : cube._id
         })
         .exec()
       eachCubeUsage[cube.cube_name]['columns'] = []

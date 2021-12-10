@@ -73,15 +73,15 @@ exports.createCompartment = (req, res) => {
         createLog(req.headers['authorization'], 'Draw', 2) // Change Logs
       } else if (err) {
         if (err.code == 11000) {
-          res
-            .status(422)
-            .send({
-              success: false,
-              message: (tiltelCase(`${Object.keys(err.keyPattern)[0].replace(
+          res.status(422).send({
+            success: false,
+            message: tiltelCase(
+              `${Object.keys(err.keyPattern)[0].replace(
                 '_',
                 ' '
-              )} already exist`)).replace('Compartment', 'Draw')
-            }) // Paste your validation fields
+              )} already exist`
+            ).replace('Compartment', 'Draw')
+          }) // Paste your validation fields
         }
       }
     })
@@ -96,7 +96,6 @@ function tiltelCase (str) {
   }
   const str2 = arr.join(' ')
   return str2
-
 }
 
 exports.getCompartment = (req, res) => {
@@ -166,15 +165,12 @@ exports.updateCompartment = (req, res) => {
         createLog(req.headers['authorization'], 'Compartment', 1)
       })
       .catch(err => {
-        res
-          .status(422)
-          .send({
-            success: false,
-            message: `${Object.keys(err.keyPattern)[0].replace(
-              '_',
-              ' '
-            )} already exist`.toLowerCase()
-          }) // Paste your validation fields
+        res.status(422).send({
+          success: false,
+          message: tiltelCase(
+            `${Object.keys(err.keyPattern)[0].replace('_', ' ')} already exist`
+          ).replace('Compartment', 'Draw')
+        }) // Paste your validation fields
       })
   } catch (err) {
     res
