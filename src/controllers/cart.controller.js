@@ -406,7 +406,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         )
         console.log('index       ' + index)
 
-        values.kitting[index]['kit_status'] = kit_status
+        values.kitting[index]['kit_status'] = kit_status      
         if (
           kit_status == 3 &&
           untaken_or_unreturned_items_list.length > 0
