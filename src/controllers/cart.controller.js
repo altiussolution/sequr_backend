@@ -310,7 +310,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
   var body = req.body
   options = { upsert: true, new: false, setDefaultsOnInsert: true }
   var take_item = body.take_items
-  var untaken_or_unreturned_items = body.untaken_or_unreturned_items
+  var untaken_or_returned_items = body.untaken_or_returned_items
   var cart_status = body.cart_status
   var kit_status = body.kit_status
   var kit_cart_id = body.kit_cart_id
@@ -386,9 +386,9 @@ exports.updateCartAfterReturnTake = async (req, res) => {
       .send({ status: true, message: `${current_status} Sucessfully` })
   }
   if (kit_status) {
-    if (untaken_or_unreturned_items.length > 0) {
-      var untaken_or_unreturned_items_list = []
-      untaken_or_unreturned_items.map(async function (k) {
+    var untaken_or_unreturned_items_list = []
+    if (untaken_or_returned_items.length > 0) {
+      untaken_or_returned_items.map(async function (k) {
         await untaken_or_unreturned_items_list.push(k.item_id)
       })
     }
@@ -397,6 +397,8 @@ exports.updateCartAfterReturnTake = async (req, res) => {
     take_item.map(async function (k) {
       await returned_item_list.push(k.item_id)
     })
+    console.log(untaken_or_unreturned_items_list)
+    console.log(returned_item_list)
 
     // update cart document
     CartModel.findById(body.cart_id, ['kitting', 'total_quantity']).then(
@@ -406,17 +408,12 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         )
         console.log('index       ' + index)
 
-        values.kitting[index]['kit_status'] = kit_status      
-        if (
-          kit_status == 3 &&
-          untaken_or_unreturned_items_list.length > 0
-        ) {
+        values.kitting[index]['kit_status'] = kit_status
+        if (kit_status == 3 && untaken_or_unreturned_items_list.length > 0) {
           values.kitting[index]['kit_status'] = 2
           values.kitting[index]['untaken_and_returned_items'] = values.kitting[
             index
-          ]['untaken_and_returned_items'].concat(
-            returned_item_list
-          )
+          ]['untaken_and_returned_items'].concat(returned_item_list)
           // values.kitting[index]['qty'] =
           //   parseInt(values.kitting[index]['qty']) -
           //   parseInt(take_item[0].kit_qty)
@@ -575,7 +572,7 @@ exports.itemHistory = async (req, res) => {
             .exec()
           stockDataJson = JSON.parse(JSON.stringify(stockData))
           stockDataJson['alloted_item_qty_in_kit'] = data.qty
-          if(val.untaken_and_returned_items.includes(stockData.item._id)){
+          if (val.untaken_and_returned_items.includes(stockData.item._id)) {
             stockDataJson['alloted_item_qty_in_kit'] = 0
           }
 
