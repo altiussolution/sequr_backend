@@ -55,7 +55,11 @@ exports.getKit = (req, res) => {
         $text: { $search: searchString },
         is_old_kit: false
       }
-    : { active_status: 1, company_id: company_id, is_old_kit: false }
+    : {
+        active_status: 1,
+        company_id: company_id,
+        $or: [{ is_old_kit: false }, { is_old_kit: { $exists: false } }]
+      }
   var _ = require('lodash')
   var binDatas = []
   var allocationDetais
@@ -313,15 +317,15 @@ exports.addKitToCart = async (req, res) => {
       .then(isInCart => {
         var items = isInCart ? isInCart.kitting : []
         // if (!isInCart) {
-          items = {
-            kitting: {
-              kit_id: kit_id,
-              qty: 1,
-              item_quantity: quantity,
-              kit_status: 1
-            }
+        items = {
+          kitting: {
+            kit_id: kit_id,
+            qty: 1,
+            item_quantity: quantity,
+            kit_status: 1
           }
-          isInCart = items
+        }
+        isInCart = items
         // } else {
         //   var checkIsKitItemExist = items.filter(
         //     obj => obj.kit_id == kit_id && obj.kit_status == 1
