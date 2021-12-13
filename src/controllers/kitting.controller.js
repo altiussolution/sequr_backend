@@ -316,7 +316,7 @@ exports.addKitToCart = async (req, res) => {
       .findOne(query, ['kitting', 'total_kitting_quantity', 'kit_status'])
       .then(isInCart => {
         var items = isInCart ? isInCart.kitting : []
-        // if (!isInCart) {
+        if (!isInCart) {
         items = {
           kitting: {
             kit_id: kit_id,
@@ -326,25 +326,25 @@ exports.addKitToCart = async (req, res) => {
           }
         }
         isInCart = items
-        // } else {
-        //   var checkIsKitItemExist = items.filter(
-        //     obj => obj.kit_id == kit_id && obj.kit_status == 1
-        //   )
-        //   if (checkIsKitItemExist.length > 0) {
-        //     var index = items.findIndex(p => p.kit_id == kit_id)
-        //     items[index].qty++
-        //     items[index].item_quantity =
-        //       items[index].item_quantity * items[index].qty
-        //   } else {
-        //     items.push({
-        //       kit_id: kit_id,
-        //       qty: 1,
-        //       item_quantity: quantity,
-        //       kit_status: 1
-        //     })
-        //   }
-        //   isInCart.kitting = items
-        // }
+        } else {
+          // var checkIsKitItemExist = items.filter(
+          //   obj => obj.kit_id == kit_id && obj.kit_status == 1
+          // )
+          // if (checkIsKitItemExist.length > 0) {
+          //   var index = items.findIndex(p => p.kit_id == kit_id)
+          //   items[index].qty++
+          //   items[index].item_quantity =
+          //     items[index].item_quantity * items[index].qty
+          // } else {
+            items.push({
+              kit_id: kit_id,
+              qty: 1,
+              item_quantity: quantity,
+              kit_status: 1
+            })
+          // }
+          isInCart.kitting = items
+        }
 
         // console.log(isInCart,'141');
 
