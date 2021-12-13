@@ -53,7 +53,8 @@ const CartSchema = Schema(
           default: Date.now
         },
         untaken_and_returned_items: {
-          type: Array
+          type: Array,
+          default: []
         },
         updated_at: {
           type: Date,
