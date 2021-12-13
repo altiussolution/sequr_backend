@@ -1,3 +1,5 @@
+const { boolean } = require('joi');
+
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
@@ -55,7 +57,13 @@ const KitSchema = Schema({
         type: Number,
         enum: [0,1],
         default: 1
-    }
+    },
+    is_old_kit: {
+        type: Boolean,
+        default : false,    
+        required : true
+    },
+
 },
 { timestamps: { updatedAt: 'updated_at' } }
 )

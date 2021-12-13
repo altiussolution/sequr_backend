@@ -9,7 +9,13 @@ exports.createKit = async (req, res) => {
   var body = req.body
   try {
     var kit = new kitModel(body)
-    var isKitExist = await kitModel.find({ kit_name: body.kit_name, company_id : req.body.company_id }).exec()
+    var isKitExist = await kitModel
+      .find({
+        kit_name: body.kit_name,
+        company_id: req.body.company_id,
+        is_old_kit: false
+      })
+      .exec()
     if (isKitExist.length == 0) {
       kit.save(err => {
         if (!err) {
@@ -46,9 +52,10 @@ exports.getKit = (req, res) => {
     ? {
         active_status: 1,
         company_id: company_id,
-        $text: { $search: searchString }
+        $text: { $search: searchString },
+        is_old_kit: false
       }
-    : { active_status: 1, company_id: company_id }
+    : { active_status: 1, company_id: company_id, is_old_kit: false }
   var _ = require('lodash')
   var binDatas = []
   var allocationDetais
@@ -119,18 +126,39 @@ exports.getKit = (req, res) => {
 
 exports.updateKit = async (req, res) => {
   let body = req.body
+  body['is_old_kit'] = true
   try {
-    var isKitExist = await kitModel.findOne({ kit_name: body.kit_name, company_id : body.company_id }).exec()
-    if (!isKitExist || isKitExist._id == req.params.id) {
+    var isKitExist = await kitModel
+      .findOne({
+        kit_name: body.kit_name,
+        company_id: body.company_id,
+        is_old_kit: true,
+        _id: { $ne: ObjectId(req.params.id) }
+      })
+      .exec()
+
+    if (!isKitExist) {
+      // Create new kit and update existing kit as old kit
       kitModel
         .findByIdAndUpdate(req.params.id, body)
         .then(kitUpdate => {
-          res
-            .status(200)
-            .send({ success: true, message: 'Kit Updated Successfully!' })
-          createLog(req.headers['authorization'], 'Kitting', 1)
-          console.log('*****update****')
-        })  
+          body['is_old_kit'] = false
+          var kit = new kitModel(body)
+          kit.save(err => {
+            if (!err) {
+              res
+                .status(200)
+                .send({ success: true, message: 'Kit Updated Successfully!' })
+              createLog(req.headers['authorization'], 'Kitting', 1)
+              console.log('*****update****')
+            } else {
+              res.status(200).send({
+                success: false,
+                message: err
+              })
+            }
+          })
+        })
         .catch(err => {
           console.log('*****err****')
           console.log(err)
@@ -147,6 +175,41 @@ exports.updateKit = async (req, res) => {
         .status(422)
         .send({ success: false, message: 'Kit Name Already Exist' })
     }
+    // Create new kit and update existing kit as old kit
+
+    // var isKitExist = await kitModel
+    //   .findOne({
+    //     kit_name: body.kit_name,
+    //     company_id: body.company_id,
+    //     is_old_kit: true
+    //   })
+    //   .exec()
+    // if (!isKitExist || isKitExist._id == req.params.id) {
+    //   kitModel
+    //     .findByIdAndUpdate(req.params.id, body)
+    //     .then(kitUpdate => {
+    //       res
+    //         .status(200)
+    //         .send({ success: true, message: 'Kit Updated Successfully!' })
+    //       createLog(req.headers['authorization'], 'Kitting', 1)
+    //       console.log('*****update****')
+    //     })
+    //     .catch(err => {
+    //       console.log('*****err****')
+    //       console.log(err)
+    //       res.status(422).send({
+    //         success: false,
+    //         message: `${Object.keys(err.keyPattern)[0].replace(
+    //           '_',
+    //           ' '
+    //         )} already exist`.toLowerCase()
+    //       }) // Paste your validation fields
+    //     })
+    // } else {
+    //   res
+    //     .status(422)
+    //     .send({ success: false, message: 'Kit Name Already Exist' })
+    // }
   } catch (err) {
     res
       .status(200)
@@ -249,7 +312,7 @@ exports.addKitToCart = async (req, res) => {
       .findOne(query, ['kitting', 'total_kitting_quantity', 'kit_status'])
       .then(isInCart => {
         var items = isInCart ? isInCart.kitting : []
-        if (!isInCart) {
+        // if (!isInCart) {
           items = {
             kitting: {
               kit_id: kit_id,
@@ -259,25 +322,25 @@ exports.addKitToCart = async (req, res) => {
             }
           }
           isInCart = items
-        } else {
-          var checkIsKitItemExist = items.filter(
-            obj => obj.kit_id == kit_id && obj.kit_status == 1
-          )
-          if (checkIsKitItemExist.length > 0) {
-            var index = items.findIndex(p => p.kit_id == kit_id)
-            items[index].qty++
-            items[index].item_quantity =
-              items[index].item_quantity * items[index].qty
-          } else {
-            items.push({
-              kit_id: kit_id,
-              qty: 1,
-              item_quantity: quantity,
-              kit_status: 1
-            })
-          }
-          isInCart.kitting = items
-        }
+        // } else {
+        //   var checkIsKitItemExist = items.filter(
+        //     obj => obj.kit_id == kit_id && obj.kit_status == 1
+        //   )
+        //   if (checkIsKitItemExist.length > 0) {
+        //     var index = items.findIndex(p => p.kit_id == kit_id)
+        //     items[index].qty++
+        //     items[index].item_quantity =
+        //       items[index].item_quantity * items[index].qty
+        //   } else {
+        //     items.push({
+        //       kit_id: kit_id,
+        //       qty: 1,
+        //       item_quantity: quantity,
+        //       kit_status: 1
+        //     })
+        //   }
+        //   isInCart.kitting = items
+        // }
 
         // console.log(isInCart,'141');
 
