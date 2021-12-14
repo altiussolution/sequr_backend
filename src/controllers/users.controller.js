@@ -122,20 +122,15 @@ exports.add = async (req, res) => {
         // Get Customer Role and Super Admin Role
         isUserRole = await rolesModel.findOne({ _id: user.role_id }).exec()
 
-        // if (isUserRole.permission.length > 0) {
-        //   if (
-        //     isUserRole.permission.includes('user') ||
-        //     !isUserRole.permission.includes('admin')
-        //   ) {
-        //     var loginPage = process.env.STAGING_USER
-        //   } else {
-        //     var loginPage = process.env.STAGING
-        //   }
-        // } else {
-        //   var loginPage = process.env.STAGING
-        // }
-        var loginPage = process.env.STAGING_USER
-
+        if (isUserRole.permission.length > 0) {
+          if (isUserRole.permission.includes('admin')) {
+            var loginPage = process.env.STAGING
+            var template = '../src/templates/registerMail'
+          } else {
+            var template = '../src/templates/registerMailUser'
+          }
+        }
+        console.log(loginPage)
         const hostname =
           process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost'
         const locals = {
@@ -148,7 +143,7 @@ exports.add = async (req, res) => {
         user.token = token
         const email = new Email()
         Promise.all([
-          email.render('../src/templates/registerMail', locals)
+          email.render(template, locals)
         ]).then(async registerMail => {
           //console.log(registerMail[0])
           await sendEmail(email_id, 'New User Signup', registerMail[0])
@@ -511,7 +506,8 @@ exports.EmployeeForgotPassword = async (req, res) => {
 
     const encryptedPassword = await bcrypt.hash(newPassword, 10)
     await User.findByIdAndUpdate(req.body.id, {
-      password: encryptedPassword, new_pass_req: false
+      password: encryptedPassword,
+      new_pass_req: false
     }).exec()
     res.send('new password sent to employee email account')
   } catch (error) {
