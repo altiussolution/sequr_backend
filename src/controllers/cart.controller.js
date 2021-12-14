@@ -430,11 +430,11 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         values.total_quantity =
           parseInt(values.total_quantity) -
           parseInt(values.kitting[index]['qty'])
-        values.kitting = await dedup_and_sum(
-          values.kitting,
-          'kit_id',
-          'kit_status'
-        )
+        // values.kitting = await dedup_and_sum(
+        //   values.kitting,
+        //   'kit_id',
+        //   'kit_status'
+        // )
         CartModel.findByIdAndUpdate(body.cart_id, values, (err, data) => {
           if (err) {
             console.log(err.name)
