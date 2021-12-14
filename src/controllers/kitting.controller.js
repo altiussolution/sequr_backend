@@ -136,7 +136,7 @@ exports.updateKit = async (req, res) => {
       .findOne({
         kit_name: body.kit_name,
         company_id: body.company_id,
-        is_old_kit: true,
+        is_old_kit: false,
         _id: { $ne: ObjectId(req.params.id) }
       })
       .exec()
