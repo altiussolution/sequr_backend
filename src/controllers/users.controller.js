@@ -123,7 +123,7 @@ exports.add = async (req, res) => {
         isUserRole = await rolesModel.findOne({ _id: user.role_id }).exec()
 
         if (isUserRole.permission.length > 0) {
-          if (isUserRole.permission.includes('admin')) {
+          if (isUserRole.permission.includes('admin') || isUserRole.permission.includes('subadmin')) {
             var loginPage = process.env.STAGING
             var template = '../src/templates/registerMail'
           } else {
