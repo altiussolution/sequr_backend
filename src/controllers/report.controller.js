@@ -1167,7 +1167,7 @@ exports.cubeStockValue = async (req, res) => {
         }
       }
       totalGroupedCubes = await groupCubes(totalStockItems)
-      res.status(200).send({ success: true, data: totalStockItems })
+      res.status(200).send({ success: true, data: totalGroupedCubes })
     })
   .catch(error => {
     res.status(400).send({ success: false, error: error })
