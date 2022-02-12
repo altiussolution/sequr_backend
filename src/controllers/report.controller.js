@@ -230,8 +230,48 @@ exports.overallStockReport = (req, res) => {
       .populate('sub_category_id')
       .skip(offset)
       .limit(limit)
-      .then(item => {
-        res.status(200).send({ success: true, item: item })
+      .then(async item => {
+        itemListWithPrices = []
+        for await (let itemId of item) {
+          totalItemPurchaseValue = await purchaseOrderModel
+            .aggregate([
+              {
+                $match: {
+                  $and: [
+                    {
+                      item_id: itemId._id,
+                      is_received: 2,
+                      remains_qty_after_allocation: { $exists: true },
+                      price_per_qty: { $exists: true }
+                    }
+                  ]
+                }
+              },
+              {
+                $group: {
+                  _id: null,
+                  totalAmount: {
+                    $sum: {
+                      $multiply: [
+                        '$price_per_qty',
+                        '$remains_qty_after_allocation'
+                      ]
+                    }
+                  }
+                }
+              }
+            ])
+            .exec()
+          console.log(totalItemPurchaseValue)
+          totalItemList = JSON.parse(JSON.stringify(itemId))
+          if (totalItemPurchaseValue.length > 0) {
+            console.log(totalItemPurchaseValue[0].totalAmount)
+            totalItemList['purchased_value'] = await totalItemPurchaseValue[0]
+              .totalAmount
+          }
+          await itemListWithPrices.push(totalItemList)
+        }
+        res.status(200).send({ success: true, item: itemListWithPrices })
       })
       .catch(error => {
         res.status(400).send({ success: false, error: error })
@@ -668,7 +708,7 @@ exports.usageReport = async (req, res) => {
     ? {
         active_status: 1,
         company_id: company_id,
-        $text: { $search: searchString },
+        $text: { $search: searchString }
         // updated_at: {
         //   $gt: new Date(fromDate),
         //   $lt: new Date(toDate)
@@ -676,7 +716,7 @@ exports.usageReport = async (req, res) => {
       }
     : {
         active_status: 1,
-        company_id: company_id,
+        company_id: company_id
         // updated_at: {
         //   $gt: new Date(fromDate),
         //   $lt: new Date(toDate)
@@ -701,7 +741,7 @@ exports.usageReport = async (req, res) => {
       // Get Item Added on cube
       stockAlloted_item = await stockAllocationModel
         .distinct('_id', {
-          item: item,
+          item: item
           // updated_at: {
           //   $gt: new Date(fromDate),
           //   $lt: new Date(toDate)
@@ -753,7 +793,7 @@ exports.usageReport = async (req, res) => {
 
       console.log('itemDetail')
       if (itemTaken.length > 0 && itemAdded.length > 0) {
-        console.log("********** if block **************")
+        console.log('********** if block **************')
         item_usage = JSON.parse(JSON.stringify(itemDetail))
         item_usage['item_alloted'] = itemAdded[0].trasaction_qty
         item_usage['item_taken'] = itemTaken[0].trasaction_qty
@@ -1016,4 +1056,96 @@ exports.userSearch = async (req, res) => {
   } catch (error) {
     res.status(201).send({ success: false, error: error })
   }
+}
+
+exports.cubeStockValue = async (req, res) => {
+  // try {
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var company_id = req.query.company_id
+  var searchString = req.query.searchString
+  var cube = req.query.in_stock
+  var item = req.query.dateFrom
+  var query = searchString
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : {
+        active_status: 1
+        // company_id: company_id
+      }
+  if (cube) {
+    query['cube'] = cube
+  }
+  if (item) {
+    query['item'] = item
+  }
+  stockAllocationModel
+    .find(query)
+    .populate({
+      path: 'category',
+      select: ['category_name']
+    })
+    .populate({
+      path: 'sub_category',
+      select: ['sub_category_name']
+    })
+    .populate('po_history.po_id', ['_id', 'price_per_qty'])
+    .skip(offset)
+    .limit(limit)
+    .then(async stockItems => {
+      // console.log(stockItems)
+      totalStockItems = []
+      for await (let cube of stockItems) {
+        if (cube.po_history.length > 0) {
+          console.log(cube.po_history.length)
+          var poHistoryList = 0
+          var isCurrentStockEqualsToLastAllocation = false
+          var remainingQtyFromPreviousPo = cube.quantity // Each Purchase Order Allocated Qty 7
+          allPoPriceInsideCube = []
+
+          while (!isCurrentStockEqualsToLastAllocation) {
+            console.log('While loop .......')
+            let purchasePrice = cube.po_history[poHistoryList]["po_id"].price_per_qty
+            let allocatedQtyFromPo =
+              cube.po_history[poHistoryList].allocated_qty // Each Purchase Order Allocated Qty
+              console.log(cube._id)
+              console.log(cube.item)
+              console.log(purchasePrice)
+              console.log(allocatedQtyFromPo)
+              console.log(remainingQtyFromPreviousPo)
+            // Check If the Last Allocated item is lesser than curren avilability in the cube
+            if (remainingQtyFromPreviousPo <= allocatedQtyFromPo) {
+              price = remainingQtyFromPreviousPo * purchasePrice
+              await allPoPriceInsideCube.push(price)
+              isCurrentStockEqualsToLastAllocation = true
+            } else {
+              price = allocatedQtyFromPo * purchasePrice
+              await allPoPriceInsideCube.push(price)
+              remainingQtyFromPreviousPo =
+                remainingQtyFromPreviousPo - allocatedQtyFromPo
+            }
+            poHistoryList++
+          }
+          cubeStringyfy = JSON.parse(JSON.stringify(cube))
+          totalCostForAllStock = allPoPriceInsideCube.reduce(function (a, b) {
+            return a + b
+          }, 0)
+          cubeStringyfy['total_purchase_price'] = totalCostForAllStock
+          await totalStockItems.push(cubeStringyfy)
+        } else {
+          await totalStockItems.push(cube)
+        }
+      }
+      res.status(200).send({ success: true, data: totalStockItems })
+    })
+  // .catch(error => {
+  //   res.status(400).send({ success: false, error: error })
+  // })
+  // } catch (error) {
+  //   console.log(error)
+  // }
 }

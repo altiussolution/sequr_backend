@@ -1,9 +1,19 @@
-const { stockAllocationModel, itemModel, logModel } = require('../models')
+const {
+  stockAllocationModel,
+  itemModel,
+  logModel,
+  purchaseOrderModel
+} = require('../models')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { ObjectID } = require('bson')
 const { func } = require('joi')
+
 exports.allocateStock = (req, res) => {
+  req.body['po_histroy'] = {
+    po_id: req.body.purchase_order,
+    allocated_qty: req.body.total_quantity
+  }
   try {
     var stock = new stockAllocationModel(req.body)
     stock.save((err, doc) => {
@@ -13,15 +23,23 @@ exports.allocateStock = (req, res) => {
           .send({ success: true, message: 'Stock Allocated Successfully' })
         createItemAddLog(doc._id, req.body.total_quantity, req.body.company_id)
         let Updatequantity = parseInt(req.body.total_quantity)
+
+        // Reduce in stock item quantity from item
         itemModel
           .findByIdAndUpdate(ObjectId(req.body.item), {
             $inc: { in_stock: -Updatequantity }
           })
           .exec()
-        decrementStock(req.body.item)
+        // Reduce Purchase order quantity from Purchase Order
+        purchaseOrderModel
+          .findByIdAndUpdate(ObjectId(req.body.purchase_order), {
+            $inc: { remains_qty_after_allocation: -Updatequantity }
+          })
+          .exec()
+        decrementStock(req.body.item, req.body.purchase_order)
         createLog(req.headers['authorization'], 'Itemoncube', 2)
       } else {
-        res.status(201).send({ status: false, message: err.name })
+        res.status(201).send({ status: false, message: err })
       }
     })
   } catch (err) {
@@ -86,10 +104,28 @@ exports.getStockAllocations = (req, res) => {
   }
 }
 
-exports.updateStockAllocation = (req, res) => {
+exports.updateStockAllocation = async (req, res) => {
   var stockId = req.params.id
   try {
     if (stockId) {
+      req.body['$push'] = {
+        po_histroy: {
+          $each: [
+            {
+              po_id: req.body.purchase_order,
+              allocated_qty: req.body.total_quantity
+            }
+          ],
+          $position: 0
+        }
+      }
+      // req.body['$push'] = {
+      //   po_histroy: {
+      //     po_id: req.body.purchase_order,
+      //     allocated_qty: req.body.total_quantity
+      //   }
+      // }
+      console.log(req.body)
       stockAllocationModel
         .findByIdAndUpdate(stockId, req.body)
         .then(async stockUpdate => {
@@ -111,7 +147,14 @@ exports.updateStockAllocation = (req, res) => {
                 $inc: { in_stock: -Updatequantity }
               })
               .exec()
-            decrementStock(req.body.item)
+
+            // Reduce Purchase order quantity from Purchase Order
+            purchaseOrderModel
+              .findByIdAndUpdate(ObjectId(req.body.purchase_order), {
+                $inc: { remains_qty_after_allocation: -Updatequantity }
+              })
+              .exec()
+            decrementStock(req.body.item, req.body.purchase_order)
           } else {
             res
               .status(200)
@@ -401,12 +444,17 @@ function createItemAddLog (stock_id, qty, company_id) {
   }
 }
 
-function decrementStock (_id) {
+function decrementStock (_id, po_id) {
   try {
-    itemModel.updateMany(
-      {in_stock: { $lt: 0 } },
-      { $set: { in_stock: 0 } }
-    ).exec()
+    itemModel
+      .updateMany({ in_stock: { $lt: 0 } }, { $set: { in_stock: 0 } })
+      .exec()
+    purchaseOrderModel
+      .updateMany(
+        { remains_qty_after_allocation: { $lt: 0 } },
+        { $set: { remains_qty_after_allocation: 0 } }
+      )
+      .exec()
     console.log(' *** item decremented to zero *** ')
   } catch (err) {
     console.log(err)

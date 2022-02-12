@@ -22,11 +22,29 @@ const logSchema = mongoose.Schema(
     trasaction_qty: {
       type: Number
     },
+    item_id: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'item'
+    },
+    po_history: [
+      {
+        po_id: {
+          type: Schema.Types.ObjectId,
+          required: true,
+          ref: 'purchaseorder'
+        },
+        used_item_qty: {
+          type: Number,
+          required: true
+        }
+      }
+    ],
     company_id: {
       type: Schema.Types.ObjectId,
       ref: 'company',
-      required : true
-  },
+      required: true
+    },
     created_at: {
       type: Date,
       default: Date.now,

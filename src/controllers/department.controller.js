@@ -267,3 +267,61 @@ exports.deleteDepartment = (req, res) => {
       .send({ success: false, error: err, message: 'An Error Catched' })
   }
 }
+
+exports.getDepartment = (req, res) => {
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var searchString = req.query.searchString
+  var company_id = req.query.company_id
+  var query = searchString
+    ? {
+        active_status: 1,
+        $text: { $search: searchString },
+        company_id: company_id
+      }
+    : { active_status: 1, company_id: company_id }
+  try {
+    departmentModel
+      .find(query)
+      .skip(offset)
+      .limit(limit)
+      .then(department => {
+        console.log(department)
+        res.status(200).send({ success: true, data: department })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    res.status(201).send({ success: false, error: error })
+  }
+}
+
+exports.updateDepartment = (req, res) => {
+  try {
+    departmentModel
+      .findByIdAndUpdate(req.params.id, req.body)
+      .then(department => {
+        res
+          .status(200)
+          .send({ success: true, message: 'Department Updated Successfully!' })
+        createLog(req.headers['authorization'], 'Department', 1)
+      })
+      .catch(err => {
+        res
+          .status(200)
+          .send({
+            success: false,
+            message: `${Object.keys(err.keyPattern)[0].replace(
+              '_',
+              ' '
+            )} already exist`.toLowerCase()
+          }) // Paste your validation fields
+      })
+  } catch (err) {
+    res
+      .status(200)
+      .send({ success: false, error: err, message: 'An Error Catched' })
+  }
+}

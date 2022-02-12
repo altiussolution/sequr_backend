@@ -11,6 +11,7 @@ const { ObjectID } = require('bson')
 
 exports.addPurchaseOrder = async (req, res) => {
   try {
+    req.body['remains_qty_after_allocation'] = req.body['quantity']
     var purchase_order = new purchaseOrderModel(req.body)
     var isPurchaseOrderExist = await purchaseOrderModel
       .findOne({ $or: [{ po_number: req.body.po_number }] })
@@ -45,7 +46,7 @@ exports.addPurchaseOrder = async (req, res) => {
             let Updatequantity = parseInt(req.body.quantity)
             await itemModel
               .findByIdAndUpdate(ObjectId(req.body.item_id), {
-                $inc: { in_stock: Updatequantity },
+                $inc: { in_stock: Updatequantity }
               })
               .exec()
           }
@@ -75,8 +76,12 @@ exports.getPurchaseOrder = (req, res) => {
   var searchString = req.query.searchString
   var company_id = req.query.company_id
   var query = searchString
-    ? { active_status: 1,company_id : company_id, $text: { $search: searchString } }
-    : { active_status: 1 , company_id:company_id}
+    ? {
+        active_status: 1,
+        company_id: company_id,
+        $text: { $search: searchString }
+      }
+    : { active_status: 1, company_id: company_id }
   try {
     purchaseOrderModel
       .find(query)
@@ -95,6 +100,7 @@ exports.getPurchaseOrder = (req, res) => {
 
 exports.updatePurchaseOrder = async (req, res) => {
   console.log(req.params.id)
+  req.body['remains_qty_after_allocation'] = req.body['quantity']
   try {
     purchaseOrderModel
       .findByIdAndUpdate(req.params.id, req.body)
@@ -138,60 +144,58 @@ exports.updatePurchaseOrder = async (req, res) => {
 }
 
 exports.deletePurchaseOrder = (req, res) => {
+  try {
+    purchaseOrderModel
+      .aggregate([
+        {
+          $match: {
+            $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
+          }
+        },
+        {
+          $lookup: {
+            from: 'stockallocations',
+            localField: '_id',
+            foreignField: 'purchase_order',
+            as: 'stock_doc'
+          }
+        }
+      ])
+      .then(async doc => {
+        console.log(doc)
+        message = []
+        if (doc[0].stock_doc.length > 0) {
+          await message.push(
+            'Please delete all the stock items refered to this purchaseOrder'
+          )
+        }
 
-    try {
-      purchaseOrderModel
-        .aggregate([
-          {
-            $match: {
-              $and: [{ _id: ObjectId(req.params.id) }, { active_status: 1 }]
-            }
-          },
-          {
-            $lookup: {
-              from: 'stockallocations',
-              localField: '_id',
-              foreignField: 'purchase_order',
-              as: 'stock_doc'
-            }
-          }
-        ])
-        .then(async doc => {
-          console.log(doc)
-          message = []
-          if (doc[0].stock_doc.length > 0) {
-            await message.push(
-              'Please delete all the stock items refered to this purchaseOrder'
-            )
-          }
-          
-  
-          if (message.length > 0) {
-            res.status(200).send({ success: true, message: message })
-          } else if (message.length == 0) {
-            purchaseOrderModel
-              .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
-              .then(purchaseOrder => {
-                res.status(200).send({
-                  success: true,
-                  message: 'PurchaseOrder Deleted Successfully!'
-                })
-                createLog(req.headers['authorization'], 'purchaseOrder', 0)
+        if (message.length > 0) {
+          res.status(200).send({ success: true, message: message })
+        } else if (message.length == 0) {
+          purchaseOrderModel
+            .deleteOne({ _id: ObjectId(req.params.id), active_status: 1 })
+            .then(purchaseOrder => {
+              res.status(200).send({
+                success: true,
+                message: 'PurchaseOrder Deleted Successfully!'
               })
-              .catch(err => {
-                res
-                  .status(200)
-                  .send({ success: false, message: 'purchaseOrder Not Found' })
-              })
-          }
-        })
-    } catch (err) {
-      res
-        .status(200)
-        .send({ success: false, error: err, message: 'An Error Catched' })
-    }
+              createLog(req.headers['authorization'], 'purchaseOrder', 0)
+            })
+            .catch(err => {
+              res
+                .status(200)
+                .send({ success: false, message: 'purchaseOrder Not Found' })
+            })
+        }
+      })
+  } catch (err) {
+    res
+      .status(200)
+      .send({ success: false, error: err, message: 'An Error Catched' })
   }
-  
+}
+
 exports.upload = async (req, res) => {
   try {
     if (req.file) {
@@ -256,7 +260,7 @@ async function autoPurchaseOrder () {
                 is_auto_po: true,
                 description: 'Auto PO Generate',
                 is_received: auto_po_or_inprogress,
-                company_id:item.company_id
+                company_id: item.company_id
               }
               // Mark this item is auto PO Generated one
               await itemModel

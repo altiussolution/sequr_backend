@@ -12,7 +12,7 @@ var storage = multer.diskStorage({
 })
 var upload = multer({ storage: storage })
 
-route.post('/add',auth, PurchaseOrderController.addPurchaseOrder)
+route.post('/add', PurchaseOrderController.addPurchaseOrder)
 route.get('/get',auth,PurchaseOrderController.getPurchaseOrder)
 route.put('/update/:id',auth,PurchaseOrderController.updatePurchaseOrder);
 route.delete('/delete/:id',auth,PurchaseOrderController.deletePurchaseOrder);

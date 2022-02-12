@@ -59,7 +59,7 @@ const StockAllocationSchema = Schema({
   company_id: {
     type: Schema.Types.ObjectId,
     ref: 'company',
-    required : true
+    required: true
   },
   created_at: {
     type: Date,
@@ -86,9 +86,25 @@ const StockAllocationSchema = Schema({
   compartment_number: {
     type: Number,
     required: true
-  }
+  },
+  po_history: [
+    {
+      po_id: {
+        type: Schema.Types.ObjectId,
+        required: true,
+        ref: 'purchaseorder'
+      },
+      allocated_qty: {
+        type: Number,
+        required: true
+      },
+      createdAt: {
+        type: Date,
+        default: Date.now
+      }
+    }
+  ]
 })
-StockAllocationSchema.index({'$**': 'text'});
-
+StockAllocationSchema.index({ '$**': 'text' })
 
 module.exports = mongoose.model('stockallocation', StockAllocationSchema)
