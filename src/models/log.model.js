@@ -24,7 +24,6 @@ const logSchema = mongoose.Schema(
     },
     item_id: {
       type: Schema.Types.ObjectId,
-      required: true,
       ref: 'item'
     },
     po_history: [

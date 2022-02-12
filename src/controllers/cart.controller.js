@@ -349,6 +349,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
       let stockAllocationItems = await stockAllocationModel
         .findById(ObjectId(item.stock_allocation_id))
         .exec()
+        const current_quantity = stockAllocationItems.quantity
       if (cart_status == 2) {
         if (stockAllocationItems.quantity >= item.qty) {
           stockAllocationItems.quantity =
@@ -356,12 +357,77 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         } else if (stockAllocationItems.quantity < item.qty) {
           stockAllocationItems.quantity = 0
         }
+        userPoHistory = []
+
+        // Creat Purchase Order History in Logs
+        if (stockAllocationItems.po_history.length > 0) {
+          isTakenQuntityInPO = false // Variable to break while loop
+          totalPurchaseOrder = []
+          var remainingQuantity = current_quantity // Toatal Stock available on cub now eg: 6 ,4
+          poHistory = 0 // Loop Through Each PO History
+
+          while (!isTakenQuntityInPO) {
+            console.log('while loop  ' + poHistory)
+            console.log(stockAllocationItems.po_history[poHistory].allocated_qty + ' >= ' + remainingQuantity)
+            if (
+              stockAllocationItems.po_history[poHistory].allocated_qty >= // 2 > 6
+              remainingQuantity
+            ) {
+              // 2 > 6
+              await totalPurchaseOrder.push(
+                stockAllocationItems.po_history[poHistory]
+              )
+              isTakenQuntityInPO = true
+            } else {
+              remainingQuantity =
+              remainingQuantity - stockAllocationItems.po_history[poHistory].allocated_qty
+                 // 6 - 2 = 4
+              await totalPurchaseOrder.push(
+                stockAllocationItems.po_history[poHistory]
+              )
+            }
+            poHistory++
+          }
+        }
+        totalPurchaseOrder = totalPurchaseOrder.reverse();
+        console.log(totalPurchaseOrder)
+
+        userTakenQuantity = parseInt(item.qty) // User Taken Quantity
+        isPoItemSubstracted = false
+        poIterate = 0
+        while (!isPoItemSubstracted) {
+          console.log('while loop  ' + poIterate)
+          if (
+            totalPurchaseOrder[poIterate].allocated_qty >= userTakenQuantity
+          ) {
+            // 2 > 1
+            await userPoHistory.push({
+              po_id: totalPurchaseOrder[poIterate].po_id,
+              used_item_qty: userTakenQuantity
+            })
+            isPoItemSubstracted = true
+          } else {
+            let userTakenQuantityInPO =
+              totalPurchaseOrder[poIterate].allocated_qty // 2
+            await userPoHistory.push({
+              po_id: totalPurchaseOrder[poIterate].po_id,
+              used_item_qty: userTakenQuantityInPO
+            }) // {po_id : PO1, qty : 2}
+            userTakenQuantity = userTakenQuantity - userTakenQuantityInPO // 3 - 2
+          }
+          poIterate++
+        }
+        console.log(userPoHistory)
+        // Creat Purchase Order History in Logs
+
         createLog(
           req.headers['authorization'],
           'Machine Items',
           'Taken',
           stockAllocationItems._id,
-          item.qty
+          item.qty,
+          userPoHistory,
+          stockAllocationItems.item
         )
       } else if (cart_status == 3) {
         stockAllocationItems.quantity =
@@ -371,7 +437,8 @@ exports.updateCartAfterReturnTake = async (req, res) => {
           'Machine Items',
           'Return',
           stockAllocationItems._id,
-          item.qty
+          item.qty,
+          stockAllocationItems.item
         )
       }
       stockAllocationItems.updated_at = new Date()
@@ -457,12 +524,77 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         } else if (stockAllocationItems.quantity < item.qty) {
           stockAllocationItems.quantity = 0
         }
+
+        userPoHistory = []
+
+        // Creat Purchase Order History in Logs
+        if (stockAllocationItems.po_history.length > 0) {
+          isTakenQuntityInPO = false // Variable to break while loop
+          totalPurchaseOrder = []
+          var remainingQuantity = current_quantity // Toatal Stock available on cub now eg: 6 ,4
+          poHistory = 0 // Loop Through Each PO History
+
+          while (!isTakenQuntityInPO) {
+            console.log('while loop  ' + poHistory)
+            console.log(stockAllocationItems.po_history[poHistory].allocated_qty + ' >= ' + remainingQuantity)
+            if (
+              stockAllocationItems.po_history[poHistory].allocated_qty >= // 2 > 6
+              remainingQuantity
+            ) {
+              // 2 > 6
+              await totalPurchaseOrder.push(
+                stockAllocationItems.po_history[poHistory]
+              )
+              isTakenQuntityInPO = true
+            } else {
+              remainingQuantity =
+              remainingQuantity - stockAllocationItems.po_history[poHistory].allocated_qty
+                 // 6 - 2 = 4
+              await totalPurchaseOrder.push(
+                stockAllocationItems.po_history[poHistory]
+              )
+            }
+            poHistory++
+          }
+        }
+        totalPurchaseOrder = totalPurchaseOrder.reverse();
+        console.log(totalPurchaseOrder)
+
+        userTakenQuantity = parseInt(item.qty) // User Taken Quantity
+        isPoItemSubstracted = false
+        poIterate = 0
+        while (!isPoItemSubstracted) {
+          console.log('while loop  ' + poIterate)
+          if (
+            totalPurchaseOrder[poIterate].allocated_qty >= userTakenQuantity
+          ) {
+            // 2 > 1
+            await userPoHistory.push({
+              po_id: totalPurchaseOrder[poIterate].po_id,
+              used_item_qty: userTakenQuantity
+            })
+            isPoItemSubstracted = true
+          } else {
+            let userTakenQuantityInPO =
+              totalPurchaseOrder[poIterate].allocated_qty // 2
+            await userPoHistory.push({
+              po_id: totalPurchaseOrder[poIterate].po_id,
+              used_item_qty: userTakenQuantityInPO
+            }) // {po_id : PO1, qty : 2}
+            userTakenQuantity = userTakenQuantity - userTakenQuantityInPO // 3 - 2
+          }
+          poIterate++
+        }
+        console.log(userPoHistory)
+        // Creat Purchase Order History in Logs
         createLog(
           req.headers['authorization'],
           'Machine Item',
           'Taken',
           stockAllocationItems._id,
-          item.qty
+          item.qty,
+          userPoHistory,
+          stockAllocationItems.item
         )
       } else if (kit_status == 3) {
         stockAllocationItems.quantity =
