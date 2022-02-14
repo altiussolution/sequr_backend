@@ -1067,8 +1067,8 @@ exports.cubeStockValue = async (req, res) => {
   var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
   var company_id = req.query.company_id
   var searchString = req.query.searchString
-  var cube = req.query.in_stock
-  var item = req.query.dateFrom
+  var cube = req.query.cube_id
+  var item = req.query.item_id
   var query = searchString
     ? {
         active_status: 1,
@@ -1076,8 +1076,8 @@ exports.cubeStockValue = async (req, res) => {
         $text: { $search: searchString }
       }
     : {
-        active_status: 1
-        // company_id: company_id
+        active_status: 1,
+        company_id: company_id
       }
   if (cube) {
     query['cube'] = cube
