@@ -10,7 +10,7 @@ const { ObjectID } = require('bson')
 const { func } = require('joi')
 
 exports.allocateStock = (req, res) => {
-  req.body['po_histroy'] = {
+  req.body['po_history'] = {
     po_id: req.body.purchase_order,
     allocated_qty: req.body.total_quantity
   }
@@ -109,7 +109,7 @@ exports.updateStockAllocation = async (req, res) => {
   try {
     if (stockId) {
       req.body['$push'] = {
-        po_histroy: {
+        po_history: {
           $each: [
             {
               po_id: req.body.purchase_order,
