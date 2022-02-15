@@ -366,7 +366,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
           var remainingQuantity = current_quantity // Toatal Stock available on cub now eg: 6 ,4
           poHistory = 0 // Loop Through Each PO History
 
-          while (!isTakenQuntityInPO) {
+          while (!isTakenQuntityInPO || stockAllocationItems.po_history.length > poHistory) {
             console.log('while loop  ' + poHistory)
             console.log(stockAllocationItems.po_history[poHistory].allocated_qty + ' >= ' + remainingQuantity)
             if (
@@ -395,7 +395,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
         userTakenQuantity = parseInt(item.qty) // User Taken Quantity
         isPoItemSubstracted = false
         poIterate = 0
-        while (!isPoItemSubstracted) {
+        while (!isPoItemSubstracted || totalPurchaseOrder.length > poIterate) {
           console.log('while loop  ' + poIterate)
           if (
             totalPurchaseOrder[poIterate].allocated_qty >= userTakenQuantity

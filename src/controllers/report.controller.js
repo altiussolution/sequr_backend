@@ -1130,7 +1130,7 @@ exports.cubeStockValue = async (req, res) => {
           var remainingQtyFromPreviousPo = cube.quantity // Each Purchase Order Allocated Qty 7
           allPoPriceInsideCube = []
 
-          while (!isCurrentStockEqualsToLastAllocation) {
+          while (!isCurrentStockEqualsToLastAllocation || cube.po_history.length > poHistoryList) {
             console.log('While loop .......')
             let purchasePrice =
               cube.po_history[poHistoryList]['po_id'].price_per_qty
