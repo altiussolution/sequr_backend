@@ -12,7 +12,6 @@ var ObjectId = require('mongodb').ObjectID
 const { find } = require('../models/item.model')
 const _ = require('lodash')
 
-
 exports.transactionReport = (req, res) => {
   var offset =
     req.query.offset != undefined ? parseInt(req.query.offset) : false
@@ -1062,116 +1061,119 @@ exports.userSearch = async (req, res) => {
 
 exports.cubeStockValue = async (req, res) => {
   try {
-  var offset =
-    req.query.offset != undefined ? parseInt(req.query.offset) : false
-  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
-  var company_id = req.query.company_id
-  var searchString = req.query.searchString
-  var cube = req.query.cube_id
-  var item = req.query.item_id
-  var query = searchString
-    ? {
-        active_status: 1,
-        company_id: company_id,
-        $text: { $search: searchString }
-      }
-    : {
-        active_status: 1,
-        company_id: company_id
-      }
-  if (cube) {
-    query['cube'] = cube
-  }
-  if (item) {
-    query['item'] = item
-  }
-  stockAllocationModel
-    .find(query)
-    .select([
-      '-bin',
-      '-compartment',
-      '-supplier',
-      '-deleted_at',
-      '-active_status',
-      '-status',
-      '-created_at',
-      '-updated_at',
-      '-__v',
-      '-description',
-      '-compartment_number'
-    ])
-    .populate({
-      path: 'category',
-      select: ['category_name']
-    })
-    .populate({
-      path: 'sub_category',
-      select: ['sub_category_name']
-    })
-    .populate({
-      path: 'cube',
-      select: ['cube_name']
-    })
-    .populate({
-      path: 'item',
-      select: ['item_name']
-    })
-    .populate('po_history.po_id', ['_id', 'price_per_qty'])
-    .skip(offset)
-    .limit(limit)
-    .then(async stockItems => {
-      // console.log(stockItems)
-      totalStockItems = []
-      for await (let cube of stockItems) {
-        if (cube.po_history.length > 0) {
-          console.log(cube.po_history.length)
-          var poHistoryList = 0
-          var isCurrentStockEqualsToLastAllocation = false
-          var remainingQtyFromPreviousPo = cube.quantity // Each Purchase Order Allocated Qty 7
-          allPoPriceInsideCube = []
-
-          while (!isCurrentStockEqualsToLastAllocation || cube.po_history.length > poHistoryList) {
-            console.log('While loop .......')
-            let purchasePrice =
-              cube.po_history[poHistoryList]['po_id'].price_per_qty
-            let allocatedQtyFromPo =
-              cube.po_history[poHistoryList].allocated_qty // Each Purchase Order Allocated Qty
-            console.log(cube._id)
-            console.log(cube.item.item_name)
-            console.log(purchasePrice)
-            console.log(allocatedQtyFromPo)
-            console.log(remainingQtyFromPreviousPo)
-            // Check If the Last Allocated item is lesser than curren avilability in the cube
-            if (remainingQtyFromPreviousPo <= allocatedQtyFromPo) {
-              price = remainingQtyFromPreviousPo * purchasePrice
-              await allPoPriceInsideCube.push(price)
-              isCurrentStockEqualsToLastAllocation = true
-            } else {
-              price = allocatedQtyFromPo * purchasePrice
-              await allPoPriceInsideCube.push(price)
-              remainingQtyFromPreviousPo =
-                remainingQtyFromPreviousPo - allocatedQtyFromPo
-            }
-            poHistoryList++
-          }
-          cubeStringyfy = JSON.parse(JSON.stringify(cube))
-          totalCostForAllStock = allPoPriceInsideCube.reduce(function (a, b) {
-            return a + b
-          }, 0)
-          cubeStringyfy['total_purchase_price'] = totalCostForAllStock
-          await totalStockItems.push(cubeStringyfy)
-        } else {
-          cubeStringyfy = JSON.parse(JSON.stringify(cube))
-          cubeStringyfy['total_purchase_price'] = 0
-          await totalStockItems.push(cubeStringyfy)
+    var offset =
+      req.query.offset != undefined ? parseInt(req.query.offset) : false
+    var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+    var company_id = req.query.company_id
+    var searchString = req.query.searchString
+    var cube = req.query.cube_id
+    var item = req.query.item_id
+    var query = searchString
+      ? {
+          active_status: 1,
+          company_id: company_id,
+          $text: { $search: searchString }
         }
-      }
-      totalGroupedCubes = await groupCubes(totalStockItems)
-      res.status(200).send({ success: true, data: totalGroupedCubes })
-    })
-  .catch(error => {
-    res.status(400).send({ success: false, error: error })
-  })
+      : {
+          active_status: 1,
+          company_id: company_id
+        }
+    if (cube) {
+      query['cube'] = cube
+    }
+    if (item) {
+      query['item'] = item
+    }
+    stockAllocationModel
+      .find(query)
+      .select([
+        '-bin',
+        '-compartment',
+        '-supplier',
+        '-deleted_at',
+        '-active_status',
+        '-status',
+        '-created_at',
+        '-updated_at',
+        '-__v',
+        '-description',
+        '-compartment_number'
+      ])
+      .populate({
+        path: 'category',
+        select: ['category_name']
+      })
+      .populate({
+        path: 'sub_category',
+        select: ['sub_category_name']
+      })
+      .populate({
+        path: 'cube',
+        select: ['cube_name']
+      })
+      .populate({
+        path: 'item',
+        select: ['item_name']
+      })
+      .populate('po_history.po_id', ['_id', 'price_per_qty'])
+      .skip(offset)
+      .limit(limit)
+      .then(async stockItems => {
+        // console.log(stockItems)
+        totalStockItems = []
+        for await (let cube of stockItems) {
+          if (cube.po_history.length > 0) {
+            console.log(cube.po_history.length)
+            var poHistoryList = 0
+            var isCurrentStockEqualsToLastAllocation = false
+            var remainingQtyFromPreviousPo = cube.quantity // Each Purchase Order Allocated Qty 7
+            allPoPriceInsideCube = []
+
+            while (
+              !isCurrentStockEqualsToLastAllocation &&
+              cube.po_history.length > poHistoryList
+            ) {
+              console.log('While loop .......')
+              let purchasePrice =
+                cube.po_history[poHistoryList]['po_id'].price_per_qty
+              let allocatedQtyFromPo =
+                cube.po_history[poHistoryList].allocated_qty // Each Purchase Order Allocated Qty
+              console.log(cube._id)
+              console.log(cube.item.item_name)
+              console.log(purchasePrice)
+              console.log(allocatedQtyFromPo)
+              console.log(remainingQtyFromPreviousPo)
+              // Check If the Last Allocated item is lesser than curren avilability in the cube
+              if (remainingQtyFromPreviousPo <= allocatedQtyFromPo) {
+                price = remainingQtyFromPreviousPo * purchasePrice
+                await allPoPriceInsideCube.push(price)
+                isCurrentStockEqualsToLastAllocation = true
+              } else {
+                price = allocatedQtyFromPo * purchasePrice
+                await allPoPriceInsideCube.push(price)
+                remainingQtyFromPreviousPo =
+                  remainingQtyFromPreviousPo - allocatedQtyFromPo
+              }
+              poHistoryList++
+            }
+            cubeStringyfy = JSON.parse(JSON.stringify(cube))
+            totalCostForAllStock = allPoPriceInsideCube.reduce(function (a, b) {
+              return a + b
+            }, 0)
+            cubeStringyfy['total_purchase_price'] = totalCostForAllStock
+            await totalStockItems.push(cubeStringyfy)
+          } else {
+            cubeStringyfy = JSON.parse(JSON.stringify(cube))
+            cubeStringyfy['total_purchase_price'] = 0
+            await totalStockItems.push(cubeStringyfy)
+          }
+        }
+        totalGroupedCubes = await groupCubes(totalStockItems)
+        res.status(200).send({ success: true, data: totalGroupedCubes })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
   } catch (error) {
     console.log(error)
   }
@@ -1187,7 +1189,7 @@ async function groupCubes (arr) {
           r.get(key) ||
           Object.assign({}, o, {
             quantity: 0,
-            total_purchase_price : 0
+            total_purchase_price: 0
           })
 
         item.quantity += o.quantity
@@ -1198,5 +1200,124 @@ async function groupCubes (arr) {
       .values()
   ]
   // let resultOmit = _.omit(result, ['_id','category']);
+  return result
+}
+
+exports.userUtilizationValueReport = async (req, res) => {
+  var offset =
+    req.query.offset != undefined ? parseInt(req.query.offset) : false
+  var limit = req.query.limit != undefined ? parseInt(req.query.limit) : false
+  var dateFrom = req.query.dateFrom // Direct Query
+  var dateTo = req.query.dateTo // Direct Query
+  var user_id = req.query.user_id
+  var item_id = req.query.item_id
+  var searchString = req.query.searchString
+  var company_id = req.query.company_id
+  try {
+    var query = searchString
+      ? {
+          active_status: 1,
+          company_id: company_id,
+          action: 'Taken',
+          $text: { $search: searchString }
+        }
+      : { active_status: 1, company_id: company_id, action: 'Taken' }
+    if (dateFrom) {
+      var fromDate = moment(dateFrom).format('YYYY-MM-DD 00:00:00')
+      var toDate = moment(dateTo).format('YYYY-MM-DD 23:59:59')
+      query['created_at'] = {
+        $gt: new Date(fromDate),
+        $lt: new Date(toDate)
+      }
+    } else {
+      var d = new Date()
+      var fromDate = moment(d.setDate(d.getDate() - 150)).format(
+        'YYYY-MM-DD 00:00:00'
+      )
+      var d2 = new Date()
+
+      var toDate = moment(d2.setDate(d.getDate() + 1)).format(
+        'YYYY-MM-DD 23:59:59'
+      )
+      query['created_at'] = {
+        $gt: new Date(fromDate),
+        $lt: new Date(toDate)
+      }
+    }
+    if (user_id) {
+      query['created_at'] = user_id
+    }
+    if (user_id) {
+      query['item_id'] = item_id
+    }
+
+    console.log(query)
+    logModel
+      .find(query)
+      .populate({
+        path: 'item_id',
+        select: ['_id', 'item_name', 'returnable']
+      })
+      .populate({
+        path: 'user_id',
+        select: ['_id', 'first_name', 'last_name']
+      })
+      .populate('po_history.po_id', ['_id', 'price_per_qty'])
+      .skip(offset)
+      .limit(limit)
+      .then(async logs => {
+        totalUserUtilization = []
+        // Loop Each Po History
+        for await (let log of logs) {
+          if (!_.isEmpty(log.item_id)) {
+            if (log.item_id.returnable == false && log.po_history.length > 0) {
+              var totalPoPurchasePrice = 0 // add purchase price for each po order loop
+              var totalTakenQty = 0 // add taken quantity for each po order loop
+              // Loop Each PO Data and Multiply  price_per_qty and taken_qty
+              for await (let poHistory of log.po_history) {
+                // totalPrice = item po price x item taken quantity
+                totalPoPurchasePrice =
+                  poHistory.po_id.price_per_qty * poHistory.used_item_qty +
+                  totalPoPurchasePrice
+                totalTakenQty = totalTakenQty + poHistory.used_item_qty
+              }
+              logStringyfy = JSON.parse(JSON.stringify(log))
+              logStringyfy['total_price_value'] = totalPoPurchasePrice
+              logStringyfy['total_taken_qty'] = totalTakenQty
+              await totalUserUtilization.push(logStringyfy)
+            }
+          }
+        }
+        groupByDateReport = await groupByDates(totalUserUtilization)
+        res.status(200).send({ success: true, data: groupByDateReport })
+      })
+      .catch(error => {
+        res.status(400).send({ success: false, error: error })
+      })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function groupByDates (arr) {
+  let result = [
+    ...arr
+      .reduce((r, o) => {
+        const key =
+          moment(o.created_at).format('YYYY-MM-DD 00:00:00') + '-' + o.user_id
+        const item =
+          r.get(key) ||
+          Object.assign({}, o, {
+            total_price_value: 0,
+            total_taken_qty: 0
+          })
+
+        item.total_price_value += o.total_price_value
+        item.total_taken_qty += o.total_taken_qty
+
+        return r.set(key, item)
+      }, new Map())
+      .values()
+  ]
   return result
 }

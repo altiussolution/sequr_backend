@@ -12,4 +12,5 @@ route.get('/usageReport', auth, ReportController.usageReport)
 route.get('/earlyWarningReport',auth, ReportController.earlyWarningReport)
 route.get('/userSearch', ReportController.userSearch)
 route.get('/cubeStockValue', ReportController.cubeStockValue)
+route.get('/userUtilizationValueReport', ReportController.userUtilizationValueReport)
 module.exports = route
