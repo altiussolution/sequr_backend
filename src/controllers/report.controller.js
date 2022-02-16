@@ -1285,15 +1285,20 @@ exports.userUtilizationValueReport = async (req, res) => {
                   totalPoPurchasePrice
                 totalTakenQty = totalTakenQty + poHistory.used_item_qty
               }
-              console.log(totalPoPurchasePrice)
+              console.log('totalPoPurchasePrice   '   +   totalPoPurchasePrice)
               logStringyfy = await JSON.parse(JSON.stringify(log))
               logStringyfy['total_price_value'] = totalPoPurchasePrice
               logStringyfy['total_taken_qty'] = totalTakenQty
+              console.log(logStringyfy)
+              console.log('Before Pushing')
               await totalUserUtilization.push(logStringyfy)
             }
           }
         }
         groupByDateReport = await groupByDates(totalUserUtilization)
+        console.log('After Grouping by dated')
+        console.log(groupByDateReport)
+
         res.status(200).send({ success: true, data: groupByDateReport })
       })
       .catch(error => {
