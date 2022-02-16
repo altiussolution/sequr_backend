@@ -388,6 +388,8 @@ exports.updateCartAfterReturnTake = async (req, res) => {
             }
             poHistory++
           }
+          totalPurchaseOrder = totalPurchaseOrder.reverse();
+          console.log(totalPurchaseOrder)
         }
         totalPurchaseOrder = totalPurchaseOrder.reverse();
         console.log(totalPurchaseOrder)
