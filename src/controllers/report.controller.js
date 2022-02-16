@@ -1276,8 +1276,9 @@ exports.userUtilizationValueReport = async (req, res) => {
               // Loop Each PO Data and Multiply  price_per_qty and taken_qty
               for await (let poHistory of log.po_history) {
                 // totalPrice = item po price x item taken quantity
+                console.log(totalPoPurchasePrice)
                 totalPoPurchasePrice =
-                  poHistory.po_id.price_per_qty * poHistory.used_item_qty +
+                  (poHistory.po_id.price_per_qty * poHistory.used_item_qty) +
                   totalPoPurchasePrice
                 totalTakenQty = totalTakenQty + poHistory.used_item_qty
               }
