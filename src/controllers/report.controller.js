@@ -1276,30 +1276,20 @@ exports.userUtilizationValueReport = async (req, res) => {
               // Loop Each PO Data and Multiply  price_per_qty and taken_qty
               for await (let poHistory of log.po_history) {
                 // totalPrice = item po price x item taken quantity
-                console.log(log._id)
-                console.log(totalPoPurchasePrice)
-                console.log(poHistory.po_id.price_per_qty)
-                console.log(poHistory.used_item_qty)
-                totalPoPurchasePrice = await
-                  (poHistory.po_id.price_per_qty * poHistory.used_item_qty) +
+                totalPoPurchasePrice =
+                  poHistory.po_id.price_per_qty * poHistory.used_item_qty +
                   totalPoPurchasePrice
                 totalTakenQty = totalTakenQty + poHistory.used_item_qty
               }
-              logStringyfy = await JSON.parse(JSON.stringify(log))
+              logStringyfy = JSON.parse(JSON.stringify(log))
               logStringyfy['total_price_value'] = totalPoPurchasePrice
               logStringyfy['total_taken_qty'] = totalTakenQty
-              console.log('Before Pushing')
               await totalUserUtilization.push(logStringyfy)
             }
           }
         }
-        console.log('before Grouping by dated')
-        console.log(totalUserUtilization)
         groupByDateReport = await groupByDates(totalUserUtilization)
-        console.log('After Grouping by dated')
-        // console.log(groupByDateReport)
-
-        res.status(200).send({ success: true, data: groupByDateReport, data2 : totalUserUtilization })
+        res.status(200).send({ success: true, data: groupByDateReport })
       })
       .catch(error => {
         res.status(400).send({ success: false, error: error })
