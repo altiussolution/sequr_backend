@@ -1299,7 +1299,7 @@ exports.userUtilizationValueReport = async (req, res) => {
         console.log('After Grouping by dated')
         // console.log(groupByDateReport)
 
-        res.status(200).send({ success: true, data: groupByDateReport })
+        res.status(200).send({ success: true, data: groupByDateReport, data2 : totalUserUtilization })
       })
       .catch(error => {
         res.status(400).send({ success: false, error: error })
