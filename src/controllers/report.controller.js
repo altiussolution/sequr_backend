@@ -1285,6 +1285,7 @@ exports.userUtilizationValueReport = async (req, res) => {
                   totalPoPurchasePrice
                 totalTakenQty = totalTakenQty + poHistory.used_item_qty
               }
+              console.log(totalPoPurchasePrice)
               logStringyfy = await JSON.parse(JSON.stringify(log))
               logStringyfy['total_price_value'] = totalPoPurchasePrice
               logStringyfy['total_taken_qty'] = totalTakenQty
