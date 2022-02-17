@@ -1245,7 +1245,7 @@ exports.userUtilizationValueReport = async (req, res) => {
       }
     }
     if (user_id) {
-      query['created_at'] = user_id
+      query['user_id'] = user_id
     }
     if (user_id) {
       query['item_id'] = item_id
