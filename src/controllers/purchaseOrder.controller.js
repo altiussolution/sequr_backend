@@ -164,7 +164,9 @@ exports.deletePurchaseOrder = (req, res) => {
       .then(async doc => {
         console.log(doc)
         message = []
-        if (doc[0].stock_doc.length > 0) {
+        if (doc[0].is_received == 2) {
+          await message.push('Unable to Delete Received PO')
+        } else if (doc[0].stock_doc.length > 0) {
           await message.push(
             'Please delete all the stock items refered to this purchaseOrder'
           )
