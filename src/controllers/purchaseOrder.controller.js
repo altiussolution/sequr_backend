@@ -75,7 +75,7 @@ exports.addPurchaseOrder = async (req, res) => {
 exports.getPurchaseOrder = (req, res) => {
   var searchString = req.query.searchString
   var company_id = req.query.company_id
-  var company_id = req.query.remains_qty_after_allocation
+  var remains_qty_after_allocation = req.query.remains_qty_after_allocation
   var query = searchString
     ? {
         active_status: 1,
