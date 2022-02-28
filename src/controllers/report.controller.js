@@ -1267,6 +1267,8 @@ exports.userUtilizationValueReport = async (req, res) => {
       .limit(limit)
       .then(async logs => {
         totalUserUtilization = []
+        console.log('logs')
+        console.log(logs)
         // Loop Each Po History
         for await (let log of logs) {
           if (!_.isEmpty(log.item_id)) {
@@ -1288,6 +1290,8 @@ exports.userUtilizationValueReport = async (req, res) => {
             }
           }
         }
+        console.log(totalUserUtilization)
+        console.log('totalUserUtilization')
         groupByDateReport = await groupByDates(totalUserUtilization)
         console.log(groupByDateReport)
         res.status(200).send({ success: true, data: groupByDateReport })
