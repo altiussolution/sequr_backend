@@ -75,6 +75,7 @@ exports.addPurchaseOrder = async (req, res) => {
 exports.getPurchaseOrder = (req, res) => {
   var searchString = req.query.searchString
   var company_id = req.query.company_id
+  var company_id = req.query.remains_qty_after_allocation
   var query = searchString
     ? {
         active_status: 1,
@@ -82,6 +83,12 @@ exports.getPurchaseOrder = (req, res) => {
         $text: { $search: searchString }
       }
     : { active_status: 1, company_id: company_id }
+
+  if (remains_qty_after_allocation) {
+    query['remains_qty_after_allocation'] = {
+      $ne: remains_qty_after_allocation
+    }
+  }
   try {
     purchaseOrderModel
       .find(query)
