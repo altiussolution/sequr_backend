@@ -1216,12 +1216,12 @@ exports.userUtilizationValueReport = async (req, res) => {
   try {
     var query = searchString
       ? {
-          active_status: 1,
+          // active_status: 1,
           company_id: company_id,
           action: 'Taken',
           $text: { $search: searchString }
         }
-      : { active_status: 1, company_id: company_id, action: 'Taken' }
+      : { company_id: company_id, action: 'Taken' }
     if (dateFrom) {
       var fromDate = moment(dateFrom).format('YYYY-MM-DD 00:00:00')
       var toDate = moment(dateTo).format('YYYY-MM-DD 23:59:59')
@@ -1289,6 +1289,7 @@ exports.userUtilizationValueReport = async (req, res) => {
           }
         }
         groupByDateReport = await groupByDates(totalUserUtilization)
+        console.log(groupByDateReport)
         res.status(200).send({ success: true, data: groupByDateReport })
       })
       .catch(error => {
