@@ -1240,8 +1240,8 @@ exports.userUtilizationValueReport = async (req, res) => {
         'YYYY-MM-DD 23:59:59'
       )
       query['created_at'] = {
-        $gt: new Date(fromDate),
-        $lt: new Date(toDate)
+        $gt: new Date(fromDate)
+        // $lt: new Date(toDate)
       }
     }
     if (user_id) {
