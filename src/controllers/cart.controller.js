@@ -556,8 +556,10 @@ exports.updateCartAfterReturnTake = async (req, res) => {
               remainingQuantity
             ) {
               // 2 > 6
+              let stockLastItem = JSON.parse(JSON.stringify(stockAllocationItems.po_history[poHistory]))
+              stockLastItem['allocated_qty'] = remainingQuantity
               await totalPurchaseOrder.push(
-                stockAllocationItems.po_history[poHistory]
+                stockLastItem
               )
               isTakenQuntityInPO = true
             } else {
@@ -572,16 +574,18 @@ exports.updateCartAfterReturnTake = async (req, res) => {
             poHistory++
           }
         }
+        //PO-01 = 5  //PO-01 = 4
+        //PO-02 = 5  //PO-02 = 5
         totalPurchaseOrderReverse = await totalPurchaseOrder.reverse()
-        console.log(totalPurchaseOrderReverse)
-
+        // totalPurchaseOrderReverse = [PO-02, PO-01]
         userTakenQuantity = parseInt(item.qty) // User Taken Quantity
         isPoItemSubstracted = false
         poIterate = 0
         while (!isPoItemSubstracted) {
           console.log('while loop  ' + poIterate)
           if (
-            totalPurchaseOrderReverse[poIterate].allocated_qty >= userTakenQuantity
+            totalPurchaseOrderReverse[poIterate].allocated_qty >=
+            userTakenQuantity
           ) {
             // 2 > 1
             await userPoHistory.push({
@@ -591,7 +595,7 @@ exports.updateCartAfterReturnTake = async (req, res) => {
             isPoItemSubstracted = true
           } else {
             let userTakenQuantityInPO =
-            totalPurchaseOrderReverse[poIterate].allocated_qty // 2
+              totalPurchaseOrderReverse[poIterate].allocated_qty // 2
             await userPoHistory.push({
               po_id: totalPurchaseOrderReverse[poIterate].po_id,
               used_item_qty: userTakenQuantityInPO
