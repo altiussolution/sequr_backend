@@ -9,8 +9,12 @@ route.get('/stockShortageReport', auth, ReportController.stockShortageReport)
 route.get('/orderReport', auth, ReportController.orderReport)
 route.get('/kittingReport', auth, ReportController.kittingReport)
 route.get('/usageReport', auth, ReportController.usageReport)
-route.get('/earlyWarningReport',auth, ReportController.earlyWarningReport)
-route.get('/userSearch', ReportController.userSearch)
-route.get('/cubeStockValue', ReportController.cubeStockValue)
-route.get('/userUtilizationValueReport', ReportController.userUtilizationValueReport)
+route.get('/earlyWarningReport', auth, ReportController.earlyWarningReport)
+route.get('/userSearch', auth, ReportController.userSearch)
+route.get('/cubeStockValue', auth, ReportController.cubeStockValue)
+route.get(
+  '/userUtilizationValueReport',
+  auth,
+  ReportController.userUtilizationValueReport
+)
 module.exports = route
