@@ -76,6 +76,7 @@ exports.getPurchaseOrder = (req, res) => {
   var searchString = req.query.searchString
   var company_id = req.query.company_id
   var remains_qty_after_allocation = req.query.remains_qty_after_allocation
+  var is_received = req.query.is_received
   var query = searchString
     ? {
         active_status: 1,
@@ -88,6 +89,10 @@ exports.getPurchaseOrder = (req, res) => {
     query['remains_qty_after_allocation'] = {
       $ne: remains_qty_after_allocation
     }
+  }
+
+  if (is_received) {
+    query['is_received'] = is_received
   }
   try {
     purchaseOrderModel
