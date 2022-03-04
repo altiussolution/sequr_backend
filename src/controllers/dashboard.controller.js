@@ -531,6 +531,9 @@ exports.calibrationMonthNotification = async (req, res) => {
             }
           }
           res.status(200).send({ success: true, data: notifyItems })
+        }else{
+          res.status(200).send({ success: true, data: [] })
+
         }
       })
   } catch (error) {
