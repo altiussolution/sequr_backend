@@ -1,5 +1,6 @@
 require('dotenv').config();
-const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
+// const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
+const hostname = '172.31.45.190'
 var mkdirp = require('mkdirp');
 const port = 4500; 
 var express = require('express')
