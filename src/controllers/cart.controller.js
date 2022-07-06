@@ -647,7 +647,7 @@ exports.myCart = async (req, res) => {
     // var userId = ObjectId('615d38fcb3b43020c778f381')
     var userId = req.query.user_id
     var company_id = req.query.company_id
-    cartItems = await CartModel.find({ user: userId, status: Cart.In_Cart }, [
+    cartItems = await CartModel.find({ user: userId, status: Cart.In_Cart,cartinfo : 1 }, [
       'cart',
       'total_quantity',
       'cart_status'
