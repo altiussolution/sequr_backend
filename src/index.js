@@ -1,6 +1,8 @@
 require('dotenv').config();
 // const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
-const hostname = '172.31.45.190'
+//const hostname = '172.31.45.190'
+const TortoiseDB = require('tortoisedb');
+const hostname = 'localhost'
 var mkdirp = require('mkdirp');
 const port = 4500; 
 var express = require('express')
@@ -35,8 +37,20 @@ app.listen(port, hostname, () => {
 });
 
 app.use(express.static(__dirname + '/public'))
-
+const server = new TortoiseDB({
+    // Choose database name  - defaults to 'default' if not provided
+    name: 'sequr4',
+    // Set server port - defaults to process.env.PORT if not provided
+    port: 3000,
+    // Provide mongodb URI - defaults to process.env.MONGODB_URI if not provided
+    mongoURI: 'mongodb://localhost:27017',
+    // Set batch limit - defaults to 1000 if not provided
+    batchLimit: 1000
+  });
+   
+server.start();
 let mongoose = require('mongoose');
+mongoose.pluralize(null);
 
 const dbPath = process.env['MONGODB_URI'];
 

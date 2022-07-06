@@ -22,7 +22,7 @@ const CartModel = require("./cart.model")
 const machineUsageModel = require("./machineUsage.model")
 const logModel = require("./log.model")
 const companyModel = require("./company.model")
-
+const storeModel  = require("./store.model")
 
 module.exports = {
     branchModel,
@@ -48,5 +48,6 @@ module.exports = {
     CartModel,
     machineUsageModel,
     logModel,
-    companyModel
+    companyModel,
+    storeModel
 }
