@@ -1,8 +1,7 @@
 require('dotenv').config();
 // const hostname = process.env['USER'] == 'ubuntu' ? '172.31.45.190' : 'localhost';
-//const hostname = '172.31.45.190'
+const hostname = '172.31.45.190'
 const TortoiseDB = require('tortoisedb');
-const hostname = 'localhost'
 var mkdirp = require('mkdirp');
 const port = 4500; 
 var express = require('express')
@@ -50,7 +49,7 @@ const server = new TortoiseDB({
    
 server.start();
 let mongoose = require('mongoose');
-mongoose.pluralize(null);
+ mongoose.pluralize(null);
 
 const dbPath = process.env['MONGODB_URI'];
 
