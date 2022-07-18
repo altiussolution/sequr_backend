@@ -10,6 +10,10 @@ const CartSchema = Schema(
       required: true,
       ref: 'users'
     },
+    cartinfo : {
+      type: Number,
+      default : 1
+    },
     cart: [
       {
         item: {
