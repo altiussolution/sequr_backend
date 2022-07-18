@@ -801,7 +801,7 @@ function cartdetails () {
     }).sort({$natural:-1}).limit(1)
    .then (data => {
     console.log(data)
-const newid = data.cart.length
+//const newid = data.cart.length
 //console.log(newid)
      
 if (data.cart.length == 4 ) {
