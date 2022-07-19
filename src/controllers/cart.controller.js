@@ -829,6 +829,38 @@ var cartqty5 = data.cart[4].qty
  var cartstatus5 = data.cart[4].cart_status
  var query = { "cart.0.qty" : cartqty1,"cart.1.qty" : cartqty2,"cart.2.qty" : cartqty3, "cart.3.qty" : cartqty4,"cart.4.qty" : cartqty5, "cart.0.cart_status": cartstatus1, "cart.1.cart_status" : cartstatus2, "cart.2.cart_status" : cartstatus3, "cart.3.cart_status" : cartstatus4,"cart.4.cart_status" : cartstatus5}
 }
+if (data.cart.length == 6 ) {
+  var cartqty1 = data.cart[0].qty
+  var cartqty2 = data.cart[1].qty
+  var cartqty3 = data.cart[2].qty
+  var cartqty4 = data.cart[3].qty
+ var cartqty5 = data.cart[4].qty
+ var cartqty6 = data.cart[5].qty
+  var cartstatus1 = data.cart[0].cart_status
+  var cartstatus2 = data.cart[1].cart_status
+  var cartstatus3 = data.cart[2].cart_status
+  var cartstatus4 = data.cart[3].cart_status
+  var cartstatus5 = data.cart[4].cart_status
+  var cartstatus6 = data.cart[5].cart_status
+  var query = { "cart.0.qty" : cartqty1,"cart.1.qty" : cartqty2,"cart.2.qty" : cartqty3, "cart.3.qty" : cartqty4,"cart.4.qty" : cartqty5,"cart.5.qty" : cartqty6, "cart.0.cart_status": cartstatus1, "cart.1.cart_status" : cartstatus2, "cart.2.cart_status" : cartstatus3, "cart.3.cart_status" : cartstatus4,"cart.4.cart_status" : cartstatus5, "cart.5.cart_status":cartstatus6}
+ }
+ if (data.cart.length == 7 ) {
+  var cartqty1 = data.cart[0].qty
+  var cartqty2 = data.cart[1].qty
+  var cartqty3 = data.cart[2].qty
+  var cartqty4 = data.cart[3].qty
+ var cartqty5 = data.cart[4].qty
+ var cartqty6 = data.cart[5].qty
+ var cartqty7 = data.cart[6].qty
+  var cartstatus1 = data.cart[0].cart_status
+  var cartstatus2 = data.cart[1].cart_status
+  var cartstatus3 = data.cart[2].cart_status
+  var cartstatus4 = data.cart[3].cart_status
+  var cartstatus5 = data.cart[4].cart_status
+  var cartstatus6 = data.cart[5].cart_status
+  var cartstatus7 = data.cart[6].cart_status
+  var query = { "cart.0.qty" : cartqty1,"cart.1.qty" : cartqty2,"cart.2.qty" : cartqty3, "cart.3.qty" : cartqty4,"cart.4.qty" : cartqty5,"cart.5.qty" : cartqty6,"cart.6.qty" : cartqty7, "cart.0.cart_status": cartstatus1, "cart.1.cart_status" : cartstatus2, "cart.2.cart_status" : cartstatus3, "cart.3.cart_status" : cartstatus4,"cart.4.cart_status" : cartstatus5, "cart.5.cart_status":cartstatus6,"cart.6.cart_ststus" : cartstatus7}
+ }
 if (data.cart.length == 3) {
  var cartqty1 = data.cart[0].qty
  var cartqty2 = data.cart[1].qty
