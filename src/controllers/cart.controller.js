@@ -657,7 +657,7 @@ exports.myCart = async (req, res) => {
     mycartData = []
     cartItems = JSON.parse(JSON.stringify(cartItems))
     var i = 0
-    for await (let item of cartItems[0]['cart']) {
+    for await (let item of cartItems['cart']) {
       let data = item
       stockData = await stockAllocationModel
         .findOne({ item: data.item._id })
@@ -666,7 +666,7 @@ exports.myCart = async (req, res) => {
         .populate('compartment', ['compartment_name', 'compartment_id'])
         .exec()
       // console.log(stockData)
-      cartItems[0]['cart'][i]['item_details'] = stockData
+      cartItems['cart'][i]['item_details'] = stockData
 
       i++
     }
