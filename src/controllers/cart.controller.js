@@ -792,109 +792,51 @@ function decrementStockDraw (_id) {
   }
 }
 
-///////////*********Prakash ***************************/////////////
-
+///////////*********Prakash ***************************///////
 
 function cartdetails () {
   try {
-   storeModel.findOne({ cartinfo : 1
-    }).sort({$natural:-1}).limit(1)
-   .then (data => {
-    console.log(data)
-//const newid = data.cart.length
-//console.log(newid)
+ 
+ 
+    
+   storeModel.findOne({cartinfo : 1
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
+ 
+  
+ 
+   for (var i = 0; i < output.data.cart.length; i++ ){
+     var cartqty1 = output.data.cart[i].qty
+     var total_quantity1 = output.data.total_quantity
+     var cartstatus1 = output.data.cart[i].cart_status
+     var cartid1 = `cart.${i}.qty`
+     var cartstatus = `cart.${i}.cart_status`
      
-if (data.cart.length == 4 ) {
- var cartqty1 = data.cart[0].qty
- var cartqty2 = data.cart[1].qty
- var cartqty3 = data.cart[2].qty
- var cartqty4 = data.cart[3].qty
-// var cartqty2 = data.cart[0].qty
- var cartstatus1 = data.cart[0].cart_status
- var cartstatus2 = data.cart[1].cart_status
- var cartstatus3 = data.cart[2].cart_status
- var cartstatus4 = data.cart[3].cart_status
- var query = { "cart.0.qty" : cartqty1,"cart.1.qty" : cartqty2,"cart.2.qty" : cartqty3, "cart.3.qty" : cartqty4, "cart.0.cart_status": cartstatus1, "cart.1.cart_status" : cartstatus2, "cart.2.cart_status" : cartstatus3, "cart.3.cart_status" : cartstatus4}
-}
-if (data.cart.length == 5 ) {
- var cartqty1 = data.cart[0].qty
- var cartqty2 = data.cart[1].qty
- var cartqty3 = data.cart[2].qty
- var cartqty4 = data.cart[3].qty
-var cartqty5 = data.cart[4].qty
- var cartstatus1 = data.cart[0].cart_status
- var cartstatus2 = data.cart[1].cart_status
- var cartstatus3 = data.cart[2].cart_status
- var cartstatus4 = data.cart[3].cart_status
- var cartstatus5 = data.cart[4].cart_status
- var query = { "cart.0.qty" : cartqty1,"cart.1.qty" : cartqty2,"cart.2.qty" : cartqty3, "cart.3.qty" : cartqty4,"cart.4.qty" : cartqty5, "cart.0.cart_status": cartstatus1, "cart.1.cart_status" : cartstatus2, "cart.2.cart_status" : cartstatus3, "cart.3.cart_status" : cartstatus4,"cart.4.cart_status" : cartstatus5}
-}
-if (data.cart.length == 6 ) {
-  var cartqty1 = data.cart[0].qty
-  var cartqty2 = data.cart[1].qty
-  var cartqty3 = data.cart[2].qty
-  var cartqty4 = data.cart[3].qty
- var cartqty5 = data.cart[4].qty
- var cartqty6 = data.cart[5].qty
-  var cartstatus1 = data.cart[0].cart_status
-  var cartstatus2 = data.cart[1].cart_status
-  var cartstatus3 = data.cart[2].cart_status
-  var cartstatus4 = data.cart[3].cart_status
-  var cartstatus5 = data.cart[4].cart_status
-  var cartstatus6 = data.cart[5].cart_status
-  var query = { "cart.0.qty" : cartqty1,"cart.1.qty" : cartqty2,"cart.2.qty" : cartqty3, "cart.3.qty" : cartqty4,"cart.4.qty" : cartqty5,"cart.5.qty" : cartqty6, "cart.0.cart_status": cartstatus1, "cart.1.cart_status" : cartstatus2, "cart.2.cart_status" : cartstatus3, "cart.3.cart_status" : cartstatus4,"cart.4.cart_status" : cartstatus5, "cart.5.cart_status":cartstatus6}
- }
- if (data.cart.length == 7 ) {
-  var cartqty1 = data.cart[0].qty
-  var cartqty2 = data.cart[1].qty
-  var cartqty3 = data.cart[2].qty
-  var cartqty4 = data.cart[3].qty
- var cartqty5 = data.cart[4].qty
- var cartqty6 = data.cart[5].qty
- var cartqty7 = data.cart[6].qty
-  var cartstatus1 = data.cart[0].cart_status
-  var cartstatus2 = data.cart[1].cart_status
-  var cartstatus3 = data.cart[2].cart_status
-  var cartstatus4 = data.cart[3].cart_status
-  var cartstatus5 = data.cart[4].cart_status
-  var cartstatus6 = data.cart[5].cart_status
-  var cartstatus7 = data.cart[6].cart_status
-  var query = { "cart.0.qty" : cartqty1,"cart.1.qty" : cartqty2,"cart.2.qty" : cartqty3, "cart.3.qty" : cartqty4,"cart.4.qty" : cartqty5,"cart.5.qty" : cartqty6,"cart.6.qty" : cartqty7, "cart.0.cart_status": cartstatus1, "cart.1.cart_status" : cartstatus2, "cart.2.cart_status" : cartstatus3, "cart.3.cart_status" : cartstatus4,"cart.4.cart_status" : cartstatus5, "cart.5.cart_status":cartstatus6,"cart.6.cart_ststus" : cartstatus7}
- }
-if (data.cart.length == 3) {
- var cartqty1 = data.cart[0].qty
- var cartqty2 = data.cart[1].qty
- var cartqty3 = data.cart[2].qty
-// var cartqty4 = data.cart[3].qty
-// var cartqty2 = data.cart[0].qty
- var cartstatus1 = data.cart[0].cart_status
- var cartstatus2 = data.cart[1].cart_status
- var cartstatus3 = data.cart[2].cart_status
- //var cartstatus4 = data.cart[3].cart_status
- var query = { "cart.0.qty" : cartqty1,"cart.1.qty" : cartqty2,"cart.2.qty" : cartqty3, "cart.0.cart_status": cartstatus1, "cart.1.cart_status" : cartstatus2, "cart.2.cart_status" : cartstatus3}
-}
-else if (data.cart.length == 1 ) {
- var cartqty1 = data.cart[0].qty
- var cartstatus1 = data.cart[0].cart_status
- var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-}
-
-else if (data.cart.length == 2) {
-   var cartqty1 = data.cart[0].qty
-   var cartqty2 = data.cart[1].qty
-   var cartstatus1 = data.cart[0].cart_status
-   var cartstatus2 = data.cart[1].cart_status
-  var query = { "cart.0.qty" : cartqty1,"cart.1.qty" : cartqty2, "cart.0.cart_status": cartstatus1, "cart.1.cart_status" : cartstatus2}
-  }
-cartModel.findOneAndUpdate(
- {user: data.user},
- query
-).then(update => {
-        console.log(update)
-           })
+   
+     //project(cartid,cartqty1)
+    // var cartcartqty1 = cart[i].qty
+    var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
+   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+   console.log(query)
+   cartModel.findOneAndUpdate(
+     {user: output.user,company_id: output.company_id},query
+     
+     ).then(update => {
+       
+      // console.log(query)
+           console.log(update)
+              })
+ 
+     }
+    
+   
+ 
+               
+        
          })
-        } catch (err) {
-           console.log(err)
-         }
-}
-cartdetails()
+       }catch (err) {
+         console.log(err)
+       }
+ }
+ 
+         cartdetails()
