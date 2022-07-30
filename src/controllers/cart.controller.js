@@ -652,7 +652,7 @@ exports.myCart = async (req, res) => {
       'total_quantity',
       'cart_status'
     ])
-      .populate('cart.item', ['item_name', 'image_path'])
+      .populate('cart.item', ['item_name','image', 'image_path'])
       .exec()
     mycartData = []
     cartItems = JSON.parse(JSON.stringify(cartItems))
