@@ -12,7 +12,7 @@ const Email = require('email-templates')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { rolesModel } = require('../models')
-const { exec } = require("child_process");
+var child_process = require('child_process');
 
 exports.add = async (req, res) => {
   try {
@@ -208,16 +208,13 @@ exports.login = async (req, res) => {
       user.token = token
 
       res.status(200).json(user)
-      const exec = require('child_process').exec;
-const myShellScript = exec('sh script.sh /home/ubuntu/scripts');
-myShellScript.stdout.on('data', (data)=>{
-    console.log(data); 
-    // do whatever you want here with data
+      
+
+child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
+  
+    console.log(stdout);
 });
-myShellScript.stderr.on('data', (data)=>{
-    console.error(data);
-});
-    } else {
+} else {
       res.status(400).send({
         statue: false,
         message: 'Invalid Credentials or No user found'
