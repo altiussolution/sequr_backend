@@ -213,6 +213,8 @@ exports.login = async (req, res) => {
 child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
     console.log(stdout);
+    console.log(stderr);
+    console.log(error);
 });
 } else {
       res.status(400).send({
