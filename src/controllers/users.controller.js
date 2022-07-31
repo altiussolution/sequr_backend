@@ -207,6 +207,15 @@ exports.login = async (req, res) => {
       user.token = token
 
       res.status(200).json(user)
+      const { exec } = require('child_process');
+var yourscript = exec('/scripts/script.sh',
+        (error, stdout, stderr) => {
+            console.log(stdout);
+            console.log(stderr);
+            if (error !== null) {
+                console.log(`exec error: ${error}`);
+            }
+        });
     } else {
       res.status(400).send({
         statue: false,
