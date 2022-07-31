@@ -209,13 +209,13 @@ exports.login = async (req, res) => {
 
       res.status(200).json(user)
       
-
-child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
+ cartdetails()
+// child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
-    console.log(stdout);
-    console.log(stderr);
-    console.log(error);
-});
+//     console.log(stdout);
+//     console.log(stderr);
+//     console.log(error);
+// });
 } else {
       res.status(400).send({
         statue: false,
