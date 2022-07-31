@@ -12,6 +12,7 @@ const Email = require('email-templates')
 const { createLog } = require('../middleware/crud.middleware')
 var ObjectId = require('mongodb').ObjectID
 const { rolesModel } = require('../models')
+const { exec } = require("child_process");
 
 exports.add = async (req, res) => {
   try {
