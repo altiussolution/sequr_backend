@@ -748,7 +748,8 @@ exports.itemHistory = async (req, res) => {
 
     res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
   } catch (err) {
-    res.status(201).send({ status: false, message: err })
+    res.status(204).send({ status: false, message: err })
+    console.log(err)
   }
 }
 
