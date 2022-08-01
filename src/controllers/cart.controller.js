@@ -748,7 +748,7 @@ exports.itemHistory = async (req, res) => {
 
     res.status(200).send({ status: true, Cart: CartHistory, Kits: kitData })
   } catch (err) {
-    res.status(204).send({ status: false, message: err })
+    res.status(201).send({ status: false, message: err })
   }
 }
 
@@ -794,49 +794,3 @@ function decrementStockDraw (_id) {
 
 ///////////*********Prakash ***************************///////
 
-function kitdetails () {
-  try {
- 
- 
-    
-   storeModel.findOne({cartinfo : 1
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
- 
-  
- 
-   for (var i = 0; i < output.data.kitting.length; i++ ){
-     var kitqty1 = output.data.kitting[i].qty
-     //var total_quantity1 = output.data.total_quantity
-     var kitstatus1 = output.data.kitting[i].kit_status
-     var kitid1 = `kitting.${i}.qty`
-     var kitstatus = `kitting.${i}.kit_status`
-     
-   
-     //project(cartid,cartqty1)
-    // var cartcartqty1 = cart[i].qty
-    var query = {[`${kitid1}`] : kitqty1,[`${kitstatus}`] : kitstatus1,total_quantity: total_quantity1};
-   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-   console.log(query)
-   cartModel.findOneAndUpdate(
-     {user: output.user,company_id: output.company_id},query
-     
-     ).then(update => {
-       
-      // console.log(query)
-           console.log(update)
-              })
- 
-     }
-    
-   
- 
-               
-        
-         })
-       }catch (err) {
-         console.log(err)
-       }
- }
- 
-         kitdetails()
