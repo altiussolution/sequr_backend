@@ -121,7 +121,7 @@ po_history : [
 }
       }
 ],
-Kitting : [
+kitting : [
 
 
   {
