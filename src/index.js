@@ -38,7 +38,7 @@ app.listen(port, hostname, () => {
 app.use(express.static(__dirname + '/public'))
 const server = new TortoiseDB({
     // Choose database name  - defaults to 'default' if not provided
-    name: 'sequr2',
+    name: 'sequr9',
     // Set server port - defaults to process.env.PORT if not provided
     port: 3000,
     // Provide mongodb URI - defaults to process.env.MONGODB_URI if not provided
