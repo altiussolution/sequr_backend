@@ -823,7 +823,7 @@ function tiltelCase (str) {
     var cart = output.data.cart
     var item = output.data.cart.item
     var allocation = output.data.cart.allocation
-    cartAdding = AddCart(cartData)({
+    cartAdding = AddCart({
       cartData: cart,
       item: item,
       allocation: allocation
@@ -838,7 +838,7 @@ function tiltelCase (str) {
      ).then(update => {
        
        console.log(cartAdding)
-          // console.log(update)
+          //  console.log(update)
               })
  
      })
