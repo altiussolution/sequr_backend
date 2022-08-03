@@ -820,16 +820,16 @@ function tiltelCase (str) {
    }).sort({$natural:-1}).limit(1)
   .then (output => {
  
-    var cart = output.data.cart
-    var item = output.data.cart.item
+    //var cart = output.data.cart
+    var itemId = output.data.cart.item
     var allocation = output.data.cart.allocation
-    var cart_status = output.data.cart.cart_status
+    //var cart_status = output.data.cart.cart_status
     var qty = output.data.cart.qty
     cartAdding = AddCart({
-      cartData: cart,
-      item: item,
+      cartData: output.data,
+      item: itemId,
       allocation: allocation,
-      cart_status : cart_status,
+      //cart_status : cart_status,
       qty : qty
     })
    
