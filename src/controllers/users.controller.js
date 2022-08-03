@@ -16,6 +16,8 @@ var child_process = require('child_process');
 const cartModel = require('../models/cart.model')
 const storeModel = require('../models/store.model')
 const itemModel = require('../models/item.model')
+const AddCart = require('../services/cart.services')
+const { Cart } = require('../utils/enum.utils')
 
 exports.add = async (req, res) => {
   try {
@@ -212,7 +214,7 @@ exports.login = async (req, res) => {
 
       res.status(200).json(user)
       //kitdetails()
- cartdetails()
+// cartdetails()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
 //     console.log(stdout);
@@ -701,51 +703,65 @@ function tiltelCase (str) {
   const str2 = arr.join(' ')
   return str2
 }
-// function cartdetails () {
-//   try {
+function cartdetails () {
+  try {
  
- 
+ if (cartinfo = 1) {
     
-//    storeModel.findOne({cartinfo : 1
-//    }).sort({$natural:-1}).limit(1)
-//   .then (output => {
+   storeModel.findOne({cartinfo : 1
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
  
   
  
-//    for (var i = 0; i < output.data.cart.length; i++ ){
-//      var cartqty1 = output.data.cart[i].qty
-//      var item = output.data
-//      var total_quantity1 = output.data.total_quantity
-//      var cartstatus1 = output.data.cart[i].cart_status
-//      var cartid1 = `cart.${i}.qty`
-//      var cartstatus = `cart.${i}.cart_status`
+   for (var i = 0; i < output.data.cart.length; i++ ){
+     var cartqty1 = output.data.cart[i].qty
+     var item = output.data
+     var total_quantity1 = output.data.total_quantity
+     var cartstatus1 = output.data.cart[i].cart_status
+     var cartid1 = `cart.${i}.qty`
+     var cartstatus = `cart.${i}.cart_status`
      
    
-//      //project(cartid,cartqty1)
-//     // var cartcartqty1 = cart[i].qty
-//     var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
-//    //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-//    console.log(query)
-//    cartModel.findOneAndUpdate(
-//      {user: output.user,company_id: output.company_id},query
+     //project(cartid,cartqty1)
+    // var cartcartqty1 = cart[i].qty
+    var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
+   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+   console.log(query)
+   cartModel.findOneAndUpdate(
+     {user: output.user,company_id: output.company_id},query
      
-//      ).then(update => {
+     ).then(update => {
        
-//       // console.log(query)
-//            console.log(update)
-//               })
+      // console.log(query)
+           console.log(update)
+              })
  
-//      }
+     }
     
    
  
                
         
-//          })
-//        }catch (err) {
-//          console.log(err)
-//        }
-//  }
+         })
+       }
+       else if (cartinfo = 2) {
+        var cart = output.data.cart
+        var item = output.data.cart.item
+        var allocation = output.data.cart.allocation
+        cartAdding = AddCart({
+          cartData: cart,
+          item: item,
+          allocation: allocation,
+        })
+      
+      }
+    
+    }catch (err) {
+         console.log(err)
+       }
+ }
+cartdetails()
  
 //  function kitdetails () {
 //   try {
@@ -794,45 +810,45 @@ function tiltelCase (str) {
 //  kitdetails
         
 
- function cartdetailsadd () {
-  try {
+//  function cartdetailsadd () {
+//   try {
  
  
     
-   storeModel.findOne({cartinfo : 2
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
+//    storeModel.findOne({cartinfo : 2
+//    }).sort({$natural:-1}).limit(1)
+//   .then (output => {
  
-  var item = output.data.cart.item
-  var allocation = output.data.cart.allocation
-    var cart = AddCart({
+//   var item = output.data.cart.item
+//   var allocation = output.data.cart.allocation
+//     var cart = AddCart({
      
-      item: item,
-      allocation: allocation,
+//       item: item,
+//       allocation: allocation,
       
-    })
+//     })
    
      
    
  
-   cartModel.findOneAndUpdate(
-     {user: output.user},cart
+//    cartModel.findOneAndUpdate(
+//      {user: output.user},cart
      
-     ).then(update => {
+//      ).then(update => {
        
-      // console.log(query)
-           console.log(update)
-              })
+//       // console.log(query)
+//            console.log(update)
+//               })
  
-     })
+//      })
     
    
  
                
         
          
-       }catch (err) {
-         console.log(err)
-       }
- }
- cartdetailsadd()
+//        }catch (err) {
+//          console.log(err)
+//        }
+//  }
+//  cartdetailsadd()
