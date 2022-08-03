@@ -708,7 +708,7 @@ function cartdetails () {
  
  if (cartinfo = 1) {
     
-   storeModel.findOne({cartinfo : 1
+   storeModel.findOne({cartinfo : 2
    }).sort({$natural:-1}).limit(1)
   .then (output => {
  
