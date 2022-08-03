@@ -703,66 +703,66 @@ function tiltelCase (str) {
   const str2 = arr.join(' ')
   return str2
 }
-function cartdetails () {
-  try {
+// function cartdetails () {
+//   try {
  
- if (cartinfo = 1) {
+//  if (cartinfo = 2 ) {
+//   var cart = output.data.cart
+//   var item = output.data.cart.item
+//   var allocation = output.data.cart.allocation
+//   cartAdding = AddCart({
+//     cartData: cart,
+//     item: item,
+//     allocation: allocation,
+//   })
+
+  
     
-   storeModel.findOne({cartinfo : 2
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
-  //console.log(output)
+//    storeModel.findOne({cartinfo : 2
+//    }).sort({$natural:-1}).limit(1)
+//   .then (output => {
+//   //console.log(output)
  
   
  
-   for (var i = 0; i < output.data.cart.length; i++ ){
-     var cartqty1 = output.data.cart[i].qty
-    // var item = output.data
-     var total_quantity1 = output.data.total_quantity
-     var cartstatus1 = output.data.cart[i].cart_status
-     var cartid1 = `cart.${i}.qty`
-     var cartstatus = `cart.${i}.cart_status`
+//    for (var i = 0; i < output.data.cart.length; i++ ){
+//      var cartqty1 = output.data.cart[i].qty
+//     // var item = output.data
+//      var total_quantity1 = output.data.total_quantity
+//      var cartstatus1 = output.data.cart[i].cart_status
+//      var cartid1 = `cart.${i}.qty`
+//      var cartstatus = `cart.${i}.cart_status`
      
    
-     //project(cartid,cartqty1)
-    // var cartcartqty1 = cart[i].qty
-    var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
-   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-   //console.log(query)
-   cartModel.findOneAndUpdate(
-     {user: output.user,company_id: output.company_id},query
+//      //project(cartid,cartqty1)
+//     // var cartcartqty1 = cart[i].qty
+//     var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
+//    //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+//    //console.log(query)
+//    cartModel.findOneAndUpdate(
+//      {user: output.user,company_id: output.company_id},query
      
-     ).then(update => {
+//      ).then(update => {
        
-      // console.log(query)
-          // console.log(update)
-              })
+//       // console.log(query)
+//           // console.log(update)
+//               })
  
-     }
+//      }
     
    
  
                
         
-         })
-       }
-       else if (cartinfo = 2) {
-        var cart = output.data.cart
-        var item = output.data.cart.item
-        var allocation = output.data.cart.allocation
-        cartAdding = AddCart({
-          cartData: cart,
-          item: item,
-          allocation: allocation,
-        })
-      console.log(item)
-      }
+//          })
+//        }
+     
     
-    }catch (err) {
-         console.log(err)
-       }
- }
-cartdetails()
+//     }catch (err) {
+//          console.log(err)
+//        }
+//  }
+// cartdetails()
  
 //  function kitdetails () {
 //   try {
@@ -811,45 +811,45 @@ cartdetails()
 //  kitdetails
         
 
-//  function cartdetailsadd () {
-//   try {
+ function cartdetailsadd () {
+  try {
  
  
     
-//    storeModel.findOne({cartinfo : 2
-//    }).sort({$natural:-1}).limit(1)
-//   .then (output => {
+   storeModel.findOne({cartinfo : 2
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
  
-//   var item = output.data.cart.item
-//   var allocation = output.data.cart.allocation
-//     var cart = AddCart({
-     
-//       item: item,
-//       allocation: allocation,
-      
-//     })
+    var cart = output.data.cart
+    var item = output.data.cart.item
+    var allocation = output.data.cart.allocation
+    cartAdding = AddCart({
+      cartData: cart,
+      item: item,
+      allocation: allocation
+    })
    
      
    
  
-//    cartModel.findOneAndUpdate(
-//      {user: output.user},cart
+   cartModel.findOneAndUpdate(
+     {user: output.user},cartAdding
      
-//      ).then(update => {
+     ).then(update => {
        
-//       // console.log(query)
-//            console.log(update)
-//               })
+      // console.log(query)
+           console.log(update)
+              })
  
-//      })
+     })
     
    
  
                
         
          
-//        }catch (err) {
-//          console.log(err)
-//        }
-//  }
-//  cartdetailsadd()
+       }catch (err) {
+         console.log(err)
+       }
+ }
+ cartdetailsadd()
