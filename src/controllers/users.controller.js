@@ -837,7 +837,7 @@ function tiltelCase (str) {
      
      ).then(update => {
        
-      // console.log(query)
+       console.log(cartAdding)
            console.log(update)
               })
  
