@@ -803,7 +803,7 @@ function tiltelCase (str) {
    }).sort({$natural:-1}).limit(1)
   .then (output => {
  
-  var item = output.data.cart.item._id
+  var item = output.data.cart.item
   var allocation = output.data.cart.allocation
     var cart = AddCart({
      
