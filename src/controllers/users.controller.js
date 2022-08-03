@@ -701,32 +701,122 @@ function tiltelCase (str) {
   const str2 = arr.join(' ')
   return str2
 }
-function cartdetails () {
+// function cartdetails () {
+//   try {
+ 
+ 
+    
+//    storeModel.findOne({cartinfo : 1
+//    }).sort({$natural:-1}).limit(1)
+//   .then (output => {
+ 
+  
+ 
+//    for (var i = 0; i < output.data.cart.length; i++ ){
+//      var cartqty1 = output.data.cart[i].qty
+//      var item = output.data
+//      var total_quantity1 = output.data.total_quantity
+//      var cartstatus1 = output.data.cart[i].cart_status
+//      var cartid1 = `cart.${i}.qty`
+//      var cartstatus = `cart.${i}.cart_status`
+     
+   
+//      //project(cartid,cartqty1)
+//     // var cartcartqty1 = cart[i].qty
+//     var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
+//    //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+//    console.log(query)
+//    cartModel.findOneAndUpdate(
+//      {user: output.user,company_id: output.company_id},query
+     
+//      ).then(update => {
+       
+//       // console.log(query)
+//            console.log(update)
+//               })
+ 
+//      }
+    
+   
+ 
+               
+        
+//          })
+//        }catch (err) {
+//          console.log(err)
+//        }
+//  }
+ 
+//  function kitdetails () {
+//   try {
+ 
+ 
+    
+//    storeModel.findOne({cartinfo : 1
+//    }).sort({$natural:-1}).limit(1)
+//   .then (output => {
+ 
+  
+ 
+//    for (var i = 0; i < output.data.Kits.length; i++ ){
+//      var kitqty1 = output.data.Kits[i].qty
+//      //var total_quantity1 = output.data.total_quantity
+//      var kitstatus1 = output.data.Kits[i].kit_status
+//      var kitid1 = `kitting.${i}.qty`
+//      var kitstatus = `kitting.${i}.kit_status`
+     
+   
+//      //project(cartid,cartqty1)
+//     // var cartcartqty1 = cart[i].qty
+//     var query = {[`${kitid1}`] : kitqty1,[`${kitstatus}`] : kitstatus1,total_quantity: total_quantity1};
+//    //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+//    console.log(query)
+//    cartModel.findOneAndUpdate(
+//      {user: output.user,company_id: output.company_id},query
+     
+//      ).then(update => {
+       
+//       // console.log(query)
+//            console.log(update)
+//               })
+ 
+//      }
+    
+   
+ 
+               
+        
+//          })
+//        }catch (err) {
+//          console.log(err)
+//        }
+//  }
+//  kitdetails
+        
+
+ function cartdetailsadd () {
   try {
  
  
     
-   storeModel.findOne({cartinfo : 1
+   storeModel.findOne({cartinfo : 2
    }).sort({$natural:-1}).limit(1)
   .then (output => {
  
-  
- 
-   for (var i = 0; i < output.data.cart.length; i++ ){
-     var cartqty1 = output.data.cart[i].qty
-     var total_quantity1 = output.data.total_quantity
-     var cartstatus1 = output.data.cart[i].cart_status
-     var cartid1 = `cart.${i}.qty`
-     var cartstatus = `cart.${i}.cart_status`
+  var item = output.data.cart.item._id
+  var allocation = output.data.cart.allocation
+    var cart = AddCart({
+     
+      item: item,
+      allocation: allocation,
+      
+    })
+   
      
    
-     //project(cartid,cartqty1)
-    // var cartcartqty1 = cart[i].qty
-    var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
-   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-   console.log(query)
+ 
    cartModel.findOneAndUpdate(
-     {user: output.user,company_id: output.company_id},query
+     {user: output.user},cart
      
      ).then(update => {
        
@@ -734,61 +824,15 @@ function cartdetails () {
            console.log(update)
               })
  
-     }
+     })
     
    
  
                
         
-         })
+         
        }catch (err) {
          console.log(err)
        }
  }
- 
- function kitdetails () {
-  try {
- 
- 
-    
-   storeModel.findOne({cartinfo : 1
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
- 
-  
- 
-   for (var i = 0; i < output.data.Kits.length; i++ ){
-     var kitqty1 = output.data.Kits[i].qty
-     //var total_quantity1 = output.data.total_quantity
-     var kitstatus1 = output.data.Kits[i].kit_status
-     var kitid1 = `kitting.${i}.qty`
-     var kitstatus = `kitting.${i}.kit_status`
-     
-   
-     //project(cartid,cartqty1)
-    // var cartcartqty1 = cart[i].qty
-    var query = {[`${kitid1}`] : kitqty1,[`${kitstatus}`] : kitstatus1,total_quantity: total_quantity1};
-   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-   console.log(query)
-   cartModel.findOneAndUpdate(
-     {user: output.user,company_id: output.company_id},query
-     
-     ).then(update => {
-       
-      // console.log(query)
-           console.log(update)
-              })
- 
-     }
-    
-   
- 
-               
-        
-         })
-       }catch (err) {
-         console.log(err)
-       }
- }
- kitdetails
-        
+ cartdetailsadd()
