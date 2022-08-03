@@ -821,7 +821,7 @@ function tiltelCase (str) {
   .then (output => {
  
     var cart = output.data.cart
-    var item = output.data.cart.item._id
+    var item = output.data.cart.item
     var allocation = output.data.cart.allocation
     cartAdding = AddCart(cartData)({
       cartData: cart,
