@@ -804,53 +804,53 @@ function tiltelCase (str) {
 //  kitdetails
         
 
-//  function cartdetailsadd () {
-//   try {
+ function cartdetailsadd () {
+  try {
  
  
     
-//    storeModel.findOne({cartinfo : 2
-//    }).sort({$natural:-1}).limit(1)
-//   .then (output => {
+   storeModel.findOne({cartinfo : 1
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
  
-//     //var cart = output.data.cart
-//     var itemId = output.data.cart.item
-//     var allocation = output.data.cart.allocation
-//     //var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-//     //var cart_status = output.data.cart.cart_status
-//     var qty = output.data.cart.qty
-//     cartAdding = AddCart({
-//       cartData: output.data,
-//       item: itemId,
-//       allocation: allocation,
-//      // cart_status : cart_status,
-//       qty : qty
-//     })
+    //var cart = output.data.cart
+    var itemId = output.data.cart.item
+    var allocation = output.data.cart.allocation
+    //var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+    //var cart_status = output.data.cart.cart_status
+    var qty = output.data.cart.qty
+    cartAdding = AddCart({
+      cartData: output.data,
+      item: itemId,
+      allocation: allocation,
+     // cart_status : cart_status,
+      qty : qty
+    })
    
      
    
  
-//    cartModel.findOneAndUpdate(
-//      {user: output.user},cartAdding
+   cartModel.findOneAndUpdate(
+     {user: output.user},cartAdding
      
-//      ).then(update => {
+     ).then(update => {
        
-//        console.log(cartAdding)
-//           //  console.log(update)
-//               })
+       console.log(cartAdding)
+          //  console.log(update)
+              })
  
-//      })
+     })
     
    
  
                
         
          
-//        }catch (err) {
-//          console.log(err)
-//        }
-//  }
-//  cartdetailsadd()
+       }catch (err) {
+         console.log(err)
+       }
+ }
+ cartdetailsadd()
 
 
 // //  function kitdetailsadd () {
