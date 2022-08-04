@@ -896,7 +896,7 @@ function cartdetails () {
  
     
    storeModel.findOne({cartinfo : 1
-   })
+   }).sort({$natural:-1}).limit(1)
   .then (output => {
  //   for(var key in output.jsonData) {
  //     for (var key1 in output.jsonData[key]) {
