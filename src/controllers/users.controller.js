@@ -938,7 +938,7 @@ function cartdetails () {
      ).then(update => {
        
       // console.log(query)
-           console.log(update)
+          // console.log(update)
               })
  
      }
