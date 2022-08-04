@@ -907,14 +907,14 @@ function cartdetails () {
   //var cart = output.data.cart
     var itemId = output.data.cart.item
     var allocation = output.data.cart.allocation
-    //var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-    //var cart_status = output.data.cart.cart_status
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+    var cart_status = output.data.cart.cart_status
     var qty = output.data.cart.qty
     cartAdding = AddCart({
-      cartData: output.data,
+      cartData: output.data.cart,
       item: itemId,
       allocation: allocation,
-     // cart_status : cart_status,
+     cart_status : cart_status,
       qty : qty
     })
  
