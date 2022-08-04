@@ -860,39 +860,39 @@ function tiltelCase (str) {
  cartdetailsadd()
 
 
- function kitdetailsadd () {
-  try {
+//  function kitdetailsadd () {
+//   try {
  
  
     
-   storeModel.findOne({cartinfo : 2
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
+//    storeModel.findOne({cartinfo : 2
+//    }).sort({$natural:-1}).limit(1)
+//   .then (output => {
  
-    //var cart = output.data.cart
+//     //var cart = output.data.cart
    
    
      
    
  
-   cartModel.findOneAndUpdate(
-     {user: output.user},cartAdding,options
+//    cartModel.findOneAndUpdate(
+//      {user: output.user},cartAdding,options
      
-     ).then(update => {
+//      ).then(update => {
        
-       console.log(cartAdding)
-          //  console.log(update)
-              })
+//        console.log(cartAdding)
+//           //  console.log(update)
+//               })
  
-     })
+//      })
     
    
  
                
         
          
-       }catch (err) {
-         console.log(err)
-       }
- }
- cartdetailsadd()
+//        }catch (err) {
+//          console.log(err)
+//        }
+//  }
+//  cartdetailsadd()
