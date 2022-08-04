@@ -890,68 +890,68 @@ function tiltelCase (str) {
 //  }
 //  cartdetailsadd()
 
-function cartdetails () {
-  try {
+// function cartdetails () {
+//   try {
  
  
     
-   storeModel.findOne({cartinfo : 1
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
- //   for(var key in output.jsonData) {
- //     for (var key1 in output.jsonData[key]) {
- //         console.log(output.jsonData[key][key1])
- //     }
- //  }
-   //console.log(output)
-  //var cart = output.data.cart
-    var itemId = output.data.cart.item
-    var allocation = output.data.cart.allocation
-    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-    var cart_status = output.data.cart.cart_status
-    var qty = output.data.cart.qty
-    cartAdding = AddCart({
-      cartData: output.data.cart,
-      item: itemId,
-      allocation: allocation,
-     cart_status : cart_status,
-      qty : qty
-    })
+//    storeModel.findOne({cartinfo : 1
+//    }).sort({$natural:-1}).limit(1)
+//   .then (output => {
+//  //   for(var key in output.jsonData) {
+//  //     for (var key1 in output.jsonData[key]) {
+//  //         console.log(output.jsonData[key][key1])
+//  //     }
+//  //  }
+//    //console.log(output)
+//   //var cart = output.data.cart
+//     var itemId = output.data.cart.item
+//     var allocation = output.data.cart.allocation
+//     var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+//     var cart_status = output.data.cart.cart_status
+//     var qty = output.data.cart.qty
+//     cartAdding = AddCart({
+//       cartData: output.data.cart,
+//       item: itemId,
+//       allocation: allocation,
+//      cart_status : cart_status,
+//       qty : qty
+//     })
  
-   for (var i = 0; i < output.data.cart.length; i++ ){
-     var cartqty1 = output.data.cart[i].qty
-     var total_quantity1 = output.data.total_quantity
-     var cartstatus1 = output.data.cart[i].cart_status
-     var cartid1 = `cart.${i}.qty`
-     var cartstatus = `cart.${i}.cart_status`
+//    for (var i = 0; i < output.data.cart.length; i++ ){
+//      var cartqty1 = output.data.cart[i].qty
+//      var total_quantity1 = output.data.total_quantity
+//      var cartstatus1 = output.data.cart[i].cart_status
+//      var cartid1 = `cart.${i}.qty`
+//      var cartstatus = `cart.${i}.cart_status`
 
  
    
-     //project(cartid,cartqty1)
-    // var cartcartqty1 = cart[i].qty
-    var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
-   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-   console.log(query)
-   cartModel.findOneAndUpdate(
-     {user: output.user,company_id: output.company_id},query
+//      //project(cartid,cartqty1)
+//     // var cartcartqty1 = cart[i].qty
+//     var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
+//    //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+//    console.log(query)
+//    cartModel.findOneAndUpdate(
+//      {user: output.user,company_id: output.company_id},query
      
-     ).then(update => {
+//      ).then(update => {
        
-      // console.log(query)
-           console.log(update)
-              })
+//       // console.log(query)
+//            console.log(update)
+//               })
  
-     }
+//      }
     
    
  
                
         
-         })
-       }catch (err) {
-         console.log(err)
-       }
- }
+//          })
+//        }catch (err) {
+//          console.log(err)
+//        }
+//  }
  
-         cartdetails()
+//          cartdetails()
  
