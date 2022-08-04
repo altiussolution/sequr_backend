@@ -895,7 +895,7 @@ function cartdetails () {
  
  
     
-   storeModel.findOne({cartinfo : 2
+   storeModel.findOne({cartinfo : 1
    })
   .then (output => {
  //   for(var key in output.jsonData) {
