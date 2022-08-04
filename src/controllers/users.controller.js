@@ -823,7 +823,7 @@ function tiltelCase (str) {
     //var cart = output.data.cart
     var itemId = output.data.cart.item
     var allocation = output.data.cart.allocation
-    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+    //var options = { upsert: true, new: true, setDefaultsOnInsert: true }
     //var cart_status = output.data.cart.cart_status
     var qty = output.data.cart.qty
     cartAdding = AddCart({
@@ -833,6 +833,44 @@ function tiltelCase (str) {
       //cart_status : cart_status,
       qty : qty
     })
+   
+     
+   
+ 
+   cartModel.findOneAndUpdate(
+     {user: output.user},cartAdding
+     
+     ).then(update => {
+       
+       console.log(cartAdding)
+          //  console.log(update)
+              })
+ 
+     })
+    
+   
+ 
+               
+        
+         
+       }catch (err) {
+         console.log(err)
+       }
+ }
+ cartdetailsadd()
+
+
+ function kitdetailsadd () {
+  try {
+ 
+ 
+    
+   storeModel.findOne({cartinfo : 2
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
+ 
+    //var cart = output.data.cart
+   
    
      
    
