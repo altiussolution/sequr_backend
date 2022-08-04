@@ -823,6 +823,7 @@ function tiltelCase (str) {
     //var cart = output.data.cart
     var itemId = output.data.cart.item
     var allocation = output.data.cart.allocation
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
     //var cart_status = output.data.cart.cart_status
     var qty = output.data.cart.qty
     cartAdding = AddCart({
@@ -837,7 +838,7 @@ function tiltelCase (str) {
    
  
    cartModel.findOneAndUpdate(
-     {user: output.user},cartAdding
+     {user: output.user},cartAdding,options
      
      ).then(update => {
        
