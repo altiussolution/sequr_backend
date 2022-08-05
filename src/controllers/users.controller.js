@@ -981,14 +981,14 @@ function kitdetailsadd () {
     var kit_status = output.data.Kits[i].kit_status
     var options = { upsert: true, new: true, setDefaultsOnInsert: true }
     //var cart_status = output.data.Kits[i].cart_status
-   // var qty = output.data.Kits[i].qty
+    var qty = output.data.Kits[i].qty
     var items = kits ? kits.kitting : []
    // if (!isInCart) {
     items = {
       kitting: {
         kit_id: kit_id,
         qty: 1,
-        item_quantity: quantity,
+        item_quantity: qty,
         kit_status: kit_status
       }
     }
