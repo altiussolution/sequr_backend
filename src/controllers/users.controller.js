@@ -836,7 +836,7 @@ function tiltelCase (str) {
      
    
  
-   cartModel.UpdateOne(
+   cartModel.updateOne(
      {user: output.user},{ $set: { "cart": cartAdding } }
      
      
