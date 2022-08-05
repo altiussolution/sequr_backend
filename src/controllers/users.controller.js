@@ -812,17 +812,23 @@ function tiltelCase (str) {
    storeModel.findOne({cartinfo : 2
    }).sort({$natural:-1}).limit(1)
   .then (output => {
+
+    for (var i = 0; i < output.data.cart.length; i++ ){
+          
+           //var cartstatus1 = output.data.cart[i].cart_status
+          // var cartid1 = `cart.${i}.qty`
+           //var cartstatus = `cart.${i}.cart_status`
  
     var cart = output.data.cart
-    var itemId = output.data.cart.item
-    var allocation1 = output.data.cart.allocation
+    var item = output.data.cart[i].item
+    var allocation = output.data.cart[i].allocation
     var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-    var cart_status = output.data.cart.cart_status
-    var qty = output.data.cart.qty
-    cartAdding = AddCart({
+    var cart_status = output.data.cart[i].cart_status
+    var qty = output.data.cart[i].qty
+   var cartAdding = AddCart({
       cartData: cart,
-      item: itemId,
-      allocation: allocation1,
+      item: item,
+      allocation: allocation,
       cart_status : cart_status,
       qty : qty
     })
@@ -830,8 +836,9 @@ function tiltelCase (str) {
      
    
  
-   cartModel.findOneAndUpdate(
-     {user: output.user},cartAdding,options
+   cartModel.UpdateOne(
+     {user: output.user},{ $set: { "cart": cartAdding } }
+     
      
      ).then(update => {
        
@@ -839,7 +846,7 @@ function tiltelCase (str) {
           //  console.log(update)
               })
  
-     })
+     }})
     
    
  
