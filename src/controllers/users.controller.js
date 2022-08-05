@@ -983,7 +983,7 @@ function kitdetailsadd () {
     //var cart_status = output.data.Kits[i].cart_status
    // var qty = output.data.Kits[i].qty
     var items = isInCart ? isInCart.kitting : []
-    if (!isInCart) {
+   // if (!isInCart) {
     items = {
       kitting: {
         kit_id: kit_id,
@@ -992,7 +992,6 @@ function kitdetailsadd () {
         kit_status: kit_status
       }
     }
-    isInCart = items
    
      
    
@@ -1007,7 +1006,7 @@ function kitdetailsadd () {
           //  console.log(update)
               })
  
-     }}})
+     }})
     
    
  
@@ -1017,5 +1016,5 @@ function kitdetailsadd () {
        }catch (err) {
          console.log(err)
        }
- }
+      }
  kitdetailsadd()
