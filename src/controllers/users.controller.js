@@ -981,20 +981,24 @@ function kitdetailsadd () {
     var kit_status = output.data.Kits[i].kit_status
     var options = { upsert: true, new: true, setDefaultsOnInsert: true }
     //var cart_status = output.data.Kits[i].cart_status
-    var qty = output.data.Kits[i].qty
-   var kitAdding = ({
-      kitting: kits,
-      kit_id: kit_id,
-      kit_status: kit_status,
-      //cart_status : cart_status,
-      item_quantity : qty
-    })
+   // var qty = output.data.Kits[i].qty
+    var items = isInCart ? isInCart.kitting : []
+    if (!isInCart) {
+    items = {
+      kitting: {
+        kit_id: kit_id,
+        qty: 1,
+        item_quantity: quantity,
+        kit_status: kit_status
+      }
+    }
+    isInCart = items
    
      
    
  
    cartModel.updateOne(
-     {user: output.user},{ $set: { "kitting": kitAdding } }
+     {user: output.user},{ $set: { "kitting": items } }
      
      
      ).then(update => {
@@ -1003,7 +1007,7 @@ function kitdetailsadd () {
           //  console.log(update)
               })
  
-     }})
+     }}})
     
    
  
