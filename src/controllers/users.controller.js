@@ -1014,4 +1014,4 @@ function kitdetailsadd () {
          console.log(err)
        }
  }
- cartdetailsadd()
+ kitdetailsadd()
