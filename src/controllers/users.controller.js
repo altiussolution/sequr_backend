@@ -983,7 +983,7 @@ function kitdetailsadd () {
     //var cart_status = output.data.Kits[i].cart_status
     var qty = output.data.Kits[i].qty
    var kitAdding = ({
-      Kits: kits,
+      kitting: kits,
       kit_id: kit_id,
       kit_status: kit_status,
       //cart_status : cart_status,
