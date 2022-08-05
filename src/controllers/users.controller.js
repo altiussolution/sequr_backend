@@ -997,7 +997,7 @@ function kitdetailsadd () {
      {user: output.user},{ $set: { "kitting": kitAdding } }
      
      
-     ).then(update => {
+     ).then(create => {
        
        console.log(kitAdding)
           //  console.log(update)
