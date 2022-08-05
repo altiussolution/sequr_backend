@@ -815,14 +815,14 @@ function tiltelCase (str) {
  
     var cart = output.data.cart
     var itemId = output.data.cart.item
-    var allocation = output.data.cart.allocation
+    var allocation1 = output.data.cart.allocation
     var options = { upsert: true, new: true, setDefaultsOnInsert: true }
     var cart_status = output.data.cart.cart_status
     var qty = output.data.cart.qty
     cartAdding = AddCart({
       cartData: cart,
       item: itemId,
-      allocation: allocation,
+      allocation: allocation1,
       cart_status : cart_status,
       qty : qty
     })
