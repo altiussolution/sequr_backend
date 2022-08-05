@@ -969,7 +969,7 @@ function kitdetailsadd () {
    storeModel.findOne({kitinfo : 2
    }).sort({$natural:-1}).limit(1)
   .then (output => {
-
+if (is_old_kit = false) {
     for (var i = 0; i < output.data.Kits.length; i++ ){
           
            //var cartstatus1 = output.data.cart[i].cart_status
@@ -1003,7 +1003,7 @@ function kitdetailsadd () {
           //  console.log(update)
               })
  
-     }})
+     }}})
     
    
  
