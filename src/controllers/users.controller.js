@@ -820,7 +820,7 @@ function tiltelCase (str) {
     var cart_status = output.data.cart.cart_status
     var qty = output.data.cart.qty
     cartAdding = AddCart({
-      cartData: CartData ? CartData : cart,
+      cartData: cart,
       item: itemId,
       allocation: allocation,
       cart_status : cart_status,
