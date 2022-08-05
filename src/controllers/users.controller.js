@@ -982,7 +982,7 @@ function kitdetailsadd () {
     var options = { upsert: true, new: true, setDefaultsOnInsert: true }
     //var cart_status = output.data.Kits[i].cart_status
    // var qty = output.data.Kits[i].qty
-    var items = isInCart ? isInCart.kitting : []
+    var items = kits ? kits.kitting : []
    // if (!isInCart) {
     items = {
       kitting: {
