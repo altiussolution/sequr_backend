@@ -967,7 +967,7 @@ function kitdetailsadd () {
  
     
    storeModel.findOne({kitinfo : 2
-   }).sort({$natural:-1}).limit(1)
+   })
   .then (output => {
 
     for (var i = 0; i < output.data.Kits.length; i++ ){
@@ -983,7 +983,7 @@ function kitdetailsadd () {
     //var cart_status = output.data.Kits[i].cart_status
     var qty = output.data.Kits[i].qty
    var kitAdding = ({
-      kitting: kits,
+      kitData: kits,
       kit_id: kit_id,
       kit_status: kit_status,
       //cart_status : cart_status,
