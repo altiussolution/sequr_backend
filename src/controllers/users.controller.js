@@ -1078,7 +1078,7 @@ function kitdetailsadd1 () {
 //if (is_old_kit = false) {
     for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
           
-           var quantity1 = output.data.cart[i].item_details[j].quantity
+           var quantity1 = output.data.cart[i].item_details.quantity
            var category = output.data.cart[i].item_details[j].category
            console.log(category)
            //var quantity1 = quantity
