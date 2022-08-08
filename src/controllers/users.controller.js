@@ -842,7 +842,7 @@ function cartdetails () {
      
      ).then(update => {
        
-       console.log(cartAdding)
+     //  console.log(cartAdding)
           //  console.log(update)
               })
  
@@ -1000,7 +1000,7 @@ function kitdetailsadd () {
      
      ).then(create => {
        
-       console.log(kitAdding)
+      // console.log(kitAdding)
           //  console.log(update)
               })
  
