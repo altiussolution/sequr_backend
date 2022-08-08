@@ -984,7 +984,7 @@ function kitdetailsadd () {
     //var qty = output.data.Kits[i].qty
     var options = { upsert: true, new: true, setDefaultsOnInsert: true }
     //var cart_status = output.data.Kits[i].cart_status
-   // var qty = output.data.Kits[i].qty
+    var qty = output.data.Kits[i].qty
    var kitAdding = AddKit({
     kitData: kitting,
           kit_id : kit_id,
