@@ -1029,7 +1029,7 @@ function kitdetailsadd1 () {
    }).sort({$natural:-1}).limit(1)
   .then (output => {
 
-    var category = output.data.Kits[i].category
+    var category = output.data.Kits[i].kit_item_details[i].category
     console.log(category)
 //if (is_old_kit = false) {
     for (var i = 0; i < output.data.Kits.length; i++ ){
