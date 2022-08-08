@@ -18,6 +18,7 @@ const storeModel = require('../models/store.model')
 const itemModel = require('../models/item.model')
 const AddCart = require('../services/cart.services')
 const { Cart } = require('../utils/enum.utils')
+const AddKit = require('../services/kit.services')
 
 exports.add = async (req, res) => {
   try {
