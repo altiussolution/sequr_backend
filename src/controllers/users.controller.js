@@ -1028,14 +1028,15 @@ function kitdetailsadd1 () {
    storeModel.findOne({kitinfo : 2
    }).sort({$natural:-1}).limit(1)
   .then (output => {
-     var quantity = output.data.Kits[i].kit_item_details[i].quantity
-     console.log(quantity)
+    // var quantity = output.data.Kits[i].kit_item_details[i].quantity
+    // console.log(quantity)
     //var category = output.data.Kits[i].kit_item_details[i].category
     //console.log(category)
 //if (is_old_kit = false) {
-    for (var i = 0; i < output.data.Kits.length; i++ ){
+    for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
           
-           var quantity = output.data.Kits[i].kit_item_details[i].quantity
+           var quantity = output.data.Kits[i].kit_item_details[j].quantity
+           
            //var quantity1 = quantity
            var query = {quantity : quantity};
    stockAllocationModel.findOneAndUpdate(
@@ -1045,7 +1046,7 @@ function kitdetailsadd1 () {
      ).then(create => {
        
       // console.log(kitAdding)
-          //  console.log(update)
+           console.log(quantity)
               })
  
      }})
