@@ -219,6 +219,7 @@ exports.login = async (req, res) => {
 cartdetails()
 kitdetailsadd()
 cartdetailsadd()
+kitdetailsadd1()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
 //     console.log(stdout);
@@ -1017,7 +1018,7 @@ function kitdetailsadd () {
        }
  }
 // kitdetailsadd()
-function kitdetailsadd () {
+function kitdetailsadd1 () {
   try {
  
  
