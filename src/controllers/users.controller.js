@@ -779,7 +779,7 @@ function tiltelCase (str) {
    
      //project(cartid,cartqty1)
     // var cartcartqty1 = cart[i].qty
-    var query = {[`${kitid1}`] : kitqty1,[`${kitstatus}`] : kitstatus1,total_quantity: total_quantity1};
+    var query = {[`${kitid1}`] : kitqty1,[`${kitstatus}`] : kitstatus1};
    //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
    console.log(query)
    cartModel.findOneAndUpdate(
