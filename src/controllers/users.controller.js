@@ -1019,7 +1019,7 @@ function kitdetailsadd () {
          console.log(err)
        }
  }
-// kitdetailsadd()
+ kitdetailsadd()
 function kitdetailsadd1 () {
   try {
  
