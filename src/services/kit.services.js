@@ -9,13 +9,13 @@ module.exports = function AddKit(kitData){ //oldCart,item,allocation,userQty
 	 if(this.items.length == 0){
 		this.items.push({kit_id : kit_id, item_quantity : item_quantity, qty : qty, kit_status : 1})
 	}else{
-		var checkIsItemmExist = this.items.filter(obj => (obj.item == item && obj.kit_status == 1));
+		var checkIsItemmExist = this.items.filter(obj => (obj.kit_id == kit_id && obj.kit_status == 1));
 		
 		if(checkIsItemmExist.length == 0){
 			this.items.push({kit_id : kit_id, item_quantity : item_quantity, qty : qty, kit_status : 1})
 		}
 		else{
-			var index = this.items.findIndex(p => p.item == item && p.kit_status == 1);
+			var index = this.items.findIndex(p => p.kit_id == kit_id && p.kit_status == 1);
 			this.items[index]['qty'] = updateQty ? userQty : this.items[index]['qty']+userQty
 		}
 	}
