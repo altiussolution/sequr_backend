@@ -1029,11 +1029,11 @@ function kitdetailsadd1 () {
 //if (is_old_kit = false) {
     for (var i = 0; i < output.data.Kits.length; i++ ){
           
-           var quantity1 = output.data.Kits[i].kit_item_details[i].quantity
+           var quantity = output.data.Kits[i].kit_item_details[i].quantity
            //var quantity1 = quantity
-           var query = {quantity : quantity1};
+           var query = {quantity : quantity};
    stockAllocationModel.findOneAndUpdate(
-     {company_id :output.company_id,},query
+     {company_id :output.company_id},query
      
      
      ).then(create => {
