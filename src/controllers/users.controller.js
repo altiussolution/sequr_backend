@@ -1033,7 +1033,7 @@ function kitdetailsadd1 () {
            //var quantity1 = quantity
            var query = {quantity : quantity1};
    stockAllocationModel.findOneAndUpdate(
-     {user: output.user,company_id :output.company_id,},query
+     {company_id :output.company_id,},query
      
      
      ).then(create => {
