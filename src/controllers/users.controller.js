@@ -1035,7 +1035,7 @@ function kitdetailsadd1 () {
 //if (is_old_kit = false) {
     for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
           
-           var quantity = output.data.Kits[i].kit_item_details[j].quantity
+           var quantity = output.data.Kits[i].kit_item_details[i].quantity
            
            //var quantity1 = quantity
            var query = {quantity : quantity};
