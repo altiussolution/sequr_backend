@@ -216,10 +216,10 @@ exports.login = async (req, res) => {
 
       res.status(200).json(user)
       //kitdetails()
- cartdetailsadd2()
- kitdetailsadd()
- cartdetailsadd()
-kitdetailsadd1()
+//  cartdetailsadd2()
+//  kitdetailsadd()
+//  cartdetailsadd()
+// kitdetailsadd1()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
 //     console.log(stdout);
@@ -859,7 +859,7 @@ function tiltelCase (str) {
          console.log(err)
        }
  }
- //cartdetailsadd()
+ cartdetailsadd()
 
 
 // //  function kitdetailsadd () {
@@ -1019,7 +1019,7 @@ function kitdetailsadd () {
          console.log(err)
        }
  }
- //kitdetailsadd()
+ kitdetailsadd()
 function kitdetailsadd1 () {
   try {
  
@@ -1061,7 +1061,7 @@ function kitdetailsadd1 () {
          console.log(err)
        }
  }
- //kitdetailsadd1()
+ kitdetailsadd1()
 
  function cartdetailsadd2 () {
   try {
@@ -1104,4 +1104,4 @@ function kitdetailsadd1 () {
          console.log(err)
        }
  }
- //cartdetailsadd2()
+ cartdetailsadd2()
