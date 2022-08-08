@@ -215,7 +215,7 @@ exports.login = async (req, res) => {
       user.token = token
 
       res.status(200).json(user)
-      kitdetails()
+      //kitdetails()
 // cartdetails()
  kitdetailsadd()
  //cartdetailsadd()
