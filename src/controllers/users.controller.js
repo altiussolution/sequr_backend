@@ -1030,8 +1030,8 @@ function kitdetailsadd1 () {
   .then (output => {
     // var quantity = output.data.Kits[i].kit_item_details[i].quantity
     // console.log(quantity)
-    var category = output.data.Kits[i].kit_item_details[j].category
-    console.log(category)
+    //var category = output.data.Kits[i].kit_item_details[j].category
+    //console.log(category)
 //if (is_old_kit = false) {
     for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
           
