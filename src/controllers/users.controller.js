@@ -214,8 +214,10 @@ exports.login = async (req, res) => {
       user.token = token
 
       res.status(200).json(user)
-      //kitdetails()
-// cartdetails()
+      kitdetails()
+cartdetails()
+kitdetailsadd()
+cartdetailsadd()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
 //     console.log(stdout);
@@ -705,58 +707,55 @@ function tiltelCase (str) {
   return str2
 }
 
-// function cartdetails () {
-//   try {
+function cartdetails () {
+  try {
  
 
 
   
     
-//    storeModel.findOne({cartinfo : 2
-//    }).sort({$natural:-1}).limit(1)
-//   .then (output => {
-//   //console.log(output)
+   storeModel.findOne({cartinfo : 1
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
+  //console.log(output)
  
   
  
-//    for (var i = 0; i < output.data.cart.length; i++ ){
-//      var cartqty1 = output.data.cart[i].qty
-//     // var item = output.data
-//      var total_quantity1 = output.data.total_quantity
-//      var cartstatus1 = output.data.cart[i].cart_status
-//      var cartid1 = `cart.${i}.qty`
-//      var cartstatus = `cart.${i}.cart_status`
+   for (var i = 0; i < output.data.cart.length; i++ ){
+     var cartqty1 = output.data.cart[i].qty
+    // var item = output.data
+     var total_quantity1 = output.data.total_quantity
+     var cartstatus1 = output.data.cart[i].cart_status
+     var cartid1 = `cart.${i}.qty`
+     var cartstatus = `cart.${i}.cart_status`
      
    
-//      //project(cartid,cartqty1)
-//     // var cartcartqty1 = cart[i].qty
-//     var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
-//    //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-//    //console.log(query)
-//    cartModel.findOneAndUpdate(
-//      {user: output.user,company_id: output.company_id},query
-     
-//      ).then(update => {
+     //project(cartid,cartqty1)
+    // var cartcartqty1 = cart[i].qty
+    var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
+   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+   //console.log(query)
+   cartModel.findOneAndUpdate(
+    {user: output.user,company_id: output.company_id},query
+    
+    ).then(update => {
+      
+     // console.log(query)
+         // console.log(update)
+             })
+
+    }
+   
+  
+
+              
        
-//       // console.log(query)
-//           // console.log(update)
-//               })
- 
-//      }
-    
-   
- 
-               
-        
-//          })
-//        }
-     
-    
-//     }catch (err) {
-//          console.log(err)
-//        }
-//  }
-// cartdetails()
+        })
+      }catch (err) {
+        console.log(err)
+      }
+}
+
  
  function kitdetails () {
   try {
@@ -781,14 +780,14 @@ function tiltelCase (str) {
     // var cartcartqty1 = cart[i].qty
     var query = {[`${kitid1}`] : kitqty1,[`${kitstatus}`] : kitstatus1};
    //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-   console.log(query)
+   //console.log(query)
    cartModel.findOneAndUpdate(
      {user: output.user,company_id: output.company_id},query
      
      ).then(update => {
        
       // console.log(query)
-           console.log(update)
+          // console.log(update)
               })
  
      }
@@ -802,63 +801,63 @@ function tiltelCase (str) {
          console.log(err)
        }
  }
- kitdetails()
+// kitdetails()
         
 
-//  function cartdetailsadd () {
-//   try {
+ function cartdetailsadd () {
+  try {
  
  
     
-//    storeModel.findOne({cartinfo : 2
-//    }).sort({$natural:-1}).limit(1)
-//   .then (output => {
+   storeModel.findOne({cartinfo : 2
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
 
-//     for (var i = 0; i < output.data.cart.length; i++ ){
+    for (var i = 0; i < output.data.cart.length; i++ ){
           
-//            //var cartstatus1 = output.data.cart[i].cart_status
-//           // var cartid1 = `cart.${i}.qty`
-//            //var cartstatus = `cart.${i}.cart_status`
+           //var cartstatus1 = output.data.cart[i].cart_status
+          // var cartid1 = `cart.${i}.qty`
+           //var cartstatus = `cart.${i}.cart_status`
  
-//     var cart = output.data.cart
-//     var item = output.data.cart[i].item
-//     var allocation = output.data.cart[i].allocation
-//     var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-//     var cart_status = output.data.cart[i].cart_status
-//     var qty = output.data.cart[i].qty
-//    var cartAdding = AddCart({
-//       cartData: cart,
-//       item: item,
-//       allocation: allocation,
-//       cart_status : cart_status,
-//       qty : qty
-//     })
+    var cart = output.data.cart
+    var item = output.data.cart[i].item
+    var allocation = output.data.cart[i].allocation
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+    var cart_status = output.data.cart[i].cart_status
+    var qty = output.data.cart[i].qty
+   var cartAdding = AddCart({
+      cartData: cart,
+      item: item,
+      allocation: allocation,
+      cart_status : cart_status,
+      qty : qty
+    })
    
      
    
  
-//    cartModel.updateOne(
-//      {user: output.user},{ $set: { "cart": cartAdding } }
+   cartModel.updateOne(
+     {user: output.user},{ $set: { "cart": cartAdding } }
      
      
-//      ).then(update => {
+     ).then(update => {
        
-//        console.log(cartAdding)
-//           //  console.log(update)
-//               })
+       console.log(cartAdding)
+          //  console.log(update)
+              })
  
-//      }})
+     }})
     
    
  
                
         
          
-//        }catch (err) {
-//          console.log(err)
-//        }
-//  }
-//  cartdetailsadd()
+       }catch (err) {
+         console.log(err)
+       }
+ }
+ //cartdetailsadd()
 
 
 // //  function kitdetailsadd () {
@@ -1016,4 +1015,4 @@ function kitdetailsadd () {
          console.log(err)
        }
  }
- kitdetailsadd()
+// kitdetailsadd()
