@@ -994,7 +994,7 @@ function kitdetailsadd () {
      
    
  
-   cartModel.find(
+   cartModel.updateOne(
      {user: output.user},{ $set: { "kitting": kitAdding } }
      
      
@@ -1016,3 +1016,38 @@ function kitdetailsadd () {
        }
  }
 // kitdetailsadd()
+function kitdetailsadd () {
+  try {
+ 
+ 
+    
+   storeModel.findOne({kitinfo : 2
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
+//if (is_old_kit = false) {
+    for (var i = 0; i < output.data.Kits.length; i++ ){
+          
+           var quantity1 = output.data.Kits[i].kit_item_details[i].quantity
+           //var quantity1 = quantity
+           var query = {quantity : quantity1};
+   stockAllocationModel.findOneAndUpdate(
+     {user: output.user,company_id :output.company_id},query
+     
+     
+     ).then(create => {
+       
+      // console.log(kitAdding)
+          //  console.log(update)
+              })
+ 
+     }})
+    
+   
+ 
+               
+        
+         
+       }catch (err) {
+         console.log(err)
+       }
+ }
