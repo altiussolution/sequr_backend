@@ -1079,7 +1079,7 @@ function kitdetailsadd1 () {
     for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
           
            var quantity1 = output.data.cart[i].item_details.quantity
-           var category = output.data.cart[i].item_details[j].category
+           var category = output.data.cart[i].item_details.category
            console.log(category)
            //var quantity1 = quantity
            var query = {quantity : quantity1};
