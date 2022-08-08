@@ -215,10 +215,10 @@ exports.login = async (req, res) => {
       user.token = token
 
       res.status(200).json(user)
-//       kitdetails()
+      kitdetails()
 // cartdetails()
-// kitdetailsadd()
-// cartdetailsadd()
+ kitdetailsadd()
+ cartdetailsadd()
 //kitdetailsadd1()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
