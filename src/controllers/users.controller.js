@@ -1020,38 +1020,39 @@ function kitdetailsadd () {
        }
  }
  kitdetailsadd()
-// function kitdetailsadd1 () {
-//   try {
+function kitdetailsadd1 () {
+  try {
  
  
     
-//    storeModel.findOne({kitinfo : 2
-//    }).sort({$natural:-1}).limit(1)
-//   .then (output => {
-// //if (is_old_kit = false) {
-//     for (var i = 0; i < output.data.Kits.length; i++ ){
+   storeModel.findOne({kitinfo : 2
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
+//if (is_old_kit = false) {
+    for (var i = 0; i < output.data.Kits.length; i++ ){
           
-//            var quantity = output.data.Kits[i].kit_item_details[i].quantity
-//            //var quantity1 = quantity
-//            var query = {quantity : quantity};
-//    stockAllocationModel.findOneAndUpdate(
-//      {company_id :output.company_id},query
+           var quantity = output.data.Kits[i].kit_item_details[i].quantity
+           //var quantity1 = quantity
+           var query = {quantity : quantity};
+   stockAllocationModel.findOneAndUpdate(
+     {company_id :output.company_id},query
      
      
-//      ).then(create => {
+     ).then(create => {
        
-//       // console.log(kitAdding)
-//           //  console.log(update)
-//               })
+      // console.log(kitAdding)
+          //  console.log(update)
+              })
  
-//      }})
+     }})
     
    
  
                
         
          
-//        }catch (err) {
-//          console.log(err)
-//        }
-//  }
+       }catch (err) {
+         console.log(err)
+       }
+ }
+ kitdetailsadd1()
