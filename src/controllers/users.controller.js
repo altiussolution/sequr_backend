@@ -1063,45 +1063,45 @@ function kitdetailsadd1 () {
  }
  kitdetailsadd1()
 
- function cartdetailsadd2 () {
-  try {
+//  function cartdetailsadd2 () {
+//   try {
  
  
     
-   storeModel.findOne({cartinfo : 2
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
-    // var quantity = output.data.Kits[i].kit_item_details[i].quantity
-    // console.log(quantity)
-    //var category = output.data.Kits[i].kit_item_details[j].category
-    //console.log(category)
-//if (is_old_kit = false) {
-    for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
+//    storeModel.findOne({cartinfo : 2
+//    }).sort({$natural:-1}).limit(1)
+//   .then (output => {
+//     // var quantity = output.data.Kits[i].kit_item_details[i].quantity
+//     // console.log(quantity)
+//     //var category = output.data.Kits[i].kit_item_details[j].category
+//     //console.log(category)
+// //if (is_old_kit = false) {
+//     for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
           
-           var quantity1 = output.data.cart[i].item_details.quantity
-           var category = output.data.cart[i].item_details.category
-           console.log(category)
-           //var quantity1 = quantity
-           var query = {quantity : quantity1};
-   stockAllocationModel.findOneAndUpdate(
-     {company_id :output.company_id,category},query
+//            var quantity1 = output.data.cart[i].item_details.quantity
+//            var category = output.data.cart[i].item_details.category
+//            console.log(category)
+//            //var quantity1 = quantity
+//            var query = {quantity : quantity1};
+//    stockAllocationModel.findOneAndUpdate(
+//      {company_id :output.company_id,category},query
      
      
-     ).then(create => {
+//      ).then(create => {
        
-      // console.log(kitAdding)
-           console.log(quantity1)
-              })
+//       // console.log(kitAdding)
+//            console.log(quantity1)
+//               })
  
-     }})
+//      }})
     
    
  
                
         
          
-       }catch (err) {
-         console.log(err)
-       }
- }
- cartdetailsadd2()
+//        }catch (err) {
+//          console.log(err)
+//        }
+//  }
+//  cartdetailsadd2()
