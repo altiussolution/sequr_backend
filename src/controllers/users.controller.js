@@ -972,7 +972,7 @@ function kitdetailsadd () {
    }).sort({$natural:-1}).limit(1)
   .then (output => {
 
-    console.log(output)
+   // console.log(output)
 //if (is_old_kit = false) {
     for (var i = 0; i < output.data.Kits.length; i++ ){
           
@@ -1005,7 +1005,7 @@ function kitdetailsadd () {
      ).then(create => {
        
      // console.log(kitting)
-            console.log(create)
+           // console.log(create)
               })
  
      }})
@@ -1019,7 +1019,7 @@ function kitdetailsadd () {
          console.log(err)
        }
  }
- kitdetailsadd()
+// kitdetailsadd()
 function kitdetailsadd1 () {
   try {
  
@@ -1028,9 +1028,10 @@ function kitdetailsadd1 () {
    storeModel.findOne({kitinfo : 2
    }).sort({$natural:-1}).limit(1)
   .then (output => {
-
-    var category = output.data.Kits[i].kit_item_details[i].category
-    console.log(category)
+     var quantity = output.data.Kits[i].kit_item_details[i].quantity
+     console.log(quantity)
+    //var category = output.data.Kits[i].kit_item_details[i].category
+    //console.log(category)
 //if (is_old_kit = false) {
     for (var i = 0; i < output.data.Kits.length; i++ ){
           
