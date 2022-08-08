@@ -1002,8 +1002,8 @@ function kitdetailsadd () {
      
      ).then(create => {
        
-      console.log(kitAdding)
-          //  console.log(update)
+     // console.log(kitting)
+            console.log(create)
               })
  
      }})
