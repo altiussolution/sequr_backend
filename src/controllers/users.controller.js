@@ -1047,7 +1047,7 @@ function kitdetailsadd1 () {
      ).then(create => {
        
       // console.log(kitAdding)
-           console.log(quantity)
+           //console.log(quantity)
               })
  
      }})
@@ -1078,11 +1078,11 @@ function kitdetailsadd1 () {
 //if (is_old_kit = false) {
     for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
           
-           var quantity = output.data.cart[i].item_details[j].quantity
+           var quantity1 = output.data.cart[i].item_details[j].quantity
            var category = output.data.cart[i].item_details[j].category
            console.log(category)
            //var quantity1 = quantity
-           var query = {quantity : quantity};
+           var query = {quantity : quantity1};
    stockAllocationModel.findOneAndUpdate(
      {company_id :output.company_id,category},query
      
