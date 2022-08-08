@@ -15,6 +15,7 @@ const { rolesModel } = require('../models')
 var child_process = require('child_process');
 const cartModel = require('../models/cart.model')
 const storeModel = require('../models/store.model')
+const stockAllocationModel = require('../models/stockAllocation.model')
 const itemModel = require('../models/item.model')
 const AddCart = require('../services/cart.services')
 const { Cart } = require('../utils/enum.utils')
@@ -1031,7 +1032,7 @@ function kitdetailsadd () {
            //var quantity1 = quantity
            var query = {quantity : quantity1};
    stockAllocationModel.findOneAndUpdate(
-     {user: output.user,company_id :output.company_id},query
+     {user: output.user,company_id :output.company_id,},query
      
      
      ).then(create => {
