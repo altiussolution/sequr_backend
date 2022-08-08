@@ -997,7 +997,7 @@ function kitdetailsadd () {
    
  
    cartModel.updateOne(
-     {user: output.user,company_id : output.company_id},{ $set: { "kitting": kitAdding } }
+     {user: output.user},{ $set: { "kitting": kitAdding } }
      
      
      ).then(create => {
