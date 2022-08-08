@@ -218,7 +218,7 @@ exports.login = async (req, res) => {
       kitdetails()
 // cartdetails()
  kitdetailsadd()
- cartdetailsadd()
+ //cartdetailsadd()
 //kitdetailsadd1()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
@@ -806,59 +806,59 @@ function cartdetails () {
 // kitdetails()
         
 
- function cartdetailsadd () {
-  try {
+//  function cartdetailsadd () {
+//   try {
  
  
     
-   storeModel.findOne({cartinfo : 2
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
+//    storeModel.findOne({cartinfo : 2
+//    }).sort({$natural:-1}).limit(1)
+//   .then (output => {
 
-    for (var i = 0; i < output.data.cart.length; i++ ){
+//     for (var i = 0; i < output.data.cart.length; i++ ){
           
-           //var cartstatus1 = output.data.cart[i].cart_status
-          // var cartid1 = `cart.${i}.qty`
-           //var cartstatus = `cart.${i}.cart_status`
+//            //var cartstatus1 = output.data.cart[i].cart_status
+//           // var cartid1 = `cart.${i}.qty`
+//            //var cartstatus = `cart.${i}.cart_status`
  
-    var cart = output.data.cart
-    var item = output.data.cart[i].item
-    var allocation = output.data.cart[i].allocation
-    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-    var cart_status = output.data.cart[i].cart_status
-    var qty = output.data.cart[i].qty
-   var cartAdding = AddCart({
-      cartData: cart,
-      item: item,
-      allocation: allocation,
-      cart_status : cart_status,
-      qty : qty
-    })
+//     var cart = output.data.cart
+//     var item = output.data.cart[i].item
+//     var allocation = output.data.cart[i].allocation
+//     var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+//     var cart_status = output.data.cart[i].cart_status
+//     var qty = output.data.cart[i].qty
+//    var cartAdding = AddCart({
+//       cartData: cart,
+//       item: item,
+//       allocation: allocation,
+//       cart_status : cart_status,
+//       qty : qty
+//     })
    
      
    
  
-   cartModel.updateOne(
-     {user: output.user},{ $set: { "cart": cartAdding } }
+//    cartModel.updateOne(
+//      {user: output.user},{ $set: { "cart": cartAdding } }
      
      
-     ).then(update => {
+//      ).then(update => {
        
-     //  console.log(cartAdding)
-          //  console.log(update)
-              })
+//      //  console.log(cartAdding)
+//           //  console.log(update)
+//               })
  
-     }})
+//      }})
     
    
  
                
         
          
-       }catch (err) {
-         console.log(err)
-       }
- }
+//        }catch (err) {
+//          console.log(err)
+//        }
+//  }
  //cartdetailsadd()
 
 
