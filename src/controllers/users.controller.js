@@ -1090,7 +1090,7 @@ function kitdetailsadd1 () {
      ).then(create => {
        
       // console.log(kitAdding)
-           console.log(quantity)
+           console.log(quantity1)
               })
  
      }})
