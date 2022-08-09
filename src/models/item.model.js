@@ -47,9 +47,9 @@ const ItemSchema = Schema(
     description: {
       type: String
     },
-    image : {
-      type : String
-    },
+    // image : {
+    //   type : String
+    // },
     image_path: {
       type: Array
     },
