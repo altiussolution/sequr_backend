@@ -215,11 +215,8 @@ exports.login = async (req, res) => {
       user.token = token
 
       res.status(200).json(user)
-      //kitdetails()
-//  cartdetailsadd2()
-//  kitdetailsadd()
-//  cartdetailsadd()
-// kitdetailsadd1()
+      cartdetailsadd()
+      kitdetailsadd()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
 //     console.log(stdout);
@@ -814,7 +811,7 @@ function tiltelCase (str) {
    storeModel.findOne({cartinfo : 2
    }).sort({$natural:-1}).limit(1)
   .then (output => {
-
+if (output.updatestatus == 1){
     for (var i = 0; i < output.data.cart.length; i++ ){
           
            //var cartstatus1 = output.data.cart[i].cart_status
@@ -848,7 +845,42 @@ function tiltelCase (str) {
           //  console.log(update)
               })
  
-     }})
+     }}
+    else if (output.updatestatus == 2) {
+      for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
+          
+        var quantity1 = output.data.cart[i].item_details.quantity
+        var category = output.data.cart[i].item_details.category
+        console.log(category)
+        //var quantity1 = quantity
+        var query = {quantity : quantity1};
+stockAllocationModel.findOneAndUpdate(
+  {company_id :output.company_id,category},query
+  
+  
+  ).then(create => {
+    
+   // console.log(kitAdding)
+        console.log(quantity1)
+           })
+
+  }
+    }
+    else  {
+     
+      cartModel.findOneAndRemove(
+        {user: output.user,company_id :output.company_id}
+        
+        
+        ).then(update => {
+          
+         // console.log(kitAdding)
+              //console.log(quantity)
+                 })
+      
+
+    }
+    })
     
    
  
@@ -859,7 +891,7 @@ function tiltelCase (str) {
          console.log(err)
        }
  }
- cartdetailsadd()
+ //cartdetailsadd()
 
 
 // //  function kitdetailsadd () {
@@ -963,7 +995,90 @@ function tiltelCase (str) {
 //  }
  
 //          cartdetails()
-// function kitdetailsadd () {
+function kitdetailsadd () {
+  try {
+ 
+ 
+    
+   storeModel.findOne({kitinfo : 2
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
+    //console.log(kitinfo)
+//
+    console.log(output)
+//if (is_old_kit = false) {
+  if (output.updatestatus == 1){
+    for (var i = 0; i < output.data.Kits.length; i++ ){
+     
+        var kitting = output.data.Kits
+        var kit_id = output.data.Kits[i].kit_id
+        var kit_status = output.data.Kits[i].kit_status
+        //var qty = output.data.Kits[i].qty
+        var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+        //var cart_status = output.data.Kits[i].cart_status
+        var qty = output.data.Kits[i].qty
+       var kitAdding = AddKit({
+        kitData: kitting,
+              kit_id : kit_id,
+              kit_status : kit_status,
+              item_quantity : qty,
+              qty : 1
+        })
+      }
+      cartModel.updateOne(
+        {user: output.user},{ $set: { "kitting": kitAdding } }
+        
+        
+        ).then(is_create => {
+          
+        // console.log(kitting)
+              // console.log(create)
+                 })
+    
+        }
+          
+          
+ 
+    else if (output.updatestatus == 2 ){
+      for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
+        
+          
+        var quantity = output.data.Kits[i].kit_item_details[j].quantity
+        var category = output.data.Kits[i].kit_item_details[j].category
+        console.log(category)
+        //var quantity1 = quantity
+        var query = {quantity : quantity};
+stockAllocationModel.findOneAndUpdate(
+  {company_id :output.company_id,category},query
+  
+  
+  ).then(create => {
+    
+   // console.log(kitAdding)
+        //console.log(quantity)
+           })
+
+  }
+    }
+
+  
+   
+     
+   
+ 
+  })
+    
+   
+ 
+               
+        
+         
+       }catch (err) {
+         console.log(err)
+       }
+ }
+ //kitdetailsadd()
+// function kitdetailsadd1 () {
 //   try {
  
  
@@ -971,52 +1086,26 @@ function tiltelCase (str) {
 //    storeModel.findOne({kitinfo : 2
 //    }).sort({$natural:-1}).limit(1)
 //   .then (output => {
-//     //console.log(kitinfo)
-// //
-//     console.log(output)
+//     // var quantity = output.data.Kits[i].kit_item_details[i].quantity
+//     // console.log(quantity)
+//     //var category = output.data.Kits[i].kit_item_details[j].category
+//     //console.log(category)
 // //if (is_old_kit = false) {
-//     for (var i = 0; i < output.data.Kits.length; i++ ){
-//       if (update_status == 1){
-//         var kitting = output.data.Kits
-//         var kit_id = output.data.Kits[i].kit_id
-//         var kit_status = output.data.Kits[i].kit_status
-//         //var qty = output.data.Kits[i].qty
-//         var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-//         //var cart_status = output.data.Kits[i].cart_status
-//         var qty = output.data.Kits[i].qty
-//        var kitAdding = AddKit({
-//         kitData: kitting,
-//               kit_id : kit_id,
-//               kit_status : kit_status,
-//               item_quantity : qty,
-//               qty : 1
-//         })
-//       }
+//     for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
           
-//            //var cartstatus1 = output.data.cart[i].cart_status
-//           // var cartid1 = `cart.${i}.qty`
-//            //var cartstatus = `cart.${i}.cart_status`
- 
-//     else if (update_status ==2 ){
-
-//     }
-
-//     else  {
-//       cart
-
-//     }
-   
-     
-   
- 
-//    cartModel.updateOne(
-//      {user: output.user},{ $set: { "kitting": kitAdding } }
+//            var quantity = output.data.Kits[i].kit_item_details[j].quantity
+//            var category = output.data.Kits[i].kit_item_details[j].category
+//            console.log(category)
+//            //var quantity1 = quantity
+//            var query = {quantity : quantity};
+//    stockAllocationModel.findOneAndUpdate(
+//      {company_id :output.company_id,category},query
      
      
 //      ).then(create => {
        
-//      // console.log(kitting)
-//            // console.log(create)
+//       // console.log(kitAdding)
+//            //console.log(quantity)
 //               })
  
 //      }})
@@ -1030,49 +1119,7 @@ function tiltelCase (str) {
 //          console.log(err)
 //        }
 //  }
-//  kitdetailsadd()
-function kitdetailsadd1 () {
-  try {
- 
- 
-    
-   storeModel.findOne({kitinfo : 2
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
-    // var quantity = output.data.Kits[i].kit_item_details[i].quantity
-    // console.log(quantity)
-    //var category = output.data.Kits[i].kit_item_details[j].category
-    //console.log(category)
-//if (is_old_kit = false) {
-    for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
-          
-           var quantity = output.data.Kits[i].kit_item_details[j].quantity
-           var category = output.data.Kits[i].kit_item_details[j].category
-           console.log(category)
-           //var quantity1 = quantity
-           var query = {quantity : quantity};
-   stockAllocationModel.findOneAndUpdate(
-     {company_id :output.company_id,category},query
-     
-     
-     ).then(create => {
-       
-      // console.log(kitAdding)
-           //console.log(quantity)
-              })
- 
-     }})
-    
-   
- 
-               
-        
-         
-       }catch (err) {
-         console.log(err)
-       }
- }
- kitdetailsadd1()
+//  kitdetailsadd1()
 
 //  function cartdetailsadd2 () {
 //   try {
