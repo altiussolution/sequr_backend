@@ -686,7 +686,7 @@ exports.itemHistory = async (req, res) => {
       'cart',
       'updated_at'
     ])
-      .populate('cart.item', ['item_name', 'image_path'])
+      .populate('cart.item', ['item_name','image', 'image_path'])
       .exec()
 
     CartHistory = JSON.parse(JSON.stringify(CartHistory))
