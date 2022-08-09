@@ -22,7 +22,10 @@ const StoreSchema = Schema(
             image_path: [{
              type: Array
             }
-            ]
+            ],
+            image : {
+              type : String
+            }
           },
           allocation: {
             type : String
@@ -242,5 +245,8 @@ total_quantity : {
 cartinfo : {
   type : Number
 },
+updatestatus : {
+  type : String
+}
 })
 module.exports = mongoose.model('store', StoreSchema, 'store');
