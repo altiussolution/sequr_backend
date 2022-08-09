@@ -847,7 +847,28 @@ if (output.updatestatus == 1){
           //  console.log(update)
               })
  
-     }}
+     }
+     for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
+          
+      var quantity1 = output.data.cart[i].item_details.quantity
+      var category = output.data.cart[i].item_details.category
+      console.log(category)
+      //var quantity1 = quantity
+      var query = {quantity : quantity1};
+stockAllocationModel.findOneAndUpdate(
+{company_id :output.company_id,category},query
+
+
+).then(create => {
+  
+ // console.log(kitAdding)
+      console.log(quantity1)
+         })
+
+
+
+  }
+    }
     else if (output.updatestatus == 2) {
       for (var i = 0; i < output.data.cart.length; i++ ){
         var cartqty1 = output.data.cart[i].qty
@@ -873,26 +894,7 @@ if (output.updatestatus == 1){
                 })
 
 }
-      for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
-          
-        var quantity1 = output.data.cart[i].item_details.quantity
-        var category = output.data.cart[i].item_details.category
-        console.log(category)
-        //var quantity1 = quantity
-        var query = {quantity : quantity1};
-stockAllocationModel.findOneAndUpdate(
-  {company_id :output.company_id,category},query
-  
-  
-  ).then(create => {
-    
-   // console.log(kitAdding)
-        console.log(quantity1)
-           })
-
-
-
-    }
+      
   }
     // else  {
      
