@@ -864,7 +864,7 @@ if (output.updatestatus == 1){
       //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
       console.log(query)
       cartModel.findOneAndUpdate(
-       {user: output.user},query
+       {user: output.user,company_id: output.company_id},query
        
        ).then(update => {
          
