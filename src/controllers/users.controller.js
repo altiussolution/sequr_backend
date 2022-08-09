@@ -877,11 +877,12 @@ stockAllocationModel.findOneAndUpdate(
         var cartstatus1 = output.data.cart[i].cart_status
         var cartid1 = `cart.${i}.qty`
         var cartstatus = `cart.${i}.cart_status`
-        
+        var item1 = `cart.${i}.item`
+        var item = output.data.cart[i].item
       
         //project(cartid,cartqty1)
        // var cartcartqty1 = cart[i].qty
-       var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
+       var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,[`${item1}`] : item,total_quantity: total_quantity1};
       //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
       console.log(query)
       cartModel.findOneAndUpdate(
@@ -1064,32 +1065,52 @@ function kitdetailsadd () {
         // console.log(kitting)
               // console.log(create)
                  })
+                 for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
+        
+          
+                  var quantity = output.data.Kits[i].kit_item_details[j].quantity
+                  var category = output.data.Kits[i].kit_item_details[j].category
+                  console.log(category)
+                  //var quantity1 = quantity
+                  var query = {quantity : quantity};
+          stockAllocationModel.findOneAndUpdate(
+            {company_id :output.company_id,category},query
+            
+            
+            ).then(create => {
+              
+             // console.log(kitAdding)
+                  //console.log(quantity)
+                     })
+                     
+          
+            }
     
         }
           
           
  
     else if (output.updatestatus == 2 ){
-      for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
+//       for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
         
           
-        var quantity = output.data.Kits[i].kit_item_details[j].quantity
-        var category = output.data.Kits[i].kit_item_details[j].category
-        console.log(category)
-        //var quantity1 = quantity
-        var query = {quantity : quantity};
-stockAllocationModel.findOneAndUpdate(
-  {company_id :output.company_id,category},query
+//         var quantity = output.data.Kits[i].kit_item_details[j].quantity
+//         var category = output.data.Kits[i].kit_item_details[j].category
+//         console.log(category)
+//         //var quantity1 = quantity
+//         var query = {quantity : quantity};
+// stockAllocationModel.findOneAndUpdate(
+//   {company_id :output.company_id,category},query
   
   
-  ).then(create => {
+//   ).then(create => {
     
-   // console.log(kitAdding)
-        //console.log(quantity)
-           })
+//    // console.log(kitAdding)
+//         //console.log(quantity)
+//            })
            
 
-  }
+//   }
     }
 
   
