@@ -216,7 +216,7 @@ exports.login = async (req, res) => {
 
       res.status(200).json(user)
       
-      kitdetailsadd()
+      //kitdetailsadd()
       //cartdetailsadd()
       //kitdetailsadd()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
@@ -1156,7 +1156,7 @@ stockAllocationModel.findOneAndUpdate(
          console.log(err)
        }
  }
- //kitdetailsadd()
+ kitdetailsadd()
 // function kitdetailsadd1 () {
 //   try {
  
