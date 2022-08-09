@@ -847,6 +847,30 @@ if (output.updatestatus == 1){
  
      }}
     else if (output.updatestatus == 2) {
+      for (var i = 0; i < output.data.cart.length; i++ ){
+        var cartqty1 = output.data.cart[i].qty
+       // var item = output.data
+        var total_quantity1 = output.data.total_quantity
+        var cartstatus1 = output.data.cart[i].cart_status
+        var cartid1 = `cart.${i}.qty`
+        var cartstatus = `cart.${i}.cart_status`
+        
+      
+        //project(cartid,cartqty1)
+       // var cartcartqty1 = cart[i].qty
+       var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,total_quantity: total_quantity1};
+      //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+      //console.log(query)
+      cartModel.findOneAndUpdate(
+       {user: output.user,company_id: output.company_id},query
+       
+       ).then(update => {
+         
+        // console.log(query)
+            // console.log(update)
+                })
+
+}
       for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
           
         var quantity1 = output.data.cart[i].item_details.quantity
