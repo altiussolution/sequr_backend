@@ -864,7 +864,7 @@ stockAllocationModel.findOneAndUpdate(
         console.log(quantity1)
            })
 
-           
+
            for (var i = 0; i < output.data.cart.length; i++ ){
                  var cartqty1 = output.data.cart[i].qty
                 // var item = output.data
@@ -891,20 +891,20 @@ stockAllocationModel.findOneAndUpdate(
   }
     }
   }
-    else  {
+    // else  {
      
-      cartModel.findOneAndRemove(
-        {user: output.user,company_id :output.company_id}
+    //   cartModel.findOneAndRemove(
+    //     {user: output.user,company_id :output.company_id}
         
         
-        ).then(update => {
+    //     ).then(update => {
           
-         // console.log(kitAdding)
-              //console.log(quantity)
-                 })
+    //      // console.log(kitAdding)
+    //           //console.log(quantity)
+    //              })
       
 
-    }
+    // }
     })
     
    
