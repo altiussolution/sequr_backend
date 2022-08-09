@@ -891,7 +891,7 @@ stockAllocationModel.findOneAndUpdate(
        ).then(update => {
          
         // console.log(query)
-             console.log(update)
+             //console.log(update)
                 })
 
 }
@@ -1091,26 +1091,51 @@ function kitdetailsadd () {
           
  
     else if (output.updatestatus == 2 ){
-//       for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
+      for (var i = 0; i < output.data.Kits.length; i++ ){
+        //var cartqty1 = output.data.cart[i].qty
+       // var item = output.data
+       var kitstatus1 = output.data.Kits[i].kit_status
+            //var kitid1 = `kitting.${i}.qty`
+            var kitstatus = `kitting.${i}.kit_status`
+            
+          
+            //project(cartid,cartqty1)
+           // var cartcartqty1 = cart[i].qty
+           var query = {[`${kitstatus}`] : kitstatus1};
+       //    //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+      //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+      console.log(query)
+      cartModel.findOneAndUpdate(
+       {user: output.user,company_id: output.company_id},query
+       
+       ).then(update => {
+         
+        // console.log(query)
+             //console.log(update)
+                })
+
+}
+for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
         
           
-//         var quantity = output.data.Kits[i].kit_item_details[j].quantity
-//         var category = output.data.Kits[i].kit_item_details[j].category
-//         console.log(category)
-//         //var quantity1 = quantity
-//         var query = {quantity : quantity};
-// stockAllocationModel.findOneAndUpdate(
-//   {company_id :output.company_id,category},query
-  
-  
-//   ).then(create => {
-    
-//    // console.log(kitAdding)
-//         //console.log(quantity)
-//            })
-           
+  var quantity = output.data.Kits[i].kit_item_details[j].quantity
+  var category = output.data.Kits[i].kit_item_details[j].category
+  console.log(category)
+  //var quantity1 = quantity
+  var query = {quantity : quantity};
+stockAllocationModel.findOneAndUpdate(
+{company_id :output.company_id,category},query
 
-//   }
+
+).then(create => {
+
+// console.log(kitAdding)
+  //console.log(quantity)
+     })
+     
+
+}
+
     }
 
   
