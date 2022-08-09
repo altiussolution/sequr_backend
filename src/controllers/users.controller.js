@@ -811,6 +811,8 @@ function tiltelCase (str) {
    storeModel.findOne({cartinfo : 2
    }).sort({$natural:-1}).limit(1)
   .then (output => {
+    var answer = output.updatestatus
+    console.log(answer)
 if (output.updatestatus == 1){
     for (var i = 0; i < output.data.cart.length; i++ ){
           
