@@ -963,63 +963,74 @@ function tiltelCase (str) {
 //  }
  
 //          cartdetails()
-function kitdetailsadd () {
-  try {
+// function kitdetailsadd () {
+//   try {
  
  
     
-   storeModel.findOne({kitinfo : 2
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
-
-   // console.log(output)
-//if (is_old_kit = false) {
-    for (var i = 0; i < output.data.Kits.length; i++ ){
+//    storeModel.findOne({kitinfo : 2
+//    }).sort({$natural:-1}).limit(1)
+//   .then (output => {
+//     //console.log(kitinfo)
+// //
+//     console.log(output)
+// //if (is_old_kit = false) {
+//     for (var i = 0; i < output.data.Kits.length; i++ ){
+//       if (update_status == 1){
+//         var kitting = output.data.Kits
+//         var kit_id = output.data.Kits[i].kit_id
+//         var kit_status = output.data.Kits[i].kit_status
+//         //var qty = output.data.Kits[i].qty
+//         var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+//         //var cart_status = output.data.Kits[i].cart_status
+//         var qty = output.data.Kits[i].qty
+//        var kitAdding = AddKit({
+//         kitData: kitting,
+//               kit_id : kit_id,
+//               kit_status : kit_status,
+//               item_quantity : qty,
+//               qty : 1
+//         })
+//       }
           
-           //var cartstatus1 = output.data.cart[i].cart_status
-          // var cartid1 = `cart.${i}.qty`
-           //var cartstatus = `cart.${i}.cart_status`
+//            //var cartstatus1 = output.data.cart[i].cart_status
+//           // var cartid1 = `cart.${i}.qty`
+//            //var cartstatus = `cart.${i}.cart_status`
  
-    var kitting = output.data.Kits
-    var kit_id = output.data.Kits[i].kit_id
-    var kit_status = output.data.Kits[i].kit_status
-    //var qty = output.data.Kits[i].qty
-    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-    //var cart_status = output.data.Kits[i].cart_status
-    var qty = output.data.Kits[i].qty
-   var kitAdding = AddKit({
-    kitData: kitting,
-          kit_id : kit_id,
-          kit_status : kit_status,
-          item_quantity : qty,
-          qty : 1
-    })
+//     else if (update_status ==2 ){
+
+//     }
+
+//     else  {
+//       cart
+
+//     }
    
      
    
  
-   cartModel.updateOne(
-     {user: output.user},{ $set: { "kitting": kitAdding } }
+//    cartModel.updateOne(
+//      {user: output.user},{ $set: { "kitting": kitAdding } }
      
      
-     ).then(create => {
+//      ).then(create => {
        
-     // console.log(kitting)
-           // console.log(create)
-              })
+//      // console.log(kitting)
+//            // console.log(create)
+//               })
  
-     }})
+//      }})
     
    
  
                
         
          
-       }catch (err) {
-         console.log(err)
-       }
- }
- kitdetailsadd()
+//        }catch (err) {
+//          console.log(err)
+//        }
+//  }
+//  kitdetailsadd()
 function kitdetailsadd1 () {
   try {
  
