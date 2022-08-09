@@ -246,7 +246,7 @@ cartinfo : {
   type : Number
 },
 updatestatus : {
-  type : String
+  type : Number
 }
 })
 module.exports = mongoose.model('store', StoreSchema, 'store');
