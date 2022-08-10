@@ -1091,7 +1091,7 @@ function kitdetailsadd () {
                  for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
         
           
-                  var quantity = output.data.Kits[i].kit_item_details[i].quantity
+                  var quantity = output.data.Kits[i].kit_item_details[j].quantity
                   var category = output.data.Kits[i].kit_item_details[j].category
                   var kit_id = output.data.Kits[i].kit_id
                   console.log(category)
