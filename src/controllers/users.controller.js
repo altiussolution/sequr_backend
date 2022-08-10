@@ -1094,7 +1094,7 @@ function kitdetailsadd () {
                   var quantity = output.data.Kits[i].kit_item_details[j].quantity
                   var category = output.data.Kits[i].kit_item_details[j].category
                   var kit_id = output.data.Kits[i].kit_id
-                  console.log(category)
+                  console.log(quantity)
                   //var quantity1 = quantity
                   var query = {quantity : quantity};
           stockAllocationModel.findOneAndUpdate(
