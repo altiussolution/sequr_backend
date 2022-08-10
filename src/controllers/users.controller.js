@@ -815,6 +815,7 @@ function tiltelCase (str) {
   .then (output => {
     var answer = output.updatestatus
     console.log(answer)
+
 if (output.updatestatus == 1){
     for (var i = 0; i < output.data.cart.length; i++ ){
           
@@ -918,20 +919,20 @@ stockAllocationModel.findOneAndUpdate(
 
 } 
   }
-//     // else  {
+    // else  {
      
-//     //   cartModel.findById(
-//     //     {user: output.user,company_id :output.company_id}
+    //   cartModel.findByIdAndRemove(
+    //     {user: output.user,company_id :output.company_id}
         
         
-//     //     ).then(update => {
+    //     ).then(update => {
           
-//     //      // console.log(kitAdding)
-//     //           //console.log(quantity)
-//     //              })
+    //      // console.log(kitAdding)
+    //           //console.log(quantity)
+    //              })
       
 
-//     // }
+    // }
 //     })
     
    
@@ -1138,7 +1139,7 @@ function kitdetailsadd () {
                 })
 
 }
-for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
+for (var i = 0,j = 0; i < output.data.Kits.kit_item_details.length; i++ ){
         
           
   var quantity = output.data.Kits[i].kit_item_details[j].quantity
