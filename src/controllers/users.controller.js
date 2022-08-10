@@ -850,7 +850,7 @@ if (output.updatestatus == 1){
               })
  
      }
-     for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
+     for (var i = 0; i < output.data.cart.length; i++ ){
           
       var quantity1 = output.data.cart[i].item_details.quantity
       var category = output.data.cart[i].item_details.category
@@ -897,7 +897,26 @@ stockAllocationModel.findOneAndUpdate(
                 })
 
 }
-      
+for (var i = 0; i < output.data.cart.length; i++ ){
+          
+  var quantity1 = output.data.cart[i].item_details.quantity
+  var category = output.data.cart[i].item_details.category
+  console.log(category)
+  //var quantity1 = quantity
+  var query = {quantity : quantity1};
+stockAllocationModel.findOneAndUpdate(
+{company_id :output.company_id,category},query
+
+
+).then(create => {
+
+// console.log(kitAdding)
+  console.log(quantity1)
+     })
+
+
+
+} 
   }
 //     // else  {
      
