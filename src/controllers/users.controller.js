@@ -805,103 +805,103 @@ function tiltelCase (str) {
 // kitdetails()
         
 
-//  function cartdetailsadd () {
-//   try {
+ function cartdetailsadd () {
+  try {
  
  
     
-//    storeModel.findOne({cartinfo : 2
-//    }).sort({$natural:-1}).limit(1)
-//   .then (output => {
-//     var answer = output.updatestatus
-//     console.log(answer)
-// if (output.updatestatus == 1){
-//     for (var i = 0; i < output.data.cart.length; i++ ){
+   storeModel.findOne({cartinfo : 2
+   }).sort({$natural:-1}).limit(1)
+  .then (output => {
+    var answer = output.updatestatus
+    console.log(answer)
+if (output.updatestatus == 1){
+    for (var i = 0; i < output.data.cart.length; i++ ){
           
-//            //var cartstatus1 = output.data.cart[i].cart_status
-//           // var cartid1 = `cart.${i}.qty`
-//            //var cartstatus = `cart.${i}.cart_status`
+           //var cartstatus1 = output.data.cart[i].cart_status
+          // var cartid1 = `cart.${i}.qty`
+           //var cartstatus = `cart.${i}.cart_status`
  
-//     var cart = output.data.cart
-//     var item = output.data.cart[i].item
-//     var allocation = output.data.cart[i].allocation
-//     var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-//     var cart_status = output.data.cart[i].cart_status
-//     var qty = output.data.cart[i].qty
-//    var cartAdding = AddCart({
-//       cartData: cart,
-//       item: item,
-//       allocation: allocation,
-//       cart_status : cart_status,
-//       qty : qty
-//     })
+    var cart = output.data.cart
+    var item = output.data.cart[i].item
+    var allocation = output.data.cart[i].allocation
+    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+    var cart_status = output.data.cart[i].cart_status
+    var qty = output.data.cart[i].qty
+   var cartAdding = AddCart({
+      cartData: cart,
+      item: item,
+      allocation: allocation,
+      cart_status : cart_status,
+      qty : qty
+    })
    
      
    
  
-//    cartModel.updateOne(
-//      {user: output.user},{ $set: { "cart": cartAdding } }
+   cartModel.updateOne(
+     {user: output.user},{ $set: { "cart": cartAdding } }
      
      
-//      ).then(update => {
+     ).then(update => {
        
-//      //  console.log(cartAdding)
-//           //  console.log(update)
-//               })
+     //  console.log(cartAdding)
+          //  console.log(update)
+              })
  
-//      }
-//      for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
+     }
+     for (var i = 0,j = 0; i < output.data.cart.length; i++ ){
           
-//       var quantity1 = output.data.cart[i].item_details.quantity
-//       var category = output.data.cart[i].item_details.category
-//       console.log(category)
-//       //var quantity1 = quantity
-//       var query = {quantity : quantity1};
-// stockAllocationModel.findOneAndUpdate(
-// {company_id :output.company_id,category},query
+      var quantity1 = output.data.cart[i].item_details.quantity
+      var category = output.data.cart[i].item_details.category
+      console.log(category)
+      //var quantity1 = quantity
+      var query = {quantity : quantity1};
+stockAllocationModel.findOneAndUpdate(
+{company_id :output.company_id,category},query
 
 
-// ).then(create => {
+).then(create => {
   
-//  // console.log(kitAdding)
-//       console.log(quantity1)
-//          })
+ // console.log(kitAdding)
+      console.log(quantity1)
+         })
 
 
 
-//   }
-//     }
-//     else if (output.updatestatus == 2) {
-//       for (var i = 0; i < output.data.cart.length; i++ ){
-//         var cartqty1 = output.data.cart[i].qty
-//        // var item = output.data
-//         var total_quantity1 = output.data.total_quantity
-//         var cartstatus1 = output.data.cart[i].cart_status
-//         var cartid1 = `cart.${i}.qty`
-//         var cartstatus = `cart.${i}.cart_status`
-//         var item1 = `cart.${i}.item`
-//         var item = output.data.cart[i].item
+  }
+    }
+    else if (output.updatestatus == 2) {
+      for (var i = 0; i < output.data.cart.length; i++ ){
+        var cartqty1 = output.data.cart[i].qty
+       // var item = output.data
+        var total_quantity1 = output.data.total_quantity
+        var cartstatus1 = output.data.cart[i].cart_status
+        var cartid1 = `cart.${i}.qty`
+        var cartstatus = `cart.${i}.cart_status`
+        var item1 = `cart.${i}.item`
+        var item = output.data.cart[i].item
       
-//         //project(cartid,cartqty1)
-//        // var cartcartqty1 = cart[i].qty
-//        var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,[`${item1}`] : item,total_quantity: total_quantity1};
-//       //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-//       console.log(query)
-//       cartModel.findOneAndUpdate(
-//        {user: output.user,company_id: output.company_id},query
+        //project(cartid,cartqty1)
+       // var cartcartqty1 = cart[i].qty
+       var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,[`${item1}`] : item,total_quantity: total_quantity1};
+      //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+      console.log(query)
+      cartModel.findOneAndUpdate(
+       {user: output.user,company_id: output.company_id},query
        
-//        ).then(update => {
+       ).then(update => {
          
-//         // console.log(query)
-//              //console.log(update)
-//                 })
+        // console.log(query)
+             //console.log(update)
+                })
 
-// }
+}
       
-//   }
+  }
 //     // else  {
      
-//     //   cartModel.findOneAndRemove(
+//     //   cartModel.findById(
 //     //     {user: output.user,company_id :output.company_id}
         
         
@@ -917,14 +917,15 @@ function tiltelCase (str) {
     
    
  
-               
+}
+  )        
         
          
-//        }catch (err) {
-//          console.log(err)
-//        }
-//  }
- //cartdetailsadd()
+       }catch (err) {
+         console.log(err)
+       }
+ }
+ cartdetailsadd()
 
 
 // //  function kitdetailsadd () {
