@@ -245,6 +245,9 @@ total_quantity : {
 cartinfo : {
   type : Number
 },
+kitinfo: {
+  type : Number
+},
 updatestatus : {
   type : Number
 }
