@@ -851,10 +851,10 @@ if (output.updatestatus == 1){
               })
  
      }
-     for (var i = 0; i < output.data.cart.length; i++ ){
+     for (var j = 0; j < output.data.cart.length; i++ ){
           
-      var quantity = output.data.cart[i].item_details.quantity
-      var category = output.data.cart[i].item_details.category
+      var quantity = output.data.cart[j].item_details.quantity
+      var category = output.data.cart[j].item_details.category
       console.log(category)
       //var quantity1 = quantity
       var query = {quantity : quantity};
@@ -1059,7 +1059,7 @@ function kitdetailsadd () {
   .then (output => {
     //console.log(kitinfo)
 //
-    console.log(output)
+   // console.log(output)
 //if (is_old_kit = false) {
   if (output.updatestatus == 1){
     for (var i = 0; i < output.data.Kits.length; i++ ){
@@ -1095,7 +1095,7 @@ function kitdetailsadd () {
                   var quantity = output.data.Kits[i].kit_item_details[j].quantity
                   var category = output.data.Kits[i].kit_item_details[j].category
                   var kit_id = output.data.Kits[i].kit_id
-                  console.log(quantity)
+                 // console.log(quantity)
                   //var quantity1 = quantity
                   var query = {quantity : quantity};
           stockAllocationModel.findOneAndUpdate(
@@ -1104,7 +1104,7 @@ function kitdetailsadd () {
             
             ).then(create => {
               
-             console.log(create)
+           //  console.log(create)
                   //console.log(quantity)
                      })
                      
@@ -1146,7 +1146,7 @@ for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
   var quantity = output.data.Kits[i].kit_item_details[j].quantity
   var category = output.data.Kits[i].kit_item_details[j].category
   var kit_id =  output.data.Kits[i].kit_id
-  console.log(category)
+ // console.log(category)
   //var quantity1 = quantity
   var query = {quantity : quantity};
 stockAllocationModel.findOneAndUpdate(
