@@ -851,10 +851,10 @@ if (output.updatestatus == 1){
               })
  
      }
-     for (var j = 0; j < output.data.cart.length; i++ ){
+     for (var i = 0; i < output.data.cart.length; i++ ){
           
-      var quantity = output.data.cart[j].item_details.quantity
-      var category = output.data.cart[j].item_details.category
+      var quantity = output.data.cart[i].item_details.quantity
+      var category = output.data.cart[i].item_details.category
       console.log(category)
       //var quantity1 = quantity
       var query = {quantity : quantity};
