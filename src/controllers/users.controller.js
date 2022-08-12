@@ -865,7 +865,7 @@ stockAllocationModel.findOneAndUpdate(
 ).then(create => {
   
  // console.log(kitAdding)
-      console.log(quantity1)
+      console.log(quantity)
          })
 
 
