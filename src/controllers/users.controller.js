@@ -814,7 +814,7 @@ function tiltelCase (str) {
    }).sort({$natural:-1}).limit(1)
   .then (output => {
     var answer = output.updatestatus
-    console.log(answer)
+    //console.log(answer)
 
 if (output.updatestatus == 1){
     for (var i = 0; i < output.data.cart.length; i++ ){
@@ -855,7 +855,7 @@ if (output.updatestatus == 1){
           
       var quantity = output.data.cart[i].item_details.quantity
       var category = output.data.cart[i].item_details.category
-      console.log(category)
+     // console.log(category)
       //var quantity1 = quantity
       var query = {quantity : quantity};
 stockAllocationModel.findOneAndUpdate(
@@ -865,7 +865,7 @@ stockAllocationModel.findOneAndUpdate(
 ).then(create => {
   
  // console.log(kitAdding)
-      console.log(quantity)
+     // console.log(quantity)
          })
 
 
