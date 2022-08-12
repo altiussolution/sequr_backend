@@ -894,7 +894,7 @@ stockAllocationModel.findOneAndUpdate(
        ).then(update => {
          
         // console.log(query)
-             //console.log(update)
+             console.log(update)
                 })
 
 }
@@ -902,7 +902,7 @@ for (var i = 0; i < output.data.cart.length; i++ ){
           
   var quantity = output.data.cart[i].item_details.quantity
   var category = output.data.cart[i].item_details.category
-  console.log(category)
+ // console.log(category)
   //var quantity1 = quantity
   var query = {quantity : quantity};
 stockAllocationModel.findOneAndUpdate(
