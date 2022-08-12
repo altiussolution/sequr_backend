@@ -1110,7 +1110,7 @@ function kitdetailsadd () {
                      
           
             }
-    
+          }
         }
           
           
