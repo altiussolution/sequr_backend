@@ -1088,27 +1088,27 @@ function kitdetailsadd () {
         // console.log(kitting)
               // console.log(create)
                  })
-                 for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
+          //        for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
         
           
-                  var quantity = output.data.Kits[i].kit_item_details[j].quantity
-                  var category = output.data.Kits[i].kit_item_details[j].category
-                  var kit_id = output.data.Kits[i].kit_id
-                  console.log(quantity)
-                  //var quantity1 = quantity
-                  var query = {quantity : quantity};
-          stockAllocationModel.findOneAndUpdate(
-            {company_id :output.company_id,category,kit_id},query
+          //         var quantity = output.data.Kits[i].kit_item_details[j].quantity
+          //         var category = output.data.Kits[i].kit_item_details[j].category
+          //         var kit_id = output.data.Kits[i].kit_id
+          //         console.log(quantity)
+          //         //var quantity1 = quantity
+          //         var query = {quantity : quantity};
+          // stockAllocationModel.findOneAndUpdate(
+          //   {company_id :output.company_id,category,kit_id},query
             
             
-            ).then(create => {
+          //   ).then(create => {
               
-             console.log(create)
-                  //console.log(quantity)
-                     })
+          //    console.log(create)
+          //         //console.log(quantity)
+          //            })
                      
           
-            }
+          //   }
     
         }
           
