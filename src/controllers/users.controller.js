@@ -887,7 +887,7 @@ stockAllocationModel.findOneAndUpdate(
        // var cartcartqty1 = cart[i].qty
        var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,[`${item1}`] : item,total_quantity: total_quantity1};
       //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-      console.log(query)
+      //console.log(query)
       cartModel.findOneAndUpdate(
        {user: output.user,company_id: output.company_id},query
        
