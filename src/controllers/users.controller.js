@@ -1088,7 +1088,8 @@ function kitdetailsadd () {
         // console.log(kitting)
               // console.log(create)
                  })
-                 for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
+                 for (var i = 0; i < output.data.Kits.length; i++ ){
+                  for (var j = 0; j < output.data.Kits[i].kit_item_details.length; j++ ) {
         
           
                   var quantity = output.data.Kits[i].kit_item_details[j].quantity
@@ -1107,7 +1108,7 @@ function kitdetailsadd () {
                   //console.log(quantity)
                      })
                      
-          
+                    }
             }
     
         }
