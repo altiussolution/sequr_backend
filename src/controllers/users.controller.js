@@ -1089,7 +1089,7 @@ function kitdetailsadd () {
               // console.log(create)
                  })
                  for (var i = 0; i < output.data.Kits.length; i++ ){
-                  for (var j = 0; j < ouput.data.Kits[i].kit_item_details.length; j++)
+                  for (var j = 0; j < ouput.data.Kits[i].kit_item_details.length; j++){
         
           
                   var quantity = output.data.Kits[i].kit_item_details[j].quantity
