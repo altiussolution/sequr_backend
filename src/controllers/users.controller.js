@@ -217,7 +217,7 @@ exports.login = async (req, res) => {
       res.status(200).json(user)
       
  
-      cartdetailsadd()
+      cartdetails()
       kitdetailsadd()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
@@ -805,146 +805,144 @@ function tiltelCase (str) {
 // kitdetails()
         
 
- function cartdetailsadd () {
+function cartdetails () {
   try {
  
  
-    
-   storeModel.findOne({cartinfo : 2
-   }).sort({$natural:-1}).limit(1)
-  .then (output => {
-    var answer = output.updatestatus
-    //console.log(answer)
-
-if (output.updatestatus == 1){
-    for (var i = 0; i < output.data.cart.length; i++ ){
-          
-           //var cartstatus1 = output.data.cart[i].cart_status
-          // var cartid1 = `cart.${i}.qty`
-           //var cartstatus = `cart.${i}.cart_status`
- 
-    var cart = output.data.cart
-    var item = output.data.cart[i].item
-    var allocation = output.data.cart[i].allocation
-    var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-    var cart_status = output.data.cart[i].cart_status
-    var qty = output.data.cart[i].qty
-   var cartAdding = AddCart({
-      cartData: cart,
-      item: item,
-      allocation: allocation,
-      cart_status : cart_status,
-      qty : qty
-    })
-   
+    storeModel.findOne({cartinfo : 2}).sort({created_at : -1 } )
+   .limit(1)
+   .then (output => {
      
+    updateDate(output)
    
  
-   cartModel.updateOne(
-     {user: output.user},{ $set: { "cart": cartAdding } }
      
-     
-     ).then(update => {
-       
-     //  console.log(cartAdding)
-          //  console.log(update)
-              })
- 
-     }
-     for (var i = 0; i < output.data.cart.length; i++ ){
-          
-      var quantity = output.data.cart[i].item_details.quantity
-      var category = output.data.cart[i].item_details.category
-     // console.log(category)
-      //var quantity1 = quantity
-      var query = {quantity : quantity};
-stockAllocationModel.findOneAndUpdate(
-{company_id :output.company_id,category},query
-
-
-).then(create => {
   
- // console.log(kitAdding)
-     // console.log(quantity)
-         })
-
-
-
-  }
-    }
-    else if (output.updatestatus == 2) {
-      for (var i = 0; i < output.data.cart.length; i++ ){
-        var cartqty1 = output.data.cart[i].qty
-       // var item = output.data
-        var total_quantity1 = output.data.total_quantity
-        var cartstatus1 = output.data.cart[i].cart_status
-        var cartid1 = `cart.${i}.qty`
-        var cartstatus = `cart.${i}.cart_status`
-        var item1 = `cart.${i}.item`
-        var item = output.data.cart[i].item
-      
-        //project(cartid,cartqty1)
-       // var cartcartqty1 = cart[i].qty
-       var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,[`${item1}`] : item,total_quantity: total_quantity1};
-      //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-      //console.log(query)
-      cartModel.findOneAndUpdate(
-       {user: output.user,company_id: output.company_id},query
-       
-       ).then(update => {
-         
-        // console.log(query)
-             console.log(update)
-                })
-
-}
-for (var i = 0; i < output.data.cart.length; i++ ){
-          
-  var quantity = output.data.cart[i].item_details.quantity
-  var category = output.data.cart[i].item_details.category
- // console.log(category)
-  //var quantity1 = quantity
-  var query = {quantity : quantity};
-stockAllocationModel.findOneAndUpdate(
-{company_id :output.company_id,category},query
-
-
-).then(create => {
-
-// console.log(kitAdding)
-  console.log(create)
-     })
-
-
-
-} 
-  }
-    // else  {
-     
-    //   cartModel.findByIdAndRemove(
-    //     {user: output.user,company_id :output.company_id}
-        
-        
-    //     ).then(update => {
-          
-    //      // console.log(kitAdding)
-    //           //console.log(quantity)
-    //              })
-      
-
-    // }
-//     })
-    
-   
- 
-}
-  )        
-        
-         
-       }catch (err) {
+    })
+ } catch (err) {
          console.log(err)
        }
- }
+}
+
+ //cartdetails()
+
+     function updateDate(output){
+      
+          console.log(output)
+          cartModel.findOne({}).limit(1).sort({updated_at: -1}).then(updated => {
+    
+            var updated = updated.updated_at
+             console.log(updated)
+             if (output.created_at > updated){
+              if (output.updatestatus == 1){
+                for (var i = 0; i < output.data.cart.length; i++ ){
+                      
+                       //var cartstatus1 = output.data.cart[i].cart_status
+                      // var cartid1 = `cart.${i}.qty`
+                       //var cartstatus = `cart.${i}.cart_status`
+             
+                var cart = output.data.cart
+                var item = output.data.cart[i].item
+                var allocation = output.data.cart[i].allocation
+                var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+                var cart_status = output.data.cart[i].cart_status
+                var qty = output.data.cart[i].qty
+               var cartAdding = AddCart({
+                  cartData: cart,
+                  item: item,
+                  allocation: allocation,
+                  cart_status : cart_status,
+                  qty : qty
+                })
+               
+                 
+               
+             
+               cartModel.updateOne(
+                 {user: output.user},{ $set: { "cart": cartAdding } }
+                 
+                 
+                 ).then(update => {
+                   
+                 //  console.log(cartAdding)
+                      //  console.log(update)
+                          })
+             
+                 }
+                 for (var i = 0; i < output.data.cart.length; i++ ){
+                      
+                  var quantity = output.data.cart[i].item_details.quantity
+                  var category = output.data.cart[i].item_details.category
+                 // console.log(category)
+                  //var quantity1 = quantity
+                  var query = {quantity : quantity};
+            stockAllocationModel.findOneAndUpdate(
+            {company_id :output.company_id,category},query
+            
+            
+            
+            ).then(create => {
+              
+             // console.log(kitAdding)
+                 // console.log(quantity)
+                     })
+            
+            
+            
+              }
+                }
+                else if (output.updatestatus == 2) {
+                  for (var i = 0; i < output.data.cart.length; i++ ){
+                    var cartqty1 = output.data.cart[i].qty
+                   // var item = output.data
+                    var total_quantity1 = output.data.total_quantity
+                    var cartstatus1 = output.data.cart[i].cart_status
+                    var cartid1 = `cart.${i}.qty`
+                    var cartstatus = `cart.${i}.cart_status`
+                    var item1 = `cart.${i}.item`
+                    var item = output.data.cart[i].item
+                  
+                    //project(cartid,cartqty1)
+                   // var cartcartqty1 = cart[i].qty
+                   var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,[`${item1}`] : item,total_quantity: total_quantity1};
+                  //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+                  //console.log(query)
+                  cartModel.findOneAndUpdate(
+                   {user: output.user,company_id: output.company_id},query
+                   
+                   ).then(update => {
+                     
+                    // console.log(query)
+                         console.log(update)
+                            })
+            
+            }
+            for (var i = 0; i < output.data.cart.length; i++ ){
+                      
+              var quantity = output.data.cart[i].item_details.quantity
+              var category = output.data.cart[i].item_details.category
+             // console.log(category)
+              //var quantity1 = quantity
+              var query = {quantity : quantity};
+            stockAllocationModel.findOneAndUpdate(
+            {company_id :output.company_id,category},query
+            
+            
+            ).then(is_create => {
+            
+            // console.log(kitAdding)
+              console.log(is_create)
+                 })
+            
+            
+            
+            } 
+              }
+             }
+             
+          })
+        }
+
  //cartdetailsadd()
 
 
@@ -1051,11 +1049,11 @@ stockAllocationModel.findOneAndUpdate(
 //          cartdetails()
 function kitdetailsadd () {
   try {
- 
+  
  
     
    storeModel.findOne({kitinfo : 2
-   }).sort({$natural:-1}).limit(1)
+   }).sort({ }).limit(1)
   .then (output => {
     //console.log(kitinfo)
 //
@@ -1081,7 +1079,8 @@ function kitdetailsadd () {
       }
       cartModel.updateOne(
         {user: output.user},{ $set: { "kitting": kitAdding } }
-        
+       
+
         
         ).then(is_create => {
           
