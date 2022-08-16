@@ -830,7 +830,7 @@ function cartdetails () {
      function updateDate(output){
       
          // console.log(output)
-          cartModel.findOne({}).limit(1).sort({updated_at: -1}).then(updated => {
+          cartModel.findOne({}).sort({updated_at: -1}).limit(1).then(updated => {
             //cartModel.findOne({}).limit(1).sort({updated_at: -1}).then(updated => {
             var updated = updated.updated_at
              //console.log(updated,"Date")
