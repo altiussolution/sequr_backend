@@ -218,7 +218,7 @@ exports.login = async (req, res) => {
       
  
       cartdetails()
-      kitdetailsadd()
+      //kitdetailsadd()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
 //     console.log(stdout);
@@ -820,7 +820,7 @@ function cartdetails () {
   
     })
  } catch (err) {
-         console.log(err)
+        // console.log(err)
        }
 }
 
@@ -828,7 +828,7 @@ function cartdetails () {
 
      function updateDate(output){
       
-          console.log(output)
+         // console.log(output)
           cartModel.findOne({}).limit(1).sort({updated_at: -1}).then(updated => {
     
             var updated = updated.updated_at
@@ -913,7 +913,7 @@ function cartdetails () {
                    ).then(update => {
                      
                     // console.log(query)
-                         console.log(update)
+                        // console.log(update)
                             })
             
             }
@@ -931,7 +931,7 @@ function cartdetails () {
             ).then(is_create => {
             
             // console.log(kitAdding)
-              console.log(is_create)
+              //console.log(is_create)
                  })
             
             
