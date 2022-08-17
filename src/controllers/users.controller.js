@@ -834,8 +834,9 @@ function cartdetails () {
          // console.log(output)
           cartModel.findOne({}).sort({updated_at: -1}).limit(1).then(updated => {
             //cartModel.findOne({}).limit(1).sort({updated_at: -1}).then(updated => {
-            var updated = updated.updated_at
-            // console.log(updated,"Date")
+            // var updated = updated.updated_at
+            console.log(updated,"UpdatedDate")
+            console.log(output['created_at'],"Createdate")
              if (output['created_at'] > updated.updated_at){
               console.log("datecheckerworking")
               if (output.updatestatus == 1){
