@@ -250,6 +250,9 @@ kitinfo: {
 },
 updatestatus : {
   type : Number
+},
+created_at : {
+  type : String
 }
 })
 module.exports = mongoose.model('store', StoreSchema, 'store');

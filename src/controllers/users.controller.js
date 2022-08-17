@@ -814,7 +814,7 @@ function cartdetails () {
    .then (output => {
     console.log(output)
      var data = output['created_at']
-     console.log(data)
+     console.log(output['created_at'])
     updateDate(output)
    
  
