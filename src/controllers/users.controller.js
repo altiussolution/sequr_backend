@@ -834,10 +834,10 @@ function cartdetails () {
          // console.log(output)
           cartModel.findOne({}).sort({updated_at: -1}).limit(1).then(updated => {
             //cartModel.findOne({}).limit(1).sort({updated_at: -1}).then(updated => {
-            // var updated = updated.updated_at
-            console.log(updated,"UpdatedDate")
+             var updateds = updated.updated_at
+            console.log(updateds,"UpdatedDate")
             console.log(output['created_at'],"Createdate")
-             if (output['created_at'] > updated.updated_at){
+             if (Date.parse(output['created_at']) > Date.parse(updated.updated_at)){
               console.log("datecheckerworking")
               if (output.updatestatus == 1){
                 for (var i = 0; i < output.data.cart.length; i++ ){
