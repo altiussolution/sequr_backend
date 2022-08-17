@@ -942,6 +942,7 @@ function cartdetails () {
             
             } 
               }
+             }else {console.log("datecchekernotworking")
              }
              
           })
