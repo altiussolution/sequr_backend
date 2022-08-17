@@ -218,7 +218,7 @@ exports.login = async (req, res) => {
       
  
       cartdetails()
-      //kitdetailsadd()
+      kitdetails()
 // child_process.exec('sh script.sh /home/ubuntu/scripts', function(error, stdout, stderr){
   
 //     console.log(stdout);
@@ -1053,18 +1053,42 @@ function cartdetails () {
 //  }
  
 //          cartdetails()
-function kitdetailsadd () {
+function kitdetails () {
   try {
-  
  
-    
-   storeModel.findOne({kitinfo : 2
-   }).sort({ }).limit(1)
-  .then (output => {
+ 
+    storeModel.findOne({kitinfo : 2}).sort({created_at : -1 } )
+   .limit(1)
+   .then (output => {
+    console.log(output)
+     var data = output['created_at']
+     console.log(output['created_at'])
+    updatekitDate(output)
+   
+ 
+     
+  
+    })
+ } catch (err) {
+        // console.log(err)
+       }
+}
     //console.log(kitinfo)
 //
    // console.log(output)
 //if (is_old_kit = false) {
+
+  function updatekitDate(output){
+    // data = output.created_at
+    //console.log(data)
+       // console.log(output)
+        cartModel.findOne({}).sort({updated_at: -1}).limit(1).then(updated => {
+          //cartModel.findOne({}).limit(1).sort({updated_at: -1}).then(updated => {
+           var updateds = updated.updated_at
+          console.log(updateds,"UpdatedDate")
+          console.log(output['created_at'],"Createdate")
+           if (Date.parse(output['created_at']) > Date.parse(updated.updated_at)){
+            console.log("datecheckerworking")
   if (output.updatestatus == 1){
     for (var i = 0; i < output.data.Kits.length; i++ ){
      
@@ -1168,23 +1192,25 @@ stockAllocationModel.findOneAndUpdate(
 }
 
     }
+  }else {console.log("datecchekernotworking")
+}
+
+})
+}
 
   
    
      
    
  
-  })
+  
     
    
  
                
         
          
-       }catch (err) {
-         console.log(err)
-       }
- }
+     
  //kitdetailsadd()
 // function kitdetailsadd1 () {
 //   try {
