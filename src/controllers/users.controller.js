@@ -967,11 +967,11 @@ function cartdetails () {
           
               
               }
-              else {console.log("cartdatecchekernotworking")
-            }
-            }
-              
-               //cartdetailsadd()
+             
+            
+            else {console.log("cartdatecchekernotworking")
+          }
+          }  //cartdetailsadd()
             
                
           
