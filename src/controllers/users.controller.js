@@ -990,14 +990,14 @@ function cartdetails () {
         }
          } )
         }
-        function cartdelete(data) {
+        //function cartdelete(data) {
 
-          console.log(data)
+         // console.log(data)
 
           
 
          
-            }
+            
           
       
 
