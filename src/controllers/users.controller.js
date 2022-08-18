@@ -970,11 +970,12 @@ function cartdetails () {
               
               
                //cartdetailsadd()
-             else {console.log("cartdatecchekernotworking")
-             }
+             
                
           
         }
+        else {console.log("cartdatecchekernotworking")
+      }
          } )
         }
         //function cartdelete(data) {
