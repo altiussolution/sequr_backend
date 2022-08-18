@@ -947,7 +947,7 @@ function cartdetails () {
                 for (var i = 0; i < output.data.cart.length; i++ ){
 
                   var data = output.data.cart[i]
-                  cartdelete( data)
+                  cartdelete(data)
           
               }
               }
@@ -963,13 +963,13 @@ function cartdetails () {
         }
         function cartdelete(data) {
 
-          //console.log(data)
+          console.log(data)
 
           
 
-          var cart_id = data
-          console.log(cart_id)
-          var item_id = data.item
+         // var cart_id = data
+          //console.log(cart_id)
+         // var item_id = data.item
           var userId = data.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
           var query = { _id: cart_id, user: userId }
