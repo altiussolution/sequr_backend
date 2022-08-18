@@ -967,14 +967,14 @@ function cartdetails () {
           
               
               }
-              
+            }
               
                //cartdetailsadd()
              else {console.log("cartdatecchekernotworking")
              }
                
           
-        }
+        
         
          } )
         }
