@@ -961,10 +961,12 @@ function cartdetails () {
         }
         function cartdelete(data) {
 
+          console.log(data)
+
           
 
           var cart_id = data
-          console.log(cart_id)
+         // console.log(cart_id)
           var item_id = data.item
           var userId = data.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -1107,7 +1109,7 @@ function kitdetails () {
    .then (output => {
     console.log(output)
      var data = output['created_at']
-     console.log(output['created_at'])
+     //console.log(output['created_at'])
     updatekitDate(output)
    
  
@@ -1130,8 +1132,8 @@ function kitdetails () {
         cartModel.findOne({}).sort({updated_at: -1}).limit(1).then(updated => {
           //cartModel.findOne({}).limit(1).sort({updated_at: -1}).then(updated => {
            var updateds = updated.updated_at
-          console.log(updateds,"UpdatedDate")
-          console.log(output['created_at'],"Createdate")
+         // console.log(updateds,"UpdatedDate")
+          //console.log(output['created_at'],"Createdate")
            if (Date.parse(output['created_at']) > Date.parse(updated.updated_at)){
             console.log("datecheckerworking")
   if (output.updatestatus == 1){
@@ -1169,7 +1171,7 @@ function kitdetails () {
                   var quantity = output.data.Kits[i].kit_item_details[j].quantity
                   var category = output.data.Kits[i].kit_item_details[j].category
                   var kit_id = output.data.Kits[i].kit_id
-                 console.log(quantity)
+               //  console.log(quantity)
                   //var quantity1 = quantity
                   var query = {quantity : quantity};
           stockAllocationModel.findOneAndUpdate(
@@ -1178,7 +1180,7 @@ function kitdetails () {
             
             ).then(create => {
               
-             console.log(create)
+            // console.log(create)
                   //console.log(quantity)
                      })
                      
