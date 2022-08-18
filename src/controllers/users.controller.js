@@ -970,14 +970,14 @@ function cartdetails () {
 
          var cart_id = data
           console.log(cart_id)
-          var item = data.item
+          var item_id = data.item
           var userId = data.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
           var query = { _id: cart_id, user: userId }
           
             
                 if (data) {
-                  for (let id of item) {
+                  for (let id of item_id) {
                     var checkIsKitItemExist = data.cart.findIndex(
                       obj => obj.item == id && obj.cart_status == 1
                     )
