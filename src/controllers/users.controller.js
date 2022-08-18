@@ -959,7 +959,7 @@ function cartdetails () {
                  
          
                     var checkIsKitItemExist = output.data.cart.findIndex(
-                      obj => obj.item == output.data.cart[i].item._id && obj.cart_status == 1
+                      obj => obj.item._id == output.data.cart[i].item._id && obj.cart_status == 1
                     )
                     if (checkIsKitItemExist !== -1) {
                       output.data.cart.splice(checkIsKitItemExist, 1)
@@ -969,9 +969,9 @@ function cartdetails () {
                   output.data.total_quantity = output.data.cart.reduce(function (sum, current) {
                     return current.cart_status == 1 ? sum + current.qty : sum
                   }, 0)
-                  cartModel.findOneAndUpdate(query, options)
+                  cartModel.findOneAndUpdate(query,output.data, options)
                     .then(is_create => {
-                      
+                      console.log(is_create)
                     })
         
        
