@@ -961,12 +961,12 @@ function cartdetails () {
         }
         function cartdelete(data) {
 
-          console.log(data)
+          //console.log(data)
 
           
 
           var cart_id = data
-         // console.log(cart_id)
+          console.log(cart_id)
           var item_id = data.item
           var userId = data.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -1107,7 +1107,7 @@ function kitdetails () {
     storeModel.findOne({kitinfo : 2}).sort({created_at : -1 } )
    .limit(1)
    .then (output => {
-    console.log(output)
+    //console.log(output)
      var data = output['created_at']
      //console.log(output['created_at'])
     updatekitDate(output)
