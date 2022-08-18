@@ -950,7 +950,7 @@ function cartdetails () {
                  // var data = output.data.cart[i]
                   var cart_id = output.data.cart[i]._id
          // console.log(cart_id)
-          var item_id = output.data.cart[i].item._id
+          var item_id = output.data.cart[i].item_details.item
           var userId = output.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
           var query = { _id: cart_id, user: userId }
@@ -959,7 +959,7 @@ function cartdetails () {
                  
          
                     var checkIsKitItemExist = output.data.cart.findIndex(
-                      obj => obj.item._id == output.data.cart[i].item._id && obj.cart_status == 1
+                      obj => obj.item == output.data.cart[i].item && obj.cart_status == 1
                     )
                     if (checkIsKitItemExist !== -1) {
                       output.data.cart.splice(checkIsKitItemExist, 1)
