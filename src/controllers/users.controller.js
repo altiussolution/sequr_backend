@@ -968,7 +968,7 @@ function cartdetails () {
 
           
 
-        // var cart_id = data
+         var cart_id = data.cart_id
          // console.log(cart_id)
           var item_id = data.item_id
           var userId = data.user
