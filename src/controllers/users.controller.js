@@ -955,27 +955,26 @@ function cartdetails () {
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
           var query = { _id: cart_id, user: userId }
           
-          cartModel.findOne(query)
-          .then(data => {
-                if (data) {
-                  for (let id of item_id) {
-                    var checkIsKitItemExist = data.cart.findIndex(
+         
+                 
+                 
+                    var checkIsKitItemExist = output.data.cart.findIndex(
                       obj => obj.item == id && obj.cart_status == 1
                     )
                     if (checkIsKitItemExist !== -1) {
-                      data.cart.splice(checkIsKitItemExist, 1)
+                      output.data.cart.splice(checkIsKitItemExist, 1)
                     }
-                  }
+                  
         
-                  data.total_quantity = data.cart.reduce(function (sum, current) {
+                  output.data.total_quantity = output.data.cart.reduce(function (sum, current) {
                     return current.cart_status == 1 ? sum + current.qty : sum
                   }, 0)
-                  cartModel.findOneAndUpdate(query, data, options)
+                  cartModel.findOneAndUpdate(query, output.data, options)
                     .then(is_create => {
                       
                     })
-        }
-      })  
+        
+       
                  // console.log(output.data.cart[0])
                  // cartdelete(data)
           
