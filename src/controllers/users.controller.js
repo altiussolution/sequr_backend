@@ -947,7 +947,7 @@ function cartdetails () {
                 for (var i = 0; i < output.data.cart.length; i++ ){
 
                   var data = output.data.cart[i]
-                  console.log(data)
+                 // console.log(data)
                   cartdelete(data)
           
               }
@@ -969,7 +969,7 @@ function cartdetails () {
           
 
          var cart_id = data
-          //console.log(cart_id)
+          console.log(cart_id)
           var item = data.item
           var userId = data.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
