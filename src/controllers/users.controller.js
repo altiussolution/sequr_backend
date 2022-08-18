@@ -944,7 +944,7 @@ function cartdetails () {
             } 
               }
               else if (output.updatestatus == 3) {
-                console.log(output.data.cart[0],"cartdata")
+               // console.log(output.data.cart[0],"cartdata")
                 for (var i = 0; i < output.data.cart.length; i++ ){
             
                  // var data = output.data.cart[i]
@@ -965,7 +965,7 @@ function cartdetails () {
         }
         function cartdelete(data) {
 
-          //console.log(data)
+          console.log(data)
 
           
 
