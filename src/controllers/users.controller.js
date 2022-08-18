@@ -946,43 +946,43 @@ function cartdetails () {
             
             } 
               }
-              else if (output.updatestatus == 3) {
-               // console.log(output.data.cart[0],"cartdata")
+          //     else if (output.updatestatus == 3) {
+          //      // console.log(output.data.cart[0],"cartdata")
              
-                 // var data = output.data.cart[i]
-                 for (var i = 0; i < output.data.cart.length; i++ ){
-                  var cartqty1 = output.data.cart[i].qty
-                 // var item = output.data
-                  var total_quantity1 = output.data.total_quantity
-                  var cartstatus1 = output.data.cart[i].cart_status
-                  var cartid1 = `cart.${i}.qty`
-                  var cartstatus = `cart.${i}.cart_status`
-                  var item1 = `cart.${i}.item`
-                  var item = output.data.cart[i].item
+          //        // var data = output.data.cart[i]
+          //        for (var i = 0; i < output.data.cart.length; i++ ){
+          //         var cartqty1 = output.data.cart[i].qty
+          //        // var item = output.data
+          //         var total_quantity1 = output.data.total_quantity
+          //         var cartstatus1 = output.data.cart[i].cart_status
+          //         var cartid1 = `cart.${i}.qty`
+          //         var cartstatus = `cart.${i}.cart_status`
+          //         var item1 = `cart.${i}.item`
+          //         var item = output.data.cart[i].item
                 
-                  //project(cartid,cartqty1)
-                 // var cartcartqty1 = cart[i].qty
-                 var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,[`${item1}`] : item,total_quantity: total_quantity1};
-                //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-                //console.log(query)
-                cartModel.findOneAndUpdate(
-                 {user: output.user,company_id: output.company_id},query
+          //         //project(cartid,cartqty1)
+          //        // var cartcartqty1 = cart[i].qty
+          //        var query = {[`${cartid1}`] : cartqty1,[`${cartstatus}`] : cartstatus1,[`${item1}`] : item,total_quantity: total_quantity1};
+          //       //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+          //       //console.log(query)
+          //       cartModel.findOneAndUpdate(
+          //        {user: output.user,company_id: output.company_id},query
                  
-                 ).then(update => {
+          //        ).then(update => {
                    
-                  // console.log(query)
-                      // console.log(update)
-                          })
+          //         // console.log(query)
+          //             // console.log(update)
+          //                 })
           
-          }
+          // }
                   
         
        
-                 // console.log(output.data.cart[0])
-                 // cartdelete(data)
+          //        // console.log(output.data.cart[0])
+          //        // cartdelete(data)
           
               
-              }
+          //     }
             }
             
             else {console.log("cartdatecchekernotworking")
