@@ -968,9 +968,9 @@ function cartdetails () {
 
           
 
-         var cart_id = data
-          console.log(cart_id)
-          var item_id = data.item
+        // var cart_id = data
+         // console.log(cart_id)
+          var item_id = data.item_id
           var userId = data.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
           var query = { _id: cart_id, user: userId }
