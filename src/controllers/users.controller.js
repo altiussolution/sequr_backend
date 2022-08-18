@@ -948,7 +948,7 @@ function cartdetails () {
                 for (var i = 0; i < output.data.cart.length; i++ ){
             
                  // var data = output.data.cart[i]
-                  var cart_id = output.data.cart[i]._id
+                  var cart_id = output.data.cart[i]
          // console.log(cart_id)
           var item_id = output.data.cart[i].item_details.item
           var userId = output.user
@@ -959,7 +959,7 @@ function cartdetails () {
                  
          
                     var checkIsKitItemExist = output.data.cart.findIndex(
-                      obj => obj.item == output.data.cart[i].item && obj.cart_status == 1
+                      obj => obj.item == output.data.cart[i].item_details.item && obj.cart_status == 1
                     )
                     if (checkIsKitItemExist !== -1) {
                       output.data.cart.splice(checkIsKitItemExist, 1)
