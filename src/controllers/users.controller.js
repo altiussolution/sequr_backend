@@ -963,12 +963,12 @@ function cartdetails () {
         }
         function cartdelete(data) {
 
-          console.log(data)
+          //console.log(data)
 
           
 
-         // var cart_id = data
-          //console.log(cart_id)
+         var cart_id = data
+          console.log(cart_id)
          // var item_id = data.item
           var userId = data.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
