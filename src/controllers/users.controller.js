@@ -947,6 +947,7 @@ function cartdetails () {
                 for (var i = 0; i < output.data.cart.length; i++ ){
 
                   var data = output.data.cart[i]
+                  console.log(data)
                   cartdelete(data)
           
               }
@@ -968,15 +969,15 @@ function cartdetails () {
           
 
          var cart_id = data
-          console.log(cart_id)
-         // var item_id = data.item
+          //console.log(cart_id)
+          var item = data.item
           var userId = data.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
           var query = { _id: cart_id, user: userId }
           
             
                 if (data) {
-                  for (let id of item_id) {
+                  for (let id of item) {
                     var checkIsKitItemExist = data.cart.findIndex(
                       obj => obj.item == id && obj.cart_status == 1
                     )
