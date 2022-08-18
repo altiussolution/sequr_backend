@@ -947,9 +947,9 @@ function cartdetails () {
                // console.log(output.data.cart[0],"cartdata")
                 for (var i = 0; i < output.data.cart.length; i++ ){
             
-                 // var data = output.data.cart[i]
+                  var data = output.data.cart[i]
                  // console.log(output.data.cart[0])
-                  cartdelete(output.data.cart[i])
+                  cartdelete(data)
           
               }
               }
