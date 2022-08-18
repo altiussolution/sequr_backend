@@ -945,11 +945,11 @@ function cartdetails () {
               }
               else if (output.updatestatus == 3) {
                // console.log(output.data.cart[0],"cartdata")
-                for (var i = 0; i < output.data.cart.length; i++ ){
+                for (let id of output.data.cart ){
             
-                  var data = output.data.cart[i]
+                 // var data = output.data.cart[i]
                  // console.log(output.data.cart[0])
-                  cartdelete(data)
+                  cartdelete(id)
           
               }
               }
