@@ -956,7 +956,7 @@ function cartdetails () {
               
               
                //cartdetailsadd()
-             else {console.log("datecchekernotworking")
+             else {console.log("cartdatecchekernotworking")
              }
                
           
