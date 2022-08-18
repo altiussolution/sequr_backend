@@ -947,7 +947,7 @@ function cartdetails () {
                 for (var i = 0; i < output.data.cart.length; i++ ){
 
                   var data = output.data.cart[i]
-                 // console.log(data)
+                  console.log(data)
                   cartdelete(data)
           
               }
