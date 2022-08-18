@@ -1143,7 +1143,7 @@ function kitdetails () {
          // console.log(updateds,"UpdatedDate")
           //console.log(output['created_at'],"Createdate")
            if (Date.parse(output['created_at']) > Date.parse(updated.updated_at)){
-            console.log("datecheckerworking")
+           // console.log("datecheckerworking")
   if (output.updatestatus == 1){
     for (var i = 0; i < output.data.Kits.length; i++ ){
      
@@ -1247,7 +1247,7 @@ stockAllocationModel.findOneAndUpdate(
 }
 
     }
-  }else {console.log("datecchekernotworking")
+  }else {//console.log("datecchekernotworking")
 }
 
 })
