@@ -968,10 +968,10 @@ function cartdetails () {
                 cartModel.findOneAndUpdate(
                  {user: output.user,company_id: output.company_id},query
                  
-                 ).then(update => {
+                 ).then(isupdate => {
                    
                   // console.log(query)
-                       console.log(update)
+                       console.log(isupdate)
                           })
           
           }
