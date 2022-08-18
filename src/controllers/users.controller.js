@@ -948,7 +948,7 @@ function cartdetails () {
              
                  // var data = output.data.cart[i]
           
-                  cartModel.updateOne({user: output.user,company_id: output.company_id})
+                  cartModel.findOneAndUpdate({user: output.user,company_id: output.company_id})
                     .then(is_create => {
                       console.log(is_create)
                     })
