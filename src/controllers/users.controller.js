@@ -976,7 +976,8 @@ function cartdetails () {
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
           var query = { _id: cart_id, user: userId }
           
-            
+          cartModel.findOne(query)
+          .then(data => {
                 if (data) {
                   for (let id of item_id) {
                     var checkIsKitItemExist = data.cart.findIndex(
@@ -995,7 +996,7 @@ function cartdetails () {
                       
                     })
         }
-              
+      })  
             }
           
       
