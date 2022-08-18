@@ -961,7 +961,10 @@ function cartdetails () {
         }
         function cartdelete(data) {
 
-          var cart_id = data.cart._id
+          
+
+          var cart_id = output.data.cart._id
+          console.log(cart_id)
           var item_id = data.item
           var userId = data.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
