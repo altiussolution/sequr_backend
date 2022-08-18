@@ -969,7 +969,7 @@ function cartdetails () {
                   output.data.total_quantity = output.data.cart.reduce(function (sum, current) {
                     return current.cart_status == 1 ? sum + current.qty : sum
                   }, 0)
-                  cartModel.findOneAndUpdate(query, output.data, options)
+                  cartModel.findOneAndUpdate(query, options)
                     .then(is_create => {
                       
                     })
