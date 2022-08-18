@@ -945,31 +945,10 @@ function cartdetails () {
               }
               else if (output.updatestatus == 3) {
                // console.log(output.data.cart[0],"cartdata")
-                for (var i = 0; i < output.data.cart.length; i++ ){
-            
+             
                  // var data = output.data.cart[i]
-                  var cart_id = output.data.cart[i]
-         // console.log(cart_id)
-          var item_id = output.data.cart[i].item_details.item
-          var userId = output.user
-          var options = { upsert: true, new: true, setDefaultsOnInsert: true }
-          var query = { _id: cart_id, user: userId }
           
-         
-                 
-         
-                    var checkIsKitItemExist = output.data.cart.findIndex(
-                      obj => obj.item == output.data.cart[i].item_details.item && obj.cart_status == 1
-                    )
-                    if (checkIsKitItemExist !== -1) {
-                      output.data.cart.splice(checkIsKitItemExist, 1)
-                    }
-          
-        
-                  output.data.total_quantity = output.data.cart.reduce(function (sum, current) {
-                    return current.cart_status == 1 ? sum + current.qty : sum
-                  }, 0)
-                  cartModel.findOneAndUpdate(query,output.data, options)
+                  cartModel.updateOne({user: output.user,company_id: output.company_id})
                     .then(is_create => {
                       console.log(is_create)
                     })
@@ -978,7 +957,7 @@ function cartdetails () {
                  // console.log(output.data.cart[0])
                  // cartdelete(data)
           
-              }
+              
               }
               
               
