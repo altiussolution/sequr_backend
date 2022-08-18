@@ -943,11 +943,53 @@ function cartdetails () {
             
             } 
               }
-             }else {console.log("datecchekernotworking")
+              else if (output.updatestatus == 3) {
+                for (var i = 0; i < output.data.cart.length; i++ ){
+                  cartdelete(output.data.cart[i])
+          
+              }
+              }
+              
+              
+               //cartdetailsadd()
+             else {console.log("datecchekernotworking")
              }
-             
-          })
+               
+          
         }
+         } )
+        }
+        function cartdelete(data) {
+
+          var cart_id = data._id
+          var item_id = data.item
+          var userId = data.user
+          var options = { upsert: true, new: true, setDefaultsOnInsert: true }
+          var query = { _id: cart_id, user: userId }
+          
+            
+                if (data) {
+                  for (let id of item_id) {
+                    var checkIsKitItemExist = data.cart.findIndex(
+                      obj => obj.item == id && obj.cart_status == 1
+                    )
+                    if (checkIsKitItemExist !== -1) {
+                      data.cart.splice(checkIsKitItemExist, 1)
+                    }
+                  }
+        
+                  data.total_quantity = data.cart.reduce(function (sum, current) {
+                    return current.cart_status == 1 ? sum + current.qty : sum
+                  }, 0)
+                  cartModel.findOneAndUpdate(query, data, options)
+                    .then(is_create => {
+                      
+                    })
+        }
+              
+            }
+          
+      
 
  //cartdetailsadd()
 
