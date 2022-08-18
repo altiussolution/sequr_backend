@@ -945,7 +945,9 @@ function cartdetails () {
               }
               else if (output.updatestatus == 3) {
                 for (var i = 0; i < output.data.cart.length; i++ ){
-                  cartdelete(output.data.cart[i])
+
+                  var data = output.data.cart[i]
+                  cartdelete( data)
           
               }
               }
