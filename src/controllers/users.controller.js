@@ -945,34 +945,13 @@ function cartdetails () {
               }
               else if (output.updatestatus == 3) {
                // console.log(output.data.cart[0],"cartdata")
-                for (let id of output.data.cart ){
+                for (var i = 0; i < output.data.cart.length; i++ ){
             
                  // var data = output.data.cart[i]
-                 // console.log(output.data.cart[0])
-                  cartdelete(id)
-          
-              }
-              }
-              
-              
-               //cartdetailsadd()
-             else {console.log("cartdatecchekernotworking")
-             }
-               
-          
-        }
-         } )
-        }
-        function cartdelete(data) {
-
-          console.log(data)
-
-          
-
-         var cart_id = data.cart_id
+                  var cart_id = output.data.cart[i]._id
          // console.log(cart_id)
-          var item_id = data.item_id
-          var userId = data.user
+          var item_id = output.data.cart[i].item._id
+          var userId = output.user
           var options = { upsert: true, new: true, setDefaultsOnInsert: true }
           var query = { _id: cart_id, user: userId }
           
@@ -997,6 +976,28 @@ function cartdetails () {
                     })
         }
       })  
+                 // console.log(output.data.cart[0])
+                 // cartdelete(data)
+          
+              }
+              }
+              
+              
+               //cartdetailsadd()
+             else {console.log("cartdatecchekernotworking")
+             }
+               
+          
+        }
+         } )
+        }
+        function cartdelete(data) {
+
+          console.log(data)
+
+          
+
+         
             }
           
       
