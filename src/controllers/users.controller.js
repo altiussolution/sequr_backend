@@ -812,9 +812,9 @@ function cartdetails () {
     storeModel.findOne({cartinfo : 2}).sort({created_at : -1 } )
    .limit(1)
    .then (output => {
-    console.log(output)
+   // console.log(output)
      var data = output['created_at']
-     console.log(output['created_at'])
+     //console.log(output['created_at'])
     updateDate(output)
    
  
@@ -870,7 +870,7 @@ function cartdetails () {
                  ).then(update => {
                    
                  //  console.log(cartAdding)
-                        console.log(update)
+                       // console.log(update)
                           })
              
                  }
