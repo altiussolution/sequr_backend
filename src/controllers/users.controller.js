@@ -946,7 +946,7 @@ function cartdetails () {
             
             } 
               }
-              // else if (output.updatestatus == 3) {
+              else if (output.updatestatus == 3) {
               //  // console.log(output.data.cart[0],"cartdata")
              
               //    // var data = output.data.cart[i]
@@ -954,14 +954,14 @@ function cartdetails () {
                   
               //   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
               //   //console.log(query)
-              //   cartModel.updateOne(
-              //    {user: output.user,company_id: output.company_id},{ $set: { "cart": output } }
+                cartModel.updateOne(
+                 {user: output.user,company_id: output.company_id},{ $set: { "cart": output } }
                  
-              //    ).then(update => {
+                 ).then(update => {
                    
-              //     // console.log(query)
-              //          console.log(update)
-              //             })
+                  // console.log(query)
+                       console.log(update)
+                          })
           
           
                   
@@ -982,6 +982,7 @@ function cartdetails () {
           
         
         
+         }
          } )
         }
         //function cartdelete(data) {
@@ -1134,7 +1135,7 @@ function kitdetails () {
          // console.log(updateds,"UpdatedDate")
           //console.log(output['created_at'],"Createdate")
            if (Date.parse(output['created_at']) > Date.parse(updated.updated_at)){
-           // console.log("datecheckerworking")
+            console.log("datecheckerworking")
   if (output.updatestatus == 1){
     for (var i = 0; i < output.data.Kits.length; i++ ){
      
