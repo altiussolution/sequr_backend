@@ -921,7 +921,7 @@ function cartdetails () {
                    ).then(update => {
                      
                     // console.log(query)
-                        // console.log(update)
+                         console.log(update)
                             })
             
             }
@@ -1131,10 +1131,10 @@ function kitdetails () {
         cartModel.findOne({}).sort({updated_at: -1}).limit(1).then(updated => {
           //cartModel.findOne({}).limit(1).sort({updated_at: -1}).then(updated => {
            var updateds = updated.updated_at
-          console.log(updateds,"UpdatedDate")
+         // console.log(updateds,"UpdatedDate")
           //console.log(output['created_at'],"Createdate")
            if (Date.parse(output['created_at']) > Date.parse(updated.updated_at)){
-            console.log("datecheckerworking")
+           // console.log("datecheckerworking")
   if (output.updatestatus == 1){
     for (var i = 0; i < output.data.Kits.length; i++ ){
      
