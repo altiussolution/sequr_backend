@@ -946,32 +946,32 @@ function cartdetails () {
             
             } 
               }
-              else if (output.updatestatus == 3) {
-               // console.log(output.data.cart[0],"cartdata")
+              // else if (output.updatestatus == 3) {
+              //  // console.log(output.data.cart[0],"cartdata")
              
-                 // var data = output.data.cart[i]
+              //    // var data = output.data.cart[i]
                  
                   
-                //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-                //console.log(query)
-                cartModel.updateOne(
-                 {user: output.user,company_id: output.company_id},{ $set: { "cart": output } }
+              //   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+              //   //console.log(query)
+              //   cartModel.updateOne(
+              //    {user: output.user,company_id: output.company_id},{ $set: { "cart": output } }
                  
-                 ).then(update => {
+              //    ).then(update => {
                    
-                  // console.log(query)
-                       console.log(update)
-                          })
+              //     // console.log(query)
+              //          console.log(update)
+              //             })
           
           
                   
         
        
-                 // console.log(output.data.cart[0])
-                 // cartdelete(data)
+              //    // console.log(output.data.cart[0])
+              //    // cartdelete(data)
           
               
-              }
+              // }
             }
             
             else {console.log("cartdatecchekernotworking")
