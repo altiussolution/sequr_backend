@@ -950,12 +950,12 @@ function cartdetails () {
               //  // console.log(output.data.cart[0],"cartdata")
              
               //    // var data = output.data.cart[i]
-                 
+                 var cart = output.data.cart
                   
               //   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
               //   //console.log(query)
                 cartModel.updateOne(
-                 {user: output.user,company_id: output.company_id},{ $set: { "cart": output } }
+                 {user: output.user,company_id: output.company_id},{ $set: { "cart": cart } }
                  
                  ).then(update => {
                    
