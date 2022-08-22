@@ -1131,10 +1131,10 @@ function kitdetails () {
         cartModel.findOne({}).sort({updated_at: -1}).limit(1).then(updated => {
           //cartModel.findOne({}).limit(1).sort({updated_at: -1}).then(updated => {
            var updateds = updated.updated_at
-         // console.log(updateds,"UpdatedDate")
+          console.log(updateds,"UpdatedDate")
           //console.log(output['created_at'],"Createdate")
            if (Date.parse(output['created_at']) > Date.parse(updated.updated_at)){
-           // console.log("datecheckerworking")
+            console.log("datecheckerworking")
   if (output.updatestatus == 1){
     for (var i = 0; i < output.data.Kits.length; i++ ){
      
@@ -1152,7 +1152,7 @@ function kitdetails () {
               item_quantity : qty,
               qty : 1
         })
-      }
+      
       cartModel.updateOne(
         {user: output.user},{ $set: { "kitting": kitAdding } }
        
@@ -1163,6 +1163,7 @@ function kitdetails () {
         // console.log(kitting)
               // console.log(create)
                  })
+                }
                  for (var i = 0; i < output.data.Kits.length; i++ ){
                   for (var j = 0; j < output.data.Kits[i].kit_item_details.length; j++ ) {
         
