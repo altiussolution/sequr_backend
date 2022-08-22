@@ -951,6 +951,7 @@ function cartdetails () {
              
               //    // var data = output.data.cart[i]
                  var cart = output.data.cart
+                 console.log(cart)
                   
               //   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
               //   //console.log(query)
