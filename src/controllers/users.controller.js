@@ -1216,30 +1216,30 @@ function kitdetails () {
                 })
 
 }
-for (var i = 0,j = 0; i < output.data.Kits.length; i++ ){
-        
-          
+for (var i = 0; i < output.data.Kits.length; i++ ){
+  for (var j = 0; j < output.data.Kits[i].kit_item_details.length; j++ ) {
+
+
   var quantity = output.data.Kits[i].kit_item_details[j].quantity
   var category = output.data.Kits[i].kit_item_details[j].category
-  var kit_id =  output.data.Kits[i].kit_id
- // console.log(category)
+  var kit_id = output.data.Kits[i].kit_id
+//  console.log(quantity)
   //var quantity1 = quantity
   var query = {quantity : quantity};
 stockAllocationModel.findOneAndUpdate(
-{company_id :output.company_id,category},query
+{company_id :output.company_id,category,kit_id},query
 
 
 ).then(create => {
 
-// console.log(kitAdding)
+// console.log(create)
   //console.log(quantity)
      })
      
-
-}
-
     }
-  }else {//console.log("datecchekernotworking")
+}
+    }
+  }else {console.log("datecchekernotworking")
 }
 
 })
