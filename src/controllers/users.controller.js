@@ -939,7 +939,7 @@ function cartdetails () {
             ).then(is_create => {
             
             // console.log(kitAdding)
-              //console.log(is_create)
+              console.log(is_create)
                  })
             
             
@@ -955,7 +955,7 @@ function cartdetails () {
                 //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
                 //console.log(query)
                 cartModel.updateOne(
-                 {user: output.user,company_id: output.company_id}
+                 {user: output.user,company_id: output.company_id},{ $set: { "cart": output } }
                  
                  ).then(update => {
                    
