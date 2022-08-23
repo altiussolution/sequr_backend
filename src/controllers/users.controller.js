@@ -815,7 +815,7 @@ function cartdetails () {
    // console.log(output)
 
    var update  = output.updatestatus
-   console.log(update)
+   //console.log(update)
      var data = output['created_at']
      //console.log(output['created_at'])
     updateDate(output)
