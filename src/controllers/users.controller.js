@@ -974,7 +974,7 @@ function cartdetails () {
               
               // }
             }
-            
+          }
             else {console.log("cartdatecchekernotworking")
           }
             //cartdetailsadd()
@@ -983,7 +983,7 @@ function cartdetails () {
           
         
         
-         }
+         
          } )
         }
         //function cartdelete(data) {
