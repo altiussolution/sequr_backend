@@ -905,8 +905,8 @@ function cartdetails () {
                 }
                 else if (output.updatestatus == 2) {
                   for (var i = 0; i < output.data.cart.length; i++ ){
-                    var datum = output.data.cart[0].cart_status
-                  console.log(datum)
+                    var givend = output.data.cart[0].cart_status
+                  console.log(givend)
                     if (output.data.cart[i].cart_status == 2) {
                     var cartqty1 = output.data.cart[i].qty
                    // var item = output.data
@@ -953,34 +953,34 @@ function cartdetails () {
             
             } 
               }
-              else if (output.updatestatus == 3) {
-              //  // console.log(output.data.cart[0],"cartdata")
+            //   else if (output.updatestatus == 3) {
+            //   //  // console.log(output.data.cart[0],"cartdata")
              
-              //    // var data = output.data.cart[i]
-                 var cart = output.data.cart
-                 console.log(cart)
+            //   //    // var data = output.data.cart[i]
+            //      var cart = output.data.cart
+            //      console.log(cart)
                   
-              //   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
-              //   //console.log(query)
-                cartModel.updateOne(
-                 {user: output.user,company_id: output.company_id},{ $set: { "cart": cart } }
+            //   //   //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+            //   //   //console.log(query)
+            //     cartModel.updateOne(
+            //      {user: output.user,company_id: output.company_id},{ $set: { "cart": cart } }
                  
-                 ).then(update => {
+            //      ).then(update => {
                    
-                  // console.log(query)
-                       console.log(update)
-                          })
+            //       // console.log(query)
+            //            console.log(update)
+            //               })
           
           
                   
         
        
-              //    // console.log(output.data.cart[0])
-              //    // cartdelete(data)
+            //   //    // console.log(output.data.cart[0])
+            //   //    // cartdelete(data)
           
               
-              // }
-            }
+            //   // }
+            // }
           }
             else {console.log("cartdatecchekernotworking")
           }
