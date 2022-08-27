@@ -1249,6 +1249,55 @@ stockAllocationModel.findOneAndUpdate(
     }
 }
     }
+    else if (output.updatestatus == 3 ){
+      for (var i = 0; i < output.data.Kits.length; i++ ){
+        //var cartqty1 = output.data.cart[i].qty
+       // var item = output.data
+       var kitstatus1 = output.data.Kits[i].kit_status
+            //var kitid1 = `kitting.${i}.qty`
+            var kitstatus = `kitting.${i}.kit_status`
+            
+          
+            //project(cartid,cartqty1)
+           // var cartcartqty1 = cart[i].qty
+           var query = {[`${kitstatus}`] : kitstatus1};
+       //    //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+      //var query = { "cart.0.qty" : cartqty1,"cart.0.cart_status" : cartstatus1}
+      console.log(query)
+      cartModel.findOneAndUpdate(
+       {user: output.user,company_id: output.company_id},query
+       
+       ).then(update => {
+         
+        // console.log(query)
+             //console.log(update)
+                })
+
+}
+for (var i = 0; i < output.data.Kits.length; i++ ){
+  for (var j = 0; j < output.data.Kits[i].kit_item_details.length; j++ ) {
+
+
+  var quantity = output.data.Kits[i].kit_item_details[j].quantity
+  var category = output.data.Kits[i].kit_item_details[j].category
+  var kit_id = output.data.Kits[i].kit_id
+  var update_kit_id = output.data.Kits[i].update_kit_id
+//  console.log(quantity)
+  //var quantity1 = quantity
+  var query = {quantity : quantity};
+stockAllocationModel.findOneAndUpdate(
+{company_id :output.company_id,category,kit_id,update_kit_id},query
+
+
+).then(create => {
+
+// console.log(create)
+  //console.log(quantity)
+     })
+     
+    }
+}
+    }
   }else {console.log("datecchekernotworking")
 }
 
