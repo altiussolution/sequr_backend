@@ -1232,11 +1232,12 @@ for (var i = 0; i < output.data.Kits.length; i++ ){
   var quantity = output.data.Kits[i].kit_item_details[j].quantity
   var category = output.data.Kits[i].kit_item_details[j].category
   var kit_id = output.data.Kits[i].kit_id
+  var update_kit_id = output.data.Kits[i].update_kit_id
 //  console.log(quantity)
   //var quantity1 = quantity
   var query = {quantity : quantity};
 stockAllocationModel.findOneAndUpdate(
-{company_id :output.company_id,category,kit_id},query
+{company_id :output.company_id,category,kit_id,update_kit_id},query
 
 
 ).then(create => {
