@@ -905,9 +905,7 @@ function cartdetails () {
                 }
                 else if (output.updatestatus == 2) {
                   for (var i = 0; i < output.data.cart.length; i++ ){
-                    var givend = output.data.cart[0].cart_status
-                  console.log(givend)
-                    if (output.data.cart[i].cart_status == 2) {
+                  
                     var cartqty1 = output.data.cart[i].qty
                    // var item = output.data
                     var total_quantity1 = output.data.total_quantity
@@ -930,10 +928,12 @@ function cartdetails () {
                     // console.log(query)
                          //console.log(update)
                             })
-                          }
+                          
             }
             for (var i = 0; i < output.data.cart.length; i++ ){
-                      
+              var givend = output.data.cart[0].cart_status
+              console.log(givend)
+                if (output.data.cart[i].cart_status == 2) {
               var quantity = output.data.cart[i].item_details.quantity
               var category = output.data.cart[i].item_details.category
              // console.log(category)
@@ -949,7 +949,7 @@ function cartdetails () {
               //console.log(is_create)
                  })
             
-            
+                }
             
             } 
               }
