@@ -1227,8 +1227,7 @@ function kitdetails () {
 }
 for (var i = 0; i < output.data.Kits.length; i++ ){
   for (var j = 0; j < output.data.Kits[i].kit_item_details.length; j++ ) {
-
-
+    
   var quantity = output.data.Kits[i].kit_item_details[j].quantity
   var category = output.data.Kits[i].kit_item_details[j].category
   var kit_id = output.data.Kits[i].kit_id
@@ -1250,6 +1249,7 @@ stockAllocationModel.findOneAndUpdate(
 }
     }
     else if (output.updatestatus == 3 ){
+
       for (var i = 0; i < output.data.Kits.length; i++ ){
         //var cartqty1 = output.data.cart[i].qty
        // var item = output.data
@@ -1277,7 +1277,7 @@ stockAllocationModel.findOneAndUpdate(
 for (var i = 0; i < output.data.Kits.length; i++ ){
   for (var j = 0; j < output.data.Kits[i].kit_item_details.length; j++ ) {
 
-
+   
   var quantity = output.data.Kits[i].kit_item_details[j].quantity
   var category = output.data.Kits[i].kit_item_details[j].category
   var kit_id = output.data.Kits[i].kit_id
