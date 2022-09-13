@@ -9,8 +9,8 @@ const sendEmail = async (email, subject, html) => {
             secure: false,
             ignoreTLS:false,
             auth: {
-                user: 'sequrrx2021@gmail.com',
-                pass: 'Test@123'
+                user: 'prakash.p@antlab.io',
+                pass: 'altius@123'
             },
         });
 
